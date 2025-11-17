@@ -16,16 +16,35 @@ namespace LongLiveKhioyen
 		Battle,
 		Settlement
 	}
+
+	public enum TurnState
+	{
+		PlayerTurn,
+		EnemyTurn,
+		FriendTurn,
+		Processing
+	}
 	public class Battle : MonoBehaviour
 	{
 		private HashSet<Vector2Int> availableMovePositions;
+		private HashSet<Vector2Int> availableArrangementPositions;
+		public Color movementHighlightColor = Color.green; 
+		public Color araangementHighlightColor = Color.blue;
 		public GameObject HextilePrefab;
 		private Dictionary<Vector2Int,HexTile> hexTiles = new();
 		AudioSource audioSource;
+		
+		private Coroutine battleLoopCoroutine;
+		
 		static Battle instance;
 		public static Battle Instance => instance;
 		public System.Action onInitialized;
 		public Stage currentStage;
+		public TurnState currentTurnState;
+		public bool isPlayerTurnOver;
+		private HashSet<Battalion> playerBattalions;
+		private HashSet<Battalion> enemyBattalions;
+		public int TurnCount { get; private set; }
 		#region Life cycle
 		void Awake()
 		{
@@ -49,15 +68,18 @@ namespace LongLiveKhioyen
 			gameObject.isStatic = true;
 			GenerateHexGrid();
 			arrangementOccupancy = new Battalion[Size.x, Size.y];
-			ArrangementSlot = new bool[Size.x, Size.y];
-			
-			//TODO:从出征队伍列表中读取部队
 			AnchorPosition = MapToWorld(new Vector2Int(data.battleSize.x/2, data.battleSize.y/2));
 			BattleTest();
-
 			
+			//TODO:从出征队伍列表中读取部队
+			//TODO:从地图数据中读取敌人部队与位置
+			currentTurnState = TurnState.PlayerTurn;
 			availableMovePositions = new HashSet<Vector2Int>();
+			availableArrangementPositions = new HashSet<Vector2Int>();
+			
+			GenerateArrangementSlot();
 			onInitialized?.Invoke();
+			TurnCount = 0;
 		}
 
 		
@@ -70,9 +92,15 @@ namespace LongLiveKhioyen
 			ReserveTeam testTeam = CreateDefaultReserveTeam();
 			if(testTeam == null) 
 				Debug.LogError("Create default reserve team failed.");
-			else 
+			else
+			{
 				data.playerReserveTeams.Add(testTeam);
+			}
 			//向战斗预备队中加入默认部队
+			
+			playerBattalions = new HashSet<Battalion>();
+			enemyBattalions = new HashSet<Battalion>();
+			
 		}
 		#endregion
 		
@@ -85,11 +113,10 @@ namespace LongLiveKhioyen
 		public void ChangeStage(Stage stage)
 		{
 			OnExitStage(currentStage);
+			
 			currentStage = stage;
 			OnEnterStage(currentStage);
 		}
-
-		
 		
 		void OnEnterStage(Stage stage)
 		{
@@ -97,8 +124,10 @@ namespace LongLiveKhioyen
 			{
 				case Stage.Arrangement:
 					Debug.Log("OnEnter: 布置阶段");
+					HighlightTiles(availableArrangementPositions,araangementHighlightColor);
 					break;
 				case Stage.Battle:
+					battleLoopCoroutine = StartCoroutine(BattleTurnLoop());
 					Debug.Log("OnEnter: 战斗阶段");
 					break;
 				case Stage.Settlement:
@@ -113,8 +142,15 @@ namespace LongLiveKhioyen
 			{
 				case Stage.Arrangement:
 					Debug.Log("OnExit: 布置阶段");
+					ClearAllHexHighlights();
+					ClearAllSelection();
 					break;
 				case Stage.Battle:
+					if (battleLoopCoroutine != null)
+					{
+						StopCoroutine(battleLoopCoroutine);
+						battleLoopCoroutine = null;
+					}
 					Debug.Log("OnExit: 战斗阶段");
 					break;
 			}
@@ -177,6 +213,11 @@ namespace LongLiveKhioyen
 			ClearBattalionSelection();
 		}
 
+		public void ClearAllSelection()
+		{
+			ClearReserveTeamSelection();
+			ClearBattalionSelection();
+		}
 		public void ClearReserveTeamSelection()
 		{
 			SelectedReserveTeam = null;
@@ -187,10 +228,9 @@ namespace LongLiveKhioyen
 		{
 			SelectedBattalion = null;
 			isBattalionSelected = false;
-			ClearAllHexHighlights();
+			if(currentStage == Stage.Battle) ClearAllHexHighlights();
 			availableMovePositions.Clear();
 		}
-
 		public bool TestAvailableMovePositions(Vector2Int mapPosition)
 		{
 			return availableMovePositions.Contains(mapPosition);
@@ -201,12 +241,13 @@ namespace LongLiveKhioyen
 			isBattalionSelected = true;
 			int moveRange = battalion.Definition.defaultFlexibility/10;
 			availableMovePositions = GetTilesInRange(SelectedBattalion.Compilation.position, moveRange);
-			HighlightTiles(availableMovePositions);
+			if(currentStage == Stage.Battle) HighlightTiles(availableMovePositions,movementHighlightColor);
 		}
 		
 		#endregion
 		
 		#region Battle
+		
 
 
 		
@@ -218,6 +259,75 @@ namespace LongLiveKhioyen
 		#endregion
 		
 		#endregion
+		#region Turn
+		public event System.Action OnPlayerTurnStarted;
+		public event System.Action OnPlayerTurnEnded;
+		private IEnumerator BattleTurnLoop()
+		{
+			Debug.Log("Battle Start!");
+			while (true)
+			{
+				currentTurnState = TurnState.PlayerTurn;
+				yield return StartCoroutine(PlayerTurnCoroutine());
+				//
+				currentTurnState = TurnState.Processing;
+				yield return new WaitForSeconds(1);
+				if (CheckGameOver()) yield break;
+				
+				currentTurnState = TurnState.EnemyTurn;
+				yield return StartCoroutine(EnemyTurnCoroutine());
+				
+				currentTurnState = TurnState.Processing;
+				yield return new WaitForSeconds(1);
+				if (CheckGameOver()) yield break;
+			}
+
+		}
+
+		private IEnumerator PlayerTurnCoroutine()
+		{
+			isPlayerTurnOver = false;
+			Debug.Log("Player Turn!");
+			
+			//
+			OnPlayerTurnStarted?.Invoke();
+
+			while (!isPlayerTurnOver)
+			{
+				yield return null;
+			}
+			Debug.Log("Player Turn End!");
+			OnPlayerTurnEnded?.Invoke();
+		}
+		
+		private IEnumerator EnemyTurnCoroutine()
+		{
+			
+			Debug.Log("Enemy Turn!");
+			yield return new WaitForSeconds(2.0f); 
+			//TODO：加入敌人逻辑
+			Debug.Log("Enemy Turn End!");
+		}
+
+		public bool CheckGameOver()
+		{
+			//TODO：加入游戏结束判断
+			if (TurnCount > 3)
+			{
+				ChangeStage(Stage.Settlement);
+				return true;
+			}
+			return false;
+		}
+		
+		public void EndPlayerTurn()
+		{
+			if(currentTurnState == TurnState.PlayerTurn) isPlayerTurnOver = true;
+			else Debug.LogError("It's not player's turn!");
+		}
+		
+		#endregion
+		
 		
 		#region Data
 		#region Battle data
@@ -278,7 +388,16 @@ namespace LongLiveKhioyen
 				}
 			}
 		}
-		
+
+		void GenerateArrangementSlot()
+		{
+			//TODO:根据玩家进入战斗的角度，在合适的位置创建部署区
+			for(int i=0;i<3;i++)
+			for (int j = 0; j < 3; j++)
+			{
+				availableArrangementPositions.Add(new Vector2Int(i, j));
+			}
+		}
 		#endregion
 		
 		#region Control mode
@@ -392,9 +511,8 @@ namespace LongLiveKhioyen
 					return false;
 				if(arrangementOccupancy[placement.x, placement.y] != null)
 					return false;
-				// if (!ArrangementSlot[placement.x, placement.y])
-				// 	return false;
-				//TODO:可部署区域的生成
+				if (!availableArrangementPositions.Contains(placement)&&currentStage == Stage.Arrangement) 
+					return false;
 			return true;
 		}
 		
@@ -403,7 +521,6 @@ namespace LongLiveKhioyen
 		#region Battalions
 		
 		Battalion[,] arrangementOccupancy;
-		bool[,] ArrangementSlot;
 		readonly List<Battalion> battalions = new();
 		public System.Action onArrangementOccupancyChanged;
 		public ReserveTeam currentReserveTeam;
@@ -550,7 +667,7 @@ namespace LongLiveKhioyen
     
 			return reachableTiles;
 		}
-		public void HighlightTiles(HashSet<Vector2Int> positionsToHighlight)
+		public void HighlightTiles(HashSet<Vector2Int> positionsToHighlight, Color highloghtColor)
 		{
 			if (positionsToHighlight == null) return;
 
@@ -558,7 +675,7 @@ namespace LongLiveKhioyen
 			{
 				if (hexTiles.TryGetValue(position, out HexTile tile))
 				{
-					tile.Highlight();
+					tile.Highlight(highloghtColor);
 				}
 			}
 		}

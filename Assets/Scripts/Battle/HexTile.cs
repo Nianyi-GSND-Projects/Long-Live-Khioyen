@@ -11,7 +11,7 @@ namespace LongLiveKhioyen
         
         private Renderer tileRenderer;
         private Color originalColor;
-        private Color HighlightColor = Color.green;
+        //private Color HighlightColor = Color.green;
 
         private void Awake()
         {
@@ -22,7 +22,7 @@ namespace LongLiveKhioyen
             }
         }
         
-        public void Highlight()
+        public void Highlight(Color HighlightColor)
         {
             if (tileRenderer != null)
             {
