@@ -32,12 +32,17 @@ namespace LongLiveKhioyen
 		SelectingAction,
 		SelectingTarget
 	}
+	
 	public class Battle : MonoBehaviour
 	{
 		private HashSet<Vector2Int> availableMovePositions;
 		private HashSet<Vector2Int> availableArrangementPositions;
+		private HashSet<Vector2Int> availableTargetPositions;
+		
 		public Color movementHighlightColor = Color.green; 
-		public Color araangementHighlightColor = Color.blue;
+		public Color arrangementHighlightColor = Color.blue;
+		public Color attackHighlightColor = Color.red;
+		
 		public GameObject HextilePrefab;
 		private Dictionary<Vector2Int,HexTile> hexTiles = new();
 		AudioSource audioSource;
@@ -51,8 +56,10 @@ namespace LongLiveKhioyen
 		public Stage currentStage;
 		public TurnState currentTurnState;
 		public PlayerActionStage currentActionStage;
+		public int currentActiontype;
 		
 		public bool isPlayerTurnOver;
+		public bool isPreparingAction;
 		private HashSet<Battalion> playerBattalions;
 		private HashSet<Battalion> enemyBattalions;
 		public int TurnCount { get; private set; }
@@ -112,6 +119,22 @@ namespace LongLiveKhioyen
 			playerBattalions = new HashSet<Battalion>();
 			enemyBattalions = new HashSet<Battalion>();
 			
+			//加入测试敌人
+			{
+				BattalionCompilation compilation = new()
+				{
+					//TODO:填入有意义数据
+					battalionId = 1,
+					position = new Vector2Int(3, 3),
+					battalionDefinition = defaultReserveTeamDefinition,
+					battalionCommander = new(),
+					currentSoliders = 20,
+					currentMurale = defaultReserveTeamDefinition.defaultMaxMorale,
+					currentTraining = 100
+				};
+				enemyBattalions.Add(SpawnBattalion(compilation));
+				data.EnemyBattalions.Add(compilation);
+			}
 		}
 		#endregion
 		
@@ -135,7 +158,7 @@ namespace LongLiveKhioyen
 			{
 				case Stage.Arrangement:
 					Debug.Log("OnEnter: 布置阶段");
-					HighlightTiles(availableArrangementPositions,araangementHighlightColor);
+					HighlightTiles(availableArrangementPositions,arrangementHighlightColor);
 					break;
 				case Stage.Battle:
 					BattleStageInitialize();
@@ -177,7 +200,7 @@ namespace LongLiveKhioyen
 		#region Arrangement
 		
 		public ArrangementModal arrangementModal;
-		public void PlacingBattalion(ReserveTeam reserveTeam, Vector2Int mapPosition)
+		public void PlacingPlayerBattalion(ReserveTeam reserveTeam, Vector2Int mapPosition)
 		{
 			if (!data.playerReserveTeams.Contains(reserveTeam))
 			{
@@ -202,8 +225,8 @@ namespace LongLiveKhioyen
 				currentMurale = reserveTeam.currentMurale,
 				currentTraining = reserveTeam.currentTraining,
 			};
-			
-			SpawnBattalion(compilation);
+
+			playerBattalions.Add(SpawnBattalion(compilation));
 			data.PlayerBattalions.Add(compilation);
 			reserveTeam.placed = true;
 			ClearReserveTeamSelection();
@@ -238,8 +261,6 @@ namespace LongLiveKhioyen
 				default:
 					break;
 			}
-
-
 			
 		}
 
@@ -293,7 +314,7 @@ namespace LongLiveKhioyen
 					if (currentActionStage == PlayerActionStage.None)
 					{
 						int moveRange = battalion.Compilation.currentMovement;
-						availableMovePositions = GetTilesInRange(SelectedBattalion.Compilation.position, moveRange);
+						availableMovePositions = GetAccessableTilesInRange(SelectedBattalion.Compilation.position, moveRange);
 						ChangeActionStage(PlayerActionStage.MovingBattalion);
 					}
 					break;
@@ -355,8 +376,9 @@ namespace LongLiveKhioyen
 					//TODO:单位处悬浮菜单，锁定滚动
 					break;
 				
-				
 				case PlayerActionStage.SelectingTarget:
+					availableTargetPositions = GetAllTilesInRange(SelectedBattalion.Compilation.position, SelectedBattalion.Definition.attackRange);
+					HighlightTiles(availableTargetPositions,attackHighlightColor);
 					Debug.Log("Change action stage to SelectingTarget");
 					break;
 			}
@@ -615,8 +637,6 @@ namespace LongLiveKhioyen
 		{
 				if(!IsValidMapPosition(placement))
 					return false;
-				if(arrangementOccupancy[placement.x, placement.y] != null)
-					return false;
 				if (!availableArrangementPositions.Contains(placement)&&currentStage == Stage.Arrangement) 
 					return false;
 			return true;
@@ -632,10 +652,10 @@ namespace LongLiveKhioyen
 		public ReserveTeam currentReserveTeam;
 		Battalion currentBattalion;
 		public BattalionDefinition defaultReserveTeamDefinition;
+		public BattalionDefinition defaultEnemyDefinition;
 		public ReserveTeam CreateDefaultReserveTeam()
 		{
 			ReserveTeam newTeam = new ReserveTeam();
-
 			newTeam.battalionDefinition = defaultReserveTeamDefinition;
 			newTeam.battalionCommander = new ();
 			newTeam.currentSoliders = newTeam.battalionDefinition.defaultMaxSolider;
@@ -670,20 +690,12 @@ namespace LongLiveKhioyen
 				if (value == currentReserveTeam)
 					return;
 
-				// if(preview != null)
-				// {
-				// 	Destroy(preview.gameObject);
-				// 	preview = null;
-				// }
 
 				currentReserveTeam = value;
 
 				if (currentReserveTeam != null)
 				{
-					// preview = new GameObject("Construction Preview").AddComponent<ConstructPreview>();
-					// preview.Definition = selectedBuildingType;
-					// preview.transform.SetParent(Polis.transform, false);
-					// preview.onInitialized += UpdatePreviewModel;
+
 				}
 			}
 		}
@@ -698,7 +710,6 @@ namespace LongLiveKhioyen
 			battalion.Compilation = compilation;
 			battalion.Definition = compilation.battalionDefinition;
 			arrangementOccupancy[compilation.position.x, compilation.position.y] = battalion;
-			playerBattalions.Add(battalion);
 			return battalion;
 		}
 
@@ -706,10 +717,15 @@ namespace LongLiveKhioyen
 		{
 			battalions.Remove(battalion);
 			arrangementOccupancy[battalion.Compilation.position.x, battalion.Compilation.position.y] = null;
-			playerBattalions.Remove(battalion);
-			Destroy(battalion);
+			if(playerBattalions.Contains(battalion))playerBattalions.Remove(battalion);
+			else if(enemyBattalions.Contains(battalion)) enemyBattalions.Remove(battalion);
 			
+			if(data.EnemyBattalions.Contains(battalion.Compilation)) data.EnemyBattalions.Remove(battalion.Compilation);
+			else if(data.PlayerBattalions.Contains(battalion.Compilation)) data.PlayerBattalions.Remove(battalion.Compilation);
+			if(SelectedBattalion == battalion) ClearAllSelection();
+			Destroy(battalion.gameObject);
 		}
+		
 		public void PositionBattalion(Transform battalion, BattalionDefinition definition, BattalionCompilation compilation)
 		{
 			battalion.SetParent(transform, false);
@@ -721,11 +737,99 @@ namespace LongLiveKhioyen
 
 		public void ActionWait()
 		{
+			
 			SelectedBattalion.Compilation.ActionEnd = true;
 			ClearAllSelection();
 			ChangeActionStage(PlayerActionStage.None);
+			
+		}
+		
+		public void ActionAttackPrepare()
+		{
+			isPreparingAction = true;
+			currentActiontype = 1;
+			ChangeActionStage(PlayerActionStage.SelectingTarget);
 		}
 
+
+		public bool ValidateActionTarget(Vector2Int placement)
+		{
+			if(!IsValidMapPosition(placement))
+				return false;
+
+			switch (currentActiontype)
+			{
+				//TODO:良好定义各种行动
+				//1:Attack
+				case 1:
+					if (arrangementOccupancy[placement.x, placement.y] == null) return false;
+					if (enemyBattalions.Contains(arrangementOccupancy[placement.x, placement.y]))
+						return true;
+					return false;
+				
+				default:
+					return false;
+			}
+			return true;
+		}
+		
+		public void ApplyAction(Vector2Int mapPosition)
+		{
+			if (!isBattalionSelected)
+			{
+				Debug.Log("No battalion selected.");
+				return;
+			}
+			
+			BattalionCompilation compilation = SelectedBattalion.Compilation;
+
+			switch (currentActiontype)
+			{
+				case 1:
+					Battalion TargetEnemy = arrangementOccupancy[mapPosition.x, mapPosition.y];
+					Attack(SelectedBattalion,TargetEnemy);
+					break;
+				default:
+					break;
+			}
+			SelectedBattalion.Compilation.ActionEnd = true;
+			ChangeActionStage(PlayerActionStage.None);
+		}
+
+		public void Attack(Battalion source, Battalion target)
+		{
+			//TODO：完善战斗计算
+			target.Compilation.currentSoliders -= source.Definition.defaultAttack * 2;
+			source.Compilation.currentSoliders -= target.Definition.defaultAttack;
+			Debug.Log($"Battalion {source.Compilation.battalionId} Attack Enemy Battalion + {target.Compilation.battalionId}");
+			Debug.Log($"Battalion {source.Compilation.battalionId} remaining solider: {source.Compilation.currentSoliders}");
+			Debug.Log($"Battalion {target.Compilation.battalionId} remaining solider: {target.Compilation.currentSoliders}");
+			CheckDeath(source);
+			CheckDeath(target);
+		}
+		public void CheckDeath(Battalion battalion)
+		{
+			if (battalion.Compilation.currentSoliders <= 0)
+			{
+				RemoveBattalionWhileBattle(battalion);
+				Debug.Log($"Battalion {battalion.Compilation.battalionId} die off!");
+
+			}
+				
+		}
+
+		public void RemoveBattalionWhileBattle(Battalion battalion)
+		{
+			battalions.Remove(battalion);
+			arrangementOccupancy[battalion.Compilation.position.x, battalion.Compilation.position.y] = null;
+			if(playerBattalions.Contains(battalion))playerBattalions.Remove(battalion);
+			else if(enemyBattalions.Contains(battalion)) enemyBattalions.Remove(battalion);
+			
+			if(data.EnemyBattalions.Contains(battalion.Compilation)) data.EnemyBattalions.Remove(battalion.Compilation);
+			else if(data.PlayerBattalions.Contains(battalion.Compilation)) data.PlayerBattalions.Remove(battalion.Compilation);
+			if(SelectedBattalion == battalion) ClearAllSelection();
+			Destroy(battalion.gameObject);
+		}
 		#endregion
 		
 		#region Functions
@@ -748,19 +852,59 @@ namespace LongLiveKhioyen
 			}
 		}
 		
-		
 		public void ExitBattle()
 		{
 			GameInstance.Instance.ExitBattle();
 		}
 		
-		public HashSet<Vector2Int> GetTilesInRange(Vector2Int startPos, int range)
+		public HashSet<Vector2Int> GetAccessableTilesInRange(Vector2Int startPos, int range)
 		{
 			HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
 			
 			if (!hexTiles.ContainsKey(startPos))
 			{
 				Debug.LogWarning($"尝试从一个不存在的格子 {startPos} 开始寻路。");
+				return reachableTiles;
+			}
+			
+			Queue<Vector2Int> frontier = new Queue<Vector2Int>();
+			frontier.Enqueue(startPos);
+			
+			Dictionary<Vector2Int, int> distanceTravelled = new Dictionary<Vector2Int, int>();
+			distanceTravelled[startPos] = 0;
+			
+			while (frontier.Count > 0)
+			{
+				Vector2Int currentPos = frontier.Dequeue();
+				
+				reachableTiles.Add(currentPos);
+				
+				if (distanceTravelled[currentPos] >= range) continue;
+				
+				int parity = currentPos.y & 1;
+				foreach (var offset in neighborOffsets[parity])
+				{
+					Vector2Int neighborPos = currentPos + offset;
+					if (!IsValidMapPosition(neighborPos) ||
+					    (arrangementOccupancy[neighborPos.x, neighborPos.y] != null)) continue;
+					if (hexTiles.ContainsKey(neighborPos) && !distanceTravelled.ContainsKey(neighborPos))
+					{
+						distanceTravelled[neighborPos] = distanceTravelled[currentPos] + 1;
+						frontier.Enqueue(neighborPos);
+					}
+				}
+			}
+
+			return reachableTiles;
+		}
+		
+		public HashSet<Vector2Int> GetAllTilesInRange(Vector2Int startPos, int range)
+		{
+			HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
+			
+			if (!hexTiles.ContainsKey(startPos))
+			{
+				Debug.LogWarning($"Function GetAllTilesInRange: 基准位置 {startPos} 不存在。");
 				return reachableTiles;
 			}
 			

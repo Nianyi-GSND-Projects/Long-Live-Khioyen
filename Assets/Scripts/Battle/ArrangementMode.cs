@@ -186,7 +186,10 @@ namespace LongLiveKhioyen
                {
                    Battle.arrangementModal.TryMoveBattalionBattle();
                }
-               
+               else if (Battle.currentActionStage == PlayerActionStage.SelectingTarget && Battle.isPreparingAction)
+               {
+                   Battle.arrangementModal.TryApplyCurrentAction();
+               }
                
            }
        }

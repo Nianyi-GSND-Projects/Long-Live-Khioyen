@@ -167,7 +167,7 @@ namespace LongLiveKhioyen
 				Debug.LogWarning($"Cannot place {compilation.battalionId} at {compilation.position}.");
 				return;
 			}
-			Battle.PlacingBattalion(Battle.SelectedReserveTeam, compilation.position);
+			Battle.PlacingPlayerBattalion(Battle.SelectedReserveTeam, compilation.position);
 		}
 		
 		public void TryMoveBattalionArrangement()
@@ -209,7 +209,7 @@ namespace LongLiveKhioyen
 
 			if (Battle.SelectedBattalion.Compilation.ActionEnd == true)
 			{
-				Debug.LogWarning("Battalion already moved this turn!");
+				Debug.LogWarning("Battalion already acted this turn!");
 				return;
 			}
 			if (!Battle.ValidateArrangementPlacement(Battle.WorldToMapInt(groundPosition)))
@@ -224,6 +224,35 @@ namespace LongLiveKhioyen
 				return;
 			}
 			Battle.MovingBattalion(Battle.WorldToMapInt(groundPosition));
+		}
+		
+		public void TryApplyCurrentAction()
+		{
+			if (!Battle.ScreenToGround(arrangementMode.PointerScreenPosition, out Vector3 groundPosition))
+			{
+				Debug.LogWarning("Position not valid." + Battle.WorldToMapInt(groundPosition));
+				return;
+			}
+			
+			if (Battle.SelectedBattalion == null)
+			{
+				Debug.LogWarning("No battalion selected." + Battle.WorldToMapInt(groundPosition));
+				return;
+			}
+
+			if (Battle.SelectedBattalion.Compilation.ActionEnd == true)
+			{
+				Debug.LogWarning("Battalion already acted this turn!");
+				return;
+			}
+			
+			if (!Battle.ValidateActionTarget(Battle.WorldToMapInt(groundPosition)))
+			{
+				Debug.LogWarning($"Not Valid Target!");
+				return;
+			}
+			
+			Battle.ApplyAction(Battle.WorldToMapInt(groundPosition));
 		}
 		#endregion
     }
