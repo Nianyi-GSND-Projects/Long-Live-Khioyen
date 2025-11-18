@@ -216,7 +216,8 @@ namespace LongLiveKhioyen
            {
                if (Battle.IsBattalionSelected)
                {
-                   ReturnToPreviousActionStage();
+                   if(Battle.CurrentActionStage!=PlayerActionStage.None) 
+                       ReturnToPreviousActionStage();
                }
            }
        }
@@ -239,10 +240,13 @@ namespace LongLiveKhioyen
                    break;
                
                case PlayerActionStage.SelectingAction:
-                   //TODO:完善逻辑
+                   Battle.CancelMovement();
+                   Battle.ChangeActionStage(PlayerActionStage.MovingBattalion);
+                   break;
                
                case PlayerActionStage.SelectingTarget:
-                   //TODO:完善逻辑
+                   Battle.CancelAction();
+                   Battle.ChangeActionStage(PlayerActionStage.SelectingAction);
                    break;
                default:
                    break;

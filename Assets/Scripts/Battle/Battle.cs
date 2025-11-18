@@ -202,6 +202,7 @@ namespace LongLiveKhioyen
 					if (CurrentActionStage != PlayerActionStage.MovingBattalion) break;
 					arrangementOccupancy[compilation.position.x, compilation.position.y] = null;
 					compilation.position = mapPosition;
+					//TODO:移动实际减少移动力
 					SelectedBattalion.transform.localPosition = MapToLocal(compilation.position);
 					arrangementOccupancy[compilation.position.x, compilation.position.y] = SelectedBattalion;
 					ChangeActionStage(PlayerActionStage.SelectingAction);
@@ -303,9 +304,12 @@ namespace LongLiveKhioyen
 					
 					SelectedBattalion = battalion;
 					IsBattalionSelected = true;
+					
+					initialUnitPosition = SelectedBattalion.Compilation.position;
+					initialUnitMovement = battalion.Compilation.currentMovement;
 					if (CurrentActionStage == PlayerActionStage.None)
 					{
-						int moveRange = battalion.Compilation.currentMovement;
+						int moveRange = initialUnitMovement;
 						availableMovePositions = GetAccessableTilesInRange(SelectedBattalion.Compilation.position, moveRange);
 						ChangeActionStage(PlayerActionStage.MovingBattalion);
 					}
@@ -348,7 +352,7 @@ namespace LongLiveKhioyen
 			if(!IsValidMapPosition(placement))
 				return false;
 
-			switch (CurrentActiontype)
+			switch (CurrentActionType)
 			{
 				//TODO:良好定义各种行动
 				//1:Attack
@@ -571,13 +575,37 @@ namespace LongLiveKhioyen
 		public event System.Action OnActionSelectionEnded;
 		
 		#endregion
+		
+		#endregion
+		
 		#region PlayerAction
 		
 		public bool IsPreparingAction{ get; set; }
 		
+		private Vector2Int initialUnitPosition;
+
+		private int initialUnitMovement;
 		public PlayerActionStage CurrentActionStage{ get; set; }
-		public int CurrentActiontype{ get; set; }
-		
+		public int CurrentActionType{ get; set; }
+
+		public void CancelMovement()
+		{
+			arrangementOccupancy[SelectedBattalion.Compilation.position.x, SelectedBattalion.Compilation.position.y] = null;
+			SelectedBattalion.Compilation.position = initialUnitPosition;
+			arrangementOccupancy[initialUnitPosition.x, initialUnitPosition.y] = SelectedBattalion;
+			SelectedBattalion.Compilation.currentMovement = initialUnitMovement;
+			SelectedBattalion.transform.localPosition = MapToLocal(initialUnitPosition);
+			
+			availableMovePositions = GetAccessableTilesInRange(initialUnitPosition, initialUnitMovement);
+		}
+
+		public void CancelAction()
+		{
+			availableTargetPositions.Clear();
+			CurrentActionType = -1;
+			IsPreparingAction = false;
+			ClearAllHexHighlights();
+		}
 		public void ChangeActionStage(PlayerActionStage stage)
 		{
 			if (CurrentActionStage == PlayerActionStage.SelectingAction)
@@ -626,7 +654,7 @@ namespace LongLiveKhioyen
 		public void ActionAttackPrepare()
 		{
 			IsPreparingAction = true;
-			CurrentActiontype = 1;
+			CurrentActionType = 1;
 			ChangeActionStage(PlayerActionStage.SelectingTarget);
 		}
 		
@@ -640,7 +668,7 @@ namespace LongLiveKhioyen
 			
 			BattalionCompilation compilation = SelectedBattalion.Compilation;
 
-			switch (CurrentActiontype)
+			switch (CurrentActionType)
 			{
 				case 1:
 					Battalion TargetEnemy = arrangementOccupancy[mapPosition.x, mapPosition.y];
@@ -664,8 +692,6 @@ namespace LongLiveKhioyen
 			CheckDeath(source);
 			CheckDeath(target);
 		}
-		
-		#endregion
 		
 		#endregion
 		

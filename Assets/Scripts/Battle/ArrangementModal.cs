@@ -99,10 +99,8 @@ namespace LongLiveKhioyen
 
 		#region Selection
 		ReserveTeam  hoveredReserveTeam;
+		
 		//ArrangementPreview preview;
-		
-		
-
 		// void UpdatePreviewModel()
 		// {
 		// 	if(preview == null)
