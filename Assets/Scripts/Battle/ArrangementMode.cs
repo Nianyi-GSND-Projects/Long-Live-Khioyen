@@ -174,17 +174,20 @@ namespace LongLiveKhioyen
            }
            else if (Battle.isInBattleStage)
            {
-               if (Battle.isBattalionSelected)
+               if (Battle.currentActionStage == PlayerActionStage.None)
+               {
+                   {
+                       Battle.ClearAllHexHighlights();
+                       var hitBattalion = hit.collider.GetComponentInParent<Battalion>();
+                       if(hitBattalion&&hitBattalion.Compilation.ActionEnd==false) Battle.SelectBattalion(hitBattalion);
+                   }
+               }
+               else if (Battle.currentActionStage==PlayerActionStage.MovingBattalion&&Battle.isBattalionSelected)
                {
                    Battle.arrangementModal.TryMoveBattalionBattle();
-                   
                }
-               else
-               {
-                   Battle.ClearAllHexHighlights();
-                   var hitBattalion = hit.collider.GetComponentInParent<Battalion>();
-                   if(hitBattalion) Battle.SelectBattalion(hitBattalion);
-               }
+               
+               
            }
        }
        
@@ -210,10 +213,38 @@ namespace LongLiveKhioyen
            {
                if (Battle.isBattalionSelected)
                {
-                   
-                   Battle.ClearBattalionSelection();
+                   ReturnToPreviousActionStage();
                }
            }
+       }
+
+       protected void ReturnToPreviousActionStage()
+       {
+           if (!Battle.isInBattleStage)
+           {
+               return;
+           }
+
+           switch (Battle.currentActionStage)
+           {
+               case PlayerActionStage.None:
+                   return;
+               
+               case PlayerActionStage.MovingBattalion:
+                   Battle.ClearBattalionSelection();
+                   Battle.ChangeActionStage(PlayerActionStage.None);
+                   break;
+               
+               case PlayerActionStage.SelectingAction:
+                   //TODO:完善逻辑
+               
+               case PlayerActionStage.SelectingTarget:
+                   //TODO:完善逻辑
+                   break;
+               default:
+                   break;
+           }
+           
        }
        #endregion
     }

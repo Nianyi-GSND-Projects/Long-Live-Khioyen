@@ -24,6 +24,14 @@ namespace LongLiveKhioyen
 		FriendTurn,
 		Processing
 	}
+
+	public enum PlayerActionStage
+	{
+		None,
+		MovingBattalion,
+		SelectingAction,
+		SelectingTarget
+	}
 	public class Battle : MonoBehaviour
 	{
 		private HashSet<Vector2Int> availableMovePositions;
@@ -39,8 +47,11 @@ namespace LongLiveKhioyen
 		static Battle instance;
 		public static Battle Instance => instance;
 		public System.Action onInitialized;
+		
 		public Stage currentStage;
 		public TurnState currentTurnState;
+		public PlayerActionStage currentActionStage;
+		
 		public bool isPlayerTurnOver;
 		private HashSet<Battalion> playerBattalions;
 		private HashSet<Battalion> enemyBattalions;
@@ -127,6 +138,7 @@ namespace LongLiveKhioyen
 					HighlightTiles(availableArrangementPositions,araangementHighlightColor);
 					break;
 				case Stage.Battle:
+					BattleStageInitialize();
 					battleLoopCoroutine = StartCoroutine(BattleTurnLoop());
 					Debug.Log("OnEnter: 战斗阶段");
 					break;
@@ -204,13 +216,31 @@ namespace LongLiveKhioyen
 				Debug.Log("No battalion selected.");
 				return;
 			}
-			
 			BattalionCompilation compilation = SelectedBattalion.Compilation;
-			arrangementOccupancy[compilation.position.x, compilation.position.y] = null;
-			compilation.position = mapPosition;
-			SelectedBattalion.transform.localPosition = MapToLocal(compilation.position);
-			arrangementOccupancy[compilation.position.x, compilation.position.y] = SelectedBattalion;
-			ClearBattalionSelection();
+			switch (currentStage)
+			{
+				case Stage.Arrangement:
+					arrangementOccupancy[compilation.position.x, compilation.position.y] = null;
+					compilation.position = mapPosition;
+					SelectedBattalion.transform.localPosition = MapToLocal(compilation.position);
+					arrangementOccupancy[compilation.position.x, compilation.position.y] = SelectedBattalion;
+					break;
+				
+				case Stage.Battle:
+					if (currentActionStage != PlayerActionStage.MovingBattalion) break;
+					arrangementOccupancy[compilation.position.x, compilation.position.y] = null;
+					compilation.position = mapPosition;
+					SelectedBattalion.transform.localPosition = MapToLocal(compilation.position);
+					arrangementOccupancy[compilation.position.x, compilation.position.y] = SelectedBattalion;
+					ChangeActionStage(PlayerActionStage.SelectingAction);
+					break;
+				
+				default:
+					break;
+			}
+
+
+			
 		}
 
 		public void ClearAllSelection()
@@ -237,18 +267,51 @@ namespace LongLiveKhioyen
 		}
 		public void SelectBattalion(Battalion battalion)
 		{
-			SelectedBattalion = battalion;
-			isBattalionSelected = true;
-			int moveRange = battalion.Definition.defaultFlexibility/10;
-			availableMovePositions = GetTilesInRange(SelectedBattalion.Compilation.position, moveRange);
-			if(currentStage == Stage.Battle) HighlightTiles(availableMovePositions,movementHighlightColor);
+			switch (currentStage)
+			{
+				case Stage.Arrangement:
+					SelectedBattalion = battalion;
+					isBattalionSelected = true;
+					break;
+				
+				case Stage.Battle:
+					
+					if (battalion.Compilation.ActionEnd)
+					{
+						Debug.Log("Battalion " + battalion.Compilation.battalionId + " has already finished its action!");
+						break;
+					}
+					
+					if (battalion.Compilation.currentMovement == 0)
+					{
+						Debug.Log("Battalion " + battalion.Compilation.battalionId + " has no movement!");
+						break;
+					}
+					
+					SelectedBattalion = battalion;
+					isBattalionSelected = true;
+					if (currentActionStage == PlayerActionStage.None)
+					{
+						int moveRange = battalion.Compilation.currentMovement;
+						availableMovePositions = GetTilesInRange(SelectedBattalion.Compilation.position, moveRange);
+						ChangeActionStage(PlayerActionStage.MovingBattalion);
+					}
+					break;
+				
+				default:
+					break;
+			}
+			
 		}
 		
 		#endregion
 		
 		#region Battle
-		
 
+		public void BattleStageInitialize()
+		{
+			
+		}
 
 		
 		#endregion
@@ -262,6 +325,42 @@ namespace LongLiveKhioyen
 		#region Turn
 		public event System.Action OnPlayerTurnStarted;
 		public event System.Action OnPlayerTurnEnded;
+		public event System.Action OnActionSelectionStarted;
+		public event System.Action OnActionSelectionEnded;
+		public void ChangeActionStage(PlayerActionStage stage)
+		{
+			if (currentActionStage == PlayerActionStage.SelectingAction)
+			{
+				OnActionSelectionEnded?.Invoke();
+			}
+			currentActionStage = stage;
+			switch (stage)
+			{
+				case PlayerActionStage.None:
+					Debug.Log("Change action stage to None");
+					ClearAllSelection();
+					ClearAllHexHighlights();
+					break;
+				
+				case PlayerActionStage.MovingBattalion:
+					Debug.Log("Change action stage to MovingBattalion");
+					ClearAllHexHighlights();
+					HighlightTiles(availableMovePositions,movementHighlightColor);
+					break;
+				
+				case PlayerActionStage.SelectingAction:
+					Debug.Log("Change action stage to SelectingAction");
+					ClearAllHexHighlights();
+					OnActionSelectionStarted?.Invoke();
+					//TODO:单位处悬浮菜单，锁定滚动
+					break;
+				
+				
+				case PlayerActionStage.SelectingTarget:
+					Debug.Log("Change action stage to SelectingTarget");
+					break;
+			}
+		}
 		private IEnumerator BattleTurnLoop()
 		{
 			Debug.Log("Battle Start!");
@@ -288,7 +387,13 @@ namespace LongLiveKhioyen
 		{
 			isPlayerTurnOver = false;
 			Debug.Log("Player Turn!");
-			
+
+			foreach (var battalion in playerBattalions)
+			{
+				battalion.Compilation.currentMovement = battalion.Compilation.battalionDefinition.defaultFlexibility/10;
+				Debug.Log("Battalion " + battalion.Compilation.battalionId + " movement: " + battalion.Compilation.currentMovement);
+				battalion.Compilation.ActionEnd = false;
+			}
 			//
 			OnPlayerTurnStarted?.Invoke();
 
@@ -297,6 +402,7 @@ namespace LongLiveKhioyen
 				yield return null;
 			}
 			Debug.Log("Player Turn End!");
+			ChangeActionStage(PlayerActionStage.None);
 			OnPlayerTurnEnded?.Invoke();
 		}
 		
@@ -587,19 +693,39 @@ namespace LongLiveKhioyen
 			
 			var battalion = new GameObject().AddComponent<Battalion>();
 			PositionBattalion(battalion.transform, compilation.battalionDefinition,compilation);
-			audioSource.PlayOneShot(compilation.battalionDefinition.SelectedSoundEffect);
+			//audioSource.PlayOneShot(compilation.battalionDefinition.SelectedSoundEffect);
 			battalions.Add(battalion);
 			battalion.Compilation = compilation;
 			battalion.Definition = compilation.battalionDefinition;
 			arrangementOccupancy[compilation.position.x, compilation.position.y] = battalion;
+			playerBattalions.Add(battalion);
 			return battalion;
 		}
 
+		public void RemoveBattalionWhileArrangement(Battalion battalion)
+		{
+			battalions.Remove(battalion);
+			arrangementOccupancy[battalion.Compilation.position.x, battalion.Compilation.position.y] = null;
+			playerBattalions.Remove(battalion);
+			Destroy(battalion);
+			
+		}
 		public void PositionBattalion(Transform battalion, BattalionDefinition definition, BattalionCompilation compilation)
 		{
 			battalion.SetParent(transform, false);
 			battalion.localPosition = MapToLocal(compilation.position);
 		}
+		#endregion
+		
+		#region Action
+
+		public void ActionWait()
+		{
+			SelectedBattalion.Compilation.ActionEnd = true;
+			ClearAllSelection();
+			ChangeActionStage(PlayerActionStage.None);
+		}
+
 		#endregion
 		
 		#region Functions

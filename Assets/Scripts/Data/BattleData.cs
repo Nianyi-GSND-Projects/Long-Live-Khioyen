@@ -73,6 +73,10 @@ namespace LongLiveKhioyen
 		public int currentSoliders;
 		public int currentMurale;
 		public int currentTraining;
+
+		public int currentMovement;
+
+		public bool ActionEnd = false;
 		
 		public BattalionCompilation()
 		{

@@ -17,17 +17,19 @@ namespace LongLiveKhioyen
         {
             battle.OnPlayerTurnStarted += HandlePlayerTurnStart;
             battle.OnPlayerTurnEnded += HandlePlayerTurnEnd;
-            
+            battle.OnActionSelectionStarted += HandleActionSelectionStart;
+            battle.OnActionSelectionEnded += HandleActionSelectionEnd;
         }
         
         private void OnDestroy()
         {
-            // --- 核心：取消订阅 ---
-            // 如果 Battle 实例还存在，就取消订阅，防止内存泄漏
+
             if (battle != null)
             {
                 battle.OnPlayerTurnStarted -= HandlePlayerTurnStart;
                 battle.OnPlayerTurnEnded -= HandlePlayerTurnEnd;
+                battle.OnActionSelectionStarted -= HandleActionSelectionStart;
+                battle.OnActionSelectionEnded -= HandleActionSelectionEnd;
             }
         }
         #endregion
@@ -43,6 +45,18 @@ namespace LongLiveKhioyen
         {
             Debug.Log("BattleUI 收到信号：玩家回合结束，关闭UI。");
             ClosePanel(playerTurnUI);
+        }
+        
+        private void HandleActionSelectionStart()
+        {
+            Debug.Log("BattleUI 收到信号：为选中单位显示行动面板");
+            OpenPanel(actionSelectionPanel);
+        }
+        
+        private void HandleActionSelectionEnd()
+        {
+            Debug.Log("BattleUI 收到信号：为选中单位关闭行动面板");
+            ClosePanel(actionSelectionPanel);
         }
         #endregion
         
@@ -65,9 +79,9 @@ namespace LongLiveKhioyen
         
         #endregion
         
-        #region TurnUI
+        
         public CanvasGroup playerTurnUI;
-        #endregion
+        public CanvasGroup actionSelectionPanel; 
         
         #region StageManagement
         public Button toArrangementButton;
@@ -119,6 +133,7 @@ namespace LongLiveKhioyen
         {
             battle.isInArrangementStage = false;
         }
+        
         #endregion
         
         
