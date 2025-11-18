@@ -192,7 +192,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u5F00\u59CB\u6218\u6597\n"
+  m_Text: 'Battle
+
+'
 --- !u!222 &56989025
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -258,7 +260,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u6218\u6CD5"
+  m_text: Tactic
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
   m_sharedMaterial: {fileID: -3695027674875980159, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
@@ -441,7 +443,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8FDB\u653B"
+  m_text: Attack
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
   m_sharedMaterial: {fileID: -3695027674875980159, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
@@ -824,7 +826,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8BA1\u7565"
+  m_text: Scheme
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
   m_sharedMaterial: {fileID: -3695027674875980159, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
@@ -1718,7 +1720,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u9000\u51FA\u6218\u5F79 (debug)"
+  m_Text: Exit Battle (debug)
 --- !u!222 &996904659
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1999,18 +2001,6 @@ MonoBehaviour:
   movementHighlightColor: {r: 0, g: 1, b: 0, a: 1}
   arrangementHighlightColor: {r: 0, g: 0, b: 1, a: 1}
   attackHighlightColor: {r: 1, g: 0, b: 0, a: 1}
-  HextilePrefab: {fileID: 5875933169087041189, guid: 6872ce78ac512bd448ed71ab8c135201, type: 3}
-  currentStage: 0
-  currentTurnState: 0
-  currentActionStage: 0
-  currentActiontype: 0
-  isPlayerTurnOver: 0
-  isPreparingAction: 0
-  isInArrangementStage: 0
-  isInBattleStage: 0
-  isReserveTeamSelected: 0
-  isBattalionSelected: 0
-  arrangementModal: {fileID: 1489175731}
   data:
     id: 
     name: 
@@ -2019,13 +2009,24 @@ MonoBehaviour:
     battleSize: {x: 10, y: 10}
     encounterOrientation: 0
     playerCommanderId: 
-  Map: {fileID: 1514081780}
+  TestEnemySoliders: 40
+  arrangementModal: {fileID: 1489175731}
+  currentStage: 0
+  isInArrangementStage: 0
+  isInBattleStage: 0
+  isReserveTeamSelected: 0
+  isBattalionSelected: 0
+  isPlayerTurnOver: 0
+  currentTurnState: 0
+  isPreparingAction: 0
+  currentActionStage: 0
+  currentActiontype: 0
+  anchor: {fileID: 413733173}
+  camera: {fileID: 983281796}
   hexgrid: {fileID: 1069218213}
   Xscale: 1.73205
   Yscale: 2
-  SizeScale: 0.95
-  anchor: {fileID: 413733173}
-  camera: {fileID: 983281796}
+  HextilePrefab: {fileID: 5875933169087041189, guid: 6872ce78ac512bd448ed71ab8c135201, type: 3}
   defaultReserveTeamDefinition: {fileID: 11400000, guid: 82805f647c8b0ab44ad2493c634b8eef, type: 2}
   defaultEnemyDefinition: {fileID: 11400000, guid: 82805f647c8b0ab44ad2493c634b8eef, type: 2}
 --- !u!156049354 &1069218213
@@ -2299,7 +2300,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u56DE\u5408\u7ED3\u675F"
+  m_text: End Turn
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
   m_sharedMaterial: {fileID: -3695027674875980159, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
@@ -3644,7 +3645,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5F85\u547D"
+  m_text: Stand By
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
   m_sharedMaterial: {fileID: -3695027674875980159, guid: fb6d80980527d5e4c87757c53ce17c90, type: 2}
@@ -4343,7 +4344,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u5F00\u59CB\u90E8\u7F72\n"
+  m_Text: 'Deploy
+
+'
 --- !u!222 &2115197044
 CanvasRenderer:
   m_ObjectHideFlags: 0

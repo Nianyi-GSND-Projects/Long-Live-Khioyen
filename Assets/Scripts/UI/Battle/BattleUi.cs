@@ -123,15 +123,15 @@ namespace LongLiveKhioyen
 
         public void EnterArrangementMode()
         {
-            battle.isInArrangementStage = true;
+            battle.IsInArrangementStage = true;
         }
         public void EnterBattleMode()
         {
-            battle.isInBattleStage = true;
+            battle.IsInBattleStage = true;
         }
         public void ExitArrangementMode()
         {
-            battle.isInArrangementStage = false;
+            battle.IsInArrangementStage = false;
         }
         
         #endregion

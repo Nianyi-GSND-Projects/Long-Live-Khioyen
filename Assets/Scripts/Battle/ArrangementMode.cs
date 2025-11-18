@@ -156,13 +156,13 @@ namespace LongLiveKhioyen
            if(!Physics.Raycast(ray, out var hit, Mathf.Infinity))
                return;
            
-           if (Battle.isInArrangementStage)
+           if (Battle.IsInArrangementStage)
            {
-               if (Battle.isReserveTeamSelected)
+               if (Battle.IsReserveTeamSelected)
                {
                    Battle.arrangementModal.TryPlaceReserveTeam();
                }
-               else if (Battle.isBattalionSelected)
+               else if (Battle.IsBattalionSelected)
                {
                    Battle.arrangementModal.TryMoveBattalionArrangement();
                }
@@ -172,9 +172,9 @@ namespace LongLiveKhioyen
                    if(hitBattalion) Battle.SelectBattalion(hitBattalion);
                }
            }
-           else if (Battle.isInBattleStage)
+           else if (Battle.IsInBattleStage)
            {
-               if (Battle.currentActionStage == PlayerActionStage.None)
+               if (Battle.CurrentActionStage == PlayerActionStage.None)
                {
                    {
                        Battle.ClearAllHexHighlights();
@@ -182,11 +182,11 @@ namespace LongLiveKhioyen
                        if(hitBattalion&&hitBattalion.Compilation.ActionEnd==false) Battle.SelectBattalion(hitBattalion);
                    }
                }
-               else if (Battle.currentActionStage==PlayerActionStage.MovingBattalion&&Battle.isBattalionSelected)
+               else if (Battle.CurrentActionStage==PlayerActionStage.MovingBattalion&&Battle.IsBattalionSelected)
                {
                    Battle.arrangementModal.TryMoveBattalionBattle();
                }
-               else if (Battle.currentActionStage == PlayerActionStage.SelectingTarget && Battle.isPreparingAction)
+               else if (Battle.CurrentActionStage == PlayerActionStage.SelectingTarget && Battle.IsPreparingAction)
                {
                    Battle.arrangementModal.TryApplyCurrentAction();
                }
@@ -200,21 +200,21 @@ namespace LongLiveKhioyen
            if(!Physics.Raycast(ray, out var hit, Mathf.Infinity))
                return;
            
-           if (Battle.isInArrangementStage)
+           if (Battle.IsInArrangementStage)
            {
-               if (Battle.isReserveTeamSelected)
+               if (Battle.IsReserveTeamSelected)
                {
                    Battle.ClearReserveTeamSelection();
                }
-               else if (Battle.isBattalionSelected)
+               else if (Battle.IsBattalionSelected)
                {
                    Battle.ClearBattalionSelection();
                }
                
            }
-           else if (Battle.isInBattleStage)
+           else if (Battle.IsInBattleStage)
            {
-               if (Battle.isBattalionSelected)
+               if (Battle.IsBattalionSelected)
                {
                    ReturnToPreviousActionStage();
                }
@@ -223,12 +223,12 @@ namespace LongLiveKhioyen
 
        protected void ReturnToPreviousActionStage()
        {
-           if (!Battle.isInBattleStage)
+           if (!Battle.IsInBattleStage)
            {
                return;
            }
 
-           switch (Battle.currentActionStage)
+           switch (Battle.CurrentActionStage)
            {
                case PlayerActionStage.None:
                    return;

@@ -81,7 +81,7 @@ namespace LongLiveKhioyen
 			if (!card.reserveTeam.placed)
 			{
 				Battle.SelectedReserveTeam = card.reserveTeam;
-				Battle.isReserveTeamSelected = true;
+				Battle.IsReserveTeamSelected = true;
 			}
 		}
   
