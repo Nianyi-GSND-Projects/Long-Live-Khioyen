@@ -2,10 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
-using System.Linq;
-using NUnit.Framework.Internal;
-using Unity.VisualScripting;
-using UnityEditor.Localization.Plugins.XLIFF.V20;
 
 namespace LongLiveKhioyen
 {
@@ -365,7 +361,6 @@ namespace LongLiveKhioyen
 				default:
 					return false;
 			}
-			return true;
 		}
 		
 		public void CheckDeath(Battalion battalion)
@@ -708,7 +703,7 @@ namespace LongLiveKhioyen
 			set => anchor.eulerAngles = value;
 		}
 
-		[SerializeField] CinemachineVirtualCamera camera;
+		[SerializeField] new CinemachineVirtualCamera camera;
 		public float CameraDistance
 		{
 			get => -camera.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.z;
