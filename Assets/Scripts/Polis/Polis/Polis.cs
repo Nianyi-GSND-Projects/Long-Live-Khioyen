@@ -38,7 +38,7 @@ namespace LongLiveKhioyen
 			// Constructions
 			ConstructGround();
 			ConstructWalls();
-			InitializeBuildings();
+			SpawnBuildingsFromData();
 
 			// Initialize Navmesh
 			navMeshSurface.RemoveData();
@@ -171,13 +171,13 @@ namespace LongLiveKhioyen
 		void ExecuteConstructionTask(PolisTask task)
 		{
 			int x = int.Parse(task.parameters[0]), y = int.Parse(task.parameters[1]);
-			var building = GetBuildingAt(x, y);
-			if(building == null)
+			var site = GetBuildingAt(x, y) as ConstructionSite;
+			if(site == null)
 			{
-				Debug.LogError($"No building at ({x}, {y}).");
+				Debug.LogError($"No construction site at ({x}, {y}).");
 				return;
 			}
-			building.UnderConstruction = false;
+			FinishConstruction(site);
 		}
 
 		void ExecuteMonthPassedTask(PolisTask task)

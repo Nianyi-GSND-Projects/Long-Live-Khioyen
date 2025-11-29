@@ -18,7 +18,7 @@ namespace LongLiveKhioyen
 			SelectedBuildingType = null;
 			ShowCostPreview = false;
 			Polis.onEconomyChanged += OnEconomyDataChanged;
-			Polis.onBuildingOccupancyChanged += UpdatePreviewModel;
+			Polis.onOccupancyChanged += UpdatePreviewModel;
 		}
 
 		void OnDisable()

@@ -1,7 +1,9 @@
+using System.Collections.Generic;
+using Unity.AI.Navigation;
+using UnityEditor.Build.Pipeline.Utilities;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
-using Unity.AI.Navigation;
-using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -146,41 +148,13 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region Building
-		readonly List<Building> buildings = new();
-		Building[,] buildingOccupancy;
-		public System.Action onBuildingOccupancyChanged;
+		#region Occupancy
+		IBuildingLike[,] occupancy;
+		public System.Action onOccupancyChanged;
 
-		void InitializeBuildings()
+		IBuildingLike GetBuildingAt(int x, int y)
 		{
-			buildingOccupancy = new Building[Size.x, Size.y];
-			foreach(var placement in Data.buildings)
-				SpawnBuilding(placement);
-		}
-
-		Building SpawnBuilding(BuildingPlacement placement)
-		{
-			if(!GameManager.FindBuildingDefinitionByType(placement.id, out var definition))
-			{
-				Debug.LogWarning($"Skipping spawning building of ID \"{placement.id}\", cannot find its definition.");
-				return null;
-			}
-
-			var building = new GameObject().AddComponent<Building>();
-			PositionBuilding(building.transform, definition, placement);
-			buildings.Add(building);
-			building.Placement = placement;
-			building.Definition = definition;
-
-			foreach(var pos in YieldBuildingOccupancy(definition, placement))
-				buildingOccupancy[pos.x, pos.y] = building;
-
-			return building;
-		}
-
-		Building GetBuildingAt(int x, int y)
-		{
-			return buildingOccupancy[x, y];
+			return occupancy[x, y];
 		}
 
 		IEnumerable<Vector2Int> YieldBuildingOccupancy(BuildingDefinition definition, BuildingPlacement placement)
@@ -233,10 +207,75 @@ namespace LongLiveKhioyen
 			{
 				if(!IsValidMapPosition(pos))
 					return false;
-				if(buildingOccupancy[pos.x, pos.y] != null)
+				if(occupancy[pos.x, pos.y] != null)
 					return false;
 			}
 			return true;
+		}
+		#endregion
+
+		#region Building
+		void SpawnBuildingsFromData()
+		{
+			occupancy = new IBuildingLike[Size.x, Size.y];
+
+			foreach(var placement in Data.buildings)
+			{
+				if(placement.underConstruction)
+					SpawnConstructionSite(placement);
+				else
+					SpawnBuilding(placement);
+			}
+		}
+
+		void SpawnBuilding(BuildingPlacement placement)
+		{
+			var go = Instantiate(Resources.Load<GameObject>($"Prefabs/Polis/Buildings/{placement.id}"));
+			var building = go.GetComponent<Building>();
+			InitializeBuildingLike(building, placement);
+		}
+
+		void SpawnConstructionSite(BuildingPlacement placement)
+		{
+			var go = Instantiate(Resources.Load<GameObject>($"Models/Buildings/{placement.id}"));
+			var site = go.AddComponent<ConstructionSite>();
+			InitializeBuildingLike(site, placement);
+		}
+
+		void InitializeBuildingLike(IBuildingLike building, BuildingPlacement placement)
+		{
+			if(!GameManager.FindBuildingDefinitionByType(placement.id, out var definition))
+			{
+				Debug.LogWarning($"Skipping spawning building of ID \"{placement.id}\", cannot find its definition.");
+				return;
+			}
+
+			PositionBuilding((building as Component).transform, definition, placement);
+			building.Definition = definition;
+			building.Placement = placement;
+
+			foreach(var pos in YieldBuildingOccupancy(definition, placement))
+				occupancy[pos.x, pos.y] = building;
+			onOccupancyChanged?.Invoke();
+		}
+
+		void RemoveBuildingLike(IBuildingLike building)
+		{
+			var definition = building.Definition;
+			var placement = building.Placement;
+
+			Destroy((building as Component).gameObject);
+
+			foreach(var pos in YieldBuildingOccupancy(definition, placement))
+				occupancy[pos.x, pos.y] = null;
+			onOccupancyChanged?.Invoke();
+		}
+
+		void FinishConstruction(ConstructionSite site)
+		{
+			BuildingPlacement placement = site.Placement;
+			RemoveBuildingLike(site);
+			SpawnBuilding(placement);
 		}
 
 		public void PositionBuilding(Transform building, BuildingDefinition definition, BuildingPlacement placement)
@@ -258,7 +297,7 @@ namespace LongLiveKhioyen
 				orientation = orientation,
 				underConstruction = true,
 			};
-			SpawnBuilding(placement);
+			SpawnConstructionSite(placement);
 			Data.buildings.Add(placement);
 
 			PolisTask task = new()
