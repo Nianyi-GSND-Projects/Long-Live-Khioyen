@@ -97,16 +97,7 @@ namespace LongLiveKhioyen
 				return;
 			if(!Polis.ScreenToGround(pointerScreenPosition, out var from))
 				return;
-			Vector3 pos = Polis.AnchorPosition + (to - from) * panSpeed;
-			Bounds bounds = new(default, new(Polis.Size.x, 0, Polis.Size.y));
-			Vector3 boundedPos = Polis.transform.localToWorldMatrix.MultiplyPoint(
-				bounds.ClosestPoint(
-					Polis.transform.worldToLocalMatrix.MultiplyPoint(pos)
-				)
-			);
-			pos.x = boundedPos.x;
-			pos.z = boundedPos.z;
-			Polis.AnchorPosition = pos;
+			Polis.AnchorPosition += (to - from) * panSpeed;
 		}
 
 		void Zoom(float scrollY)

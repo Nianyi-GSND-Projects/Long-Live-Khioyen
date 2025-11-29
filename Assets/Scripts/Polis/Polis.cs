@@ -1,9 +1,10 @@
-using UnityEngine;
-using UnityEngine.AI;
-using Unity.AI.Navigation;
 using Cinemachine;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
+using UnityEngine;
+using UnityEngine.AI;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace LongLiveKhioyen
 {
@@ -40,9 +41,7 @@ namespace LongLiveKhioyen
 			gameObject.isStatic = true;
 
 			// Ground
-			groundMesh = ConstructGroundMesh();
-			ground.GetComponent<MeshFilter>().sharedMesh = groundMesh;
-			ground.GetComponent<MeshCollider>().sharedMesh = groundMesh;
+			ConstructGround();
 
 			// Walls
 			ConstructWalls();
@@ -56,6 +55,9 @@ namespace LongLiveKhioyen
 			navMeshSurface.RemoveData();
 			navMeshSurface.BuildNavMesh();
 
+			// Center view
+			AnchorPosition = MapToWorld((Vector2)Size * .5f);
+
 			/* Time */
 
 			GameInstance.Instance.onGameTimeAdvanced += PassTime;
@@ -68,14 +70,7 @@ namespace LongLiveKhioyen
 
 		void OnDestroy()
 		{
-			_Finalize();
 			instance = null;
-		}
-
-		void _Finalize()
-		{
-			Destroy(groundMesh);
-
 			if(GameInstance.Instance)
 				GameInstance.Instance.onGameTimeAdvanced -= PassTime;
 		}
@@ -83,7 +78,8 @@ namespace LongLiveKhioyen
 		void Update()
 		{
 			float dt = Time.deltaTime;
-			GameInstance.Instance.AdvanceTime(dt);
+			if(dt > 0)
+				GameInstance.Instance.AdvanceTime(dt);
 		}
 		#endregion
 
@@ -131,41 +127,24 @@ namespace LongLiveKhioyen
 
 		#region Construction
 		[Header("Construction")]
-		public GameObject ground;
 		public Grid grid;
-		Mesh groundMesh;
 		public NavMeshSurface navMeshSurface;
 
 		#region Ground
-		Mesh ConstructGroundMesh()
+		void ConstructGround()
 		{
-			Mesh mesh = new() { name = $"Ground mesh ({Id})" };
-			Dictionary<(int, int), (int, Vector2)> vertices = new();
-			float mx = Size.x * -.5f, my = Size.y * -.5f;
-			for(int x = -1; x <= Size.x + 1; ++x)
+			var ground = new GameObject("Ground").transform;
+			ground.SetParent(transform, false);
+			for(int x = 0; x < Size.x; ++x)
 			{
-				for(int y = -1; y <= Size.y + 1; ++y)
-					vertices[(x, y)] = (vertices.Count, new(x + mx, y + my));
-			}
-			mesh.vertices = vertices.Values.Select(pair => new Vector3(pair.Item2.x, 0, pair.Item2.y)).ToArray();
-			mesh.uv = vertices.Values.Select(pair => pair.Item2).ToArray();
-			List<int> indices = new();
-			for(int x = -1; x < Size.x + 1; ++x)
-			{
-				for(int y = -1; y < Size.y + 1; ++y)
+				for(int y = 0; y < Size.y; ++y)
 				{
-					indices.Add(vertices[(x, y)].Item1);
-					indices.Add(vertices[(x, y + 1)].Item1);
-					indices.Add(vertices[(x + 1, y)].Item1);
-					indices.Add(vertices[(x + 1, y)].Item1);
-					indices.Add(vertices[(x, y + 1)].Item1);
-					indices.Add(vertices[(x + 1, y + 1)].Item1);
+					var tile = Instantiate(Resources.Load<GameObject>("Prefabs/Polis/Ground_tile"));
+					tile.name = $"Polis Ground Tile ({x}, {y})";
+					tile.transform.SetParent(ground.transform, false);
+					tile.transform.localPosition = grid.CellToLocalInterpolated(new(x, 0, y));
 				}
 			}
-			mesh.SetIndices(indices, MeshTopology.Triangles, 0);
-			mesh.RecalculateNormals();
-			mesh.RecalculateBounds();
-			return mesh;
 		}
 
 		struct WallConstructionParams
@@ -177,32 +156,32 @@ namespace LongLiveKhioyen
 		}
 		void ConstructWalls()
 		{
-			var sectionTemplate = Resources.Load<GameObject>("Models/Polis/Wall_section");
-			var cornerTemplate = Resources.Load<GameObject>("Models/Polis/Wall_corner");
+			var sectionTemplate = Resources.Load<GameObject>("Prefabs/Polis/Wall_section");
+			var cornerTemplate = Resources.Load<GameObject>("Prefabs/Polis/Wall_corner");
 			var root = new GameObject("Walls").transform;
 			root.SetParent(transform, false);
 			var ps = new WallConstructionParams[] {
 				new() {
 					length = Size.x,
-					offset = new Vector3(-Size.x + 1, 0, -Size.y - 1) * .5f,
+					offset = new Vector3(0, 0, -1),
 					space = Vector3.right,
 					orientation = 0,
 				},
 				new() {
 					length = Size.y,
-					offset = new Vector3(+Size.x + 1, 0, -Size.y + 1) * .5f,
+					offset = new Vector3(Size.x + 1, 0, 0),
 					space = Vector3.forward,
 					orientation = 3,
 				},
 				new() {
 					length = Size.x,
-					offset = new Vector3(+Size.x - 1, 0, +Size.y + 1) * .5f,
+					offset = new Vector3(Size.x, 0, Size.y + 1),
 					space = Vector3.left,
 					orientation = 2,
 				},
 				new() {
 					length = Size.y,
-					offset = new Vector3(-Size.x - 1, 0, +Size.y - 1) * .5f,
+					offset = new Vector3(-1, 0, Size.y),
 					space = Vector3.back,
 					orientation = 1,
 				},
@@ -213,7 +192,7 @@ namespace LongLiveKhioyen
 				model.transform.SetParent(root, false);
 				model.transform.SetLocalPositionAndRotation(
 					pos,
-					Quaternion.Euler(Vector3.up * (90 * orientation))
+					Quaternion.Euler(0, 90 * orientation, 0)
 				);
 				var obstacle = model.AddComponent<NavMeshObstacle>();
 				obstacle.carving = true;
@@ -262,27 +241,22 @@ namespace LongLiveKhioyen
 		#region Grid
 		public Vector2 WorldToMap(Vector3 world)
 		{
-			Vector3Int gridPos = grid.WorldToCell(world);
-			return new(
-				gridPos.x + Size.x * .5f,
-				gridPos.z + Size.y * .5f
-			);
+			var cell = grid.LocalToCellInterpolated(grid.WorldToLocal(world));
+			return new(cell.x, cell.z);
 		}
 		public Vector2Int WorldToMapInt(Vector3 world)
-		{
-			return Vector2Int.FloorToInt(WorldToMap(world));
-		}
+			=> Vector2Int.FloorToInt(WorldToMap(world));
 		public Vector3 MapToWorld(Vector2 map)
-		{
-			return transform.localToWorldMatrix.MultiplyPoint(MapToLocal(map));
-		}
+			=> grid.LocalToWorld(MapToLocal(map));
 		public Vector3 MapToLocal(Vector2 map)
+			=> grid.CellToLocalInterpolated(new(map.x, 0, map.y));
+
+		public Vector3 ClampToMap(Vector3 pos)
 		{
-			return grid.CellToLocalInterpolated(new(
-				map.x - Size.x * .5f,
-				0,
-				map.y - Size.y * .5f
-			));
+			pos = WorldToMap(pos);
+			pos.x = Mathf.Clamp(pos.x, 0, Size.x);
+			pos.y = Mathf.Clamp(pos.y, 0, Size.y);
+			return MapToWorld(pos);
 		}
 
 		public bool IsValidMapPosition(Vector2Int pos)
@@ -477,7 +451,7 @@ namespace LongLiveKhioyen
 		public Vector3 AnchorPosition
 		{
 			get => anchor.position;
-			set => anchor.position = value;
+			set => anchor.position = ClampToMap(value);
 		}
 		public Vector3 AnchorEulers
 		{
