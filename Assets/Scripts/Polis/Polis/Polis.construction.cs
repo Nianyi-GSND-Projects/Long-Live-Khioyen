@@ -151,30 +151,11 @@ namespace LongLiveKhioyen
 		Building[,] buildingOccupancy;
 		public System.Action onBuildingOccupancyChanged;
 
-		Building currentSelection;
-		public Building SelectedBuilding
+		void InitializeBuildings()
 		{
-			get => currentSelection;
-			set
-			{
-				// 解除上一个的高亮
-				if(currentSelection != null)
-					currentSelection.Selected = false;
-
-				currentSelection = value;
-
-				// 新的高亮 & UI
-				if(currentSelection != null)
-				{
-					currentSelection.Selected = true;
-					// TODO: 打开信息面板 / 属性编辑器
-					Debug.Log($"Seleted {currentSelection}.", currentSelection);
-				}
-				else
-				{
-					// TODO: 关闭信息面板
-				}
-			}
+			buildingOccupancy = new Building[Size.x, Size.y];
+			foreach(var placement in Data.buildings)
+				SpawnBuilding(placement);
 		}
 
 		Building SpawnBuilding(BuildingPlacement placement)

@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
-using Unity.AI.Navigation;
-using Cinemachine;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,25 +25,20 @@ namespace LongLiveKhioyen
 			if(Data == null)
 				player.gameObject.SetActive(false);
 
+			InitializeUi();
+
+			// Mode
 			SwitchToMode(Mode.Mayor);
 			IsInConstructModal = false;
-
-			/* Procedural polis generation */
 
 			// Orientation
 			transform.rotation = Quaternion.Euler(0, Data.orientation, 0);
 			gameObject.isStatic = true;
 
-			// Ground
+			// Constructions
 			ConstructGround();
-
-			// Walls
 			ConstructWalls();
-
-			// Buildings
-			buildingOccupancy = new Building[Size.x, Size.y];
-			foreach(var placement in Data.buildings)
-				SpawnBuilding(placement);
+			InitializeBuildings();
 
 			// Initialize Navmesh
 			navMeshSurface.RemoveData();
@@ -55,14 +47,10 @@ namespace LongLiveKhioyen
 			// Center view
 			AnchorPosition = MapToWorld((Vector2)Size * .5f);
 
-			/* Time */
-
+			// Time
+			float passedTime = GameInstance.Instance.GameTime - LastTime;
+			PassTime(passedTime);
 			GameInstance.Instance.onGameTimeAdvanced += PassTime;
-
-			// Update accumulated status changes since last leaving
-			PassTime(GameInstance.Instance.GameTime - LastTime);
-
-			InitializeUi();
 		}
 
 		void OnDestroy()
@@ -197,6 +185,25 @@ namespace LongLiveKhioyen
 			int startingMonth = int.Parse(task.parameters[0]);
 			Debug.Log($"Month passed in polis \"{Data.id}\". Starting month: {startingMonth}");
 			// TODO
+		}
+		#endregion
+
+		#region Selection
+		readonly List<ISelectable> selection = new();
+		public IList<ISelectable> Selection
+		{
+			get => selection;
+			set
+			{
+				foreach(var s in selection)
+					s.OnDeselect();
+
+				selection.Clear();
+				selection.AddRange(value);
+
+				foreach(var s in selection)
+					s.OnSelect();
+			}
 		}
 		#endregion
 	}

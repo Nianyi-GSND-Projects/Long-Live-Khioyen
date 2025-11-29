@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System;
 using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
-	public class Building : MonoBehaviour
+	public class Building : MonoBehaviour, ISelectable, IInspectable
 	{
 		public BuildingPlacement Placement { get; set; }
 		public BuildingDefinition Definition { get; set; }
@@ -73,7 +72,13 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public bool Selected { get; set; }
+		public void OnSelect()
+		{
+		}
+
+		public void OnDeselect()
+		{
+		}
 		#endregion
 	}
 }
