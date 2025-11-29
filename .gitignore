@@ -12,6 +12,7 @@
 /.vs
 /.vsconfig
 /*.sln
+/*.sln.*
 /*.csproj
 
 # Rider
