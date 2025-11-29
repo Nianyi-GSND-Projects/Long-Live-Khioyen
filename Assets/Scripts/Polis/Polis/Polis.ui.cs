@@ -1,25 +1,20 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.UI;
+using TMPro;
 
 namespace LongLiveKhioyen
 {
-	public class PolisUi : MonoBehaviour
+	public partial class Polis
 	{
 		#region Life cycle
-		void Awake()
-		{
-			Polis.Instance.onInitialized += Initialize;
-		}
-
-		void Initialize()
+		void InitializeUi()
 		{
 			localizedPolisName = new("Polis Names", "");
 			localizedPolisName.StringChanged += s => polisName.text = s;
 
-			polis.onPopulationChanged += UpdateTopBar;
-			polis.onEconomyChanged += UpdateTopBar;
+			onPopulationChanged += UpdateTopBar;
+			onEconomyChanged += UpdateTopBar;
 			UpdateTopBar();
 
 			SwitchBottomPanel(normalPanel);
@@ -27,8 +22,6 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region General
-		public Polis polis;
-
 		public void OpenPauseMenu()
 		{
 			GameInstance.Instance.OpenPauseMenu();
@@ -52,12 +45,12 @@ namespace LongLiveKhioyen
 
 		void UpdateTopBar()
 		{
-			localizedPolisName.TableEntryReference = polis.Id;
+			localizedPolisName.TableEntryReference = Id;
 			localizedPolisName.RefreshString();
-			populationValue.text = $"{polis.Population}/{polis.Population - polis.BusyPopulation}/{polis.PopulationCap}";
-			foodValue.text = $"{(int)polis.Economy.food}";
-			materialValue.text = $"{(int)polis.Economy.material}";
-			moneyValue.text = $"{(int)polis.Economy.money}";
+			populationValue.text = $"{Population}/{Population - BusyPopulation}/{PopulationCap}";
+			foodValue.text = $"{(int)Economy.food}";
+			materialValue.text = $"{(int)Economy.material}";
+			moneyValue.text = $"{(int)Economy.money}";
 		}
 		#endregion
 
@@ -95,16 +88,16 @@ namespace LongLiveKhioyen
 		public Sprite wanderModeIcon;
 		public Sprite mayorModeIcon;
 
-		public void SwitchMode()
+		public void UiSwitchMode()
 		{
-			polis.SwitchMode();
-			switch(polis.CurrentMode)
+			SwitchMode();
+			switch(CurrentMode)
 			{
-				case Polis.Mode.Mayor:
+				case Mode.Mayor:
 					switchModeImage.sprite = wanderModeIcon;
 					SetBottomAreaVisibiltiy(true);
 					break;
-				case Polis.Mode.Wander:
+				case Mode.Wander:
 					ExitConstructModal();
 					switchModeImage.sprite = mayorModeIcon;
 					SetBottomAreaVisibiltiy(false);
@@ -117,14 +110,19 @@ namespace LongLiveKhioyen
 		public void EnterConstructModal()
 		{
 			SwitchBottomPanel(constructPanel);
-			polis.IsInConstructModal = true;
+			IsInConstructModal = true;
 		}
 
 		public void ExitConstructModal()
 		{
 			SwitchBottomPanel(normalPanel);
-			polis.IsInConstructModal = false;
+			IsInConstructModal = false;
 		}
+		#endregion
+
+		#region Inspection
+		[Header("Inspection")]
+		public InspectionPanel inspectionPanel;
 		#endregion
 	}
 }

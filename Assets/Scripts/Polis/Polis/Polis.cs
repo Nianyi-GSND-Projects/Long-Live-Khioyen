@@ -13,8 +13,6 @@ namespace LongLiveKhioyen
 		public static Polis Instance => instance;
 
 		#region Life cycle
-		public System.Action onInitialized;
-
 		void Awake()
 		{
 			instance = this;
@@ -64,7 +62,7 @@ namespace LongLiveKhioyen
 			// Update accumulated status changes since last leaving
 			PassTime(GameInstance.Instance.GameTime - LastTime);
 
-			onInitialized?.Invoke();
+			InitializeUi();
 		}
 
 		void OnDestroy()

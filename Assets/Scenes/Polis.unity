@@ -1262,7 +1262,7 @@ PrefabInstance:
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_TargetGraphic
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1368464843}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -1274,7 +1274,7 @@ PrefabInstance:
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1329727376}
+      objectReference: {fileID: 528471306}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -1285,7 +1285,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: LongLiveKhioyen.PolisUi, Assembly-CSharp
+      value: LongLiveKhioyen.Polis, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1422,6 +1422,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1329727382}
   - {fileID: 1064727833}
   - {fileID: 792397362}
   m_Father: {fileID: 0}
@@ -1445,6 +1446,19 @@ MonoBehaviour:
   mayorCamera: {fileID: 7655285}
   player: {fileID: 792397364}
   wanderCamera: {fileID: 707400281}
+  statusBar: {fileID: 1058830616}
+  polisName: {fileID: 1783859885}
+  populationValue: {fileID: 50644238}
+  foodValue: {fileID: 102495418}
+  materialValue: {fileID: 162768338}
+  moneyValue: {fileID: 613111912}
+  bottomArea: {fileID: 156296199}
+  normalPanel: {fileID: 51543384}
+  constructPanel: {fileID: 1410869439}
+  switchModeImage: {fileID: 8300583476755228279}
+  wanderModeIcon: {fileID: 21300000, guid: d18ef669efd206b45a57a45d4dd9876e, type: 3}
+  mayorModeIcon: {fileID: 21300000, guid: 0397b25d086162240b19348c3e5bb0b0, type: 3}
+  inspectionPanel: {fileID: 1875398018}
 --- !u!156049354 &528471307
 Grid:
   m_ObjectHideFlags: 0
@@ -3903,7 +3917,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 528471305}
     m_Modifications:
     - target: {fileID: 3083851564030733744, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
       propertyPath: m_Pivot.x
@@ -3991,7 +4005,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8905195717608776628, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
       propertyPath: m_Name
-      value: Polis UI
+      value: UI
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4005,41 +4019,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3083851564030733744, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
       insertIndex: -1
       addedObject: {fileID: 979560135}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8905195717608776628, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1329727376}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
---- !u!1 &1329727375 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8905195717608776628, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
-  m_PrefabInstance: {fileID: 1329727374}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1329727376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1329727375}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc38e20ee4b66e343b8fc4f2f29439d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  polis: {fileID: 528471306}
-  statusBar: {fileID: 1058830616}
-  polisName: {fileID: 1783859885}
-  populationValue: {fileID: 50644238}
-  foodValue: {fileID: 102495418}
-  materialValue: {fileID: 162768338}
-  moneyValue: {fileID: 613111912}
-  bottomArea: {fileID: 156296199}
-  normalPanel: {fileID: 51543384}
-  constructPanel: {fileID: 1410869439}
-  switchModeImage: {fileID: 8300583476755228279}
-  wanderModeIcon: {fileID: 21300000, guid: d18ef669efd206b45a57a45d4dd9876e, type: 3}
-  mayorModeIcon: {fileID: 21300000, guid: 0397b25d086162240b19348c3e5bb0b0, type: 3}
 --- !u!224 &1329727382 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3083851564030733744, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
@@ -4146,6 +4127,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 960, y: -20}
   m_Pivot: {x: 1, y: 0}
+--- !u!114 &1368464843 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3873169481070739656, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
+  m_PrefabInstance: {fileID: 483548946}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1410869436
 GameObject:
   m_ObjectHideFlags: 0
@@ -5708,8 +5700,9 @@ GameObject:
   - component: {fileID: 1875398013}
   - component: {fileID: 1875398015}
   - component: {fileID: 1875398017}
+  - component: {fileID: 1875398018}
   m_Layer: 5
-  m_Name: Selection Status
+  m_Name: Inspection Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5755,7 +5748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.99562836, b: 0.95283014, a: 1}
+  m_Color: {r: 0.41568628, g: 0.3372549, b: 0.2784314, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5772,6 +5765,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 0.5
+--- !u!114 &1875398018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875398012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 499d8a38f6c511e419351dd58654617e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1896687936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5920,7 +5925,7 @@ PrefabInstance:
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1329727376}
+      objectReference: {fileID: 528471306}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -5931,7 +5936,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: LongLiveKhioyen.PolisUi, Assembly-CSharp
+      value: LongLiveKhioyen.Polis, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -6676,7 +6681,7 @@ PrefabInstance:
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1329727376}
+      objectReference: {fileID: 528471306}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -6687,7 +6692,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: LongLiveKhioyen.PolisUi, Assembly-CSharp
+      value: LongLiveKhioyen.Polis, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
@@ -6927,7 +6932,7 @@ PrefabInstance:
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1329727376}
+      objectReference: {fileID: 528471306}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -6938,7 +6943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: LongLiveKhioyen.PolisUi, Assembly-CSharp
+      value: LongLiveKhioyen.Polis, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -7212,9 +7217,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1329727376}
-        m_TargetAssemblyTypeName: LongLiveKhioyen.PolisUi, Assembly-CSharp
-        m_MethodName: SwitchMode
+      - m_Target: {fileID: 528471306}
+        m_TargetAssemblyTypeName: LongLiveKhioyen.Polis, Assembly-CSharp
+        m_MethodName: UiSwitchMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7263,6 +7268,5 @@ SceneRoots:
   - {fileID: 1865116967}
   - {fileID: 1714077484}
   - {fileID: 1034691333}
-  - {fileID: 1329727374}
   - {fileID: 528471305}
   - {fileID: 634249834}
