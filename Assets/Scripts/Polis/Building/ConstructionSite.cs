@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 namespace LongLiveKhioyen
 {
@@ -24,23 +25,10 @@ namespace LongLiveKhioyen
 				renderer.sharedMaterials = mArr;
 			}
 
-			Vector3 size = new(Definition.size.x, 0, Definition.size.y);
-			Vector3 center = new Vector3(Definition.center.x, 0, Definition.center.y) - size * .5f;
-			size.y = 1;
-
-			// For building selection.
-			var collider = gameObject.AddComponent<BoxCollider>();
-			collider.isTrigger = Definition.obstructive;
-			collider.size = size;
-			collider.center = center;
-
-			if(Definition.obstructive)
-			{
-				var obstale = gameObject.AddComponent<NavMeshObstacle>();
-				obstale.carving = true;
-				obstale.size = size;
-				obstale.center = center;
-			}
+			var modifier = gameObject.AddComponent<NavMeshModifier>();
+			modifier.applyToChildren = true;
+			modifier.overrideArea = true;
+			modifier.area = NavMesh.GetAreaFromName("Not Walkable");
 		}
 		#endregion
 

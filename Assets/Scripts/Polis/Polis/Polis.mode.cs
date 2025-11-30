@@ -93,7 +93,7 @@ namespace LongLiveKhioyen
 		{
 			wanderCamera.enabled = enabled;
 			player.gameObject.SetActive(enabled);
-			player.GetComponent<NavMeshAgent>().enabled = enabled;
+			player.enabled = enabled;
 			if(enabled)
 			{
 				AnchorPosition = ClosestWalkablePosition(AnchorPosition);

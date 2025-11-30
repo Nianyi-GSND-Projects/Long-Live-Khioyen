@@ -957,11 +957,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
-  far clip plane: 1000
-  field of view: 10
+  near clip plane: 0.1
+  far clip plane: 250
+  field of view: 60
   orthographic: 0
-  orthographic size: 10
+  orthographic size: 20
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -985,8 +985,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 425449516}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.23911719, y: 0.36964393, z: -0.09904557, w: 0.89239925}
-  m_LocalPosition: {x: -30.618643, y: 24.99996, z: -30.618639}
+  m_LocalRotation: {x: 0.024960712, y: -5.245885e-10, z: 1.3098181e-11, w: 0.99968845}
+  m_LocalPosition: {x: 0.0000000010481962, y: 1.1499059, z: -2.998754}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -2031,7 +2031,6 @@ GameObject:
   - component: {fileID: 792397362}
   - component: {fileID: 792397363}
   - component: {fileID: 792397364}
-  - component: {fileID: 792397365}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2055,28 +2054,32 @@ Transform:
   - {fileID: 672292420}
   m_Father: {fileID: 528471305}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!195 &792397363
-NavMeshAgent:
+--- !u!143 &792397363
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792397361}
-  m_Enabled: 0
-  m_AgentTypeID: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
   m_Radius: 0.5
-  m_Speed: 5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1.5
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_SlopeLimit: 15
+  m_StepOffset: 0.1
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &792397364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,31 +2089,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 792397361}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f519a93d1766ef04a861194d92bd0212, type: 3}
+  m_Script: {fileID: 11500000, guid: d973255ce89bba340b9ea93cfa1a14bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2000174023}
-  moveSpeed: 8
-  lateralSpeed: 10
---- !u!114 &792397365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792397361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_OverrideArea: 0
-  m_Area: 0
-  m_OverrideGenerateLinks: 0
-  m_GenerateLinks: 0
-  m_IgnoreFromBuild: 1
-  m_ApplyToChildren: 1
-  m_AffectedAgents: ffffffff
+  moveSpeed: 4
+  lateralSpeed: 200
 --- !u!1001 &803322939
 PrefabInstance:
   m_ObjectHideFlags: 0
