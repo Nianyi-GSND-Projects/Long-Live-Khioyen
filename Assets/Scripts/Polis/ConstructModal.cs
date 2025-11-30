@@ -58,7 +58,7 @@ namespace LongLiveKhioyen
 			foreach(var child in children)
 				Destroy(child.gameObject);
 
-			var cardTemplate = Resources.Load<GameObject>("Prefabs/UI/Polis/Construct Option Card");
+			var cardTemplate = Resources.Load<GameObject>("Prefabs/Polis/UI/Construct Option Card");
 			foreach(var definition in GameManager.BuildingDefinitions)
 			{
 				var card = Instantiate(cardTemplate).GetComponent<ConstructOptionCard>();

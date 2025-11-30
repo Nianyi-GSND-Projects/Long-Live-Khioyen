@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -11,6 +9,7 @@ namespace LongLiveKhioyen
 
 		static Material constructionMaterial;
 
+		#region Unity life cycle
 		protected void Start()
 		{
 			if(constructionMaterial == null)
@@ -24,7 +23,9 @@ namespace LongLiveKhioyen
 				renderer.sharedMaterials = mArr;
 			}
 		}
+		#endregion
 
+		#region Selection
 		public void OnDeselect()
 		{
 		}
@@ -32,5 +33,11 @@ namespace LongLiveKhioyen
 		public void OnSelect()
 		{
 		}
+
+		public GameObject MakeUi()
+		{
+			return default;
+		}
+		#endregion
 	}
 }

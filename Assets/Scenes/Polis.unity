@@ -957,11 +957,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
-  far clip plane: 250
-  field of view: 60
+  near clip plane: 1
+  far clip plane: 1000
+  field of view: 10
   orthographic: 0
-  orthographic size: 20
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -985,8 +985,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 425449516}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.024960712, y: -5.245885e-10, z: 1.3098181e-11, w: 0.99968845}
-  m_LocalPosition: {x: 0.0000000010481962, y: 1.1499059, z: -2.998754}
+  m_LocalRotation: {x: 0.23911719, y: 0.36964393, z: -0.09904557, w: 0.89239925}
+  m_LocalPosition: {x: -30.618643, y: 24.99996, z: -30.618639}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1454,11 +1454,11 @@ MonoBehaviour:
   moneyValue: {fileID: 613111912}
   bottomArea: {fileID: 156296199}
   normalPanel: {fileID: 51543384}
+  inspectionArea: {fileID: 1875398013}
   constructPanel: {fileID: 1410869439}
   switchModeImage: {fileID: 8300583476755228279}
   wanderModeIcon: {fileID: 21300000, guid: d18ef669efd206b45a57a45d4dd9876e, type: 3}
   mayorModeIcon: {fileID: 21300000, guid: 0397b25d086162240b19348c3e5bb0b0, type: 3}
-  inspectionPanel: {fileID: 1875398018}
 --- !u!156049354 &528471307
 Grid:
   m_ObjectHideFlags: 0
@@ -5700,9 +5700,8 @@ GameObject:
   - component: {fileID: 1875398013}
   - component: {fileID: 1875398015}
   - component: {fileID: 1875398017}
-  - component: {fileID: 1875398018}
   m_Layer: 5
-  m_Name: Inspection Panel
+  m_Name: Inspection Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5765,18 +5764,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 0.5
---- !u!114 &1875398018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1875398012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 499d8a38f6c511e419351dd58654617e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1896687936
 PrefabInstance:
   m_ObjectHideFlags: 0

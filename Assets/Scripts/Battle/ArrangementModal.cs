@@ -62,7 +62,7 @@ namespace LongLiveKhioyen
 			foreach(var child in children)
 				Destroy(child.gameObject);
   
-			var cardTemplate = Resources.Load<GameObject>("Prefabs/UI/Battle/Battalion_Arrangement");
+			var cardTemplate = Resources.Load<GameObject>("Prefabs/Battle/UI/Battalion_Arrangement");
 			foreach(var reserveTeam in Battle.data.playerReserveTeams)
 			{
 				var card = Instantiate(cardTemplate).GetComponent<BattalionArrangementUi>();

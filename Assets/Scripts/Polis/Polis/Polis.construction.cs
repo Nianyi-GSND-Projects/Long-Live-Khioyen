@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using Unity.AI.Navigation;
-using UnityEditor.Build.Pipeline.Utilities;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -22,7 +20,7 @@ namespace LongLiveKhioyen
 			{
 				for(int y = 0; y < Size.y; ++y)
 				{
-					var tile = Instantiate(Resources.Load<GameObject>("Prefabs/Polis/Ground_tile"));
+					var tile = Instantiate(Resources.Load<GameObject>("Prefabs/Polis/Construction/Ground_tile"));
 					tile.name = $"Polis Ground Tile ({x}, {y})";
 					tile.transform.SetParent(ground.transform, false);
 					tile.transform.localPosition = grid.CellToLocalInterpolated(new(x, 0, y));
@@ -39,8 +37,8 @@ namespace LongLiveKhioyen
 		}
 		void ConstructWalls()
 		{
-			var sectionTemplate = Resources.Load<GameObject>("Prefabs/Polis/Wall_section");
-			var cornerTemplate = Resources.Load<GameObject>("Prefabs/Polis/Wall_corner");
+			var sectionTemplate = Resources.Load<GameObject>("Prefabs/Polis/Construction/Wall_section");
+			var cornerTemplate = Resources.Load<GameObject>("Prefabs/Polis/Construction/Wall_corner");
 			var root = new GameObject("Walls").transform;
 			root.SetParent(transform, false);
 			var ps = new WallConstructionParams[] {

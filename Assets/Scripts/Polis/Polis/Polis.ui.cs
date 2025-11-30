@@ -58,6 +58,7 @@ namespace LongLiveKhioyen
 		[Header("Bottom Area")]
 		public CanvasGroup bottomArea;
 		public CanvasGroup normalPanel;
+		public Transform inspectionArea;
 		public CanvasGroup constructPanel;
 
 		void SwitchBottomPanel(CanvasGroup panel)
@@ -118,11 +119,6 @@ namespace LongLiveKhioyen
 			SwitchBottomPanel(normalPanel);
 			IsInConstructModal = false;
 		}
-		#endregion
-
-		#region Inspection
-		[Header("Inspection")]
-		public InspectionPanel inspectionPanel;
 		#endregion
 	}
 }

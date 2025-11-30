@@ -189,20 +189,30 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Selection
-		readonly List<ISelectable> selection = new();
-		public IList<ISelectable> Selection
+		ISelectable selected;
+		GameObject inspectionUi;
+
+		public ISelectable Selected
 		{
-			get => selection;
+			get => selected;
 			set
 			{
-				foreach(var s in selection)
-					s.OnDeselect();
+				selected?.OnDeselect();
+				if(inspectionUi != null)
+				{
+					Destroy(inspectionUi);
+					inspectionUi = null;
+				}
 
-				selection.Clear();
-				selection.AddRange(value);
+				selected = value;
 
-				foreach(var s in selection)
-					s.OnSelect();
+				selected?.OnSelect();
+				if(selected is Component && (selected as Component).TryGetComponent(out IInspectable inspectable))
+				{
+					inspectionUi = inspectable.MakeUi();
+					if(inspectionUi != null)
+						inspectionUi.transform.SetParent(inspectionArea, false);
+				}
 			}
 		}
 		#endregion

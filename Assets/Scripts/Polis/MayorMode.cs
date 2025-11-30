@@ -132,7 +132,7 @@ namespace LongLiveKhioyen
 			if(!Physics.Raycast(ray, out var hit, Mathf.Infinity))
 				return;
 
-			Polis.Selection = hit.collider.GetComponentsInParent<ISelectable>();
+			Polis.Selected = hit.collider.GetComponentInParent<ISelectable>();
 		}
 		#endregion
 	}
