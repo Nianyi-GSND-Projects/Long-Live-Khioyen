@@ -14,7 +14,6 @@ namespace LongLiveKhioyen
 		[Range(0, 3)] public int defaultOrientation;
 		public Vector2Int pivot;
 		public Vector2Int size;
-		public bool obstructive;
 		public Vector2 center;
 
 		public GameObject ModelTemplate => Resources.Load<GameObject>($"Models/Buildings/{id}");

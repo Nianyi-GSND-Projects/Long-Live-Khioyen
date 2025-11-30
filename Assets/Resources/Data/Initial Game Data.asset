@@ -31,17 +31,17 @@ MonoBehaviour:
       size: {x: 40, y: 40}
       economy:
         food: 1000
+        material: 0
         money: 800
-        knowledge: 0
       lastTime: 0
       buildings:
       - id: water-well
         position: {x: 19, y: 19}
         orientation: 2
         underConstruction: 0
-      - id: barracks
+      - id: commandant-office
         position: {x: 24, y: 23}
-        orientation: 2
+        orientation: 0
         underConstruction: 0
       tasks: []
     - id: fanhe
@@ -52,8 +52,8 @@ MonoBehaviour:
       size: {x: 20, y: 20}
       economy:
         food: 0
+        material: 0
         money: 0
-        knowledge: 0
       lastTime: 0
       buildings: []
       tasks: []
@@ -65,8 +65,8 @@ MonoBehaviour:
       size: {x: 50, y: 50}
       economy:
         food: 0
+        material: 0
         money: 0
-        knowledge: 0
       lastTime: 0
       buildings: []
       tasks: []
@@ -78,8 +78,8 @@ MonoBehaviour:
       size: {x: 10, y: 10}
       economy:
         food: 0
+        material: 0
         money: 0
-        knowledge: 0
       lastTime: 0
       buildings: []
       tasks: []
