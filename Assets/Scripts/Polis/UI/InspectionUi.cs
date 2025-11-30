@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Localization;
 using TMPro;
 
 namespace LongLiveKhioyen
@@ -8,21 +9,34 @@ namespace LongLiveKhioyen
 		[SerializeField] TMP_Text title;
 		[SerializeField] TMP_Text detail;
 
-		public string Title
+		static GameObject template;
+		public static InspectionUi CreateInstance(IBuildingLike building)
 		{
-			set => title.text = value;
+			if(template == null)
+				template = Resources.Load<GameObject>("Prefabs/Polis/UI/Inspection UI");
+			var instance = Instantiate(template).GetComponent<InspectionUi>();
+			instance.Building = building;
+			return instance;
 		}
 
-		public string Detail
+		public IBuildingLike Building { get; set; }
+		LocalizedString localizedBuildingName;
+		string buildingName;
+
+		protected void Start()
 		{
-			set => detail.text = value;
+			localizedBuildingName = Building.Definition.GetLocalizedName();
+			localizedBuildingName.StringChanged += name =>
+			{
+				buildingName = name;
+				UpdateContent();
+			};
 		}
 
-		public System.Action onUpdate;
-
-		protected void Update()
+		void UpdateContent()
 		{
-			onUpdate?.Invoke();
+			title.text = $"{buildingName}{(Building.Placement.underConstruction ? " (constructing)" : string.Empty)}";
+			detail.text = "";
 		}
 	}
 }

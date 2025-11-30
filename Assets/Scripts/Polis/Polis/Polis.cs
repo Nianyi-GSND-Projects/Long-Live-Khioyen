@@ -23,7 +23,10 @@ namespace LongLiveKhioyen
 		void Initialize()
 		{
 			if(Data == null)
-				player.gameObject.SetActive(false);
+			{
+				Debug.LogWarning("No polis data assigned, cannot initialize polis.");
+				return;
+			}
 
 			InitializeUi();
 
@@ -70,9 +73,7 @@ namespace LongLiveKhioyen
 
 		#region Data
 		PolisData Data => GameInstance.Instance.LastPolis;
-
-		public string Id => Data.id;
-		public Vector2Int Size => Data.size;
+		Vector2Int Size => Data.size;
 		#endregion
 
 		#region Population

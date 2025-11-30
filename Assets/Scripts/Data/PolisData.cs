@@ -1,5 +1,5 @@
 using UnityEngine;
-using NaughtyAttributes;
+using UnityEngine.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,11 @@ namespace LongLiveKhioyen
 		public string id;
 		public Vector2 position;
 		[Range(0, 359)] public float orientation;
+
+		public LocalizedString GetLocalizedName()
+		{
+			return new("Polis Names", id);
+		}
 
 		public bool isControlled;
 		public bool isHostile;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace LongLiveKhioyen
 {
@@ -21,5 +22,10 @@ namespace LongLiveKhioyen
 		[Header("Construction")]
 		[Min(0)] public float constructionTime;
 		public Economy cost;
+
+		public LocalizedString GetLocalizedName()
+		{
+			return new("Building Names", id);
+		}
 	}
 }

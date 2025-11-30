@@ -45,11 +45,7 @@ namespace LongLiveKhioyen
 
 		public GameObject MakeUi()
 		{
-			var go = Instantiate(Resources.Load<GameObject>("Prefabs/Polis/UI/Inspection UI"));
-			var inspection = go.GetComponent<InspectionUi>();
-			inspection.Title = Definition.id;
-			inspection.Detail = "Lorem ipsum";
-			return go;
+			return InspectionUi.CreateInstance(this).gameObject;
 		}
 		#endregion
 	}

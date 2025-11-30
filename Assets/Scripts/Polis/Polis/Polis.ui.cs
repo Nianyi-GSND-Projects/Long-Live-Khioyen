@@ -10,7 +10,7 @@ namespace LongLiveKhioyen
 		#region Life cycle
 		void InitializeUi()
 		{
-			localizedPolisName = new("Polis Names", "");
+			localizedPolisName = Data.GetLocalizedName();
 			localizedPolisName.StringChanged += s => polisName.text = s;
 
 			onPopulationChanged += UpdateTopBar;
@@ -45,8 +45,6 @@ namespace LongLiveKhioyen
 
 		void UpdateTopBar()
 		{
-			localizedPolisName.TableEntryReference = Id;
-			localizedPolisName.RefreshString();
 			populationValue.text = $"{Population}/{Population - BusyPopulation}/{PopulationCap}";
 			foodValue.text = $"{(int)Economy.food}";
 			materialValue.text = $"{(int)Economy.material}";

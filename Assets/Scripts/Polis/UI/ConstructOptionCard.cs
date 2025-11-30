@@ -24,17 +24,13 @@ namespace LongLiveKhioyen
 		{
 			group = GetComponent<CanvasGroup>();
 			Polis.onEconomyChanged += OnEconomyDataChanged;
-
-			localizedBuildingName = new("Building Names", "");
-			localizedBuildingName.StringChanged += s => text.text = s;
-
 			button.onClick.AddListener(() => onSelected?.Invoke(this));
 		}
 
 		protected void Start()
 		{
-			localizedBuildingName.TableEntryReference = buildingDefinition.id;
-			localizedBuildingName.RefreshString();
+			localizedBuildingName = buildingDefinition.GetLocalizedName();
+			localizedBuildingName.StringChanged += s => text.text = s;
 			image.sprite = buildingDefinition.figure;
 		}
 
