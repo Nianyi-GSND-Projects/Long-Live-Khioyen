@@ -66,10 +66,6 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
-			GameInstance.Instance.ExecuteWhenInitialized(Initialize);
-		}
-		void Initialize()
-		{
 			ChangeStage(Stage.Preparation);
 			transform.rotation = Quaternion.Euler(0, 0, 0);
 			gameObject.isStatic = true;

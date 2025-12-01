@@ -7,6 +7,9 @@ namespace LongLiveKhioyen
 		#region Singleton
 		static GameInstance instance;
 		public static GameInstance Instance => instance;
+		#endregion
+
+		#region Life cycle
 
 		void Awake()
 		{
@@ -19,42 +22,23 @@ namespace LongLiveKhioyen
 			DontDestroyOnLoad(this);
 		}
 
-		void OnDestroy()
-		{
-			_Finalize();
-			Destroy(gameObject);
-			if(instance == this)
-				instance = null;
-		}
-		#endregion
-
-		#region Life cycle
-		bool initialized;
-		System.Action onInitialized;
 		void Start()
-		{
-			Initialize();
-			initialized = true;
-			onInitialized?.Invoke();
-		}
-
-		void Initialize()
 		{
 			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
 			Paused = false;
 		}
 
-		void _Finalize()
+		/// <summary>
+		/// 退出游戏，回到主菜单时触发。
+		/// </summary>
+		void OnDestroy()
 		{
 			Paused = false;
-		}
 
-		public void ExecuteWhenInitialized(System.Action action)
-		{
-			if(initialized)
-				action?.Invoke();
-			else
-				onInitialized += action;
+			Destroy(gameObject);
+
+			if(instance == this)
+				instance = null;
 		}
 		#endregion
 

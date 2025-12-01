@@ -17,11 +17,6 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
-			GameInstance.Instance.ExecuteWhenInitialized(Initialize);
-		}
-
-		void Initialize()
-		{
 			if(Data == null)
 			{
 				Debug.LogWarning("No polis data assigned, cannot initialize polis.");
