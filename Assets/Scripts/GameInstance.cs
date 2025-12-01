@@ -150,13 +150,8 @@ namespace LongLiveKhioyen
 			get => Data.gameTime;
 			private set => Data.gameTime = value;
 		}
-		public int CurrentMonth => ConvertToMonth(GameTime);
+		public int CurrentMonth => GameManager.ConvertToMonth(GameTime);
 		static float MonthLength => GameManager.InternalSettings.monthLength;
-
-		static int ConvertToMonth(float time)
-		{
-			return Mathf.FloorToInt(time / MonthLength);
-		}
 
 		public void AdvanceTime(float dt)
 		{
@@ -166,7 +161,7 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			int targetMonth = ConvertToMonth(GameTime + dt);
+			int targetMonth = GameManager.ConvertToMonth(GameTime + dt);
 			float remaining = dt;
 			while(CurrentMonth != targetMonth)
 			{

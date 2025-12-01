@@ -7,23 +7,23 @@ namespace LongLiveKhioyen
 {
 	public class PolisUi : MonoBehaviour
 	{
-		public Polis polis;
+		Polis Polis => Polis.Instance;
 
 		#region Life cycle
 		protected void Start()
 		{
-			localizedPolisName = polis.Data.GetLocalizedName();
+			localizedPolisName = Polis.Data.GetLocalizedName();
 			localizedPolisName.StringChanged += s => polisName.text = s;
 
-			polis.onPopulationDataChanged += UpdatePopulation;
+			Polis.onPopulationDataChanged += UpdatePopulation;
 			UpdatePopulation();
 
-			polis.onEconomyChanged += UpdateEnocomy;
+			Polis.onEconomyChanged += UpdateEnocomy;
 			UpdateEnocomy();
 
 			SwitchBottomPanel(normalPanel);
 
-			polis.onSelectionChanged += OnSelectionChanged;
+			Polis.onSelectionChanged += OnSelectionChanged;
 		}
 
 		protected void Update()
@@ -55,7 +55,7 @@ namespace LongLiveKhioyen
 
 		void UpdatePopulation()
 		{
-			populationValue.text = $"{polis.Population}/{polis.FreePopulation}/{polis.PopulationCap}";
+			populationValue.text = $"{Polis.Population}/{Polis.FreePopulation}/{Polis.PopulationCap}";
 		}
 
 		[Header("Economy")]
@@ -65,9 +65,9 @@ namespace LongLiveKhioyen
 
 		void UpdateEnocomy()
 		{
-			foodValue.text = $"{(int)polis.Economy.food}";
-			materialValue.text = $"{(int)polis.Economy.material}";
-			moneyValue.text = $"{(int)polis.Economy.money}";
+			foodValue.text = $"{(int)Polis.Economy.food}";
+			materialValue.text = $"{(int)Polis.Economy.material}";
+			moneyValue.text = $"{(int)Polis.Economy.money}";
 		}
 
 		[Header("Time")]
@@ -119,8 +119,8 @@ namespace LongLiveKhioyen
 
 		public void SwitchMode()
 		{
-			polis.SwitchMode();
-			switch(polis.CurrentMode)
+			Polis.SwitchMode();
+			switch(Polis.CurrentMode)
 			{
 				case Polis.Mode.Mayor:
 					switchModeImage.sprite = wanderModeIcon;
@@ -139,13 +139,13 @@ namespace LongLiveKhioyen
 		public void EnterConstructModal()
 		{
 			SwitchBottomPanel(constructPanel);
-			polis.IsInConstructModal = true;
+			Polis.IsInConstructModal = true;
 		}
 
 		public void ExitConstructModal()
 		{
 			SwitchBottomPanel(normalPanel);
-			polis.IsInConstructModal = false;
+			Polis.IsInConstructModal = false;
 		}
 		#endregion
 
@@ -166,6 +166,23 @@ namespace LongLiveKhioyen
 				if(inspectionUi != null)
 					inspectionUi.transform.SetParent(inspectionArea, false);
 			}
+		}
+		#endregion
+
+		#region Month pass
+		[Header("Month pass")]
+		public CanvasGroup monthPassPanel;
+
+		public void ShowMonthPassPanel()
+		{
+			GameInstance.Instance.Paused = true;
+			monthPassPanel.gameObject.SetActive(true);
+		}
+
+		public void HideMonthPassPanel()
+		{
+			monthPassPanel.gameObject.SetActive(false);
+			GameInstance.Instance.Paused = false;
 		}
 		#endregion
 	}

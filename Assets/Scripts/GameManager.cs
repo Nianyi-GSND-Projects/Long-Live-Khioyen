@@ -106,6 +106,11 @@ namespace LongLiveKhioyen
 				Debug.LogError(e);
 			}
 		}
+
+		public static int ConvertToMonth(float time)
+		{
+			return Mathf.FloorToInt(time / InternalSettings.monthLength);
+		}
 		#endregion
 
 		#region Savegames

@@ -9,6 +9,8 @@ namespace LongLiveKhioyen
 		static Polis instance;
 		public static Polis Instance => instance;
 
+		[SerializeField] PolisUi ui;
+
 		#region Life cycle
 		void Awake()
 		{
@@ -187,6 +189,26 @@ namespace LongLiveKhioyen
 		}
 
 		void PassTime(float amount)
+		{
+			int previousMonth = GameManager.ConvertToMonth(GameInstance.Instance.GameTime - amount);
+			int currentMonth = GameInstance.Instance.CurrentMonth;
+			bool willPassMonth = currentMonth != 0 && previousMonth != currentMonth;
+
+			PassTime_Internal(amount);
+
+			if(willPassMonth)
+			{
+				// 这些信息现在还没用到，之后会显示在月度更迭的界面里。
+#pragma warning disable CS0219
+				int monthsPassed = currentMonth - previousMonth;
+				bool justReturned = false;  // 是否刚从外面回城。
+#pragma warning restore CS0219
+
+				ui.ShowMonthPassPanel();
+			}
+		}
+
+		void PassTime_Internal(float amount)
 		{
 			if(Efficiency == 0)
 			{
