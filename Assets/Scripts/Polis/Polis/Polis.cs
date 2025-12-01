@@ -28,20 +28,27 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			// Mode
-			SwitchToMode(Mode.Mayor);
-			IsInConstructModal = false;
-
 			// Orientation
 			transform.rotation = Quaternion.Euler(0, Data.orientation, 0);
 			gameObject.isStatic = true;
 
-			// Constructions
+			// Construction
 			ConstructGround();
 			ConstructWalls();
 			SpawnBuildingsFromData();
 
-			// Initialize Navmesh
+			// Population
+			onTasksChanged += () => RequiredPopulation = CalculateRequiredPopulation();
+			RequiredPopulation = CalculateRequiredPopulation();
+			onBuildingsChanged += () => PopulationCap = CalculatePopulationCap();
+			PopulationCap = CalculatePopulationCap();
+
+			// Time
+			float passedTime = GameInstance.Instance.GameTime - LastTime;
+			PassTime(passedTime);
+			GameInstance.Instance.onGameTimeAdvanced += PassTime;
+
+			// Navmesh
 			navMeshSurface.RemoveData();
 			navMeshSurface.BuildNavMesh();
 
@@ -55,13 +62,10 @@ namespace LongLiveKhioyen
 				npc.transform.position = position;
 			}
 
-			// Center view
+			// Mode
+			SwitchToMode(Mode.Mayor);
+			IsInConstructModal = false;
 			AnchorPosition = MapToWorld((Vector2)Size * .5f);
-
-			// Time
-			float passedTime = GameInstance.Instance.GameTime - LastTime;
-			PassTime(passedTime);
-			GameInstance.Instance.onGameTimeAdvanced += PassTime;
 		}
 
 		void OnDestroy()
@@ -85,18 +89,82 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Population
-		public System.Action onPopulationChanged;
+		public System.Action onPopulationDataChanged;
 
-		public int Population { get; private set; } = 10;  // Debug
-		public int BusyPopulation { get; private set; } = 5;
-		public int PopulationCap { get; private set; } = 12;
+		public int Population
+		{
+			get => Data.population;
+			private set
+			{
+				Data.population = Mathf.Min(value, PopulationCap);
+				onPopulationDataChanged?.Invoke();
+			}
+		}
+
+		int requiredPopulation;
+		public int RequiredPopulation
+		{
+			get => requiredPopulation;
+			private set
+			{
+				requiredPopulation = value;
+				onPopulationDataChanged?.Invoke();
+			}
+		}
+
+		int CalculateRequiredPopulation()
+		{
+			if(Data.Tasks.Count == 0)
+				return 0;
+			return Data.Tasks.Select(t => t.requiredPopulation).Aggregate((a, b) => a + b);
+		}
+
+		public int FreePopulation
+			=> Population - RequiredPopulation;
+
+		public float Efficiency
+		{
+			get
+			{
+				int required = RequiredPopulation;
+				if(required <= Population)
+					return 1f;
+				return (float)Population / required;
+			}
+		}
+
+		int populationCap;
+		public int PopulationCap
+		{
+			get => populationCap;
+			private set
+			{
+				populationCap = value;
+				Population = Mathf.Min(Population, PopulationCap);  // 此行自动触发更新事件。
+			}
+		}
+
+		/// <summary>
+		/// 计算城池人口上限。
+		/// </summary>
+		/// <remarks>
+		/// 应该根据民居与水井的数量及分布计算，但牢宋还没给出具体算法，此处先用 民居数量*10 占位。
+		/// </remarks>
+		int CalculatePopulationCap()
+		{
+			return QueryBuildingsByTag("dwelling").Length * 10;
+		}
 		#endregion
 
 		#region Economy
 		public Economy Economy
 		{
 			get => Data.economy;
-			set => Data.economy = value;
+			set
+			{
+				Data.economy = value;
+				onEconomyChanged?.Invoke();
+			}
 		}
 
 		public System.Action onEconomyChanged;
@@ -111,10 +179,7 @@ namespace LongLiveKhioyen
 			if(!CheckResourceAffordance(cost))
 				return false;
 			if(actuallyCost)
-			{
 				Economy -= cost;
-				onEconomyChanged?.Invoke();
-			}
 			return true;
 		}
 		#endregion
@@ -128,6 +193,13 @@ namespace LongLiveKhioyen
 
 		void PassTime(float amount)
 		{
+			if(Efficiency == 0)
+			{
+				// 效率为 0（人口也为 0）时无法执行任何任务，可安全度过时间。
+				PassTime_Simple(amount);
+				return;
+			}
+
 			while(amount > 0)
 			{
 				if(Tasks.Count == 0)
@@ -135,7 +207,7 @@ namespace LongLiveKhioyen
 					PassTime_Simple(amount);
 					return;
 				}
-				float a = Mathf.Min(amount, Tasks[0].remainingTime);
+				float a = Mathf.Min(amount, Tasks[0].remainingTime / Efficiency);
 				PassTime_Simple(a);
 				amount -= a;
 			}
@@ -144,23 +216,32 @@ namespace LongLiveKhioyen
 		void PassTime_Simple(float amount)
 		{
 			foreach(var task in Tasks)
-				task.remainingTime -= amount;
+				task.remainingTime -= amount * Efficiency;
 			var toBeExecuted = Tasks.Where(t => t.remainingTime <= 0).ToArray();
 			foreach(var task in toBeExecuted)
 			{
 				ExecuteTask(task);
-				Tasks.Remove(task);
+				RemoveTask(task);
 			}
 			LastTime += amount;
 		}
 		#endregion
 
 		#region Tasks
-		IList<PolisTask> Tasks => Data.Tasks;
+		IReadOnlyList<PolisTask> Tasks => Data.Tasks;
+
+		public System.Action onTasksChanged;
 
 		public void AddTask(PolisTask task)
 		{
 			Data.AddTask(task);
+			onTasksChanged.Invoke();
+		}
+
+		public void RemoveTask(PolisTask task)
+		{
+			Data.RemoveTask(task);
+			onTasksChanged.Invoke();
 		}
 
 		void ExecuteTask(PolisTask task)

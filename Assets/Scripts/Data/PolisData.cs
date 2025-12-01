@@ -22,13 +22,14 @@ namespace LongLiveKhioyen
 		public bool isHostile;
 
 		public Vector2Int size;
+		public int population;
 		public Economy economy;
-		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
-		public float lastTime;
 		public List<BuildingPlacement> buildings;
 
+		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
+		public float lastTime;
 		[SerializeField] List<PolisTask> tasks;
-		public IList<PolisTask> Tasks => tasks;
+		public IReadOnlyList<PolisTask> Tasks => tasks;
 		public void AddTask(PolisTask task)
 		{
 			tasks.Add(task);
@@ -41,6 +42,10 @@ namespace LongLiveKhioyen
 					return -1;
 				return 1;
 			});
+		}
+		public void RemoveTask(PolisTask task)
+		{
+			tasks.Remove(task);
 		}
 	}
 
@@ -102,6 +107,7 @@ namespace LongLiveKhioyen
 		public string type;
 		public float remainingTime;
 		public string[] parameters;
+		public int requiredPopulation;
 	}
 
 	public static class PolisTaskType

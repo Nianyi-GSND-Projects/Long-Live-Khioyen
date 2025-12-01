@@ -29,11 +29,11 @@ MonoBehaviour:
       isControlled: 1
       isHostile: 0
       size: {x: 40, y: 40}
+      population: 10
       economy:
         food: 1000
         material: 0
         money: 800
-      lastTime: 0
       buildings:
       - id: water-well
         position: {x: 19, y: 19}
@@ -43,6 +43,11 @@ MonoBehaviour:
         position: {x: 24, y: 23}
         orientation: 0
         underConstruction: 0
+      - id: dwelling-trio-1
+        position: {x: 16, y: 26}
+        orientation: 0
+        underConstruction: 0
+      lastTime: 0
       tasks: []
     - id: fanhe
       position: {x: -5000, y: 1000}
@@ -50,12 +55,13 @@ MonoBehaviour:
       isControlled: 1
       isHostile: 0
       size: {x: 20, y: 20}
+      population: 0
       economy:
         food: 0
         material: 0
         money: 0
-      lastTime: 0
       buildings: []
+      lastTime: 0
       tasks: []
     - id: dunhuang
       position: {x: 5000, y: -3000}
@@ -63,12 +69,13 @@ MonoBehaviour:
       isControlled: 1
       isHostile: 0
       size: {x: 50, y: 50}
+      population: 0
       economy:
         food: 0
         material: 0
         money: 0
-      lastTime: 0
       buildings: []
+      lastTime: 0
       tasks: []
     - id: huns-debug
       position: {x: 0, y: 5000}
@@ -76,11 +83,12 @@ MonoBehaviour:
       isControlled: 0
       isHostile: 1
       size: {x: 10, y: 10}
+      population: 0
       economy:
         food: 0
         material: 0
         money: 0
-      lastTime: 0
       buildings: []
+      lastTime: 0
       tasks: []
     gameTime: 0

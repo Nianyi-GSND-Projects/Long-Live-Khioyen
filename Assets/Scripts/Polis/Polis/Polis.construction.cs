@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.AI.Navigation;
+using UnityEditor.Build.Pipeline.Utilities;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -148,7 +150,6 @@ namespace LongLiveKhioyen
 
 		#region Occupancy
 		IBuildingLike[,] occupancy;
-		public System.Action onOccupancyChanged;
 
 		IBuildingLike GetBuildingAt(int x, int y)
 		{
@@ -213,6 +214,9 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Building
+		readonly HashSet<IBuildingLike> buildings = new();
+		public System.Action onBuildingsChanged;
+
 		void SpawnBuildingsFromData()
 		{
 			occupancy = new IBuildingLike[Size.x, Size.y];
@@ -230,17 +234,17 @@ namespace LongLiveKhioyen
 		{
 			var go = Instantiate(Resources.Load<GameObject>($"Prefabs/Polis/Buildings/{placement.id}"));
 			var building = go.GetComponent<Building>();
-			InitializeBuildingLike(building, placement);
+			RecordAndPlaceBuildingLike(building, placement);
 		}
 
 		void SpawnConstructionSite(BuildingPlacement placement)
 		{
 			var go = Instantiate(Resources.Load<GameObject>($"Models/Buildings/{placement.id}"));
 			var site = go.AddComponent<ConstructionSite>();
-			InitializeBuildingLike(site, placement);
+			RecordAndPlaceBuildingLike(site, placement);
 		}
 
-		void InitializeBuildingLike(IBuildingLike building, BuildingPlacement placement)
+		void RecordAndPlaceBuildingLike(IBuildingLike building, BuildingPlacement placement)
 		{
 			if(!GameManager.FindBuildingDefinitionByType(placement.id, out var definition))
 			{
@@ -248,17 +252,21 @@ namespace LongLiveKhioyen
 				return;
 			}
 
+			buildings.Add(building);
+
 			PositionBuilding((building as Component).transform, definition, placement);
 			building.Definition = definition;
 			building.Placement = placement;
 
 			foreach(var pos in YieldBuildingOccupancy(definition, placement))
 				occupancy[pos.x, pos.y] = building;
-			onOccupancyChanged?.Invoke();
+			onBuildingsChanged?.Invoke();
 		}
 
 		void RemoveBuildingLike(IBuildingLike building)
 		{
+			buildings.Remove(building);
+
 			var definition = building.Definition;
 			var placement = building.Placement;
 
@@ -266,7 +274,7 @@ namespace LongLiveKhioyen
 
 			foreach(var pos in YieldBuildingOccupancy(definition, placement))
 				occupancy[pos.x, pos.y] = null;
-			onOccupancyChanged?.Invoke();
+			onBuildingsChanged?.Invoke();
 		}
 
 		void FinishConstruction(ConstructionSite site)
@@ -306,8 +314,26 @@ namespace LongLiveKhioyen
 					mapPosition.y.ToString(),
 				},
 				remainingTime = definition.constructionTime,
+				requiredPopulation = definition.requiredPopulation,
 			};
 			AddTask(task);
+		}
+
+		IEnumerable<Building> GetBuildings_Internal()
+		{
+			return buildings
+				.Where(b => b is Building)
+				.Select(b => b as Building);
+		}
+
+		public Building[] GetBuildings()
+			=> GetBuildings_Internal().ToArray();
+
+		public Building[] QueryBuildingsByTag(params string[] tags)
+		{
+			return GetBuildings_Internal()
+				.Where(b => tags.Any(t => b.Definition.tags.Contains(t)))
+				.ToArray();
 		}
 		#endregion
 	}

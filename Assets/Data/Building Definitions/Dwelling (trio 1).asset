@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Dwelling (trio 1)
   m_EditorClassIdentifier: 
   id: dwelling-trio-1
-  tags: []
+  tags:
+  - dwelling
   figure: {fileID: 0}
   defaultOrientation: 0
   pivot: {x: 0, y: 0}
   size: {x: 2, y: 2}
-  obstructive: 1
   center: {x: 1, y: 1}
   constructionTime: 0
   cost:
     food: 0
+    material: 0
     money: 0
-    knowledge: 0

@@ -18,7 +18,7 @@ namespace LongLiveKhioyen
 			SelectedBuildingType = null;
 			ShowCostPreview = false;
 			Polis.onEconomyChanged += OnEconomyDataChanged;
-			Polis.onOccupancyChanged += UpdatePreviewModel;
+			Polis.onBuildingsChanged += UpdatePreviewModel;
 		}
 
 		void OnDisable()
@@ -189,7 +189,7 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			if(!Polis.TryCostResource(SelectedBuildingType.cost))
+			if(!Polis.TryCostResource(SelectedBuildingType.cost, false))
 			{
 				Debug.LogWarning(
 					$"Not enough resources to build {SelectedBuildingType.id}!\n" +
@@ -199,6 +199,7 @@ namespace LongLiveKhioyen
 			}
 
 			Polis.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
+			Polis.Economy -= SelectedBuildingType.cost;
 		}
 		#endregion
 	}

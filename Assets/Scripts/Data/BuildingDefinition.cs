@@ -20,6 +20,7 @@ namespace LongLiveKhioyen
 
 		[Header("Construction")]
 		[Min(0)] public float constructionTime;
+		public int requiredPopulation;
 		public Economy cost;
 
 		public LocalizedString GetLocalizedName()

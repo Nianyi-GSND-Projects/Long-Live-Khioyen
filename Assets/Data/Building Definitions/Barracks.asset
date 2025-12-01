@@ -18,10 +18,10 @@ MonoBehaviour:
   defaultOrientation: 2
   pivot: {x: 2, y: 2}
   size: {x: 5, y: 5}
-  obstructive: 1
   center: {x: 2.5, y: 2.5}
   constructionTime: 10
+  requiredPopulation: 5
   cost:
     food: 200
+    material: 0
     money: 100
-    knowledge: 0

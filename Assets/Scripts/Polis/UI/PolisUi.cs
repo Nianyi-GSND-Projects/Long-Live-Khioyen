@@ -15,7 +15,7 @@ namespace LongLiveKhioyen
 			localizedPolisName = polis.Data.GetLocalizedName();
 			localizedPolisName.StringChanged += s => polisName.text = s;
 
-			polis.onPopulationChanged += UpdatePopulation;
+			polis.onPopulationDataChanged += UpdatePopulation;
 			UpdatePopulation();
 
 			polis.onEconomyChanged += UpdateEnocomy;
@@ -55,7 +55,7 @@ namespace LongLiveKhioyen
 
 		void UpdatePopulation()
 		{
-			populationValue.text = $"{polis.Population}/{polis.Population - polis.BusyPopulation}/{polis.PopulationCap}";
+			populationValue.text = $"{polis.Population}/{polis.FreePopulation}/{polis.PopulationCap}";
 		}
 
 		[Header("Economy")]
