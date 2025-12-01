@@ -28,8 +28,6 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			InitializeUi();
-
 			// Mode
 			SwitchToMode(Mode.Mayor);
 			IsInConstructModal = false;
@@ -82,7 +80,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Data
-		PolisData Data => GameInstance.Instance.LastPolis;
+		public PolisData Data => GameInstance.Instance.LastPolis;
 		Vector2Int Size => Data.size;
 		#endregion
 
@@ -200,8 +198,9 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Selection
-		ISelectable selected;
-		GameObject inspectionUi;
+		public ISelectable selected;
+
+		public System.Action<ISelectable> onSelectionChanged;
 
 		public ISelectable Selected
 		{
@@ -209,21 +208,9 @@ namespace LongLiveKhioyen
 			set
 			{
 				selected?.OnDeselect();
-				if(inspectionUi != null)
-				{
-					Destroy(inspectionUi);
-					inspectionUi = null;
-				}
-
 				selected = value;
-
 				selected?.OnSelect();
-				if(selected is Component && (selected as Component).TryGetComponent(out IInspectable inspectable))
-				{
-					inspectionUi = inspectable.MakeUi();
-					if(inspectionUi != null)
-						inspectionUi.transform.SetParent(inspectionArea, false);
-				}
+				onSelectionChanged?.Invoke(selected);
 			}
 		}
 		#endregion

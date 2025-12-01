@@ -5,23 +5,39 @@ using TMPro;
 
 namespace LongLiveKhioyen
 {
-	public partial class Polis
+	public class PolisUi : MonoBehaviour
 	{
+		public Polis polis;
+
 		#region Life cycle
-		void InitializeUi()
+		protected void Start()
 		{
-			localizedPolisName = Data.GetLocalizedName();
+			localizedPolisName = polis.Data.GetLocalizedName();
 			localizedPolisName.StringChanged += s => polisName.text = s;
 
-			onPopulationChanged += UpdateTopBar;
-			onEconomyChanged += UpdateTopBar;
-			UpdateTopBar();
+			polis.onPopulationChanged += UpdatePopulation;
+			UpdatePopulation();
+
+			polis.onEconomyChanged += UpdateEnocomy;
+			UpdateEnocomy();
 
 			SwitchBottomPanel(normalPanel);
+
+			polis.onSelectionChanged += OnSelectionChanged;
+		}
+
+		protected void Update()
+		{
+			UpdateTime();
 		}
 		#endregion
 
 		#region General
+		[Header("Status")]
+		public CanvasGroup statusBar;
+		public TMP_Text polisName;
+		LocalizedString localizedPolisName;
+
 		public void OpenPauseMenu()
 		{
 			GameInstance.Instance.OpenPauseMenu();
@@ -34,21 +50,35 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Status Bar
-		[Header("Status Bar")]
-		public CanvasGroup statusBar;
-		public TMP_Text polisName;
-		LocalizedString localizedPolisName;
+		[Header("Population")]
 		public TMP_Text populationValue;
+
+		void UpdatePopulation()
+		{
+			populationValue.text = $"{polis.Population}/{polis.Population - polis.BusyPopulation}/{polis.PopulationCap}";
+		}
+
+		[Header("Economy")]
 		public TMP_Text foodValue;
 		public TMP_Text materialValue;
 		public TMP_Text moneyValue;
 
-		void UpdateTopBar()
+		void UpdateEnocomy()
 		{
-			populationValue.text = $"{Population}/{Population - BusyPopulation}/{PopulationCap}";
-			foodValue.text = $"{(int)Economy.food}";
-			materialValue.text = $"{(int)Economy.material}";
-			moneyValue.text = $"{(int)Economy.money}";
+			foodValue.text = $"{(int)polis.Economy.food}";
+			materialValue.text = $"{(int)polis.Economy.material}";
+			moneyValue.text = $"{(int)polis.Economy.money}";
+		}
+
+		[Header("Time")]
+		public TMP_Text timeText;
+		public Slider timeSlider;
+
+		void UpdateTime()
+		{
+			float month = GameInstance.Instance.GameTime / GameManager.InternalSettings.monthLength;
+			timeText.text = $"Month {Mathf.FloorToInt(month)}";
+			timeSlider.value = month - Mathf.Floor(month);
 		}
 		#endregion
 
@@ -87,16 +117,16 @@ namespace LongLiveKhioyen
 		public Sprite wanderModeIcon;
 		public Sprite mayorModeIcon;
 
-		public void UiSwitchMode()
+		public void SwitchMode()
 		{
-			SwitchMode();
-			switch(CurrentMode)
+			polis.SwitchMode();
+			switch(polis.CurrentMode)
 			{
-				case Mode.Mayor:
+				case Polis.Mode.Mayor:
 					switchModeImage.sprite = wanderModeIcon;
 					SetBottomAreaVisibiltiy(true);
 					break;
-				case Mode.Wander:
+				case Polis.Mode.Wander:
 					ExitConstructModal();
 					switchModeImage.sprite = mayorModeIcon;
 					SetBottomAreaVisibiltiy(false);
@@ -109,13 +139,33 @@ namespace LongLiveKhioyen
 		public void EnterConstructModal()
 		{
 			SwitchBottomPanel(constructPanel);
-			IsInConstructModal = true;
+			polis.IsInConstructModal = true;
 		}
 
 		public void ExitConstructModal()
 		{
 			SwitchBottomPanel(normalPanel);
-			IsInConstructModal = false;
+			polis.IsInConstructModal = false;
+		}
+		#endregion
+
+		#region Inspection
+		GameObject inspectionUi;
+
+		void OnSelectionChanged(ISelectable selected)
+		{
+			if(inspectionUi != null)
+			{
+				Destroy(inspectionUi);
+				inspectionUi = null;
+			}
+
+			if(selected is Component && (selected as Component).TryGetComponent(out IInspectable inspectable))
+			{
+				inspectionUi = inspectable.MakeUi();
+				if(inspectionUi != null)
+					inspectionUi.transform.SetParent(inspectionArea, false);
+			}
 		}
 		#endregion
 	}
