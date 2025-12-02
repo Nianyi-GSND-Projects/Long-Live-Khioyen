@@ -1,0 +1,233 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+namespace Nianyi.UnityPack
+{
+	public class MemberAccessor
+	{
+		static readonly Regex
+			memberPattern = new(@"^\.([_a-zA-Z][_a-zA-Z\d]*)"),
+			indexPattern = new(@"^\[(0|(?:[1-9]\d*))\]");
+		static List<Step> PathFromString(string path)
+		{
+			var paths = new List<Step>();
+			for(; path.Length > 0;)
+			{
+				var memberMatch = memberPattern.Match(path);
+				if(memberMatch.Success)
+				{
+					paths.Add(new()
+					{
+						type = Step.Type.Member,
+						member = memberMatch.Groups[1].Value,
+					});
+					path = path.Substring(memberMatch.Length);
+					continue;
+				}
+				var indexMatch = indexPattern.Match(path);
+				if(indexMatch.Success)
+				{
+					paths.Add(new()
+					{
+						type = Step.Type.Index,
+						index = int.Parse(indexMatch.Groups[1].Value),
+					});
+					path = path.Substring(indexMatch.Length);
+					continue;
+				}
+				throw new FormatException($"Malformed accessor path: {path}");
+			}
+			return paths;
+		}
+
+		struct Step
+		{
+			public enum Type { None, Member, Index }
+			public Type type;
+			public string member;
+			public int index;
+
+			const BindingFlags bindingFlagsDontCare = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+			private static MemberInfo FindMember(System.Type type, string name)
+			{
+				if(type == null)
+					return null;
+
+				FieldInfo field = type.GetField(name, bindingFlagsDontCare);
+				if(field != null)
+					return field;
+				PropertyInfo property = type.GetProperty(name, bindingFlagsDontCare);
+				if(property != null)
+					return property;
+
+				return FindMember(type.BaseType, name);
+			}
+
+			public readonly T Get<T>(object from)
+			{
+				switch(type)
+				{
+					case Type.Index:
+						return (T)((IList)from)[index];
+					case Type.Member:
+						var type = from.GetType();
+						var memberInfo = FindMember(type, member);
+						if(memberInfo == null)
+							throw new MemberAccessException($"Cannot find member {member} in {type.Name}");
+						switch(memberInfo)
+						{
+							case FieldInfo field:
+								return (T)field.GetValue(from);
+							case PropertyInfo property:
+								return (T)property.GetValue(from);
+						}
+						;
+						break;
+				}
+				throw new MemberAccessException($"Invalid accessor path step: {member}");
+			}
+			public readonly void Set<T>(object from, T value)
+			{
+				switch(type)
+				{
+					case Type.Index:
+						((IList)from)[index] = value;
+						return;
+					case Type.Member:
+						var type = from.GetType();
+						var memberInfo = FindMember(type, member);
+						if(memberInfo == null)
+							throw new MemberAccessException($"Cannot find member {member} in {type.Name}");
+						switch(memberInfo)
+						{
+							case FieldInfo field:
+								field.SetValue(from, value);
+								break;
+							case PropertyInfo property:
+								property.SetValue(from, value);
+								break;
+						}
+						return;
+					default:
+						throw new NotSupportedException();
+				}
+			}
+
+			public override readonly string ToString()
+			{
+				return type switch
+				{
+					Type.Index => $"[{index}]",
+					Type.Member => $".{member}",
+					_ => string.Empty,
+				};
+			}
+		}
+		readonly object root;
+		readonly Step[] path;
+
+		MemberAccessor(object root, IEnumerable<Step> path)
+		{
+			this.root = root;
+			this.path = path?.ToArray();
+			if(this.path.Length == 0)
+				throw new IndexOutOfRangeException("Path of a member accessor must be non-empty");
+		}
+		public MemberAccessor(object root, string path) :
+			this(root, PathFromString(path))
+		{ }
+
+		public override string ToString()
+			=> string.Join("", path.Select(step => step.ToString()));
+
+		object Last()
+		{
+			object target = root;
+			for(int i = 0; i < path.Length - 1; ++i)
+				target = path[i].Get<object>(target);
+			return target;
+		}
+		public T Get<T>() => Get_Internal<T>(root, path);
+		static T Get_Internal<T>(object root, IEnumerable<Step> path)
+		{
+			if(path.Count() <= 0)
+				return (T)root;
+			return Get_Internal<T>(path.First().Get<object>(root), path.Skip(1));
+		}
+
+		public void Set<T>(T value) => Set_Internal(root, path, value);
+		static void Set_Internal<T>(object root, IEnumerable<Step> path, T value)
+		{
+			int count = path.Count();
+			if(count <= 0)
+				throw new ArgumentOutOfRangeException($"Value must be set on a non-empty property path.");
+			Step firstStep = path.First();
+			if(count == 1)
+			{
+				firstStep.Set(root, value);
+				return;
+			}
+			object first = firstStep.Get<object>(root);
+			Set_Internal(first, path.Skip(1), value);
+			firstStep.Set(root, first);  // Prevent action lost on non-managed fields.
+		}
+
+		public MemberAccessor Navigate(string forward) => Navigate(0, forward);
+		public MemberAccessor Navigate(int backard, string forward = "")
+		{
+			var newPath = path
+				.Take(path.Length - backard)
+				.Concat(PathFromString(forward));
+			return new MemberAccessor(root, newPath);
+		}
+
+		public MemberAccessor Simplify()
+		{
+			return new(Last(), path[^1].ToString());
+		}
+
+#if UNITY_EDITOR
+		static string PropertyPathToPath(string path)
+			=> ("." + path).Replace(".Array.data", "");
+
+		public SerializedProperty ToSerializedProperty()
+		{
+			if(path.Length == 0 || path[0].type != Step.Type.Member)
+				return null;
+			SerializedObject so = new((UnityEngine.Object)root);
+			SerializedProperty sp = so.FindProperty(path[0].member);
+			for(int i = 1; i < path.Length; ++i)
+			{
+				if(sp == null)
+					return null;
+				switch(path[i].type)
+				{
+					case Step.Type.Index:
+						sp = sp.GetArrayElementAtIndex(path[i].index);
+						continue;
+					case Step.Type.Member:
+						sp = sp.FindPropertyRelative(path[i].member);
+						continue;
+					default:
+						return null;
+				}
+			}
+			return sp;
+		}
+
+		public MemberAccessor(SerializedProperty property) :
+			this(property.serializedObject.targetObject, PropertyPathToPath(property.propertyPath))
+		{ }
+		public static implicit operator SerializedProperty(MemberAccessor accessor)
+			=> accessor.ToSerializedProperty();
+#endif
+	}
+}

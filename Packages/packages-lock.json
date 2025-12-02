@@ -435,6 +435,12 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.wangnianyi2001.unity-pack.base": {
+      "version": "file:com.wangnianyi2001.unity-pack.base",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.xelu.prompts": {
       "version": "file:Xelu Free Controller & Key Prompts",
       "depth": 0,
