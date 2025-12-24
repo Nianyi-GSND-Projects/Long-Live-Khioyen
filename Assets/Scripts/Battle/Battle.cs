@@ -70,7 +70,7 @@ namespace LongLiveKhioyen
 			transform.rotation = Quaternion.Euler(0, 0, 0);
 			gameObject.isStatic = true;
 			GenerateHexGrid();
-			arrangementOccupancy = new Battalion[Size.x, Size.y];
+			arrangementOccupancy = new Unit[Size.x, Size.y];
 			AnchorPosition = MapToWorld(new Vector2Int(data.battleSize.x/2, data.battleSize.y/2));
 			BattleTest();
 			
@@ -115,24 +115,23 @@ namespace LongLiveKhioyen
 			}
 			//向战斗预备队中加入默认部队
 			
-			playerBattalions = new HashSet<Battalion>();
-			enemyBattalions = new HashSet<Battalion>();
+			playerActiveBattalions = new HashSet<Battalion>();
+			enemyActiveBattalions = new HashSet<Battalion>();
 			
 			//加入测试敌人
 			{
-				BattalionCompilation compilation = new()
+				BattalionDescriptor newBattalion = new()
 				{
-					//TODO:填入有意义数据
-					battalionId = 1,
+					InstanceId = 1,
 					position = new Vector2Int(3, 3),
-					battalionDefinition = defaultReserveTeamDefinition,
+					Definition = defaultReserveTeamDefinition,
 					battalionCommander = new(),
 					currentSoliders = TestEnemySoliders,
 					currentMurale = defaultReserveTeamDefinition.defaultMaxMorale,
 					currentTraining = 100
 				};
-				enemyBattalions.Add(SpawnBattalion(compilation));
-				data.EnemyBattalions.Add(compilation);
+				
+				enemyActiveBattalions.Add(SpawnBattalion(newBattalion));
 			}
 		}
 		
@@ -145,30 +144,29 @@ namespace LongLiveKhioyen
 		{
 			if (!data.playerReserveTeams.Contains(reserveTeam))
 			{
-				Debug.Log("Battalion name: " + reserveTeam.battalionDefinition.battalionId + "Don't exist in your reserve teams.");
+				Debug.Log("Battalion name: " + reserveTeam.battalionDefinition.unitName + "Don't exist in your reserve teams.");
 				return;
 			}
 
 			if (reserveTeam.placed)
 			{
-				Debug.Log("Battalion name: " + reserveTeam.battalionDefinition.battalionId + "already placed.");
+				Debug.Log("Battalion name: " + reserveTeam.battalionDefinition.unitName + "already placed.");
 				return;
 			}
 
-			BattalionCompilation compilation = new()
+			BattalionDescriptor newBattalion = new()
 			{
 				//TODO:填入有意义数据
-				battalionId = 0,
+				InstanceId = 0,
 				position = mapPosition,
-				battalionDefinition = reserveTeam.battalionDefinition,
+				Definition = reserveTeam.battalionDefinition,
 				battalionCommander = reserveTeam.battalionCommander,
 				currentSoliders = reserveTeam.currentSoliders,
 				currentMurale = reserveTeam.currentMurale,
 				currentTraining = reserveTeam.currentTraining,
 			};
 
-			playerBattalions.Add(SpawnBattalion(compilation));
-			data.PlayerBattalions.Add(compilation);
+			playerActiveBattalions.Add(SpawnBattalion(newBattalion));
 			reserveTeam.placed = true;
 			ClearReserveTeamSelection();
 		}
@@ -180,23 +178,23 @@ namespace LongLiveKhioyen
 				Debug.Log("No battalion selected.");
 				return;
 			}
-			BattalionCompilation compilation = SelectedBattalion.Compilation;
+			
 			switch (CurrentStage)
 			{
 				case Stage.Arrangement:
-					arrangementOccupancy[compilation.position.x, compilation.position.y] = null;
-					compilation.position = mapPosition;
-					SelectedBattalion.transform.localPosition = MapToLocal(compilation.position);
-					arrangementOccupancy[compilation.position.x, compilation.position.y] = SelectedBattalion;
+					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = null;
+					SelectedUnit.position = mapPosition;
+					SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
+					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = SelectedUnit;
 					break;
 				
 				case Stage.Battle:
 					if (CurrentActionStage != PlayerActionStage.MovingBattalion) break;
-					arrangementOccupancy[compilation.position.x, compilation.position.y] = null;
-					compilation.position = mapPosition;
+					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = null;
+					SelectedUnit.position = mapPosition;
 					//TODO:移动实际减少移动力
-					SelectedBattalion.transform.localPosition = MapToLocal(compilation.position);
-					arrangementOccupancy[compilation.position.x, compilation.position.y] = SelectedBattalion;
+					SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
+					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = SelectedUnit;
 					ChangeActionStage(PlayerActionStage.SelectingAction);
 					break;
 				
@@ -227,19 +225,19 @@ namespace LongLiveKhioyen
 			}
 		}
 		
-		public Battalion SelectedBattalion
+		public Unit SelectedUnit
 		{
-			get => CurrentBattalion;
+			get => CurrentUnit;
 			set
 			{
-				if (CurrentBattalion != null)
-					CurrentBattalion.Selected = false;
+				if (CurrentUnit != null)
+					CurrentUnit.Selected = false;
 				
-				CurrentBattalion = value;
+				CurrentUnit = value;
 
-				if (CurrentBattalion != null)
+				if (CurrentUnit != null)
 				{
-					CurrentBattalion.Selected = true;
+					CurrentUnit.Selected = true;
 					//TODO: 打开行动面板
 				}
 			}
@@ -259,7 +257,7 @@ namespace LongLiveKhioyen
 		
 		public void ClearBattalionSelection()
 		{
-			SelectedBattalion = null;
+			SelectedUnit = null;
 			IsBattalionSelected = false;
 			if(CurrentStage == Stage.Battle) ClearAllHexHighlights();
 			availableMovePositions.Clear();
@@ -267,42 +265,42 @@ namespace LongLiveKhioyen
 		
 		public void SelectBattalion(Battalion battalion)
 		{
-			if (!playerBattalions.Contains(battalion))
+			if (!playerActiveBattalions.Contains(battalion))
 			{
-				Debug.Log("Battalion " + battalion.Compilation.battalionId + " is not your battalion.");
+				Debug.Log("Battalion " + battalion.InstanceId + " is not your battalion.");
 				return;
 			}
 			
 			switch (CurrentStage)
 			{
 				case Stage.Arrangement:
-					SelectedBattalion = battalion;
+					SelectedUnit = battalion;
 					IsBattalionSelected = true;
 					break;
 				
 				case Stage.Battle:
 					
-					if (battalion.Compilation.ActionEnd)
+					if (battalion.actionDone)
 					{
-						Debug.Log("Battalion " + battalion.Compilation.battalionId + " has already finished its action!");
+						Debug.Log("Battalion " + battalion.InstanceId + " has already finished its action!");
 						break;
 					}
 					
-					if (battalion.Compilation.currentMovement == 0)
+					if (battalion.currentMovement == 0)
 					{
-						Debug.Log("Battalion " + battalion.Compilation.battalionId + " has no movement!");
+						Debug.Log("Battalion " + battalion.InstanceId + " has no movement!");
 						break;
 					}
 					
-					SelectedBattalion = battalion;
+					SelectedUnit = battalion;
 					IsBattalionSelected = true;
 					
-					initialUnitPosition = SelectedBattalion.Compilation.position;
-					initialUnitMovement = battalion.Compilation.currentMovement;
+					initialUnitPosition = SelectedUnit.position;
+					initialUnitMovement = battalion.currentMovement;
 					if (CurrentActionStage == PlayerActionStage.None)
 					{
 						int moveRange = initialUnitMovement;
-						availableMovePositions = GetAccessableTilesInRange(SelectedBattalion.Compilation.position, moveRange);
+						availableMovePositions = GetAccessableTilesInRange(SelectedUnit.position, moveRange);
 						ChangeActionStage(PlayerActionStage.MovingBattalion);
 					}
 					break;
@@ -350,8 +348,15 @@ namespace LongLiveKhioyen
 				//1:Attack
 				case 1:
 					if (arrangementOccupancy[placement.x, placement.y] == null) return false;
-					if (enemyBattalions.Contains(arrangementOccupancy[placement.x, placement.y]))
-						return true;
+					if (arrangementOccupancy[placement.x, placement.y] is Battalion bat)
+					{
+						if (enemyActiveBattalions.Contains(bat) && bat.Definition.beAttacked == true)
+							return true;
+					}
+					if (arrangementOccupancy[placement.x, placement.y] is Facility fac)
+					{
+						//TODO
+					}
 					return false;
 				
 				default:
@@ -359,17 +364,25 @@ namespace LongLiveKhioyen
 			}
 		}
 		
-		public void CheckDeath(Battalion battalion)
+		public void CheckDeathBattalion(Battalion battalion)
 		{
-			if (battalion.Compilation.currentSoliders <= 0)
+			if (battalion.currentSoliders <= 0)
 			{
-				RemoveBattalionWhileBattle(battalion);
-				Debug.Log($"Battalion {battalion.Compilation.battalionId} die off!");
+				RemoveUnitFromBattle(battalion);
+				Debug.Log($"Battalion {battalion.InstanceId} die off!");
+
+			}
+		}
+		public void CheckDeathFacility(Facility facility)
+		{
+			if (facility.currentDurability <= 0)
+			{
+			//	RemoveFacilityWhileBattle(facility);
+				Debug.Log($"Facility {facility.InstanceId} destroyed!");
 
 			}
 				
 		}
-		
 		
 		
 		#endregion
@@ -525,11 +538,11 @@ namespace LongLiveKhioyen
 			IsPlayerTurnOver = false;
 			Debug.Log("Player Turn!");
 
-			foreach (var battalion in playerBattalions)
+			foreach (var battalion in playerActiveBattalions)
 			{
-				battalion.Compilation.currentMovement = battalion.Compilation.battalionDefinition.defaultFlexibility/10;
-				Debug.Log("Battalion " + battalion.Compilation.battalionId + " movement: " + battalion.Compilation.currentMovement);
-				battalion.Compilation.ActionEnd = false;
+				battalion.currentMovement = battalion.Definition.defaultFlexibility/10;
+				Debug.Log("Battalion " + battalion.InstanceId + " movement: " + battalion.currentMovement);
+				battalion.actionDone = false;
 			}
 			//
 			OnPlayerTurnStarted?.Invoke();
@@ -581,11 +594,11 @@ namespace LongLiveKhioyen
 
 		public void CancelMovement()
 		{
-			arrangementOccupancy[SelectedBattalion.Compilation.position.x, SelectedBattalion.Compilation.position.y] = null;
-			SelectedBattalion.Compilation.position = initialUnitPosition;
-			arrangementOccupancy[initialUnitPosition.x, initialUnitPosition.y] = SelectedBattalion;
-			SelectedBattalion.Compilation.currentMovement = initialUnitMovement;
-			SelectedBattalion.transform.localPosition = MapToLocal(initialUnitPosition);
+			arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = null;
+			SelectedUnit.position = initialUnitPosition;
+			arrangementOccupancy[initialUnitPosition.x, initialUnitPosition.y] = SelectedUnit;
+			if(SelectedUnit is Battalion bat) bat.currentMovement = initialUnitMovement;
+			SelectedUnit.transform.localPosition = MapToLocal(initialUnitPosition);
 			
 			availableMovePositions = GetAccessableTilesInRange(initialUnitPosition, initialUnitMovement);
 		}
@@ -626,7 +639,7 @@ namespace LongLiveKhioyen
 					break;
 				
 				case PlayerActionStage.SelectingTarget:
-					availableTargetPositions = GetAllTilesInRange(SelectedBattalion.Compilation.position, SelectedBattalion.Definition.attackRange);
+					availableTargetPositions = GetAttackableTiles();
 					HighlightTiles(availableTargetPositions,attackHighlightColor);
 					Debug.Log("Change action stage to SelectingTarget");
 					break;
@@ -636,7 +649,7 @@ namespace LongLiveKhioyen
 		public void ActionWait()
 		{
 			
-			SelectedBattalion.Compilation.ActionEnd = true;
+			SelectedUnit.actionDone = true;
 			ClearAllSelection();
 			ChangeActionStage(PlayerActionStage.None);
 			
@@ -656,32 +669,51 @@ namespace LongLiveKhioyen
 				Debug.Log("No battalion selected.");
 				return;
 			}
-			
-			BattalionCompilation compilation = SelectedBattalion.Compilation;
-
+			bool actionFinished = false;
 			switch (CurrentActionType)
 			{
 				case 1:
-					Battalion TargetEnemy = arrangementOccupancy[mapPosition.x, mapPosition.y];
-					Attack(SelectedBattalion,TargetEnemy);
+					Unit TargetEnemyUnit = arrangementOccupancy[mapPosition.x, mapPosition.y];
+					if((SelectedUnit is Battalion bat) && TargetEnemyUnit.unitDefinition.beAttacked == true) 
+						actionFinished = Attack(bat,TargetEnemyUnit);
 					break;
 				default:
 					break;
 			}
-			SelectedBattalion.Compilation.ActionEnd = true;
+
+			if (actionFinished == false)
+			{
+				Debug.Log("Action not Valid!");
+				return;
+			}
+			if(SelectedUnit) SelectedUnit.actionDone = true;
 			ChangeActionStage(PlayerActionStage.None);
 		}
 
-		public void Attack(Battalion source, Battalion target)
+		public bool Attack(Battalion source, Unit target)
 		{
 			//TODO：完善战斗计算
-			target.Compilation.currentSoliders -= source.Definition.defaultAttack * 2;
-			source.Compilation.currentSoliders -= target.Definition.defaultAttack;
-			Debug.Log($"Battalion {source.Compilation.battalionId} Attack Enemy Battalion + {target.Compilation.battalionId}");
-			Debug.Log($"Battalion {source.Compilation.battalionId} remaining solider: {source.Compilation.currentSoliders}");
-			Debug.Log($"Battalion {target.Compilation.battalionId} remaining solider: {target.Compilation.currentSoliders}");
-			CheckDeath(source);
-			CheckDeath(target);
+			if (target is Battalion bat)
+			{
+				bat.currentSoliders -= source.Definition.defaultAttack * 2;
+				source.currentSoliders -= bat.Definition.defaultAttack;
+				Debug.Log($"Battalion {source.InstanceId} Attack Enemy Battalion + {target.InstanceId}");
+				Debug.Log($"Battalion {source.InstanceId} remaining solider: {source.InstanceId}");
+				Debug.Log($"Battalion {target.InstanceId} remaining solider: {target.InstanceId}");
+				CheckDeathBattalion(source);
+				CheckDeathBattalion(bat);
+				return true;
+			}
+			else if (target is Facility fac)
+			{
+				fac.currentDurability -= source.Definition.defaultAttack * 2;
+				Debug.Log($"Battalion {source.InstanceId} Attack Enemy Facility + {target.InstanceId}");
+				Debug.Log($"Battalion {source.InstanceId} remaining solider: {source.InstanceId}");
+				CheckDeathBattalion(source);
+				CheckDeathFacility(fac);
+				return true;
+			}
+			return false;
 		}
 		
 		#endregion
@@ -737,7 +769,7 @@ namespace LongLiveKhioyen
 		public float Xscale;
 		public float Yscale;
 		
-		Battalion[,] arrangementOccupancy;
+		Unit[,] arrangementOccupancy;
 		public GameObject HextilePrefab;
 		private Dictionary<Vector2Int,HexTile> hexTiles = new();
 		
@@ -835,63 +867,85 @@ namespace LongLiveKhioyen
 
 		#endregion
 		
-		#region Battalions
+		#region Units
 		
-		readonly List<Battalion> battalions = new();
+		readonly List<Battalion> activeBattalions = new();
 				
-		private HashSet<Battalion> playerBattalions;
-		private HashSet<Battalion> enemyBattalions;
+		private HashSet<Battalion> playerActiveBattalions;
+		private HashSet<Battalion> enemyActiveBattalions;
 		
 		
 		public ReserveTeam CurrentReserveTeam{ get; set; }
-		public Battalion CurrentBattalion{ get; set; }
+		public Unit CurrentUnit{ get; set; }
 		
 		public BattalionDefinition defaultReserveTeamDefinition;
 		public BattalionDefinition defaultEnemyDefinition;
 		
-		Battalion SpawnBattalion(BattalionCompilation compilation)
+		Battalion SpawnBattalion(BattalionDescriptor battalioninfo)
 		{
 			
 			var battalion = new GameObject().AddComponent<Battalion>();
-			PositionBattalion(battalion.transform, compilation.battalionDefinition,compilation);
+			GenerateBattalionFromDescriptor(battalion, battalioninfo);
+			PositionBattalion(battalion);
 			//audioSource.PlayOneShot(compilation.battalionDefinition.SelectedSoundEffect);
-			battalions.Add(battalion);
-			battalion.Compilation = compilation;
-			battalion.Definition = compilation.battalionDefinition;
-			arrangementOccupancy[compilation.position.x, compilation.position.y] = battalion;
+			activeBattalions.Add(battalion);
+			arrangementOccupancy[battalion.position.x, battalion.position.y] = battalion;
 			return battalion;
 		}
 
+		public void GenerateBattalionFromDescriptor(Battalion battalion, BattalionDescriptor battalioninfo)
+		{
+			battalion.InstanceId = battalioninfo.InstanceId;
+			battalion.position = battalioninfo.position;
+			battalion.Definition = battalioninfo.Definition;
+			battalion.battalionCommander = battalioninfo.battalionCommander;
+			battalion.currentSoliders = battalioninfo.currentSoliders;
+			
+		}
 		public void RemoveBattalionWhileArrangement(Battalion battalion)
 		{
-			battalions.Remove(battalion);
-			arrangementOccupancy[battalion.Compilation.position.x, battalion.Compilation.position.y] = null;
-			if(playerBattalions.Contains(battalion))playerBattalions.Remove(battalion);
-			else if(enemyBattalions.Contains(battalion)) enemyBattalions.Remove(battalion);
+			activeBattalions.Remove(battalion);
+			arrangementOccupancy[battalion.position.x, battalion.position.y] = null;
+			if(playerActiveBattalions.Contains(battalion))playerActiveBattalions.Remove(battalion);
+			else if(enemyActiveBattalions.Contains(battalion)) enemyActiveBattalions.Remove(battalion);
 			
-			if(data.EnemyBattalions.Contains(battalion.Compilation)) data.EnemyBattalions.Remove(battalion.Compilation);
-			else if(data.PlayerBattalions.Contains(battalion.Compilation)) data.PlayerBattalions.Remove(battalion.Compilation);
-			if(SelectedBattalion == battalion) ClearAllSelection();
+			if(data.EnemyBattalions.Contains(battalion)) data.EnemyBattalions.Remove(battalion);
+			else if(data.PlayerBattalions.Contains(battalion)) data.PlayerBattalions.Remove(battalion);
+			if(SelectedUnit == battalion) ClearAllSelection();
 			Destroy(battalion.gameObject);
 		}
 		
-		public void RemoveBattalionWhileBattle(Battalion battalion)
+		public void RemoveUnitFromBattle(Unit unit)
 		{
-			battalions.Remove(battalion);
-			arrangementOccupancy[battalion.Compilation.position.x, battalion.Compilation.position.y] = null;
-			if(playerBattalions.Contains(battalion))playerBattalions.Remove(battalion);
-			else if(enemyBattalions.Contains(battalion)) enemyBattalions.Remove(battalion);
+			if(unit == null) return;
 			
-			if(data.EnemyBattalions.Contains(battalion.Compilation)) data.EnemyBattalions.Remove(battalion.Compilation);
-			else if(data.PlayerBattalions.Contains(battalion.Compilation)) data.PlayerBattalions.Remove(battalion.Compilation);
-			if(SelectedBattalion == battalion) ClearAllSelection();
-			Destroy(battalion.gameObject);
+			if (unit is Battalion bat)
+			{
+				activeBattalions.Remove(bat);
+				arrangementOccupancy[bat.position.x, bat.position.y] = null;
+				if(playerActiveBattalions.Contains(bat))playerActiveBattalions.Remove(bat);
+				else if(enemyActiveBattalions.Contains(bat)) enemyActiveBattalions.Remove(bat);
+			
+				if(data.EnemyBattalions.Contains(bat)) data.EnemyBattalions.Remove(bat);
+				else if(data.PlayerBattalions.Contains(bat)) data.PlayerBattalions.Remove(bat);
+				if(SelectedUnit == bat) ClearAllSelection();
+				bat.gameObject.SetActive(false);
+				bat.transform.SetParent(null);
+				return;
+			}
+
+			if (unit is Facility fac)
+			{
+				return;
+			}
+			
+			
 		}
 		
-		public void PositionBattalion(Transform battalion, BattalionDefinition definition, BattalionCompilation compilation)
+		public void PositionBattalion(Battalion battalion)
 		{
-			battalion.SetParent(transform, false);
-			battalion.localPosition = MapToLocal(compilation.position);
+			battalion.transform.SetParent(transform, false);
+			battalion.transform.localPosition = MapToLocal(battalion.position);
 		}
 		
 		#endregion
@@ -938,7 +992,13 @@ namespace LongLiveKhioyen
 
 			return reachableTiles;
 		}
-		
+
+		public HashSet<Vector2Int> GetAttackableTiles()
+		{
+			if(SelectedUnit is Battalion bat)
+			return GetAllTilesInRange(bat.position, bat.Definition.attackRange);
+			return new HashSet<Vector2Int>();
+		}
 		public HashSet<Vector2Int> GetAllTilesInRange(Vector2Int startPos, int range)
 		{
 			HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();

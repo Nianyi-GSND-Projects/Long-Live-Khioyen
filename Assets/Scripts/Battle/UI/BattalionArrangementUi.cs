@@ -48,7 +48,7 @@ namespace LongLiveKhioyen
         public void OnPointerExit(PointerEventData eventData) => onUnhovered?.Invoke(this);
         public void Setup(ReserveTeam reserveTeam)
         {
-            buttonText.text = reserveTeam.battalionDefinition.battalionId;
+            buttonText.text = reserveTeam.battalionDefinition.unitName;
             Debug.Log("预备队已生成");
         }
     }

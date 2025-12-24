@@ -179,7 +179,7 @@ namespace LongLiveKhioyen
                    {
                        Battle.ClearAllHexHighlights();
                        var hitBattalion = hit.collider.GetComponentInParent<Battalion>();
-                       if(hitBattalion&&hitBattalion.Compilation.ActionEnd==false) Battle.SelectBattalion(hitBattalion);
+                       if(hitBattalion&&hitBattalion.actionDone==false) Battle.SelectBattalion(hitBattalion);
                    }
                }
                else if (Battle.CurrentActionStage==PlayerActionStage.MovingBattalion&&Battle.IsBattalionSelected)

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
+  m_Name: S1
+  m_EditorClassIdentifier: 
+  unitName: 
+  unitType: 0
+  figure: {fileID: 0}
+  unitModelTemplate: {fileID: 0}
+  unitSelectedSoundEffect: {fileID: 0}
+  passability: 0
+  movable: 0
+  actionable: 0
+  beAttacked: 0
+  beInteracted: 0
+  beMoved: 0
+  tags: []
+  defaultDiscipline: 0
+  defaultAttack: 0
+  defaultDefence: 0
+  defaultFlexibility: 0
+  defaultStrategy: 0
+  defaultMaxSolider: 0
+  defaultMaxMorale: 0
+  battalionAttackType: 0
+  attackRange: 0

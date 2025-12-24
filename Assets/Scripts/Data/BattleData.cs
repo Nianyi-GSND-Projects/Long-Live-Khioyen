@@ -22,9 +22,9 @@ namespace LongLiveKhioyen
 		public Vector2Int battleSize;
 		[Range(0, 359)] public float encounterOrientation;
 		public List<ReserveTeam> playerReserveTeams;
-		public List<BattalionCompilation> PlayerBattalions;
-		public List<BattalionCompilation> EnemyBattalions;
-		public List<BattalionCompilation> FriendlyBattalions;
+		public List<Battalion> PlayerBattalions;
+		public List<Battalion> EnemyBattalions;
+		public List<Battalion> FriendlyBattalions;
 		public string playerCommanderId;
 
 		public BattleData()
@@ -45,46 +45,14 @@ namespace LongLiveKhioyen
 		public void CollectLoot(BattleData battleData)
 		{
 			Loot.Clear();
-			foreach (var BattalionCompilation in battleData.PlayerBattalions)
-			foreach (var Item in BattalionCompilation.currentInventory)
+			foreach (var Battalion in battleData.PlayerBattalions)
+			foreach (var Item in Battalion.inventory)
 			{
 				Loot.Add(Item);
 			}
 		}
 	}
-
 	
-	
-	public class BattalionCompilation
-	{
-		public int battalionId;
-		public Vector2Int position;
-		
-		
-		public bool selected;
-		public bool actionDone;
-		
-		public List<string> currentInventory;
-		//TODO：道具堆叠的定义
-		
-		public BattalionDefinition battalionDefinition;
-		public BattalionCommander battalionCommander;
-		
-		public int currentSoliders;
-		public int currentMurale;
-		public int currentTraining;
-
-		public int currentMovement;
-
-		public bool ActionEnd = false;
-		
-		public BattalionCompilation()
-		{
-			battalionId = 0;
-			currentInventory = new List<string>();
-		}
-		
-	}
 
 	public class ReserveTeam
 	{

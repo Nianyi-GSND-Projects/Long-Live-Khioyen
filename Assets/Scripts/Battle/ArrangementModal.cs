@@ -155,17 +155,14 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			BattalionCompilation compilation = new()
+			
+			Vector2Int position = Battle.WorldToMapInt(groundPosition);
+			if (!Battle.ValidateArrangementPlacement(position))
 			{
-				//position = Battle.WorldToMapInt(groundPosition),
-				position = Battle.WorldToMapInt(groundPosition),
-			};
-			if (!Battle.ValidateArrangementPlacement(compilation.position))
-			{
-				Debug.LogWarning($"Cannot place {compilation.battalionId} at {compilation.position}.");
+				Debug.LogWarning($"Cannot place reserve team at {position}.");
 				return;
 			}
-			Battle.PlacingPlayerBattalion(Battle.SelectedReserveTeam, compilation.position);
+			Battle.PlacingPlayerBattalion(Battle.SelectedReserveTeam, position);
 		}
 		
 		public void TryMoveBattalionArrangement()
@@ -176,7 +173,7 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			if (Battle.SelectedBattalion == null)
+			if (Battle.SelectedUnit == null)
 			{
 				Debug.LogWarning("No battalion selected." + Battle.WorldToMapInt(groundPosition));
 				return;
@@ -185,7 +182,7 @@ namespace LongLiveKhioyen
 			
 			if (!Battle.ValidateArrangementPlacement(Battle.WorldToMapInt(groundPosition)))
 			{
-				Debug.LogWarning($"Cannot move {Battle.SelectedBattalion.Compilation.battalionId} at {Battle.WorldToMapInt(groundPosition)}.");
+				Debug.LogWarning($"Cannot move {Battle.SelectedUnit.InstanceId} at {Battle.WorldToMapInt(groundPosition)}.");
 				return;
 			}
 			Battle.MovingBattalion(Battle.WorldToMapInt(groundPosition));
@@ -199,20 +196,20 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			if (Battle.SelectedBattalion == null)
+			if (Battle.SelectedUnit == null)
 			{
 				Debug.LogWarning("No battalion selected." + Battle.WorldToMapInt(groundPosition));
 				return;
 			}
 
-			if (Battle.SelectedBattalion.Compilation.ActionEnd == true)
+			if (Battle.SelectedUnit.actionDone == true)
 			{
 				Debug.LogWarning("Battalion already acted this turn!");
 				return;
 			}
 			if (!Battle.ValidateArrangementPlacement(Battle.WorldToMapInt(groundPosition)))
 			{
-				Debug.LogWarning($"Cannot move {Battle.SelectedBattalion.Compilation.battalionId} at {Battle.WorldToMapInt(groundPosition)}.");
+				Debug.LogWarning($"Cannot move {Battle.SelectedUnit.InstanceId} at {Battle.WorldToMapInt(groundPosition)}.");
 				return;
 			}
 
@@ -232,13 +229,13 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			if (Battle.SelectedBattalion == null)
+			if (Battle.SelectedUnit == null)
 			{
 				Debug.LogWarning("No battalion selected." + Battle.WorldToMapInt(groundPosition));
 				return;
 			}
 
-			if (Battle.SelectedBattalion.Compilation.ActionEnd == true)
+			if (Battle.SelectedUnit.actionDone == true)
 			{
 				Debug.LogWarning("Battalion already acted this turn!");
 				return;
