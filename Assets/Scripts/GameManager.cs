@@ -47,13 +47,16 @@ namespace LongLiveKhioyen
 		public static InternalGameSettings InternalSettings { get; private set; }
 		static BuildingDefinitionSheet buildingDefinitionSheet;
 		public static List<BuildingDefinition> BuildingDefinitions => buildingDefinitionSheet?.buildingDefinitions;
+
 		public static bool FindBuildingDefinitionByType(string type, out BuildingDefinition definition)
 		{
 			definition = BuildingDefinitions.Find(d => d.id == type);
 			return definition != null;
 		}
+		
+		
 		#endregion
-
+		
 		#region Local data
 		#region Settings
 		static readonly string settingsPath = Path.Combine(Application.persistentDataPath, "settings.json");

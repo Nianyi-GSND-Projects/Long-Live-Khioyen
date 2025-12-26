@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: 
   unitType: 0
-  figure: {fileID: 0}
-  unitModelTemplate: {fileID: 0}
-  unitSelectedSoundEffect: {fileID: 0}
+  figure: {fileID: 21300000, guid: db863fa59d809cb4b80bc3d95bdd2b6e, type: 3}
+  unitModelTemplate: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
+  unitSelectedSoundEffect: {fileID: 8300000, guid: 177ed77be30b12c4180ce6493d7f9183, type: 3}
   passability: 0
-  movable: 0
-  actionable: 0
-  beAttacked: 0
-  beInteracted: 0
-  beMoved: 0
+  movable: 1
+  actionable: 1
+  beAttacked: 1
+  beInteracted: 1
+  beMoved: 1
   tags: []
-  defaultDiscipline: 0
-  defaultAttack: 0
-  defaultDefence: 0
-  defaultFlexibility: 0
-  defaultStrategy: 0
-  defaultMaxSolider: 0
-  defaultMaxMorale: 0
+  defaultDiscipline: 100
+  defaultAttack: 100
+  defaultDefence: 100
+  defaultFlexibility: 10
+  defaultStrategy: 100
+  defaultMaxSolider: 100
+  defaultMaxMorale: 100
   battalionAttackType: 0
-  attackRange: 0
+  attackRange: 1

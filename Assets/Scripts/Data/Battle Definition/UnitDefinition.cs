@@ -7,7 +7,6 @@ namespace LongLiveKhioyen
     
     public enum BattalionAttackType
     {
-        
         Melee,
         Ranged,
         NonBattle
@@ -15,7 +14,7 @@ namespace LongLiveKhioyen
     
     public enum UnitType { Battalion, Facility }
     
-    public enum UnitPassability { Impassable,AlliesOnly, Passable, Stoppable}
+    public enum UnitPassability { Impassable, Passable, Stoppable,AlliesStoppable,AlliesPassable}
 
     
     public abstract class UnitDefinition : ScriptableObject
@@ -28,7 +27,7 @@ namespace LongLiveKhioyen
         
         public Sprite figure;
         public GameObject unitModelTemplate;
-        //public GameObject ModelTemplate => Resources.Load<GameObject>($"Models/Battalions/{battalionId}");
+        //public GameObject ModelTemplate => Resources.Load<GameObject>($"Models/Battalions/{armyId}");
         public AudioClip unitSelectedSoundEffect;
         
         #endregion

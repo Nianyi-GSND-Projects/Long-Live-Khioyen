@@ -4,6 +4,13 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
+    public enum Faction
+    {
+        Player,
+        Friend,
+        Enemy,
+        Neutral
+    }
     public abstract class Unit : MonoBehaviour
     {
         public int InstanceId { get; set; } 
@@ -11,6 +18,7 @@ namespace LongLiveKhioyen
         
         public bool selected;
         public bool actionDone;
+        public Faction faction;
         public abstract UnitDefinition unitDefinition { get; }
         public bool Selected
         {

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using UnityEditor.Build.Pipeline.Tasks;
 
 namespace LongLiveKhioyen
 {
@@ -28,13 +29,19 @@ namespace LongLiveKhioyen
 		SelectingAction,
 		SelectingTarget
 	}
+
+	public struct TileData
+	{
+		public Unit Battalion;
+		public Unit Facility;
+	}
 	
 	public class Battle : MonoBehaviour
 	{
-		static Battle instance;
-		public static Battle Instance => instance;
+		static Battle _instance;
+		public static Battle Instance => _instance;
 		public System.Action onInitialized;
-
+		
 		#region General Config
 
 		public Color movementHighlightColor = Color.green; 
@@ -46,128 +53,262 @@ namespace LongLiveKhioyen
 		#region Battle data
 
 		//TODO:加载战斗数据
-		public BattleData data = new();
+		public BattleMetaData data;
+		public ArmyStatus armyStatus = ArmyStatus.Instance;
 		public Vector2Int Size => data.battleSize;
-		public string Id => data.id;
+		public string BattleName => data.battleName;
+
+		private void LoadBattleMetaData()
+		{
+			//TODO
+		}
 		#endregion
 
 		
 		#region Life cycle
 		void Awake()
 		{
-			instance = this;
-			audioSource = GetComponent<AudioSource>();
+			_instance = this;
 		}
 
 		void OnDestroy()
 		{
-			instance = null;
+			_instance = null;
 		}
 
 		void Start()
 		{
-			ChangeStage(Stage.Preparation);
+			//加载MetaData
+			#if BATTLE_TEST
+				GenerateTestData();
+			#else
+				LoadBattleMetaData();
+			#endif
+			
+			InitializeData();
+			InitializeScene();
+			InitializeComponent();
+			InitializeGameStatue();
+			
+			#if BATTLE_TEST
+
+			GenerateTestArmyData();
+			
+			#endif
+			
+			ImportArmyData();
+			
+			PlaceNonPlayerBattalionUnit();
+			
+			onInitialized?.Invoke();
+		}
+		
+		
+		
+		#endregion
+		
+		#region Initialization
+		
+		
+		private void ImportArmyData()
+		{
+			ArmyStatus armyStatus = ArmyStatus.Instance;
+
+			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++)
+			{
+				BattalionDescriptor battalionDescriptor = new BattalionDescriptor()
+				{
+					armyId = i,
+					Definition = armyStatus.battalionStatuses[i].battalionDefinition,
+					faction = Faction.Player,
+					battalionCommander = armyStatus.battalionStatuses[i].battalionCommander,
+					currentSoliders = armyStatus.battalionStatuses[i].currentSolider,
+					currentMurale = armyStatus.battalionStatuses[i].currentMorale,
+					currentTraining = armyStatus.battalionStatuses[i].currentExp,
+					maxSolider = armyStatus.battalionStatuses[i].MaxSolider,
+					maxMorale = armyStatus.battalionStatuses[i].MaxMorale,
+					maxTraining = armyStatus.battalionStatuses[i].MaxExp,
+					placed = false
+				};
+				playerReserveTeam.Add(battalionDescriptor);
+			}
+		}
+
+
+		private void InitializeScene()
+		{
 			transform.rotation = Quaternion.Euler(0, 0, 0);
 			gameObject.isStatic = true;
 			GenerateHexGrid();
-			arrangementOccupancy = new Unit[Size.x, Size.y];
 			AnchorPosition = MapToWorld(new Vector2Int(data.battleSize.x/2, data.battleSize.y/2));
-			BattleTest();
+			GenerateDetailedMap();
+			GenerateArrangementSlot();
+		}
+		
+		private void InitializeComponent()
+		{
+			audioSource = GetComponent<AudioSource>();
+		}
+		
+		private void InitializeData()
+		{
+			arrangementOccupancy = new Unit[Size.x, Size.y];
 			
-			//TODO:从出征队伍列表中读取部队
-			//TODO:从地图数据中读取敌人部队与位置
-			CurrentTurnState = TurnState.PlayerTurn;
 			availableMovePositions = new HashSet<Vector2Int>();
 			availableArrangementPositions = new HashSet<Vector2Int>();
+			availableTargetPositions = new HashSet<Vector2Int>();
 			
-			GenerateArrangementSlot();
-			onInitialized?.Invoke();
+			playerReserveTeam = new List<BattalionDescriptor>();
+			
+			factionActiveUnits = new Dictionary<Faction, HashSet<Unit>>();
+			foreach (Faction f in System.Enum.GetValues(typeof(Faction)))
+			{
+				factionActiveUnits.Add(f, new HashSet<Unit>());
+			}
+			
+			#if BATTLE_TEST
+			testPlayerReserveTeamCount = 3;
+			#endif
+		}
+		
+		private void InitializeGameStatue()
+		{
 			TurnCount = 0;
+			CurrentTurnState = TurnState.PlayerTurn;
+			ChangeStage(Stage.Preparation);
 		}
 
+		private void PlaceNonPlayerBattalionUnit()
+		{
+			List<BattalionDescriptor> enemyReserveTeam = new List<BattalionDescriptor>();
+			
+			#if BATTLE_TEST
+			for (int i = 0; i < data.enemyCount; i++)
+			{
+				BattalionDescriptor battalionDescriptor = new()
+				{
+					armyId = -1,
+					Definition = defaultEnemyDefinition,
+					faction = Faction.Enemy,
+					battalionCommander = null,
+					currentSoliders = defaultEnemyDefinition.defaultMaxSolider,
+					currentMurale = defaultEnemyDefinition.defaultMaxMorale,
+					currentTraining = 0,
+					maxSolider = defaultEnemyDefinition.defaultMaxSolider,
+					maxMorale = defaultEnemyDefinition.defaultMaxMorale,
+					maxTraining = 0,
+					placed = false
+				};
+				enemyReserveTeam.Add(battalionDescriptor);
+			}
+			
+			
+			foreach (BattalionDescriptor battalionDescriptor in enemyReserveTeam)
+			{
+				Vector2Int pos = GetRandomValidPosition(UnitPassability.Stoppable);
+				while (availableArrangementPositions.Contains(pos))
+				{
+					pos = GetRandomValidPosition(UnitPassability.Stoppable);
+				}
+				factionActiveUnits[Faction.Enemy].Add(SpawnBattalion(battalionDescriptor,pos));
+			}
+			#else 
+			GenerateEnemyData();
+			#endif
+			
+			
+			//TODO 
+		}
 		
 		#endregion
 		
 		#region Test
-		//用于进行功能测试部分的代码
-
-		public int TestEnemySoliders;
-		public ReserveTeam CreateDefaultReserveTeam()
+		
+		public int testPlayerReserveTeamCount;
+		
+		private void GenerateTestData()
 		{
-			//创建并返回一个默认类型的预备队
-			ReserveTeam newTeam = new ReserveTeam();
-			newTeam.battalionDefinition = defaultReserveTeamDefinition;
-			newTeam.battalionCommander = new ();
-			newTeam.currentSoliders = newTeam.battalionDefinition.defaultMaxSolider;
-			newTeam.currentMurale = newTeam.battalionDefinition.defaultMaxMorale;
-			newTeam.currentTraining = 100;
-			return newTeam;
+			data = new BattleMetaData()
+			{
+				battleName = "Battle of Test",
+				battleId = 0,
+				battleTime = 0,
+				battleType = BattleType.Encounter,
+				battleSize = new Vector2Int(10, 10),
+				battlePosition = new Vector2Int(0, 0),
+				encounterOrientation = new Vector2Int(0, 0),
+				battleGoal = BattleGoal.Annihilate,
+				enemyCount = 4
+			};
+			
 		}
-		public void BattleTest()
+		
+		private void GenerateTestArmyData()
 		{
-			//初始化测试场景
-			ReserveTeam testTeam = CreateDefaultReserveTeam();
-			if(testTeam == null) 
-				Debug.LogError("Create default reserve team failed.");
-			else
+			//PlayerReserveTeam
+			ArmyStatus armyStatus = ArmyStatus.Instance;
+			if(armyStatus == null) Debug.LogError("ArmyStatus is null!");
+			armyStatus.armyCommander = new ArmyCommander()
 			{
-				data.playerReserveTeams.Add(testTeam);
-			}
-			//向战斗预备队中加入默认部队
+				commanderId = 0,
+				commanderName = "TestCommander",
+				Zhi = 50,
+				Xin = 50,
+				Ren = 50,
+				Yong = 50,
+				Yan = 50
+			};
 			
-			playerActiveBattalions = new HashSet<Battalion>();
-			enemyActiveBattalions = new HashSet<Battalion>();
-			
-			//加入测试敌人
+			armyStatus.battalionStatuses.Clear();
+			for (int i = 0; i < testPlayerReserveTeamCount; i++)
 			{
-				BattalionDescriptor newBattalion = new()
+				BattalionStatus battalionStatus = new BattalionStatus()
 				{
-					InstanceId = 1,
-					position = new Vector2Int(3, 3),
-					Definition = defaultReserveTeamDefinition,
-					battalionCommander = new(),
-					currentSoliders = TestEnemySoliders,
-					currentMurale = defaultReserveTeamDefinition.defaultMaxMorale,
-					currentTraining = 100
+					battalionId = i,
+					battalionName = "TestBattalion" + i,
+					battalionCommander = new BattalionCommander()
+					{
+						commanderId = 0,
+						commanderName = "TestBattalionCommander" + i,
+						Zhi = 50,
+						Xin = 50,
+						Ren = 50,
+						Yong = 50,
+						Yan = 50
+					},
+					battalionDefinition = defaultReserveTeamDefinition
 				};
 				
-				enemyActiveBattalions.Add(SpawnBattalion(newBattalion));
+				battalionStatus.currentSolider = battalionStatus.MaxSolider;
+				battalionStatus.currentMorale = battalionStatus.MaxMorale;
+				battalionStatus.currentExp = battalionStatus.MaxExp;
+				
+				armyStatus.battalionStatuses.Add(battalionStatus);
 			}
+
 		}
+
 		
 		#endregion
 		
 		#region Interface
 		public ArrangementModal arrangementModal;
 		
-		public void PlacingPlayerBattalion(ReserveTeam reserveTeam, Vector2Int mapPosition)
+		public void PlacingPlayerBattalion(BattalionDescriptor battalionDescriptor, Vector2Int mapPosition)
 		{
-			if (!data.playerReserveTeams.Contains(reserveTeam))
+			if (!playerReserveTeam.Contains(battalionDescriptor))
 			{
-				Debug.Log("Battalion name: " + reserveTeam.battalionDefinition.unitName + "Don't exist in your reserve teams.");
+				Debug.Log("Battalion name: " + battalionDescriptor.Definition.unitName + "Don't exist in your reserve teams.");
 				return;
 			}
 
-			if (reserveTeam.placed)
+			if (battalionDescriptor.placed)
 			{
-				Debug.Log("Battalion name: " + reserveTeam.battalionDefinition.unitName + "already placed.");
+				Debug.Log("Battalion name: " + battalionDescriptor.Definition.unitName + "already placed.");
 				return;
 			}
 
-			BattalionDescriptor newBattalion = new()
-			{
-				//TODO:填入有意义数据
-				InstanceId = 0,
-				position = mapPosition,
-				Definition = reserveTeam.battalionDefinition,
-				battalionCommander = reserveTeam.battalionCommander,
-				currentSoliders = reserveTeam.currentSoliders,
-				currentMurale = reserveTeam.currentMurale,
-				currentTraining = reserveTeam.currentTraining,
-			};
-
-			playerActiveBattalions.Add(SpawnBattalion(newBattalion));
-			reserveTeam.placed = true;
+			factionActiveUnits[Faction.Player].Add(SpawnBattalion(battalionDescriptor,mapPosition));
 			ClearReserveTeamSelection();
 		}
 		
@@ -207,18 +348,18 @@ namespace LongLiveKhioyen
 
 		#region Selection
 		
-		public ReserveTeam SelectedReserveTeam
+		public BattalionDescriptor SelectedBattalionDescriptor
 		{
-			get => CurrentReserveTeam;
+			get => CurrentBattalionDescriptor;
 			set
 			{
-				if (value == CurrentReserveTeam)
+				if (value == CurrentBattalionDescriptor)
 					return;
 
 
-				CurrentReserveTeam = value;
+				CurrentBattalionDescriptor = value;
 
-				if (CurrentReserveTeam != null)
+				if (CurrentBattalionDescriptor != null)
 				{
 
 				}
@@ -251,7 +392,7 @@ namespace LongLiveKhioyen
 		
 		public void ClearReserveTeamSelection()
 		{
-			SelectedReserveTeam = null;
+			SelectedBattalionDescriptor = null;
 			IsReserveTeamSelected = false;
 		}
 		
@@ -265,7 +406,12 @@ namespace LongLiveKhioyen
 		
 		public void SelectBattalion(Battalion battalion)
 		{
-			if (!playerActiveBattalions.Contains(battalion))
+			if (CurrentStage == Stage.Battle && CurrentTurnState != TurnState.PlayerTurn)
+			{
+				Debug.Log("Not your turn!");
+				return;
+			}
+			if (!factionActiveUnits[Faction.Player].Contains(battalion))
 			{
 				Debug.Log("Battalion " + battalion.InstanceId + " is not your battalion.");
 				return;
@@ -350,7 +496,7 @@ namespace LongLiveKhioyen
 					if (arrangementOccupancy[placement.x, placement.y] == null) return false;
 					if (arrangementOccupancy[placement.x, placement.y] is Battalion bat)
 					{
-						if (enemyActiveBattalions.Contains(bat) && bat.Definition.beAttacked == true)
+						if (factionActiveUnits[Faction.Enemy].Contains(bat) && bat.Definition.beAttacked == true)
 							return true;
 					}
 					if (arrangementOccupancy[placement.x, placement.y] is Facility fac)
@@ -538,10 +684,11 @@ namespace LongLiveKhioyen
 			IsPlayerTurnOver = false;
 			Debug.Log("Player Turn!");
 
-			foreach (var battalion in playerActiveBattalions)
+			foreach (var battalion in factionActiveUnits[Faction.Player])
 			{
-				battalion.currentMovement = battalion.Definition.defaultFlexibility/10;
-				Debug.Log("Battalion " + battalion.InstanceId + " movement: " + battalion.currentMovement);
+				if(battalion is Battalion bat)
+				bat.currentMovement = bat.Definition.defaultFlexibility/10;
+				//改成实际数值
 				battalion.actionDone = false;
 			}
 			//
@@ -567,7 +714,28 @@ namespace LongLiveKhioyen
 		
 		public void EndPlayerTurn()
 		{
-			if(CurrentTurnState == TurnState.PlayerTurn) IsPlayerTurnOver = true;
+			if (CurrentTurnState == TurnState.PlayerTurn)
+			{
+				
+				
+				if (CurrentActionStage == PlayerActionStage.SelectingTarget)
+				{
+					CancelAction();
+					ChangeActionStage(PlayerActionStage.SelectingAction);
+				}
+				if (CurrentActionStage == PlayerActionStage.SelectingAction)
+				{
+					CancelMovement();
+					ChangeActionStage(PlayerActionStage.MovingBattalion);
+				}
+				if (CurrentActionStage == PlayerActionStage.MovingBattalion)
+				{
+					ClearAllSelection();
+					ChangeActionStage(PlayerActionStage.None);
+				}
+				ClearAllHexHighlights();
+				IsPlayerTurnOver = true;
+			}
 			else Debug.LogError("It's not player's turn!");
 		}
 		
@@ -784,9 +952,9 @@ namespace LongLiveKhioyen
 			Transform mapContainer = new GameObject("HexMapContainer").transform;
 			mapContainer.SetParent(transform, false);
 			
-			for (int y = -1; y < Size.y+1; y++)
+			for (int y = 0; y < Size.y; y++)
 			{
-				for (int x = -1; x < Size.x+1; x++)
+				for (int x = 0; x < Size.x; x++)
 				{
 					Vector2Int mapPos = new Vector2Int(x, y);
 
@@ -802,10 +970,30 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		private Vector2Int GetRandomValidPosition(UnitPassability passability)
+		{
+			int x = Random.Range(0, Size.x);
+			int y = Random.Range(0, Size.y);
+
+			if (passability == UnitPassability.Stoppable)
+			{
+				while (arrangementOccupancy[x, y] != null)
+				{
+					x = Random.Range(0, Size.x);
+					y = Random.Range(0, Size.y);
+				}
+			}
+			
+			return new Vector2Int(x,y);
+		}
+		void GenerateDetailedMap()
+		{
+			//TODO 读取数据或生成地图细节
+		}
 		void GenerateArrangementSlot()
 		{
 			//TODO:根据玩家进入战斗的角度，在合适的位置创建部署区
-			for(int i=0;i<3;i++)
+			for(int i= 0;i < 3;i++)
 			for (int j = 0; j < 3; j++)
 			{
 				availableArrangementPositions.Add(new Vector2Int(i, j));
@@ -869,49 +1057,47 @@ namespace LongLiveKhioyen
 		
 		#region Units
 		
-		readonly List<Battalion> activeBattalions = new();
-				
-		private HashSet<Battalion> playerActiveBattalions;
-		private HashSet<Battalion> enemyActiveBattalions;
+		#region Unit Container
 		
+		public List<BattalionDescriptor> playerReserveTeam;
 		
-		public ReserveTeam CurrentReserveTeam{ get; set; }
+		private Dictionary<Faction,HashSet<Unit>> factionActiveUnits;
+		
+		#endregion
+		public BattalionDescriptor CurrentBattalionDescriptor{ get; set; }
 		public Unit CurrentUnit{ get; set; }
 		
 		public BattalionDefinition defaultReserveTeamDefinition;
 		public BattalionDefinition defaultEnemyDefinition;
 		
-		Battalion SpawnBattalion(BattalionDescriptor battalioninfo)
+		Battalion SpawnBattalion(BattalionDescriptor battalioninfo, Vector2Int position)
 		{
-			
-			var battalion = new GameObject().AddComponent<Battalion>();
-			GenerateBattalionFromDescriptor(battalion, battalioninfo);
+			Battalion battalion = GenerateBattalionFromDescriptor(battalioninfo);
+			battalion.position = position;
 			PositionBattalion(battalion);
 			//audioSource.PlayOneShot(compilation.battalionDefinition.SelectedSoundEffect);
-			activeBattalions.Add(battalion);
+			factionActiveUnits[battalioninfo.faction].Add(battalion);
 			arrangementOccupancy[battalion.position.x, battalion.position.y] = battalion;
+			battalioninfo.placed = true;
 			return battalion;
 		}
 
-		public void GenerateBattalionFromDescriptor(Battalion battalion, BattalionDescriptor battalioninfo)
+		public Battalion GenerateBattalionFromDescriptor(BattalionDescriptor battalioninfo)
 		{
-			battalion.InstanceId = battalioninfo.InstanceId;
-			battalion.position = battalioninfo.position;
+			var battalion = new GameObject().AddComponent<Battalion>();
+			battalion.InstanceId = battalioninfo.armyId;
+			battalion.faction = battalioninfo.faction;
 			battalion.Definition = battalioninfo.Definition;
 			battalion.battalionCommander = battalioninfo.battalionCommander;
 			battalion.currentSoliders = battalioninfo.currentSoliders;
-			
+			return battalion;
 		}
 		public void RemoveBattalionWhileArrangement(Battalion battalion)
 		{
-			activeBattalions.Remove(battalion);
+			factionActiveUnits[battalion.faction].Remove(battalion);
 			arrangementOccupancy[battalion.position.x, battalion.position.y] = null;
-			if(playerActiveBattalions.Contains(battalion))playerActiveBattalions.Remove(battalion);
-			else if(enemyActiveBattalions.Contains(battalion)) enemyActiveBattalions.Remove(battalion);
-			
-			if(data.EnemyBattalions.Contains(battalion)) data.EnemyBattalions.Remove(battalion);
-			else if(data.PlayerBattalions.Contains(battalion)) data.PlayerBattalions.Remove(battalion);
 			if(SelectedUnit == battalion) ClearAllSelection();
+			playerReserveTeam[battalion.InstanceId].placed = false;
 			Destroy(battalion.gameObject);
 		}
 		
@@ -921,13 +1107,8 @@ namespace LongLiveKhioyen
 			
 			if (unit is Battalion bat)
 			{
-				activeBattalions.Remove(bat);
+				factionActiveUnits[bat.faction].Remove(bat);
 				arrangementOccupancy[bat.position.x, bat.position.y] = null;
-				if(playerActiveBattalions.Contains(bat))playerActiveBattalions.Remove(bat);
-				else if(enemyActiveBattalions.Contains(bat)) enemyActiveBattalions.Remove(bat);
-			
-				if(data.EnemyBattalions.Contains(bat)) data.EnemyBattalions.Remove(bat);
-				else if(data.PlayerBattalions.Contains(bat)) data.PlayerBattalions.Remove(bat);
 				if(SelectedUnit == bat) ClearAllSelection();
 				bat.gameObject.SetActive(false);
 				bat.transform.SetParent(null);
@@ -947,7 +1128,6 @@ namespace LongLiveKhioyen
 			battalion.transform.SetParent(transform, false);
 			battalion.transform.localPosition = MapToLocal(battalion.position);
 		}
-		
 		#endregion
 		
 		#region Range
@@ -1070,7 +1250,7 @@ namespace LongLiveKhioyen
 		{
 			//结算战役
 			BattleResult result = new BattleResult();
-			result.CollectLoot(data);
+			result.CollectLoot();
 			return result;
 		}
 
@@ -1080,5 +1260,13 @@ namespace LongLiveKhioyen
 		}
 		
 		#endregion
+	}
+
+	public class BattleResult
+	{
+		public void CollectLoot()
+		{
+			
+		}
 	}
 }

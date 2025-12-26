@@ -51,7 +51,7 @@ namespace LongLiveKhioyen
 		 {
 			 GenerateUi();
 			 Debug.Log("Arrangement Modal Enabled");
-			 Battle.SelectedReserveTeam = null;
+			 Battle.SelectedBattalionDescriptor = null;
 		 }
 		void GenerateUi()
 		{
@@ -63,10 +63,10 @@ namespace LongLiveKhioyen
 				Destroy(child.gameObject);
   
 			var cardTemplate = Resources.Load<GameObject>("Prefabs/Battle/UI/Battalion_Arrangement");
-			foreach(var reserveTeam in Battle.data.playerReserveTeams)
+			foreach(var reserveTeam in Battle.playerReserveTeam)
 			{
 				var card = Instantiate(cardTemplate).GetComponent<BattalionArrangementUi>();
-				card.reserveTeam = reserveTeam;
+				card.battalionDescriptor = reserveTeam;
 				card.transform.SetParent(ArrangementLayoutGroup.transform, false);
   
 				card.onSelected += OnBattalionCardSelected;
@@ -78,16 +78,16 @@ namespace LongLiveKhioyen
   //
 		void OnBattalionCardSelected(BattalionArrangementUi card)
 		{
-			if (!card.reserveTeam.placed)
+			if (!card.battalionDescriptor.placed)
 			{
-				Battle.SelectedReserveTeam = card.reserveTeam;
+				Battle.SelectedBattalionDescriptor = card.battalionDescriptor;
 				Battle.IsReserveTeamSelected = true;
 			}
 		}
   
 		void OnBattalionCardHovered(BattalionArrangementUi card)
 		{
-			hoveredReserveTeam = card.reserveTeam;
+			_hoveredBattalionDescriptor = card.battalionDescriptor;
 			//ShowCostPreview = true;
 		}
   
@@ -98,7 +98,7 @@ namespace LongLiveKhioyen
 		 #endregion
 
 		#region Selection
-		ReserveTeam  hoveredReserveTeam;
+		BattalionDescriptor  _hoveredBattalionDescriptor;
 		
 		//ArrangementPreview preview;
 		// void UpdatePreviewModel()
@@ -143,13 +143,13 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			if (Battle.SelectedReserveTeam == null)
+			if (Battle.SelectedBattalionDescriptor == null)
 			{
 				Debug.LogWarning("No reserve team selected." + Battle.WorldToMapInt(groundPosition));
 				return;
 			}
 			
-			if (Battle.SelectedReserveTeam.placed == true)
+			if (Battle.SelectedBattalionDescriptor.placed == true)
 			{
 				Debug.LogWarning("Reserve team already placed." + Battle.WorldToMapInt(groundPosition));
 				return;
@@ -162,7 +162,7 @@ namespace LongLiveKhioyen
 				Debug.LogWarning($"Cannot place reserve team at {position}.");
 				return;
 			}
-			Battle.PlacingPlayerBattalion(Battle.SelectedReserveTeam, position);
+			Battle.PlacingPlayerBattalion(Battle.SelectedBattalionDescriptor, position);
 		}
 		
 		public void TryMoveBattalionArrangement()
@@ -190,6 +190,11 @@ namespace LongLiveKhioyen
 		
 		public void TryMoveBattalionBattle()
 		{
+			if (Battle.CurrentTurnState != TurnState.PlayerTurn)
+			{
+				Debug.LogWarning("Not player turn!");
+				return;
+			}
 			if (!Battle.ScreenToGround(arrangementMode.PointerScreenPosition, out Vector3 groundPosition))
 			{
 				Debug.LogWarning("Position not valid." + Battle.WorldToMapInt(groundPosition));
@@ -223,6 +228,11 @@ namespace LongLiveKhioyen
 		
 		public void TryApplyCurrentAction()
 		{
+			if (Battle.CurrentTurnState != TurnState.PlayerTurn)
+			{
+				Debug.LogWarning("Not player turn!");
+				return;
+			}
 			if (!Battle.ScreenToGround(arrangementMode.PointerScreenPosition, out Vector3 groundPosition))
 			{
 				Debug.LogWarning("Position not valid." + Battle.WorldToMapInt(groundPosition));

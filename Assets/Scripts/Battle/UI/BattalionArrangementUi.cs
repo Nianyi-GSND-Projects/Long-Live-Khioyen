@@ -12,7 +12,7 @@ namespace LongLiveKhioyen
     public class BattalionArrangementUi : MonoBehaviour,IPointerEnterHandler, IPointerExitHandler
     {
         Battle Battle => Battle.Instance;
-        [NonSerialized] public ReserveTeam reserveTeam;
+        [NonSerialized] public BattalionDescriptor battalionDescriptor;
         
         LocalizedString localizedBattalionName;
         public Text buttonText;
@@ -35,7 +35,7 @@ namespace LongLiveKhioyen
         
         protected void Start()
         {
-          //  localizedBattalionName.TableEntryReference = battalionDefinition.battalionId;
+          //  localizedBattalionName.TableEntryReference = battalionDefinition.armyId;
            // localizedBattalionName.RefreshString();
            // image.sprite = battalionDefinition.figure;
         }
@@ -46,9 +46,9 @@ namespace LongLiveKhioyen
         }
         public void OnPointerEnter(PointerEventData eventData) => onHovered?.Invoke(this);
         public void OnPointerExit(PointerEventData eventData) => onUnhovered?.Invoke(this);
-        public void Setup(ReserveTeam reserveTeam)
+        public void Setup(BattalionDescriptor battalionDescriptor)
         {
-            buttonText.text = reserveTeam.battalionDefinition.unitName;
+            buttonText.text = battalionDescriptor.Definition.unitName;
             Debug.Log("预备队已生成");
         }
     }

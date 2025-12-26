@@ -2008,27 +2008,20 @@ MonoBehaviour:
     battleType: 2
     battleSize: {x: 10, y: 10}
     encounterOrientation: 0
+    PlayerBattalions: []
+    EnemyBattalions: []
+    FriendlyBattalions: []
     playerCommanderId: 
   TestEnemySoliders: 40
   arrangementModal: {fileID: 1489175731}
-  currentStage: 0
-  isInArrangementStage: 0
-  isInBattleStage: 0
-  isReserveTeamSelected: 0
-  isBattalionSelected: 0
-  isPlayerTurnOver: 0
-  currentTurnState: 0
-  isPreparingAction: 0
-  currentActionStage: 0
-  currentActiontype: 0
   anchor: {fileID: 413733173}
   camera: {fileID: 983281796}
   hexgrid: {fileID: 1069218213}
   Xscale: 1.73205
   Yscale: 2
   HextilePrefab: {fileID: 5875933169087041189, guid: 6872ce78ac512bd448ed71ab8c135201, type: 3}
-  defaultReserveTeamDefinition: {fileID: 11400000, guid: 82805f647c8b0ab44ad2493c634b8eef, type: 2}
-  defaultEnemyDefinition: {fileID: 11400000, guid: 82805f647c8b0ab44ad2493c634b8eef, type: 2}
+  defaultReserveTeamDefinition: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
+  defaultEnemyDefinition: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
 --- !u!156049354 &1069218213
 Grid:
   m_ObjectHideFlags: 0
