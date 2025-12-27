@@ -27,7 +27,7 @@ MonoBehaviour:
   defaultDiscipline: 100
   defaultAttack: 100
   defaultDefence: 100
-  defaultFlexibility: 10
+  defaultFlexibility: 30
   defaultStrategy: 100
   defaultMaxSolider: 100
   defaultMaxMorale: 100

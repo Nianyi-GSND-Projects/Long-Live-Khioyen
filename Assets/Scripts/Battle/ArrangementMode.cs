@@ -23,10 +23,12 @@ namespace LongLiveKhioyen
        Vector2 pointerScreenPosition;
        public Vector2 PointerScreenPosition => pointerScreenPosition;
        bool isPointerOverGameObjects;
-
+       bool isValidDragOperation = false;
        bool isPrimaryButtonDown, isSecondaryButtonDown;
        float lastPrimaryClickTime;
        Vector2 primaryStartScreenPosition;
+       
+       
        #endregion
        
        #region Life cycle
@@ -47,10 +49,8 @@ namespace LongLiveKhioyen
        {
            var raw = value.Get<Vector2>();
 
-           if(isPrimaryButtonDown)
+           if(isPrimaryButtonDown&&isValidDragOperation)
                Pan(raw);
-          // if(isSecondaryButtonDown)
-            //   Rotate(raw);
        }
 
        protected void OnScroll(InputValue value)
@@ -61,27 +61,38 @@ namespace LongLiveKhioyen
 
        protected void OnPrimaryClick(InputValue value)
        {
-           if(isPointerOverGameObjects)
-               return;
-
+          
+           
+           Debug.Log("Primary Click");
            var raw = value.isPressed;
            isPrimaryButtonDown = raw;
-
+           
+           
            if(raw)
            {
+               if(isPointerOverGameObjects)
+               {
+                   isValidDragOperation = false;
+                   return;
+               }
+               
+               isValidDragOperation = true;
                lastPrimaryClickTime = Time.realtimeSinceStartup;
                primaryStartScreenPosition = pointerScreenPosition;
            }
            else
            {
-               float elapsedTime = Time.realtimeSinceStartup - lastPrimaryClickTime;
-               Vector2 mouseMoved = primaryStartScreenPosition - pointerScreenPosition;
-               if(
-                   elapsedTime <= 0.3f &&
-                   mouseMoved.magnitude <= 5 &&
-                   !isPointerOverGameObjects
-               )
-                   Interact(pointerScreenPosition);
+               if(isValidDragOperation)
+               {
+                   float elapsedTime = Time.realtimeSinceStartup - lastPrimaryClickTime;
+                   Vector2 mouseMoved = primaryStartScreenPosition - pointerScreenPosition;
+                   if(
+                       elapsedTime <= 0.3f &&
+                       mouseMoved.magnitude <= 5
+                   )
+                       Interact(pointerScreenPosition);
+               }
+               isValidDragOperation = false;
            }
        }
 
@@ -119,7 +130,8 @@ namespace LongLiveKhioyen
            if(!Battle.ScreenToGround(pointerScreenPosition, out var from))
                return;
            Vector3 pos = Battle.AnchorPosition + (to - from) * panSpeed;
-           Bounds bounds = new(default, new(Battle.Size.x * Battle.Xscale, 0, Battle.Size.y * Battle.Yscale));
+           Vector3 totalSize = new Vector3(Battle.Size.x * Battle.Xscale, 0, Battle.Size.y * Battle.Yscale);
+           Bounds bounds = new(totalSize*0.5f, totalSize);
            Vector3 boundedPos = Battle.transform.localToWorldMatrix.MultiplyPoint(
                bounds.ClosestPoint(
                    Battle.transform.worldToLocalMatrix.MultiplyPoint(pos)
