@@ -39,7 +39,8 @@ namespace LongLiveKhioyen
                 UpdateVisualState();
             }
         }
-        
+
+
         #region Visual state
         protected GameObject model;
         protected readonly Dictionary<Renderer, Material[]> legacyMaterials = new();
@@ -68,6 +69,14 @@ namespace LongLiveKhioyen
         }
 
        
+        #endregion
+
+        #region Effect
+
+        public abstract void TakeDamage(int damage);
+
+        public abstract float GetPower();
+
         #endregion
     }
     public abstract class Unit<T>: Unit where T: UnitDefinition

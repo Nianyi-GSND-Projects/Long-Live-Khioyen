@@ -20,6 +20,18 @@ namespace LongLiveKhioyen
             InstanceId = 0;
             inventory = new List<string>();
         }
+
+        public override void TakeDamage(int damage)
+        {
+            currentSoliders -= damage;
+            Debug.Log($"Battalion {InstanceId} take {damage} damage, current soliders: {currentSoliders}");
+        }
+
+        public override float GetPower()
+        {
+            return Definition.defaultPower * currentSoliders*1.0f / Definition.defaultMaxSolider;
+            //Todo 将领系数影响
+        }
     }
     
     public class BattalionDescriptor

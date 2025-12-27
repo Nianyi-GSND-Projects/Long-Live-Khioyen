@@ -12,7 +12,7 @@ namespace LongLiveKhioyen
         
         #region Battalion Attributes
         public int defaultDiscipline;
-        public int defaultAttack;
+        public int defaultPower;
         public int defaultDefence;
         public int defaultFlexibility;
         public int defaultStrategy;

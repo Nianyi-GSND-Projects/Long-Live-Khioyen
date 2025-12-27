@@ -25,7 +25,7 @@ MonoBehaviour:
   beMoved: 1
   tags: []
   defaultDiscipline: 100
-  defaultAttack: 100
+  defaultPower: 100
   defaultDefence: 100
   defaultFlexibility: 30
   defaultStrategy: 100

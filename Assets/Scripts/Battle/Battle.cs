@@ -41,6 +41,7 @@ namespace LongLiveKhioyen
 		static Battle _instance;
 		public static Battle Instance => _instance;
 		public System.Action onInitialized;
+		public ActionDefinitionSheet actionDataBase;
 		
 		#region General Config
 
@@ -152,6 +153,7 @@ namespace LongLiveKhioyen
 		
 		private void InitializeData()
 		{
+			actionDataBase.Initialize();
 			arrangementOccupancy = new Unit[Size.x, Size.y];
 			
 			availableMovePositions = new HashSet<Vector2Int>();
@@ -225,7 +227,6 @@ namespace LongLiveKhioyen
 		#region Test
 		
 		public int testPlayerReserveTeamCount;
-		
 		private void GenerateTestData()
 		{
 			data = new BattleMetaData()
@@ -510,25 +511,24 @@ namespace LongLiveKhioyen
 			}
 		}
 		
-		public void CheckDeathBattalion(Battalion battalion)
+		public void CheckDeath(Unit unit)
 		{
-			if (battalion.currentSoliders <= 0)
+			if(unit is Battalion battalion && battalion.currentSoliders <= 0)
 			{
 				RemoveUnitFromBattle(battalion);
 				Debug.Log($"Battalion {battalion.InstanceId} die off!");
-
+				return;
 			}
-		}
-		public void CheckDeathFacility(Facility facility)
-		{
-			if (facility.currentDurability <= 0)
+			else if (unit is Facility facility && facility.currentDurability<=0)
 			{
-			//	RemoveFacilityWhileBattle(facility);
+				RemoveUnitFromBattle(facility);
 				Debug.Log($"Facility {facility.InstanceId} destroyed!");
-
+				return;
 			}
-				
+
+			return;
 		}
+		
 		
 		
 		#endregion
@@ -684,12 +684,12 @@ namespace LongLiveKhioyen
 			IsPlayerTurnOver = false;
 			Debug.Log("Player Turn!");
 
-			foreach (var battalion in factionActiveUnits[Faction.Player])
+			foreach (var unit in factionActiveUnits[Faction.Player])
 			{
-				if(battalion is Battalion bat)
+				if(unit is Battalion bat)
 				bat.currentMovement = bat.Definition.defaultFlexibility/10;
 				//改成实际数值
-				battalion.actionDone = false;
+				unit.actionDone = false;
 			}
 			//
 			OnPlayerTurnStarted?.Invoke();
@@ -700,6 +700,11 @@ namespace LongLiveKhioyen
 			}
 			Debug.Log("Player Turn End!");
 			ChangeActionStage(PlayerActionStage.None);
+			foreach (var unit in factionActiveUnits[Faction.Player])
+			{
+				//改成实际数值
+				unit.selected = false;
+			}
 			OnPlayerTurnEnded?.Invoke();
 		}
 		
@@ -860,27 +865,14 @@ namespace LongLiveKhioyen
 
 		public bool Attack(Battalion source, Unit target)
 		{
-			//TODO：完善战斗计算
-			if (target is Battalion bat)
+			ActionDefinition attack = actionDataBase.GetAction("RegularAttack");
+			if(attack.Perform(source,target))
 			{
-				bat.currentSoliders -= source.Definition.defaultAttack * 2;
-				source.currentSoliders -= bat.Definition.defaultAttack;
-				Debug.Log($"Battalion {source.InstanceId} Attack Enemy Battalion + {target.InstanceId}");
-				Debug.Log($"Battalion {source.InstanceId} remaining solider: {source.InstanceId}");
-				Debug.Log($"Battalion {target.InstanceId} remaining solider: {target.InstanceId}");
-				CheckDeathBattalion(source);
-				CheckDeathBattalion(bat);
+				CheckDeath(source);
+				CheckDeath(target);
 				return true;
 			}
-			else if (target is Facility fac)
-			{
-				fac.currentDurability -= source.Definition.defaultAttack * 2;
-				Debug.Log($"Battalion {source.InstanceId} Attack Enemy Facility + {target.InstanceId}");
-				Debug.Log($"Battalion {source.InstanceId} remaining solider: {source.InstanceId}");
-				CheckDeathBattalion(source);
-				CheckDeathFacility(fac);
-				return true;
-			}
+			    
 			return false;
 		}
 		

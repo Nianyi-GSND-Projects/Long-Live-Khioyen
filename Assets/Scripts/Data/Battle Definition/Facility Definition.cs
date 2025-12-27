@@ -10,6 +10,10 @@ namespace LongLiveKhioyen
         public string[] tags;
         
         public int defaultMaxDurability;
+        
+        public int defaultCost;
+        
+        public int defaultPower;
 
         public bool special;
     }
