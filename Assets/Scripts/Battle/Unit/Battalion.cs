@@ -32,6 +32,23 @@ namespace LongLiveKhioyen
             return Definition.defaultPower * currentSoliders*1.0f / Definition.defaultMaxSolider;
             //Todo 将领系数影响
         }
+
+        public override void ApplyBuff(BuffDescriptor buffDescriptor)
+        {
+            if (buffDescriptor.definition.unitType == BuffUnitType.Battalion ||
+                buffDescriptor.definition.unitType == BuffUnitType.Both)
+            {
+                //处理逻辑
+                Buff newBuff = new Buff()
+                {
+                    descriptor = buffDescriptor,
+                    currentDuration = buffDescriptor.defaultDuration
+                };
+                
+                buffs.Add(newBuff);
+                
+            }
+        }
     }
     
     public class BattalionDescriptor

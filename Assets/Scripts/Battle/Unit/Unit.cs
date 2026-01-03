@@ -11,6 +11,7 @@ namespace LongLiveKhioyen
         Enemy,
         Neutral
     }
+    
     public abstract class Unit : MonoBehaviour
     {
         public int InstanceId { get; set; } 
@@ -20,6 +21,9 @@ namespace LongLiveKhioyen
         public bool actionDone;
         public Faction faction;
         public abstract UnitDefinition unitDefinition { get; }
+        
+        public List<Buff> buffs = new();
+        
         public bool Selected
         {
             get => selected;
@@ -73,10 +77,33 @@ namespace LongLiveKhioyen
 
         #region Effect
 
-        public abstract void TakeDamage(int damage);
+        public abstract void TakeDamage(int damage);//该单位受到伤害
 
-        public abstract float GetPower();
+        public abstract float GetPower(); //获取该单位的攻击力
 
+        public abstract void ApplyBuff(BuffDescriptor buffDescriptor);
+
+        public void ClearAllBuff()
+        {
+            buffs.Clear();
+        }
+        
+        public void RemoveBuffViaDefinition(BuffDefinition buffDefinition)
+        {
+            buffs.RemoveAll(buff => buff.descriptor.definition == buffDefinition);
+        }
+
+        public void UpdateBuffs()
+        {
+            foreach (Buff buff in buffs)
+            {
+                buff.TimePass();
+                if (buff.currentDuration <= 0)
+                {
+                    buffs.Remove(buff);
+                }
+            }
+        }
         #endregion
     }
     public abstract class Unit<T>: Unit where T: UnitDefinition

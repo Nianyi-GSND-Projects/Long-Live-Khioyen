@@ -17,6 +17,21 @@ namespace LongLiveKhioyen
         {
             return Definition.defaultPower;
         }
+        public override void ApplyBuff(BuffDescriptor buffDescriptor)
+        {
+            if (buffDescriptor.definition.unitType == BuffUnitType.Facility ||
+                buffDescriptor.definition.unitType == BuffUnitType.Both)
+            {
+                //处理逻辑
+                Buff newBuff = new Buff()
+                {
+                    descriptor = buffDescriptor,
+                    currentDuration = buffDescriptor.defaultDuration
+                };
+                
+                buffs.Add(newBuff);
+            }
+        }
     }
     
     public class FacilityDescriptor
