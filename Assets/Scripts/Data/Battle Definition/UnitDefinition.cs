@@ -15,7 +15,6 @@ namespace LongLiveKhioyen
     public enum UnitType { Battalion, Facility }
     
     public enum UnitPassability { Impassable, Passable, Stoppable,AlliesStoppable,AlliesPassable}
-
     
     public abstract class UnitDefinition : ScriptableObject
     {
@@ -45,6 +44,11 @@ namespace LongLiveKhioyen
 
         #endregion
         
+        #region Action
+        
+        public List<ActionDefinition> unitUniqueActions = new List<ActionDefinition>();
+        
+        #endregion
     }
     
     

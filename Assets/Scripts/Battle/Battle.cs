@@ -13,6 +13,13 @@ namespace LongLiveKhioyen
 		Battle,
 		Settlement
 	}
+	
+	public enum UnitTypeFilter
+	{
+		All,
+		BattalionOnly,
+		FacilityOnly
+	}
 
 	public enum TurnState
 	{
@@ -682,6 +689,7 @@ namespace LongLiveKhioyen
 		private IEnumerator PlayerTurnCoroutine()
 		{
 			IsPlayerTurnOver = false;
+			TurnCount++;
 			Debug.Log("Player Turn!");
 
 			foreach (var unit in factionActiveUnits[Faction.Player])
@@ -713,9 +721,31 @@ namespace LongLiveKhioyen
 			
 			Debug.Log("Enemy Turn!");
 			yield return new WaitForSeconds(2.0f); 
+			List<Unit> enemyUnits = new List<Unit>(factionActiveUnits[Faction.Enemy]);
+			foreach (var unit in enemyUnits)
+			{
+				
+				if (unit == null || !unit.gameObject.activeSelf) continue;
+				if (unit is not Battalion aiBattalion) continue;
+				
+				aiBattalion.currentMovement = aiBattalion.Definition.defaultFlexibility/10;
+				
+				yield return new WaitForSeconds(0.5f);
+				
+				yield return StartCoroutine(ProcessAIUnitTurn(aiBattalion));
+				
+				yield return new WaitForSeconds(0.3f);
+			}
+			
 			//TODO：加入敌人逻辑
 			Debug.Log("Enemy Turn End!");
+			
+			foreach (var unit in factionActiveUnits[Faction.Enemy])
+			{
+				unit.actionDone = false;
+			}
 		}
+		
 		
 		public void EndPlayerTurn()
 		{
@@ -962,6 +992,22 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		public int GetHexDistance(Vector2Int a, Vector2Int b)
+		{
+			Vector3Int ac = OffsetToCube(a);
+			Vector3Int bc = OffsetToCube(b);
+			return (Mathf.Abs(ac.x - bc.x) + Mathf.Abs(ac.y - bc.y) + Mathf.Abs(ac.z - bc.z)) / 2;
+		}
+		
+		private Vector3Int OffsetToCube(Vector2Int hex)
+		{
+			var q = hex.x - (hex.y - (hex.y & 1)) / 2;
+			var r = hex.y;
+			return new Vector3Int(q, r, -q - r);
+		}
+		//To be checked
+		
+		
 		private Vector2Int GetRandomValidPosition(UnitPassability passability)
 		{
 			int x = Random.Range(0, Size.x);
@@ -1120,6 +1166,151 @@ namespace LongLiveKhioyen
 			battalion.transform.SetParent(transform, false);
 			battalion.transform.localPosition = MapToLocal(battalion.position);
 		}
+		
+		public HashSet<Unit> GetUnitsByFaction(Faction faction)
+		{
+			if (factionActiveUnits.TryGetValue(faction, out var units))
+			{
+				return units;
+			}
+			return new HashSet<Unit>();
+		}
+		
+		public Unit FindNearestUnit(Unit source, Faction targetFaction, UnitTypeFilter typeFilter = UnitTypeFilter.All)
+		{
+			Unit nearest = null;
+			int minDist = int.MaxValue;
+
+			var targets = GetUnitsByFaction(targetFaction);
+
+			foreach (var targetUnit in targets)
+			{
+				if (targetUnit == null || !targetUnit.gameObject.activeSelf) continue;
+
+				bool isTypeMatch = false;
+				switch (typeFilter)
+				{
+					case UnitTypeFilter.All:
+						isTypeMatch = true;
+						break;
+					case UnitTypeFilter.BattalionOnly:
+						isTypeMatch = (targetUnit is Battalion);
+						break;
+					case UnitTypeFilter.FacilityOnly:
+						isTypeMatch = (targetUnit is Facility);
+						break;
+				}
+				
+				if (!isTypeMatch) continue;
+				
+				int d = GetHexDistance(source.position, targetUnit.position);
+        
+				if (d < minDist)
+				{
+					minDist = d;
+					nearest = targetUnit;
+				}
+			}
+			return nearest;
+		}
+		
+		#endregion
+		
+		#region AI
+		
+		private IEnumerator ProcessAIUnitTurn(Battalion aiUnit)
+		{
+			//Testing 只有攻击指令
+			Debug.Log("Enemy Action Start!");
+			
+			Faction targetFaction = Faction.Player;
+			Unit target = FindNearestUnit(aiUnit, targetFaction,UnitTypeFilter.BattalionOnly);
+
+			if (target == null)
+			{
+				Debug.Log($"Enemy {aiUnit.InstanceId} has no target.");
+				yield break;
+			}
+			
+			int dist = GetHexDistance(aiUnit.position, target.position);
+			
+			if (dist <= aiUnit.Definition.attackRange)
+			{
+				Debug.Log($"Enemy {aiUnit.InstanceId} attacks directly.");
+				DoAIAttack(aiUnit, target);
+			}
+			else
+			{
+				
+				HashSet<Vector2Int> moveableTiles = GetAccessableTilesInRange(aiUnit.position, aiUnit.currentMovement);
+				
+				Vector2Int bestPos = aiUnit.position;
+				int minDistanceToTarget = int.MaxValue;
+				bool canAttackFromBestPos = false;
+
+				foreach (var pos in moveableTiles)
+				{
+					if (pos != aiUnit.position && arrangementOccupancy[pos.x, pos.y] != null) continue;
+
+					int d = GetHexDistance(pos, target.position);
+					
+					bool inRange = d <= aiUnit.Definition.attackRange;
+					
+					if (inRange && !canAttackFromBestPos)
+					{
+						bestPos = pos;
+						minDistanceToTarget = d;
+						canAttackFromBestPos = true;
+					}
+					else if (inRange == canAttackFromBestPos)
+					{
+						if (d < minDistanceToTarget)
+						{
+							bestPos = pos;
+							minDistanceToTarget = d;
+						}
+					}
+				}
+				
+				if (bestPos != aiUnit.position)
+				{
+
+					DoAIMove(aiUnit, bestPos);
+					yield return new WaitForSeconds(0.5f);
+					
+					if (GetHexDistance(aiUnit.position, target.position) <= aiUnit.Definition.attackRange)
+					{
+						DoAIAttack(aiUnit, target);
+					}
+				}
+			}
+
+			aiUnit.actionDone = true;
+		}
+		
+		private void DoAIMove(Battalion unit, Vector2Int targetPos)
+		{
+			arrangementOccupancy[unit.position.x, unit.position.y] = null;
+			
+			unit.position = targetPos;
+			
+			arrangementOccupancy[unit.position.x, unit.position.y] = unit;
+			
+			unit.transform.localPosition = MapToLocal(unit.position);
+			
+			Debug.Log($"Enemy moved to {targetPos}");
+		}
+		
+		private void DoAIAttack(Battalion source, Unit target)
+		{
+			bool success = Attack(source, target);
+			
+			if(success)
+			{
+				Debug.Log($"Enemy attacked {target.name}");
+			}
+		}
+		
 		#endregion
 		
 		#region Range
