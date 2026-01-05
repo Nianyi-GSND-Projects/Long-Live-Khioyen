@@ -7,7 +7,7 @@ namespace LongLiveKhioyen
     public class Battalion : Unit<BattalionDefinition>
     {
         public List<string> inventory;
-        public BattalionCommander battalionCommander;
+        public GameCommander battalionCommander;
         
         public int currentSoliders;
         public int currentMurale;
@@ -57,7 +57,7 @@ namespace LongLiveKhioyen
         public Faction faction;
         public Vector2Int position;
         public BattalionDefinition Definition;
-        public BattalionCommander battalionCommander;
+        public GameCommander battalionCommander;
         public int maxSolider;
         public int maxMorale;
         public int maxTraining;

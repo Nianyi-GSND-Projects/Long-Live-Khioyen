@@ -49,7 +49,7 @@ namespace LongLiveKhioyen
 		public static Battle Instance => _instance;
 		public System.Action onInitialized;
 		public ActionDefinitionSheet actionDataBase;
-		
+		public CommanderRegistry commanderRegistry;
 		#region General Config
 
 		public Color movementHighlightColor = Color.green; 
@@ -62,7 +62,7 @@ namespace LongLiveKhioyen
 
 		//TODO:加载战斗数据
 		public BattleMetaData data;
-		public ArmyStatus armyStatus = ArmyStatus.Instance;
+		public ArmyStatus armyStatus;
 		public Vector2Int Size => data.battleSize;
 		public string BattleName => data.battleName;
 
@@ -160,7 +160,9 @@ namespace LongLiveKhioyen
 		
 		private void InitializeData()
 		{
+			armyStatus = ArmyStatus.Instance;
 			actionDataBase.Initialize();
+			commanderRegistry = CommanderRegistry.Instance; 
 			arrangementOccupancy = new Unit[Size.x, Size.y];
 			
 			availableMovePositions = new HashSet<Vector2Int>();
@@ -256,34 +258,29 @@ namespace LongLiveKhioyen
 			//PlayerReserveTeam
 			ArmyStatus armyStatus = ArmyStatus.Instance;
 			if(armyStatus == null) Debug.LogError("ArmyStatus is null!");
-			armyStatus.armyCommander = new ArmyCommander()
-			{
-				commanderId = 0,
-				commanderName = "TestCommander",
-				Zhi = 50,
-				Xin = 50,
-				Ren = 50,
-				Yong = 50,
-				Yan = 50
-			};
+			armyStatus.armyCommander = CommanderRegistry.Instance.GetAllFreeCommanders()
+				.Find(c => c.commanderName == "王 念一");
 			
+			Debug.Log("Army Commander name: " + armyStatus.armyCommander.commanderName);
 			armyStatus.battalionStatuses.Clear();
+			
 			for (int i = 0; i < testPlayerReserveTeamCount; i++)
 			{
 				BattalionStatus battalionStatus = new BattalionStatus()
 				{
 					battalionId = i,
 					battalionName = "TestBattalion" + i,
-					battalionCommander = new BattalionCommander()
-					{
-						commanderId = 0,
-						commanderName = "TestBattalionCommander" + i,
-						Zhi = 50,
-						Xin = 50,
-						Ren = 50,
-						Yong = 50,
-						Yan = 50
-					},
+					// battalionCommander = new GameCommander()
+					// {
+					// 	commanderId = 0,
+					// 	commanderName = "TestBattalionCommander" + i,
+					// 	Zhi = 50,
+					// 	Xin = 50,
+					// 	Ren = 50,
+					// 	Yong = 50,
+					// 	Yan = 50
+					// },
+					battalionCommander = CommanderRegistry.Instance.GenerateRandomCommander(),
 					battalionDefinition = defaultReserveTeamDefinition
 				};
 				
@@ -292,6 +289,8 @@ namespace LongLiveKhioyen
 				battalionStatus.currentExp = battalionStatus.MaxExp;
 				
 				armyStatus.battalionStatuses.Add(battalionStatus);
+				battalionStatus.battalionCommander.isAssigned = true;
+				Debug.Log("Commander name: " + battalionStatus.battalionCommander.commanderName);
 			}
 
 		}

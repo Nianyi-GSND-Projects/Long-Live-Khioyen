@@ -14,13 +14,17 @@ namespace LongLiveKhioyen
         {
             get
             {
-                if (instance == null) instance = new ArmyStatus();
+                if (instance == null)
+                {
+                    instance = new ArmyStatus();
+                    var ensureRegistryInit = CommanderRegistry.Instance; 
+                }
                 return instance;
             }
         }
         #endregion
         
-        public ArmyCommander armyCommander;
+        public GameCommander armyCommander;
         public List<BattalionStatus> battalionStatuses = new List<BattalionStatus>();
     }
     
@@ -29,7 +33,7 @@ namespace LongLiveKhioyen
         public int battalionId;
         //全局游戏中的部队ID，用于从全局数据中索引部队
         public string battalionName;
-        public BattalionCommander battalionCommander;
+        public GameCommander battalionCommander;
         
         public BattalionDefinition battalionDefinition;
         //部队类型
@@ -84,31 +88,19 @@ namespace LongLiveKhioyen
         
     }
 
-    public class ArmyCommander
+    public class GameCommander
     {
         public int commanderId;
         public string commanderName;
+        public Sprite portrait;
         
         public int Zhi;
         public int Xin;
         public int Ren;
         public int Yong;
         public int Yan;
-        
+
+        public bool isAssigned;
     }
 
-    public class BattalionCommander
-    {
-        public int commanderId;
-        public string commanderName;
-        
-        public int Zhi;//智 提高谋略效果，提高对谋略与战法的抵抗
-        public int Xin;//信 提高士兵上限，提高从战斗中获得的经验值
-        public int Ren;//仁 提高伤兵恢复，减少士气与补给消耗
-        public int Yong;//勇 提高部队攻击力，提高战法效果
-        public int Yan;//严 提高从训练中获得的经验值，提高设施建设速度
-        
-    }
-    
-    
 }

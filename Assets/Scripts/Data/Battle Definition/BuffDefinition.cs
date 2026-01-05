@@ -41,7 +41,5 @@ namespace LongLiveKhioyen
         
         public BuffUnitType unitType;
     }
-    
-    
    
 }
