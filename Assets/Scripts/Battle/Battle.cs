@@ -299,6 +299,9 @@ namespace LongLiveKhioyen
 		#endregion
 		
 		#region Interface
+
+		public event System.Action<Unit> OnUnitSelectionChanged;
+		public event System.Action<BattalionDescriptor> OnReserveTeamSelectionChanged;
 		public ArrangementModal arrangementModal;
 		
 		public void PlacingPlayerBattalion(BattalionDescriptor battalionDescriptor, Vector2Int mapPosition)
@@ -362,14 +365,15 @@ namespace LongLiveKhioyen
 			{
 				if (value == CurrentBattalionDescriptor)
 					return;
-
+				
+				if (value != null) ClearUnitSelection();
+				
+				
 
 				CurrentBattalionDescriptor = value;
-
-				if (CurrentBattalionDescriptor != null)
-				{
-
-				}
+				IsReserveTeamSelected = (value != null);
+				OnReserveTeamSelectionChanged?.Invoke(CurrentBattalionDescriptor);
+				
 			}
 		}
 		
@@ -378,6 +382,8 @@ namespace LongLiveKhioyen
 			get => CurrentUnit;
 			set
 			{
+				if (value == CurrentUnit) return;
+				
 				if (CurrentUnit != null)
 					CurrentUnit.Selected = false;
 				
@@ -388,13 +394,15 @@ namespace LongLiveKhioyen
 					CurrentUnit.Selected = true;
 					//TODO: 打开行动面板
 				}
+				
+				OnUnitSelectionChanged?.Invoke(CurrentUnit);
 			}
 		}
 		
 		public void ClearAllSelection()
 		{
 			ClearReserveTeamSelection();
-			ClearBattalionSelection();
+			ClearUnitSelection();
 		}
 		
 		public void ClearReserveTeamSelection()
@@ -403,7 +411,7 @@ namespace LongLiveKhioyen
 			IsReserveTeamSelected = false;
 		}
 		
-		public void ClearBattalionSelection()
+		public void ClearUnitSelection()
 		{
 			SelectedUnit = null;
 			IsBattalionSelected = false;
@@ -413,25 +421,42 @@ namespace LongLiveKhioyen
 		
 		public void SelectBattalion(Battalion battalion)
 		{
+			
+			
 			if (CurrentStage == Stage.Battle && CurrentTurnState != TurnState.PlayerTurn)
 			{
 				Debug.Log("Not your turn!");
 				return;
 			}
+
+			SelectedUnit = battalion;
+			IsBattalionSelected = true;
+			
+			if (IsReserveTeamSelected) 
+				ClearReserveTeamSelection();
+			
+			
 			if (!factionActiveUnits[Faction.Player].Contains(battalion))
 			{
 				Debug.Log("Battalion " + battalion.InstanceId + " is not your battalion.");
+				if(CurrentStage == Stage.Battle) ClearAllHexHighlights();
 				return;
 			}
+			
+			
 			
 			switch (CurrentStage)
 			{
 				case Stage.Arrangement:
-					SelectedUnit = battalion;
-					IsBattalionSelected = true;
 					break;
 				
 				case Stage.Battle:
+					
+					if (CurrentTurnState != TurnState.PlayerTurn)
+					{
+						Debug.Log("Not Your Turn!");
+						return;
+					}
 					
 					if (battalion.actionDone)
 					{
@@ -444,9 +469,6 @@ namespace LongLiveKhioyen
 						Debug.Log("Battalion " + battalion.InstanceId + " has no movement!");
 						break;
 					}
-					
-					SelectedUnit = battalion;
-					IsBattalionSelected = true;
 					
 					initialUnitPosition = SelectedUnit.position;
 					initialUnitMovement = battalion.currentMovement;

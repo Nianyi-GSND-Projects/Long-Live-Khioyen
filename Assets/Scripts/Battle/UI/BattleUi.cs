@@ -19,6 +19,8 @@ namespace LongLiveKhioyen
             battle.OnPlayerTurnEnded += HandlePlayerTurnEnd;
             battle.OnActionSelectionStarted += HandleActionSelectionStart;
             battle.OnActionSelectionEnded += HandleActionSelectionEnd;
+            battle.OnUnitSelectionChanged += HandleUnitSelectionChanged;
+            battle.OnReserveTeamSelectionChanged += HandleReserveSelectionChanged;
         }
         
         private void OnDestroy()
@@ -30,6 +32,8 @@ namespace LongLiveKhioyen
                 battle.OnPlayerTurnEnded -= HandlePlayerTurnEnd;
                 battle.OnActionSelectionStarted -= HandleActionSelectionStart;
                 battle.OnActionSelectionEnded -= HandleActionSelectionEnd;
+                battle.OnUnitSelectionChanged -= HandleUnitSelectionChanged;
+                battle.OnReserveTeamSelectionChanged -= HandleReserveSelectionChanged;
             }
         }
         #endregion
@@ -58,6 +62,34 @@ namespace LongLiveKhioyen
             Debug.Log("BattleUI 收到信号：为选中单位关闭行动面板");
             ClosePanel(actionSelectionPanel);
         }
+        
+        private void HandleUnitSelectionChanged(Unit unit)
+        {
+            if (unit == null)
+            {
+                if(!battle.IsReserveTeamSelected) 
+                    ClosePanel(unitInfoPanel.canvasGroup);
+            }
+            else
+            {
+                unitInfoPanel.UpdateUI(unit);
+                OpenPanel(unitInfoPanel.canvasGroup);
+            }
+        }
+        
+        private void HandleReserveSelectionChanged(BattalionDescriptor desc)
+        {
+            if (desc == null)
+            {
+                if(!battle.IsBattalionSelected)
+                    ClosePanel(unitInfoPanel.canvasGroup);
+            }
+            else
+            {
+                unitInfoPanel.UpdateUI(desc);
+                OpenPanel(unitInfoPanel.canvasGroup);
+            }
+        }
         #endregion
         
         #region General
@@ -67,6 +99,11 @@ namespace LongLiveKhioyen
         {
             GameInstance.Instance.OpenPauseMenu();
         }
+        #endregion
+        
+        #region UnitInfoPanel
+        
+        public UnitInfoPanel unitInfoPanel;
         #endregion
         
         #region BottomPanel

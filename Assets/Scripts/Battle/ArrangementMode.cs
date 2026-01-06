@@ -191,7 +191,7 @@ namespace LongLiveKhioyen
                    {
                        Battle.ClearAllHexHighlights();
                        var hitBattalion = hit.collider.GetComponentInParent<Battalion>();
-                       if(hitBattalion&&hitBattalion.actionDone==false) Battle.SelectBattalion(hitBattalion);
+                       if(hitBattalion) Battle.SelectBattalion(hitBattalion);
                    }
                }
                else if (Battle.CurrentActionStage==PlayerActionStage.MovingBattalion&&Battle.IsBattalionSelected)
@@ -220,7 +220,7 @@ namespace LongLiveKhioyen
                }
                else if (Battle.IsBattalionSelected)
                {
-                   Battle.ClearBattalionSelection();
+                   Battle.ClearUnitSelection();
                }
                
            }
@@ -230,6 +230,7 @@ namespace LongLiveKhioyen
                {
                    if(Battle.CurrentActionStage!=PlayerActionStage.None) 
                        ReturnToPreviousActionStage();
+                   else Battle.ClearUnitSelection();
                }
            }
        }
@@ -247,7 +248,7 @@ namespace LongLiveKhioyen
                    return;
                
                case PlayerActionStage.MovingBattalion:
-                   Battle.ClearBattalionSelection();
+                   Battle.ClearUnitSelection();
                    Battle.ChangeActionStage(PlayerActionStage.None);
                    break;
                
