@@ -49,7 +49,8 @@ namespace LongLiveKhioyen
 		public static Battle Instance => _instance;
 		public System.Action onInitialized;
 		public ActionDefinitionSheet actionDataBase;
-		public CommanderRegistry commanderRegistry;
+		private CommanderRegistry commanderRegistry;
+		public string[,] mapTerrainData; 
 		#region General Config
 
 		public Color movementHighlightColor = Color.green; 
@@ -164,6 +165,7 @@ namespace LongLiveKhioyen
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
 			arrangementOccupancy = new Unit[Size.x, Size.y];
+			mapTerrainData = new string[Size.x, Size.y];
 			
 			availableMovePositions = new HashSet<Vector2Int>();
 			availableArrangementPositions = new HashSet<Vector2Int>();
@@ -1009,10 +1011,21 @@ namespace LongLiveKhioyen
 					HexTile hexTile = tileObject.GetComponent<HexTile>();
 					hexTile.mapPosition = mapPos;
 					hexTiles.Add(mapPos, hexTile);
+					//TODO
+					AssignTerrainToTile(hexTile, "Plain");
 				}
 			}
 		}
 
+		public void AssignTerrainToTile(HexTile tile, string terrainType)
+		{
+			TerrainDefinition def = TerrainDB.Instance.GetTerrain(terrainType);
+			if (def != null)
+			{
+				tile.SetTerrain(def);
+				mapTerrainData[tile.mapPosition.x, tile.mapPosition.y] = terrainType;
+			}
+		}
 		public int GetHexDistance(Vector2Int a, Vector2Int b)
 		{
 			Vector3Int ac = OffsetToCube(a);

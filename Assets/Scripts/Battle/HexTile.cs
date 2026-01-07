@@ -9,6 +9,9 @@ namespace LongLiveKhioyen
     {
         public Vector2Int mapPosition { get; set; }
         
+        private TerrainDefinition terrainDefinition;
+        public TerrainDefinition TerrainDefinition => terrainDefinition;
+        
         private Renderer tileRenderer;
         private Color originalColor;
         //private Color HighlightColor = Color.green;
@@ -20,6 +23,13 @@ namespace LongLiveKhioyen
             {
                 originalColor = tileRenderer.material.color;
             }
+        }
+
+        public void SetTerrain(TerrainDefinition terrainDefinition)
+        {
+            this.terrainDefinition = terrainDefinition;
+            if(tileRenderer!=null && terrainDefinition.material!=null) tileRenderer.sharedMaterial = terrainDefinition.material;
+            
         }
         
         public void Highlight(Color HighlightColor)
@@ -34,7 +44,7 @@ namespace LongLiveKhioyen
         {
             if (tileRenderer != null)
             {
-                tileRenderer.material.color = originalColor;
+                tileRenderer.sharedMaterial = terrainDefinition.material;
             }
         }
     }
