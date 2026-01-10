@@ -167,6 +167,7 @@ namespace LongLiveKhioyen
 		
 		public void TryMoveBattalionArrangement()
 		{
+			
 			if (!Battle.ScreenToGround(arrangementMode.PointerScreenPosition, out Vector3 groundPosition))
 			{
 				Debug.LogWarning("Position not valid." + Battle.WorldToMapInt(groundPosition));
@@ -179,6 +180,11 @@ namespace LongLiveKhioyen
 				return;
 			}
 
+			if (Battle.SelectedUnit is not Battalion bat)
+			{
+				Debug.LogWarning("No a battalion!");
+				return;
+			}
 			
 			if (!Battle.ValidateArrangementPlacement(Battle.WorldToMapInt(groundPosition)))
 			{

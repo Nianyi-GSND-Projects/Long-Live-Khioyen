@@ -32,15 +32,19 @@ namespace LongLiveKhioyen
 	public enum PlayerActionStage
 	{
 		None,
+		SelectingAmbiguousTarget,
 		MovingBattalion,
 		SelectingAction,
 		SelectingTarget
 	}
 
-	public struct TileData
+	public class TileData
 	{
-		public Unit Battalion;
-		public Unit Facility;
+		public Battalion Battalion;
+		public Facility Facility;
+		public bool IsEmpty => Battalion == null && Facility == null;
+		
+		
 	}
 	
 	public class Battle : MonoBehaviour
@@ -164,7 +168,12 @@ namespace LongLiveKhioyen
 			armyStatus = ArmyStatus.Instance;
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
-			arrangementOccupancy = new Unit[Size.x, Size.y];
+			
+			mapData = new TileData[Size.x, Size.y];
+			for(int x=0; x<Size.x; x++)
+				for(int y=0; y<Size.y; y++)
+					mapData[x,y] = new TileData();
+			
 			mapTerrainData = new string[Size.x, Size.y];
 			
 			availableMovePositions = new HashSet<Vector2Int>();
@@ -303,6 +312,8 @@ namespace LongLiveKhioyen
 		#region Interface
 
 		public event System.Action<Unit> OnUnitSelectionChanged;
+		public event System.Action<List<Unit>> OnAmbiguousSelectionStarted;
+		public event System.Action OnAmbiguousSelectionEnded;
 		public event System.Action<BattalionDescriptor> OnReserveTeamSelectionChanged;
 		public ArrangementModal arrangementModal;
 		
@@ -326,7 +337,7 @@ namespace LongLiveKhioyen
 		
 		public void MovingBattalion(Vector2Int mapPosition)
 		{
-			if (!IsBattalionSelected)
+			if (!IsUnitSelected)
 			{
 				Debug.Log("No battalion selected.");
 				return;
@@ -335,19 +346,19 @@ namespace LongLiveKhioyen
 			switch (CurrentStage)
 			{
 				case Stage.Arrangement:
-					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = null;
+					RemoveUnitFromMap(SelectedUnit);
 					SelectedUnit.position = mapPosition;
 					SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
-					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = SelectedUnit;
+					PlaceUnitOnMap(SelectedUnit, SelectedUnit.position);
 					break;
 				
 				case Stage.Battle:
 					if (CurrentActionStage != PlayerActionStage.MovingBattalion) break;
-					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = null;
+					RemoveUnitFromMap(SelectedUnit);
 					SelectedUnit.position = mapPosition;
 					//TODO:移动实际减少移动力
 					SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
-					arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = SelectedUnit;
+					PlaceUnitOnMap(SelectedUnit, SelectedUnit.position);
 					ChangeActionStage(PlayerActionStage.SelectingAction);
 					break;
 				
@@ -359,7 +370,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Selection
-		
+		private List<Unit> currentAmbiguousCandidates;
 		public BattalionDescriptor SelectedBattalionDescriptor
 		{
 			get => CurrentBattalionDescriptor;
@@ -416,36 +427,103 @@ namespace LongLiveKhioyen
 		public void ClearUnitSelection()
 		{
 			SelectedUnit = null;
-			IsBattalionSelected = false;
+			IsUnitSelected = false;
 			if(CurrentStage == Stage.Battle) ClearAllHexHighlights();
 			availableMovePositions.Clear();
 		}
-		
-		public void SelectBattalion(Battalion battalion)
+
+		public void ClearAmbiguousSelection()
 		{
+			currentAmbiguousCandidates = null;
+			OnAmbiguousSelectionEnded?.Invoke();
+		}
+		public void InteractWithTile(Vector2Int gridPos)
+		{
+			if (!IsValidMapPosition(gridPos)) return;
 			
+			if (CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget) 
+				return;
 			
 			if (CurrentStage == Stage.Battle && CurrentTurnState != TurnState.PlayerTurn)
 			{
 				Debug.Log("Not your turn!");
 				return;
 			}
+			
+			//若在移动
+			if (CurrentActionStage == PlayerActionStage.MovingBattalion && availableMovePositions.Contains(gridPos))
+			{
+				MovingBattalion(gridPos);
+				return;
+			}
+			
+			if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(gridPos))
+			{
+				// 如果目标格有多个可攻击对象（比如部队+设施），也需要进入歧义选择
+				// 但为了简化，这里暂时保持之前的 ApplyAction 逻辑，或者你也在这里加入歧义判断
+				// 这里先演示基础的“点击选中”逻辑的歧义处理
+				ApplyAction(gridPos);
+				return;
+			}
+			
+			TileData tile = mapData[gridPos.x,gridPos.y];
+			List<Unit> candidates = new List<Unit>();
+			if (tile.Battalion != null) candidates.Add(tile.Battalion);
+			if (tile.Facility != null) candidates.Add(tile.Facility);
+			
+			if (candidates.Count == 0)
+			{
+				if (CurrentActionStage == PlayerActionStage.None)
+				{
+					ClearAllSelection();
+				}
+				return;
+			}
+			
+			 if (candidates.Count == 1)
+			 {
+			 	SelectUnit(candidates[0]);
+			 }
+			 else
+			 {
+			 	EnterAmbiguousState(candidates);
+			 }
+		}
+		
+		private void EnterAmbiguousState(List<Unit> candidates)
+		{
+			currentAmbiguousCandidates = candidates;
+			ChangeActionStage(PlayerActionStage.SelectingAmbiguousTarget);
+		}
+		public void ResolveAmbiguousSelection(Unit selectedUnit)
+		{
 
-			SelectedUnit = battalion;
-			IsBattalionSelected = true;
+			ChangeActionStage(PlayerActionStage.None);
+			
+			SelectUnit(selectedUnit);
+		}
+		
+		public void SelectUnit(Unit unit)
+		{
+			if (CurrentStage == Stage.Battle && CurrentTurnState != TurnState.PlayerTurn)
+			{
+				Debug.Log("Not your turn!");
+				return;
+			}
+
+			SelectedUnit = unit;
+			IsUnitSelected = true;
 			
 			if (IsReserveTeamSelected) 
 				ClearReserveTeamSelection();
 			
 			
-			if (!factionActiveUnits[Faction.Player].Contains(battalion))
+			if (!factionActiveUnits[Faction.Player].Contains(unit))
 			{
-				Debug.Log("Battalion " + battalion.InstanceId + " is not your battalion.");
+				Debug.Log("Battalion " + unit.InstanceId + " is not your battalion.");
 				if(CurrentStage == Stage.Battle) ClearAllHexHighlights();
 				return;
 			}
-			
-			
 			
 			switch (CurrentStage)
 			{
@@ -460,26 +538,37 @@ namespace LongLiveKhioyen
 						return;
 					}
 					
-					if (battalion.actionDone)
+					if (unit.actionDone)
 					{
-						Debug.Log("Battalion " + battalion.InstanceId + " has already finished its action!");
+						Debug.Log("Battalion " + unit.InstanceId + " has already finished its action!");
 						break;
 					}
 					
-					if (battalion.currentMovement == 0)
+					if (unit is Battalion bat && bat.currentMovement == 0)
 					{
-						Debug.Log("Battalion " + battalion.InstanceId + " has no movement!");
+						Debug.Log("Battalion " + bat.InstanceId + " has no movement!");
 						break;
 					}
 					
 					initialUnitPosition = SelectedUnit.position;
+					if(unit is Battalion battalion)
 					initialUnitMovement = battalion.currentMovement;
+					//TODO 可移动的设施？
 					if (CurrentActionStage == PlayerActionStage.None)
 					{
-						int moveRange = initialUnitMovement;
-						availableMovePositions = GetAccessableTilesInRange(SelectedUnit.position, moveRange);
-						ChangeActionStage(PlayerActionStage.MovingBattalion);
+						if (unit.unitDefinition.movable)
+						{
+							int moveRange = initialUnitMovement;
+							availableMovePositions = GetAccessableTilesInRange(SelectedUnit, moveRange);
+							ChangeActionStage(PlayerActionStage.MovingBattalion);
+						}
+						else if (unit.unitDefinition.actionable)
+						{
+							availableMovePositions.Clear();
+							ChangeActionStage(PlayerActionStage.SelectingAction);
+						}
 					}
+					
 					break;
 				
 				default:
@@ -524,18 +613,10 @@ namespace LongLiveKhioyen
 				//TODO:良好定义各种行动
 				//1:Attack
 				case 1:
-					if (arrangementOccupancy[placement.x, placement.y] == null) return false;
-					if (arrangementOccupancy[placement.x, placement.y] is Battalion bat)
-					{
-						if (factionActiveUnits[Faction.Enemy].Contains(bat) && bat.Definition.beAttacked == true)
-							return true;
-					}
-					if (arrangementOccupancy[placement.x, placement.y] is Facility fac)
-					{
-						//TODO
-					}
+					if (mapData[placement.x, placement.y] == null) return false;
+					if (mapData[placement.x, placement.y].Battalion) return true;
+					if (mapData[placement.x, placement.y].Facility.Definition.beAttacked) return true;
 					return false;
-				
 				default:
 					return false;
 			}
@@ -572,7 +653,7 @@ namespace LongLiveKhioyen
 		public bool IsInArrangementStage { get; set; } = false;
 		public bool IsInBattleStage { get; set; }= false;
 		public bool IsReserveTeamSelected { get; set; }= false;
-		public bool IsBattalionSelected { get; set; }= false;
+		public bool IsUnitSelected { get; set; }= false;
 
 		#endregion
 		
@@ -820,13 +901,13 @@ namespace LongLiveKhioyen
 
 		public void CancelMovement()
 		{
-			arrangementOccupancy[SelectedUnit.position.x, SelectedUnit.position.y] = null;
+			RemoveUnitFromMap(SelectedUnit);
 			SelectedUnit.position = initialUnitPosition;
-			arrangementOccupancy[initialUnitPosition.x, initialUnitPosition.y] = SelectedUnit;
+			PlaceUnitOnMap( SelectedUnit,initialUnitPosition);
 			if(SelectedUnit is Battalion bat) bat.currentMovement = initialUnitMovement;
 			SelectedUnit.transform.localPosition = MapToLocal(initialUnitPosition);
 			
-			availableMovePositions = GetAccessableTilesInRange(initialUnitPosition, initialUnitMovement);
+			availableMovePositions = GetAccessableTilesInRange(SelectedUnit, initialUnitMovement);
 		}
 
 		public void CancelAction()
@@ -838,10 +919,17 @@ namespace LongLiveKhioyen
 		}
 		public void ChangeActionStage(PlayerActionStage stage)
 		{
+			if (CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget)
+			{
+				OnAmbiguousSelectionEnded?.Invoke();
+				currentAmbiguousCandidates = null;
+			}
+			
 			if (CurrentActionStage == PlayerActionStage.SelectingAction)
 			{
 				OnActionSelectionEnded?.Invoke();
 			}
+			
 			CurrentActionStage = stage;
 			switch (stage)
 			{
@@ -869,6 +957,13 @@ namespace LongLiveKhioyen
 					HighlightTiles(availableTargetPositions,attackHighlightColor);
 					Debug.Log("Change action stage to SelectingTarget");
 					break;
+				
+				case PlayerActionStage.SelectingAmbiguousTarget:
+					Debug.Log("Change action stage to SelectingAmbiguousTarget");
+					ClearAllHexHighlights();
+					// 触发事件，把刚才存下来的列表发给 UI
+					OnAmbiguousSelectionStarted?.Invoke(currentAmbiguousCandidates);
+					break;
 			}
 		}
 		
@@ -887,10 +982,18 @@ namespace LongLiveKhioyen
 			CurrentActionType = 1;
 			ChangeActionStage(PlayerActionStage.SelectingTarget);
 		}
-		
+
+		public Unit PrimaryAttackTarget(Vector2Int targetPosition)
+		{
+			//TODO:根据逻辑实际判断攻击优先级
+			TileData targetTile = mapData[targetPosition.x, targetPosition.y];
+			if(targetTile.Battalion != null) return targetTile.Battalion;
+			if(targetTile.Facility != null) return targetTile.Facility;
+			return null;
+		}
 		public void ApplyAction(Vector2Int mapPosition)
 		{
-			if (!IsBattalionSelected)
+			if (!IsUnitSelected)
 			{
 				Debug.Log("No battalion selected.");
 				return;
@@ -899,9 +1002,10 @@ namespace LongLiveKhioyen
 			switch (CurrentActionType)
 			{
 				case 1:
-					Unit TargetEnemyUnit = arrangementOccupancy[mapPosition.x, mapPosition.y];
+					Unit TargetEnemyUnit = PrimaryAttackTarget(mapPosition);
 					if((SelectedUnit is Battalion bat) && TargetEnemyUnit.unitDefinition.beAttacked == true) 
 						actionFinished = Attack(bat,TargetEnemyUnit);
+					
 					break;
 				default:
 					break;
@@ -982,7 +1086,7 @@ namespace LongLiveKhioyen
 		public float Xscale;
 		public float Yscale;
 		
-		Unit[,] arrangementOccupancy;
+		public TileData[,] mapData; 
 		public GameObject HextilePrefab;
 		private Dictionary<Vector2Int,HexTile> hexTiles = new();
 		
@@ -1039,8 +1143,101 @@ namespace LongLiveKhioyen
 			var r = hex.y;
 			return new Vector3Int(q, r, -q - r);
 		}
-		//To be checked
 		
+		public void PlaceUnitOnMap(Unit unit, Vector2Int pos)
+		{
+			if (!IsValidMapPosition(pos)) return;
+            
+			TileData tile = mapData[pos.x, pos.y];
+
+			if (unit is Battalion bat)
+			{
+				if (tile.Battalion != null) Debug.LogError($"位置 {pos} 已有部队，覆盖逻辑需谨慎处理！");
+				tile.Battalion = bat;
+			}
+			else if (unit is Facility fac)
+			{
+				if (tile.Facility != null) Debug.LogError($"位置 {pos} 已有设施！");
+				tile.Facility = fac;
+			}
+			unit.position = pos;
+		}
+		
+		public void RemoveUnitFromMap(Unit unit)
+		{
+			if (!IsValidMapPosition(unit.position)) return;
+
+			TileData tile = mapData[unit.position.x, unit.position.y];
+            
+			if (unit is Battalion && tile.Battalion == unit)
+			{
+				tile.Battalion = null;
+			}
+			else if (unit is Facility && tile.Facility == unit)
+			{
+				tile.Facility = null;
+			}
+		}
+		
+		public bool CanUnitStopOnTile(Unit unit, Vector2Int pos)
+		{
+			if (!IsValidMapPosition(pos)) return false;
+			TileData tile = mapData[pos.x, pos.y];
+			//假如目标地点上有单位，则不可停驻
+			if (tile.Battalion&& tile.Battalion != unit) return false;
+			
+			//假如目标地点有设施，则设施的可通行性覆盖地形本身的可通行性
+			//否则，考虑地形本身的可通行性
+			UnitPassability p;
+			if (tile.Facility) p = tile.Facility.Definition.passability;
+			else p = hexTiles[pos].TerrainDefinition.unitPassability;
+			
+			switch (p)
+			{
+				case UnitPassability.Impassable:     return false;
+				case UnitPassability.Passable:       return false;
+				case UnitPassability.AlliesPassable: return false;
+				case UnitPassability.Stoppable:      return true;
+				case UnitPassability.AlliesStoppable:
+					return tile.Facility.faction == unit.faction;
+                        
+				default: return true;
+			}
+			return true;
+		}
+		
+		public bool CanUnitPassThroughTile(Unit unit, Vector2Int pos)
+		{
+			if (!IsValidMapPosition(pos)) return false;
+			TileData tile = mapData[pos.x, pos.y];
+			if (tile.Battalion)
+			{
+				if (tile.Battalion.faction == unit.faction)
+				{
+					if (tile.Battalion.Definition.passability == UnitPassability.Impassable) return false;
+					return true;
+				}
+				else return false;
+			}
+			UnitPassability p;
+			if (tile.Facility) p = tile.Facility.Definition.passability;
+			else p = hexTiles[pos].TerrainDefinition.unitPassability;
+			
+			switch (p)
+			{
+				case UnitPassability.Impassable: return false;
+				case UnitPassability.Passable:   return true;
+				case UnitPassability.Stoppable:  return true;
+                    
+				case UnitPassability.AlliesPassable:
+				case UnitPassability.AlliesStoppable:
+					return tile.Facility.faction == unit.faction;
+                        
+				default: return true;
+			}
+
+			return true;
+		}
 		
 		private Vector2Int GetRandomValidPosition(UnitPassability passability)
 		{
@@ -1049,7 +1246,7 @@ namespace LongLiveKhioyen
 
 			if (passability == UnitPassability.Stoppable)
 			{
-				while (arrangementOccupancy[x, y] != null)
+				while (mapData[x, y].Battalion != null)
 				{
 					x = Random.Range(0, Size.x);
 					y = Random.Range(0, Size.y);
@@ -1149,7 +1346,7 @@ namespace LongLiveKhioyen
 			PositionBattalion(battalion);
 			//audioSource.PlayOneShot(compilation.battalionDefinition.SelectedSoundEffect);
 			factionActiveUnits[battalioninfo.faction].Add(battalion);
-			arrangementOccupancy[battalion.position.x, battalion.position.y] = battalion;
+			PlaceUnitOnMap(battalion, position);
 			battalioninfo.placed = true;
 			return battalion;
 		}
@@ -1164,10 +1361,11 @@ namespace LongLiveKhioyen
 			battalion.currentSoliders = battalioninfo.currentSoliders;
 			return battalion;
 		}
+		
 		public void RemoveBattalionWhileArrangement(Battalion battalion)
 		{
 			factionActiveUnits[battalion.faction].Remove(battalion);
-			arrangementOccupancy[battalion.position.x, battalion.position.y] = null;
+			RemoveUnitFromMap(battalion);
 			if(SelectedUnit == battalion) ClearAllSelection();
 			playerReserveTeam[battalion.InstanceId].placed = false;
 			Destroy(battalion.gameObject);
@@ -1180,7 +1378,7 @@ namespace LongLiveKhioyen
 			if (unit is Battalion bat)
 			{
 				factionActiveUnits[bat.faction].Remove(bat);
-				arrangementOccupancy[bat.position.x, bat.position.y] = null;
+				RemoveUnitFromMap(bat);
 				if(SelectedUnit == bat) ClearAllSelection();
 				bat.gameObject.SetActive(false);
 				bat.transform.SetParent(null);
@@ -1276,7 +1474,7 @@ namespace LongLiveKhioyen
 			else
 			{
 				
-				HashSet<Vector2Int> moveableTiles = GetAccessableTilesInRange(aiUnit.position, aiUnit.currentMovement);
+				HashSet<Vector2Int> moveableTiles = GetAccessableTilesInRange(aiUnit, aiUnit.currentMovement);
 				
 				Vector2Int bestPos = aiUnit.position;
 				int minDistanceToTarget = int.MaxValue;
@@ -1284,7 +1482,7 @@ namespace LongLiveKhioyen
 
 				foreach (var pos in moveableTiles)
 				{
-					if (pos != aiUnit.position && arrangementOccupancy[pos.x, pos.y] != null) continue;
+					if (pos != aiUnit.position && !CanUnitStopOnTile(aiUnit,pos)) continue;
 
 					int d = GetHexDistance(pos, target.position);
 					
@@ -1324,11 +1522,11 @@ namespace LongLiveKhioyen
 		
 		private void DoAIMove(Battalion unit, Vector2Int targetPos)
 		{
-			arrangementOccupancy[unit.position.x, unit.position.y] = null;
+			RemoveUnitFromMap(unit);
 			
 			unit.position = targetPos;
 			
-			arrangementOccupancy[unit.position.x, unit.position.y] = unit;
+			PlaceUnitOnMap(unit, targetPos);
 			
 			unit.transform.localPosition = MapToLocal(unit.position);
 			
@@ -1349,47 +1547,68 @@ namespace LongLiveKhioyen
 		
 		#region Range
 		
-		public HashSet<Vector2Int> GetAccessableTilesInRange(Vector2Int startPos, int range)
+		public HashSet<Vector2Int> GetAccessableTilesInRange(Unit movingUnit, int range)
 		{
-			HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
+			
+			HashSet<Vector2Int> validDestinations = new HashSet<Vector2Int>();
+			
+			if (!movingUnit) return validDestinations;
+			
+			Vector2Int startPos = movingUnit.position;
+			
+			if (!IsValidMapPosition(startPos)) return validDestinations;
+			
 			
 			if (!hexTiles.ContainsKey(startPos))
 			{
 				Debug.LogWarning($"尝试从一个不存在的格子 {startPos} 开始寻路。");
-				return reachableTiles;
+				return validDestinations;
 			}
 			
+			HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
+
 			Queue<Vector2Int> frontier = new Queue<Vector2Int>();
 			frontier.Enqueue(startPos);
 			
-			Dictionary<Vector2Int, int> distanceTravelled = new Dictionary<Vector2Int, int>();
-			distanceTravelled[startPos] = 0;
+			Dictionary<Vector2Int, int> CostSofar = new Dictionary<Vector2Int, int>();
+			CostSofar[startPos] = 0;
 			
 			while (frontier.Count > 0)
 			{
 				Vector2Int currentPos = frontier.Dequeue();
+
+				if (currentPos != startPos)
+				{
+					if(CanUnitStopOnTile(movingUnit,currentPos))
+						validDestinations.Add(currentPos);
+				}
+				if(CanUnitPassThroughTile(movingUnit, currentPos)) reachableTiles.Add(currentPos);
 				
-				reachableTiles.Add(currentPos);
-				
-				if (distanceTravelled[currentPos] >= range) continue;
+				if (CostSofar[currentPos] >= range) continue;
 				
 				int parity = currentPos.y & 1;
 				foreach (var offset in neighborOffsets[parity])
 				{
 					Vector2Int neighborPos = currentPos + offset;
-					if (!IsValidMapPosition(neighborPos) ||
-					    (arrangementOccupancy[neighborPos.x, neighborPos.y] != null)) continue;
-					if (hexTiles.ContainsKey(neighborPos) && !distanceTravelled.ContainsKey(neighborPos))
+					
+					if (!CanUnitPassThroughTile(movingUnit, neighborPos)) continue;
+ 
+					// int moveCost = TerrainDB.Instance.GetTerrain(mapTerrainData[neighborPos.x, neighborPos.y]).movementCost;
+					int moveCost = 1; 
+					int newCost = CostSofar[currentPos] + moveCost;
+
+					if (newCost <= range && !CostSofar.ContainsKey(neighborPos))
 					{
-						distanceTravelled[neighborPos] = distanceTravelled[currentPos] + 1;
+						CostSofar[neighborPos] = newCost;
 						frontier.Enqueue(neighborPos);
 					}
 				}
 			}
 
-			return reachableTiles;
+			return validDestinations;
 		}
-
+		
+		
 		public HashSet<Vector2Int> GetAttackableTiles()
 		{
 			if(SelectedUnit is Battalion bat)

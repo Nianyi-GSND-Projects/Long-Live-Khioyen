@@ -61,7 +61,6 @@ namespace LongLiveKhioyen
 
        protected void OnPrimaryClick(InputValue value)
        {
-          
            
            Debug.Log("Primary Click");
            var raw = value.isPressed;
@@ -164,9 +163,11 @@ namespace LongLiveKhioyen
 
        protected void Interact(Vector2 screenPos)
        {
-           var ray = Camera.main.ScreenPointToRay(screenPos);
-           if(!Physics.Raycast(ray, out var hit, Mathf.Infinity))
+           if (!Battle.ScreenToGround(screenPos, out Vector3 groundPos))
                return;
+           
+           
+           Vector2Int gridPos = Battle.WorldToMapInt(groundPos);
            
            if (Battle.IsInArrangementStage)
            {
@@ -174,36 +175,14 @@ namespace LongLiveKhioyen
                {
                    Battle.arrangementModal.TryPlaceReserveTeam();
                }
-               else if (Battle.IsBattalionSelected)
+               else if (Battle.IsUnitSelected)
                {
                    Battle.arrangementModal.TryMoveBattalionArrangement();
                }
-               else
-               {
-                   var hitBattalion = hit.collider.GetComponentInParent<Battalion>();
-                   if(hitBattalion) Battle.SelectBattalion(hitBattalion);
-               }
+               else Battle.InteractWithTile(gridPos);
            }
-           else if (Battle.IsInBattleStage)
-           {
-               if (Battle.CurrentActionStage == PlayerActionStage.None)
-               {
-                   {
-                       Battle.ClearAllHexHighlights();
-                       var hitBattalion = hit.collider.GetComponentInParent<Battalion>();
-                       if(hitBattalion) Battle.SelectBattalion(hitBattalion);
-                   }
-               }
-               else if (Battle.CurrentActionStage==PlayerActionStage.MovingBattalion&&Battle.IsBattalionSelected)
-               {
-                   Battle.arrangementModal.TryMoveBattalionBattle();
-               }
-               else if (Battle.CurrentActionStage == PlayerActionStage.SelectingTarget && Battle.IsPreparingAction)
-               {
-                   Battle.arrangementModal.TryApplyCurrentAction();
-               }
-               
-           }
+           else
+            Battle.InteractWithTile(gridPos);
        }
        
        protected void SecondaryInteract(Vector2 screenPos)
@@ -218,7 +197,7 @@ namespace LongLiveKhioyen
                {
                    Battle.ClearReserveTeamSelection();
                }
-               else if (Battle.IsBattalionSelected)
+               else if (Battle.IsUnitSelected)
                {
                    Battle.ClearUnitSelection();
                }
@@ -226,7 +205,12 @@ namespace LongLiveKhioyen
            }
            else if (Battle.IsInBattleStage)
            {
-               if (Battle.IsBattalionSelected)
+               if (Battle.CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget)
+               {
+                   ReturnToPreviousActionStage();
+                   return;
+               }
+               if (Battle.IsUnitSelected)
                {
                    if(Battle.CurrentActionStage!=PlayerActionStage.None) 
                        ReturnToPreviousActionStage();
@@ -247,6 +231,11 @@ namespace LongLiveKhioyen
                case PlayerActionStage.None:
                    return;
                
+               case PlayerActionStage.SelectingAmbiguousTarget:
+                   Battle.ClearAmbiguousSelection();
+                   Battle.ChangeActionStage(PlayerActionStage.None);
+                   break;
+               
                case PlayerActionStage.MovingBattalion:
                    Battle.ClearUnitSelection();
                    Battle.ChangeActionStage(PlayerActionStage.None);
@@ -261,6 +250,8 @@ namespace LongLiveKhioyen
                    Battle.CancelAction();
                    Battle.ChangeActionStage(PlayerActionStage.SelectingAction);
                    break;
+               
+           
                default:
                    break;
            }

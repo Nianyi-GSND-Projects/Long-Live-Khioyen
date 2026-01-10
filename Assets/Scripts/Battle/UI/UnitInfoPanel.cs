@@ -28,16 +28,14 @@ namespace LongLiveKhioyen
         public TMP_Text statYong;// 勇
         public TMP_Text statYan; // 严
 
-        // 刷新 UI 的主要方法
         public void UpdateUI(Unit unit)
         {
             if (unit is Battalion bat)
             {
-                // 从实体中读取数据
                 DisplayInfo(
                     bat.Definition.unitName,
                     bat.currentSoliders, bat.Definition.defaultMaxSolider,
-                    bat.currentMurale, // 实体可能有最大士气，这里简化
+                    bat.currentMurale,
                     bat.currentTraining,
                     bat.currentMovement,
                     bat.battalionCommander

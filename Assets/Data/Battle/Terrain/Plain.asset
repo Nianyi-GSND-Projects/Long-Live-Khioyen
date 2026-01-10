@@ -16,4 +16,4 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: f27c84f54aac5af44aaa0a0b64f65eda, type: 2}
   movementCost: 1
   defenseBonus: 0
-  isPassable: 1
+  unitPassability: 2
