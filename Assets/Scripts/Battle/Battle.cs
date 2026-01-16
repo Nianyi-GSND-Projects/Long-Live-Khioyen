@@ -1191,19 +1191,16 @@ namespace LongLiveKhioyen
 			UnitPassability p;
 			if (tile.Facility) p = tile.Facility.Definition.passability;
 			else p = hexTiles[pos].TerrainDefinition.unitPassability;
-			
-			switch (p)
+
+			return p switch
 			{
-				case UnitPassability.Impassable:     return false;
-				case UnitPassability.Passable:       return false;
-				case UnitPassability.AlliesPassable: return false;
-				case UnitPassability.Stoppable:      return true;
-				case UnitPassability.AlliesStoppable:
-					return tile.Facility.faction == unit.faction;
-                        
-				default: return true;
-			}
-			return true;
+				UnitPassability.Impassable => false,
+				UnitPassability.Passable => false,
+				UnitPassability.AlliesPassable => false,
+				UnitPassability.Stoppable => true,
+				UnitPassability.AlliesStoppable => tile.Facility.faction == unit.faction,
+				_ => true,
+			};
 		}
 		
 		public bool CanUnitPassThroughTile(Unit unit, Vector2Int pos)
@@ -1222,21 +1219,15 @@ namespace LongLiveKhioyen
 			UnitPassability p;
 			if (tile.Facility) p = tile.Facility.Definition.passability;
 			else p = hexTiles[pos].TerrainDefinition.unitPassability;
-			
-			switch (p)
-			{
-				case UnitPassability.Impassable: return false;
-				case UnitPassability.Passable:   return true;
-				case UnitPassability.Stoppable:  return true;
-                    
-				case UnitPassability.AlliesPassable:
-				case UnitPassability.AlliesStoppable:
-					return tile.Facility.faction == unit.faction;
-                        
-				default: return true;
-			}
 
-			return true;
+			return p switch
+			{
+				UnitPassability.Impassable => false,
+				UnitPassability.Passable => true,
+				UnitPassability.Stoppable => true,
+				UnitPassability.AlliesPassable or UnitPassability.AlliesStoppable => tile.Facility.faction == unit.faction,
+				_ => true,
+			};
 		}
 		
 		private Vector2Int GetRandomValidPosition(UnitPassability passability)
