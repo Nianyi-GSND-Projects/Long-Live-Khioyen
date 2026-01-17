@@ -53,7 +53,7 @@ namespace LongLiveKhioyen
 			var npcTemplate = Resources.Load<GameObject>("Prefabs/Polis/Characters/NPC-dummy");
 			for(int i = 0; i < 100; ++i)
 			{
-				var position = Utilities.GetRandomPositionOnHavMesh(navMeshSurface);
+				var position = Utilities.GetRandomPositionOnNavMesh(navMeshSurface);
 				var npc = Instantiate(npcTemplate);
 				npc.transform.SetParent(transform, false);
 				npc.transform.position = position;

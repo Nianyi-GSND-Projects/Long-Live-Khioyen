@@ -14,25 +14,22 @@ namespace LongLiveKhioyen
 			agent = GetComponent<NavMeshAgent>();
 		}
 
-		void Start()
+		IEnumerator Start()
 		{
 			agent.speed = moveSpeed;
 			agent.angularSpeed = lateralSpeed;
-			StartCoroutine(nameof(WanderCoroutine));
+
+			yield return new WaitForEndOfFrame();  // 等待 NavMesh 构建完毕
+			for(; ; )
+			{
+				Vector3 destination = Utilities.GetRandomPositionOnNavMesh(Polis.Instance.navMeshSurface);
+				yield return NavigateToCoroutine(destination);
+			}
 		}
 
 		void FixedUpdate()
 		{
 			ForwardMoveInput = agent.transform.worldToLocalMatrix.MultiplyVector(agent.velocity).z;
-		}
-
-		IEnumerator WanderCoroutine()
-		{
-			for(; ; )
-			{
-				Vector3 destination = Utilities.GetRandomPositionOnHavMesh(Polis.Instance.navMeshSurface);
-				yield return NavigateToCoroutine(destination);
-			}
 		}
 
 		IEnumerator NavigateToCoroutine(Vector3 destination)

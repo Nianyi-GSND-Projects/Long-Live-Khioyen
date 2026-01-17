@@ -13,10 +13,9 @@ namespace LongLiveKhioyen
 			return JsonUtility.FromJson<T>(JsonUtility.ToJson(source));
 		}
 
-		public static Vector3 GetRandomPositionOnHavMesh(NavMeshSurface surface)
+		public static Vector3 GetRandomPositionOnNavMesh(NavMeshSurface surface)
 		{
 			var bounds = surface.navMeshData.sourceBounds;
-			var radius = surface.GetBuildSettings().agentRadius;
 			for(int i = 0; i < 30; i++)
 			{
 				Vector3 random = new(
@@ -26,7 +25,7 @@ namespace LongLiveKhioyen
 				);
 				Vector3 world = surface.transform.TransformPoint(random);
 
-				if(NavMesh.SamplePosition(world, out NavMeshHit hit, radius, NavMesh.AllAreas))
+				if(NavMesh.SamplePosition(world, out NavMeshHit hit, bounds.size.y, NavMesh.AllAreas))
 					return hit.position;
 			}
 			return default;
