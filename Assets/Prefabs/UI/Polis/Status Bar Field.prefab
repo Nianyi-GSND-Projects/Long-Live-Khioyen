@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 790090097991493492}
   - component: {fileID: 1047237761371159689}
   m_Layer: 5
-  m_Name: Economy Field
+  m_Name: Status Bar Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +82,7 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
+  m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!1001 &774048226156171552
@@ -175,19 +175,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5972466713482820270, guid: 8c4790b13acead14faf287da06017534, type: 3}
       propertyPath: m_MinWidth
-      value: 40
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5972466713482820270, guid: 8c4790b13acead14faf287da06017534, type: 3}
       propertyPath: m_MinHeight
-      value: 40
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5972466713482820270, guid: 8c4790b13acead14faf287da06017534, type: 3}
       propertyPath: m_PreferredWidth
-      value: 40
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5972466713482820270, guid: 8c4790b13acead14faf287da06017534, type: 3}
       propertyPath: m_PreferredHeight
-      value: 40
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7754748214862642480, guid: 8c4790b13acead14faf287da06017534, type: 3}
       propertyPath: m_Name
@@ -221,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4486079986820584174, guid: 750f114ef41d04f479e4f75df865f036, type: 3}
       propertyPath: m_fontSize
-      value: 20.7
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5912047297456201161, guid: 750f114ef41d04f479e4f75df865f036, type: 3}
       propertyPath: m_Pivot.x
