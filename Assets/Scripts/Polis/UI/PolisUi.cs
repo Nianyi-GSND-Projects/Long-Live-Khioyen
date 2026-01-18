@@ -104,11 +104,6 @@ namespace LongLiveKhioyen
 			if(!flag)  // If nothing has been switched to, display the normal panel.
 				SwitchBottomPanel(normalPanel);
 		}
-
-		void SetBottomAreaVisibiltiy(bool visible)
-		{
-			bottomArea.gameObject.SetActive(visible);
-		}
 		#endregion
 
 		#region Side bar
@@ -124,12 +119,10 @@ namespace LongLiveKhioyen
 			{
 				case Polis.Mode.Mayor:
 					switchModeImage.sprite = wanderModeIcon;
-					SetBottomAreaVisibiltiy(true);
 					break;
 				case Polis.Mode.Wander:
 					ExitConstructModal();
 					switchModeImage.sprite = mayorModeIcon;
-					SetBottomAreaVisibiltiy(false);
 					break;
 			}
 		}
@@ -138,6 +131,8 @@ namespace LongLiveKhioyen
 		#region Construction
 		public void EnterConstructModal()
 		{
+			if(Polis.CurrentMode != Polis.Mode.Mayor)
+				SwitchMode();
 			SwitchBottomPanel(constructPanel);
 			Polis.IsInConstructModal = true;
 		}
