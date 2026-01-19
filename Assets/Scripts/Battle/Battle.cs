@@ -1688,9 +1688,11 @@ namespace LongLiveKhioyen
 		
 		#endregion
 	}
-
+	
+	
 	public class BattleResult
 	{
+		//BattleResult即各个部队的缴获情况
 		public void CollectLoot()
 		{
 			
