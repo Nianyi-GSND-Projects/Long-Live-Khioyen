@@ -50,14 +50,6 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Status Bar
-		[Header("Population")]
-		public TMP_Text populationValue;
-
-		void UpdatePopulation()
-		{
-			populationValue.text = $"{Polis.Population}/{Polis.FreePopulation}/{Polis.PopulationCap}";
-		}
-
 		[Header("Economy")]
 		public TMP_Text foodValue;
 		public TMP_Text materialValue;
@@ -68,6 +60,18 @@ namespace LongLiveKhioyen
 			foodValue.text = $"{(int)Polis.Economy.food}";
 			materialValue.text = $"{(int)Polis.Economy.material}";
 			moneyValue.text = $"{(int)Polis.Economy.money}";
+		}
+
+		[Header("Population")]
+		public TMP_Text populationValue;
+		public TMP_Text freePopulationValue;
+		public TMP_Text populationCapValue;
+
+		void UpdatePopulation()
+		{
+			populationValue.text = $"{Polis.Population}";
+			freePopulationValue.text = $"{Polis.FreePopulation}";
+			populationCapValue.text = $"{Polis.PopulationCap}";
 		}
 
 		[Header("Time")]

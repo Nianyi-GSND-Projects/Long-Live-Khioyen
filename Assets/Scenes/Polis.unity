@@ -1321,7 +1321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3533904035885718941, guid: 0d9b95381121f824189699e9a2de2359, type: 3}
       propertyPath: m_Name
-      value: Available Population
+      value: Free Population
       objectReference: {fileID: 0}
     - target: {fileID: 5573645290227723446, guid: 0d9b95381121f824189699e9a2de2359, type: 3}
       propertyPath: m_Pivot.x
@@ -1465,6 +1465,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5573645290227723446, guid: 0d9b95381121f824189699e9a2de2359, type: 3}
   m_PrefabInstance: {fileID: 457193181}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &457193183 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 101279345960656507, guid: 0d9b95381121f824189699e9a2de2359, type: 3}
+  m_PrefabInstance: {fileID: 457193181}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &483548946
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4210,6 +4221,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5573645290227723446, guid: 0d9b95381121f824189699e9a2de2359, type: 3}
   m_PrefabInstance: {fileID: 1268639881}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1268639883 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 101279345960656507, guid: 0d9b95381121f824189699e9a2de2359, type: 3}
+  m_PrefabInstance: {fileID: 1268639881}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1329727374
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4342,10 +4364,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusBar: {fileID: 1058830616}
   polisName: {fileID: 240620900}
-  populationValue: {fileID: 1778707402}
   foodValue: {fileID: 2167164872804243666}
   materialValue: {fileID: 1468838083}
   moneyValue: {fileID: 817454885}
+  populationValue: {fileID: 1778707402}
+  freePopulationValue: {fileID: 457193183}
+  populationCapValue: {fileID: 1268639883}
   timeText: {fileID: 689772411}
   timeSlider: {fileID: 2018272627}
   bottomArea: {fileID: 156296199}
