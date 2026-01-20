@@ -6,7 +6,7 @@ namespace LongLiveKhioyen
 {
     public class Battalion : Unit<BattalionDefinition>
     {
-        public List<string> inventory;
+        public List<inBattleItem> inventory;
         public GameCommander battalionCommander;
         
         public int currentSoliders;
@@ -18,7 +18,7 @@ namespace LongLiveKhioyen
         public Battalion()
         {
             InstanceId = 0;
-            inventory = new List<string>();
+            inventory = new List<inBattleItem>();
         }
 
         public override void TakeDamage(int damage)

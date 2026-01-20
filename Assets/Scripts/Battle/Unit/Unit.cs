@@ -111,6 +111,8 @@ namespace LongLiveKhioyen
         
         public T Definition { get; set; }
         public override UnitDefinition unitDefinition => Definition;
+        
+        
         #region Life cycle
         protected void Start()
         {

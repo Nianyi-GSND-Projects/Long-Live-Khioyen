@@ -14,8 +14,6 @@ namespace LongLiveKhioyen
     
     public enum UnitType { Battalion, Facility }
     
-    public enum UnitPassability { Impassable, Passable, Stoppable,AlliesStoppable,AlliesPassable}
-    
     public abstract class UnitDefinition : ScriptableObject
     {
         public string unitName;
@@ -30,7 +28,8 @@ namespace LongLiveKhioyen
         public AudioClip unitSelectedSoundEffect;
         
         #endregion
-
+        
+        
         #region Accessibility
         
         public UnitPassability passability;

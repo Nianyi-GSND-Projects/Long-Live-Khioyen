@@ -6,47 +6,6 @@ using UnityEditor.Build.Pipeline.Tasks;
 
 namespace LongLiveKhioyen
 {
-	public enum Stage
-	{
-		Preparation,
-		Arrangement,
-		Battle,
-		Settlement
-	}
-	
-	public enum UnitTypeFilter
-	{
-		All,
-		BattalionOnly,
-		FacilityOnly
-	}
-
-	public enum TurnState
-	{
-		PlayerTurn,
-		EnemyTurn,
-		FriendTurn,
-		Processing
-	}
-
-	public enum PlayerActionStage
-	{
-		None,
-		SelectingAmbiguousTarget,
-		MovingBattalion,
-		SelectingAction,
-		SelectingTarget
-	}
-
-	public class TileData
-	{
-		public Battalion Battalion;
-		public Facility Facility;
-		public bool IsEmpty => Battalion == null && Facility == null;
-		
-		
-	}
-	
 	public class Battle : MonoBehaviour
 	{
 		static Battle _instance;
@@ -1677,10 +1636,52 @@ namespace LongLiveKhioyen
 		{
 			//结算战役
 			BattleResult result = new BattleResult();
-			result.CollectLoot();
+			CollectLoot(result);
 			return result;
 		}
 
+		private void CollectLoot(BattleResult result)
+		{
+			Dictionary<ItemDefinition, int> consolidatedLoot = new Dictionary<ItemDefinition, int>();
+			
+			
+			foreach (var unit in factionActiveUnits[Faction.Player])
+			{
+				if (unit is Battalion bat)
+				{
+					foreach (inBattleItem item in bat.inventory)
+					{
+						if (item == null || item.definition == null) continue;
+
+						if (consolidatedLoot.ContainsKey(item.definition))
+						{
+							consolidatedLoot[item.definition] += item.amount;
+						}
+						else
+						{
+							consolidatedLoot.Add(item.definition, item.amount);
+						}
+					}
+				}
+			}
+			
+			if (result.Loot == null) result.Loot = new List<inBattleItem>();
+			
+			foreach (var kvp in consolidatedLoot)
+			{
+				ItemDefinition def = kvp.Key;
+				int totalAmount = kvp.Value;
+
+				inBattleItem newItem = new inBattleItem
+				{
+					definition = def,
+					amount = totalAmount
+				};
+
+				result.Loot.Add(newItem);
+			}
+		}
+		
 		public void ExitBattle()
 		{
 			GameInstance.Instance.ExitBattle();
@@ -1693,9 +1694,6 @@ namespace LongLiveKhioyen
 	public class BattleResult
 	{
 		//BattleResult即各个部队的缴获情况
-		public void CollectLoot()
-		{
-			
-		}
+		public List<inBattleItem> Loot;
 	}
 }
