@@ -14,6 +14,7 @@ namespace LongLiveKhioyen
 		public ActionDefinitionSheet actionDataBase;
 		private CommanderRegistry commanderRegistry;
 		public string[,] mapTerrainData; 
+		BattleResult battleResult;
 		#region General Config
 
 		public Color movementHighlightColor = Color.green; 
@@ -60,8 +61,7 @@ namespace LongLiveKhioyen
 			InitializeData();
 			InitializeScene();
 			InitializeComponent();
-			InitializeGameStatue();
-			
+			InitializeGameStatus();
 			#if BATTLE_TEST
 
 			GenerateTestArmyData();
@@ -75,8 +75,6 @@ namespace LongLiveKhioyen
 			onInitialized?.Invoke();
 		}
 		
-		
-		
 		#endregion
 		
 		#region Initialization
@@ -86,26 +84,34 @@ namespace LongLiveKhioyen
 		{
 			ArmyStatus armyStatus = ArmyStatus.Instance;
 
-			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++)
-			{
-				BattalionDescriptor battalionDescriptor = new BattalionDescriptor()
-				{
-					armyId = i,
-					Definition = armyStatus.battalionStatuses[i].battalionDefinition,
-					faction = Faction.Player,
-					battalionCommander = armyStatus.battalionStatuses[i].battalionCommander,
-					currentSoliders = armyStatus.battalionStatuses[i].currentSolider,
-					currentMurale = armyStatus.battalionStatuses[i].currentMorale,
-					currentTraining = armyStatus.battalionStatuses[i].currentExp,
-					maxSolider = armyStatus.battalionStatuses[i].MaxSolider,
-					maxMorale = armyStatus.battalionStatuses[i].MaxMorale,
-					maxTraining = armyStatus.battalionStatuses[i].MaxExp,
-					placed = false
-				};
-				playerReserveTeam.Add(battalionDescriptor);
-			}
+			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
+				playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
 		}
 
+		public BattalionDescriptor GenerateBattalionDescriptorFromBattalionStatus(BattalionStatus battalionStatus)
+		{
+			BattalionDescriptor battalionDescriptor = new BattalionDescriptor();
+			//根据battalionStatus烘焙单位属性快照
+			battalionDescriptor.Definition = battalionStatus.battalionDefinition;
+			
+			battalionDescriptor.armyId = battalionStatus.battalionId;
+			//该预备队在整个Army中的id
+
+			battalionDescriptor.faction = Faction.Player;
+			battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
+			
+			//TODO 科技树与全局增益影响
+			battalionDescriptor.maxSolider = battalionStatus.MaxSolider;
+			battalionDescriptor.maxMorale = battalionStatus.MaxMorale;
+			battalionDescriptor.maxTraining = battalionStatus.MaxExp;
+			battalionDescriptor.currentSoliders = battalionStatus.currentSolider;
+			battalionDescriptor.currentMurale = battalionStatus.currentMorale;
+			battalionDescriptor.currentTraining = battalionStatus.currentExp;
+			battalionDescriptor.placed = false;
+			
+			return battalionDescriptor;
+			
+		}
 
 		private void InitializeScene()
 		{
@@ -127,6 +133,8 @@ namespace LongLiveKhioyen
 			armyStatus = ArmyStatus.Instance;
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
+			
+			battleResult = new BattleResult();
 			
 			mapData = new TileData[Size.x, Size.y];
 			for(int x=0; x<Size.x; x++)
@@ -152,7 +160,7 @@ namespace LongLiveKhioyen
 			#endif
 		}
 		
-		private void InitializeGameStatue()
+		private void InitializeGameStatus()
 		{
 			TurnCount = 0;
 			CurrentTurnState = TurnState.PlayerTurn;
@@ -184,6 +192,7 @@ namespace LongLiveKhioyen
 			}
 			
 			
+			
 			foreach (BattalionDescriptor battalionDescriptor in enemyReserveTeam)
 			{
 				Vector2Int pos = GetRandomValidPosition(UnitPassability.Stoppable);
@@ -200,6 +209,7 @@ namespace LongLiveKhioyen
 			
 			//TODO 
 		}
+
 		
 		#endregion
 		
@@ -340,8 +350,6 @@ namespace LongLiveKhioyen
 				
 				if (value != null) ClearUnitSelection();
 				
-				
-
 				CurrentBattalionDescriptor = value;
 				IsReserveTeamSelected = (value != null);
 				OnReserveTeamSelectionChanged?.Invoke(CurrentBattalionDescriptor);
@@ -553,6 +561,10 @@ namespace LongLiveKhioyen
 			return pos.x >= 0 && pos.y >= 0 && pos.x < Size.x && pos.y < Size.y;
 		}
 		
+		public bool IsTargetPositionValid(Vector2Int pos)
+		{
+			return availableTargetPositions != null && availableTargetPositions.Contains(pos);
+		}
 		public bool ValidateArrangementPlacement(Vector2Int placement)
 		{
 			if(!IsValidMapPosition(placement))
@@ -562,24 +574,6 @@ namespace LongLiveKhioyen
 			return true;
 		}
 		
-		public bool ValidateActionTarget(Vector2Int placement)
-		{
-			if(!IsValidMapPosition(placement))
-				return false;
-
-			switch (CurrentActionType)
-			{
-				//TODO:良好定义各种行动
-				//1:Attack
-				case 1:
-					if (mapData[placement.x, placement.y] == null) return false;
-					if (mapData[placement.x, placement.y].Battalion) return true;
-					if (mapData[placement.x, placement.y].Facility.Definition.beAttacked) return true;
-					return false;
-				default:
-					return false;
-			}
-		}
 		
 		public void CheckDeath(Unit unit)
 		{
@@ -856,7 +850,8 @@ namespace LongLiveKhioyen
 
 		private int initialUnitMovement;
 		public PlayerActionStage CurrentActionStage{ get; set; }
-		public int CurrentActionType{ get; set; }
+		
+		public ActionDefinition CurrentAction { get; private set; }
 
 		public void CancelMovement()
 		{
@@ -872,7 +867,7 @@ namespace LongLiveKhioyen
 		public void CancelAction()
 		{
 			availableTargetPositions.Clear();
-			CurrentActionType = -1;
+			CurrentAction = null;
 			IsPreparingAction = false;
 			ClearAllHexHighlights();
 		}
@@ -912,9 +907,17 @@ namespace LongLiveKhioyen
 					break;
 				
 				case PlayerActionStage.SelectingTarget:
-					availableTargetPositions = GetAttackableTiles();
-					HighlightTiles(availableTargetPositions,attackHighlightColor);
-					Debug.Log("Change action stage to SelectingTarget");
+					if (CurrentAction != null)
+					{
+						availableTargetPositions = GetValidActionTargetTiles(SelectedUnit, CurrentAction);
+						HighlightTiles(availableTargetPositions, attackHighlightColor); // 建议改个名，比如 targetHighlightColor
+						Debug.Log($"进入目标选择阶段: {CurrentAction.actionName}, 可选目标数: {availableTargetPositions.Count}");
+					}
+					else
+					{
+						Debug.LogError("进入选择目标阶段，但 CurrentAction 为空！");
+						ChangeActionStage(PlayerActionStage.SelectingAction);
+					}
 					break;
 				
 				case PlayerActionStage.SelectingAmbiguousTarget:
@@ -935,61 +938,94 @@ namespace LongLiveKhioyen
 			
 		}
 		
-		public void ActionAttackPrepare()
+		public void PrepareAction(ActionDefinition action)
 		{
+			if (action == null) return;
+
 			IsPreparingAction = true;
-			CurrentActionType = 1;
+			CurrentAction = action;
+			
 			ChangeActionStage(PlayerActionStage.SelectingTarget);
 		}
-
-		public Unit PrimaryAttackTarget(Vector2Int targetPosition)
+		
+		public Unit GetBestTargetOnTile(Vector2Int targetPosition)
 		{
-			//TODO:根据逻辑实际判断攻击优先级
-			TileData targetTile = mapData[targetPosition.x, targetPosition.y];
-			if(targetTile.Battalion != null) return targetTile.Battalion;
-			if(targetTile.Facility != null) return targetTile.Facility;
-			return null;
+			TileData tile = mapData[targetPosition.x, targetPosition.y];
+			if (tile.IsEmpty) return null;
+
+			// 如果当前没有行动，默认逻辑 (比如返回部队)
+			if (CurrentAction == null) return tile.Battalion != null ? (Unit)tile.Battalion : tile.Facility;
+
+			// 1. 尝试获取部队
+			if (tile.Battalion != null)
+			{
+				// 检查部队是否符合当前技能的条件
+				if (CurrentAction.CheckTargetConditions(SelectedUnit, tile.Battalion))
+					return tile.Battalion;
+			}
+
+			// 2. 尝试获取设施
+			if (tile.Facility != null)
+			{
+				if (CurrentAction.CheckTargetConditions(SelectedUnit, tile.Facility))
+					return tile.Facility;
+			}
+
+			// 3. 如果都不符合条件但格子上有人，返回任意一个让后续逻辑处理（可能会报错提示无效目标）
+			return tile.Battalion != null ? (Unit)tile.Battalion : tile.Facility;
 		}
+		
 		public void ApplyAction(Vector2Int mapPosition)
 		{
-			if (!IsUnitSelected)
+			if (!IsUnitSelected || CurrentAction == null)
 			{
-				Debug.Log("No battalion selected.");
+				Debug.LogWarning("No unit selected or no action prepared.");
 				return;
-			}
-			bool actionFinished = false;
-			switch (CurrentActionType)
-			{
-				case 1:
-					Unit TargetEnemyUnit = PrimaryAttackTarget(mapPosition);
-					if((SelectedUnit is Battalion bat) && TargetEnemyUnit.unitDefinition.beAttacked == true) 
-						actionFinished = Attack(bat,TargetEnemyUnit);
-					
-					break;
-				default:
-					break;
 			}
 
-			if (actionFinished == false)
+			// 1. 获取目标
+			Unit targetUnit = GetBestTargetOnTile(mapPosition);
+
+			// 2. 验证目标是否存在
+			if (targetUnit == null)
 			{
-				Debug.Log("Action not Valid!");
+				Debug.Log("该位置没有有效目标。");
 				return;
 			}
-			if(SelectedUnit) SelectedUnit.actionDone = true;
-			ChangeActionStage(PlayerActionStage.None);
+
+			// 3. 验证目标是否合法 (再次检查条件，防止 UI 漏洞)
+			if (!CurrentAction.CheckTargetConditions(SelectedUnit, targetUnit))
+			{
+				Debug.Log($"目标 {targetUnit.name} 不满足行动 {CurrentAction.actionName} 的条件。");
+				return;
+			}
+
+			// 4. 执行逻辑
+			ExecuteActionLogic(SelectedUnit, targetUnit);
 		}
 
-		public bool Attack(Battalion source, Unit target)
+		private void ExecuteActionLogic(Unit source, Unit target)
 		{
-			ActionDefinition attack = actionDataBase.GetAction("RegularAttack");
-			if(attack.Perform(source,target))
+			// 执行 ActionDefinition 定义的 Perform
+			bool success = CurrentAction.Perform(source, target);
+
+			if (success)
 			{
+				// 检查可能的死亡
 				CheckDeath(source);
 				CheckDeath(target);
-				return true;
+
+				// 标记行动结束
+				if (SelectedUnit) SelectedUnit.actionDone = true;
+                
+				// 清理状态
+				ClearAllSelection(); // 或者 CancelAction()
+				ChangeActionStage(PlayerActionStage.None);
 			}
-			    
-			return false;
+			else
+			{
+				Debug.Log("Action Perform returned false.");
+			}
 		}
 		
 		#endregion
@@ -1298,9 +1334,44 @@ namespace LongLiveKhioyen
 			factionActiveUnits[battalioninfo.faction].Add(battalion);
 			PlaceUnitOnMap(battalion, position);
 			battalioninfo.placed = true;
+			InitializeUnitActions(battalion);
 			return battalion;
 		}
-
+		
+		public void InitializeUnitActions(Unit unit)
+		{
+			//默认攻击（对于设施来说，默认攻击不显示，因此等于没有）
+			unit.DefaultAttack = unit.unitDefinition.defaultAttack;
+			//单位原生行动
+			if (unit.unitDefinition.unitUniqueActions != null)
+			{
+				unit.runtimeUnitActions.Clear();
+				foreach (var action in unit.unitDefinition.unitUniqueActions)
+				{
+					if (action != null && action.CheckDisplayConditions(unit))
+					{
+						unit.runtimeUnitActions.Add(action);
+					}
+				}
+				
+				Debug.Log($"Unit {unit.name} has {unit.runtimeUnitActions.Count} actions.");
+			}
+			//对于部队，还有来自指挥官的行动
+			if (unit is Battalion bat)
+			{
+				if (bat.battalionCommander != null && bat.battalionCommander.commanderActions != null)
+				{
+					unit.runtimeCommanderActions.Clear();
+					foreach (var action in bat.battalionCommander.commanderActions)
+					{
+						if (action != null && action.CheckDisplayConditions(unit))
+						{
+							unit.runtimeCommanderActions.Add(action);
+						}
+					}
+				}
+			}
+		}
 		public Battalion GenerateBattalionFromDescriptor(BattalionDescriptor battalioninfo)
 		{
 			var battalion = new GameObject().AddComponent<Battalion>();
@@ -1485,11 +1556,25 @@ namespace LongLiveKhioyen
 		
 		private void DoAIAttack(Battalion source, Unit target)
 		{
-			bool success = Attack(source, target);
-			
+			ActionDefinition attackAction = source.DefaultAttack;
+
+			if (attackAction == null)
+			{
+				Debug.LogError($"Unit {source.name} has no DefaultAttack defined!");
+				return;
+			}
+
+			// 2. 直接调用 ActionDefinition 的 Perform
+			bool success = attackAction.Perform(source, target);
+    
 			if(success)
 			{
 				Debug.Log($"Enemy attacked {target.name}");
+				
+				CheckDeath(source);
+				CheckDeath(target);
+        
+				source.actionDone = true; 
 			}
 		}
 		
@@ -1559,12 +1644,78 @@ namespace LongLiveKhioyen
 		}
 		
 		
-		public HashSet<Vector2Int> GetAttackableTiles()
+		public HashSet<Vector2Int> GetValidActionTargetTiles(Unit user, ActionDefinition action)
+        {
+            HashSet<Vector2Int> validTiles = new HashSet<Vector2Int>();
+            
+            // 如果是 Self 类型，只返回自己脚下
+            if (action.targetCountType == TargetCountType.Self)
+            {
+                validTiles.Add(user.position);
+                return validTiles;
+            }
+
+            // 使用 BFS 搜索范围 (不考虑地形阻挡，通常技能范围是无视地形的“射程”)
+            // 如果需要考虑视线阻挡(Line of Sight)，这里需要改为 Raycast 逻辑
+            
+            // 简单的曼哈顿距离/六边形距离遍历
+            // 为了性能，我们可以直接遍历 range 范围内的所有坐标，然后计算距离
+            
+            // 获取当前坐标的 Cube 坐标
+            Vector3Int centerCube = OffsetToCube(user.position);
+            int N = action.range;
+            int minN = action.minRange; // 假设你有最小射程
+
+            for (int q = -N; q <= N; q++)
+            {
+                for (int r = -N; r <= N; r++)
+                {
+                    for (int s = -N; s <= N; s++)
+                    {
+                        if (q + r + s == 0)
+                        {
+                            // 计算距离
+                            int dist = (Mathf.Abs(q) + Mathf.Abs(r) + Mathf.Abs(s)) / 2;
+                            if (dist > N || dist < minN) continue;
+
+                            // 转换回 Offset 坐标
+                            Vector3Int neighborCube = centerCube + new Vector3Int(q, r, s);
+                            Vector2Int neighborPos = CubeToOffset(neighborCube); // 需要添加 CubeToOffset 辅助方法
+
+                            if (IsValidMapPosition(neighborPos))
+                            {
+                                TileData tile = mapData[neighborPos.x, neighborPos.y];
+                                
+                                bool hasValidTarget = false;
+
+                                if (tile.Battalion != null && action.CheckTargetConditions(user, tile.Battalion))
+                                    hasValidTarget = true;
+                                
+                                // 检查设施
+                                if (!hasValidTarget && tile.Facility != null && action.CheckTargetConditions(user, tile.Facility))
+                                    hasValidTarget = true;
+
+                               
+                                if (action.CanTargetEmptyTile && tile.IsEmpty) hasValidTarget = true;
+
+                                if (hasValidTarget)
+                                {
+                                    validTiles.Add(neighborPos);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return validTiles;
+        }
+		public Vector2Int CubeToOffset(Vector3Int cube)
 		{
-			if(SelectedUnit is Battalion bat)
-			return GetAllTilesInRange(bat.position, bat.Definition.attackRange);
-			return new HashSet<Vector2Int>();
+			var col = cube.x + (cube.y - (cube.y & 1)) / 2;
+			var row = cube.y;
+			return new Vector2Int(col, row);
 		}
+		
 		public HashSet<Vector2Int> GetAllTilesInRange(Vector2Int startPos, int range)
 		{
 			HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
@@ -1630,21 +1781,35 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 		
+		#region End Game
+		
+		private void EndGame(bool isWin)
+		{
+			battleResult.Victory = isWin;
+			
+			//TODO：跳转结算阶段
+		}
+
+		private void ApplyArmyChangesToArmyStatus()
+		{
+			//TODO:将战斗损耗应用回军队状态
+			//TODO：更新指挥官经验值、等级或死亡与负伤
+		}
+		
+		#endregion
+		
 		#region Functions
 		
 		public BattleResult YieldResult()
 		{
-			//结算战役
-			BattleResult result = new BattleResult();
-			CollectLoot(result);
-			return result;
+			CollectLoot(battleResult);
+			return battleResult;
 		}
 
 		private void CollectLoot(BattleResult result)
 		{
 			Dictionary<ItemDefinition, int> consolidatedLoot = new Dictionary<ItemDefinition, int>();
-			
-			
+            
 			foreach (var unit in factionActiveUnits[Faction.Player])
 			{
 				if (unit is Battalion bat)
@@ -1694,6 +1859,7 @@ namespace LongLiveKhioyen
 	public class BattleResult
 	{
 		//BattleResult即各个部队的缴获情况
+		public bool Victory = false;
 		public List<inBattleItem> Loot;
 	}
 }

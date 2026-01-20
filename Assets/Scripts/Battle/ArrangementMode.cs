@@ -242,6 +242,11 @@ namespace LongLiveKhioyen
                    break;
                
                case PlayerActionStage.SelectingAction:
+                   if (BattleUi.Instance != null && BattleUi.Instance.TryHandleBackInput())
+                   {
+                       // 如果 UI 成功关闭了次级菜单，直接返回，不再执行下面的取消移动
+                       return; 
+                   }
                    Battle.CancelMovement();
                    Battle.ChangeActionStage(PlayerActionStage.MovingBattalion);
                    break;

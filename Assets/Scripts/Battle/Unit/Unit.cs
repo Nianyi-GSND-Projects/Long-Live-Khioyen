@@ -43,8 +43,17 @@ namespace LongLiveKhioyen
                 UpdateVisualState();
             }
         }
+        
+        #region Action
+        
+        public ActionDefinition DefaultAttack;
 
+        public List<ActionDefinition> runtimeUnitActions = new List<ActionDefinition>();
 
+        public List<ActionDefinition> runtimeCommanderActions = new List<ActionDefinition>();
+        
+        #endregion
+        
         #region Visual state
         protected GameObject model;
         protected readonly Dictionary<Renderer, Material[]> legacyMaterials = new();

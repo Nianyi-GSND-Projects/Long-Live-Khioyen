@@ -65,7 +65,6 @@ namespace LongLiveKhioyen
         public int currentMurale;
         public int currentTraining;
         
-        
         public bool placed = false;
     }
 }

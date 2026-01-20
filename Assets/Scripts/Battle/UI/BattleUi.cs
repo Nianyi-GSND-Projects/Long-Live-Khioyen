@@ -11,9 +11,11 @@ namespace LongLiveKhioyen
         #region Life cycle
         void Awake()
         {
-            Battle.Instance.onInitialized += Initialize;
+            Instance = this;
+            if (Battle.Instance != null)
+                Battle.Instance.onInitialized += Initialize;
         }
-
+        public static BattleUi Instance { get; private set; }
         void Initialize()
         {
             battle.OnPlayerTurnStarted += HandlePlayerTurnStart;
@@ -59,13 +61,21 @@ namespace LongLiveKhioyen
         private void HandleActionSelectionStart()
         {
             Debug.Log("BattleUI 收到信号：为选中单位显示行动面板");
-            OpenPanel(actionSelectionPanel);
+            //OpenPanel(actionSelectionPanel);
+            if (actionMenu != null && Battle.Instance.SelectedUnit != null)
+            {
+                actionMenu.Show(Battle.Instance.SelectedUnit);
+            }
         }
         
         private void HandleActionSelectionEnd()
         {
             Debug.Log("BattleUI 收到信号：为选中单位关闭行动面板");
-            ClosePanel(actionSelectionPanel);
+            //ClosePanel(actionSelectionPanel);
+            if (actionMenu != null)
+            {
+                actionMenu.Hide();
+            }
         }
         
         private void HandleUnitSelectionChanged(Unit unit)
@@ -184,6 +194,18 @@ namespace LongLiveKhioyen
             Debug.Log("BattleUI: 关闭多重选择列表");
             ClosePanel(ambiguousSelectionPanel);
         }
+        
+        public bool TryHandleBackInput()
+        {
+            // 检查动态行动菜单是否有次级菜单打开
+            if (actionMenu != null && actionMenu.TryCloseSubMenu())
+            {
+                return true; // UI 拦截了这次回退操作
+            }
+
+            return false; // UI 没什么可回退的，交回给游戏逻辑
+        }
+        
         #endregion
         
         #region General
@@ -218,7 +240,9 @@ namespace LongLiveKhioyen
         
         
         public CanvasGroup playerTurnUI;
-        public CanvasGroup actionSelectionPanel; 
+        //public CanvasGroup actionSelectionPanel; 
+        
+        public ActionMenuUI actionMenu; 
         
         #region StageManagement
         public Button toArrangementButton;

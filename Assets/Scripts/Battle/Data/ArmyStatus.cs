@@ -101,6 +101,8 @@ namespace LongLiveKhioyen
         public int Yan;
 
         public bool isAssigned;
+        
+        public List<ActionDefinition> commanderActions = new List<ActionDefinition>();
     }
 
 }

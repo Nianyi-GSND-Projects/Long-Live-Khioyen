@@ -21,5 +21,7 @@ MonoBehaviour:
   actionPointCost: 0
   targetFactionType: 2
   targetCountType: 1
+  displayConditions: []
+  useConditions: []
   effects:
   - {fileID: 11400000, guid: 03756d16644a91548abf9e6789ff396e, type: 2}

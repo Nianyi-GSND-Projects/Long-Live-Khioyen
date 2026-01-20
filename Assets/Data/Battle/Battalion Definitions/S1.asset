@@ -23,6 +23,9 @@ MonoBehaviour:
   beAttacked: 1
   beInteracted: 1
   beMoved: 1
+  defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
+  unitUniqueActions:
+  - {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   tags: []
   defaultDiscipline: 100
   defaultPower: 100

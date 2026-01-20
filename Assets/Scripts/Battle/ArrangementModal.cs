@@ -257,7 +257,7 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			if (!Battle.ValidateActionTarget(Battle.WorldToMapInt(groundPosition)))
+			if (!Battle.Instance.IsTargetPositionValid(Battle.WorldToMapInt(groundPosition)))
 			{
 				Debug.LogWarning($"Not Valid Target!");
 				return;

@@ -45,6 +45,10 @@ namespace LongLiveKhioyen
         
         #region Action
         
+        [Header("Actions")]
+        [Tooltip("单位的基础攻击方式 (例如：普通攻击)")]
+        public ActionDefinition defaultAttack;
+        
         public List<ActionDefinition> unitUniqueActions = new List<ActionDefinition>();
         
         #endregion

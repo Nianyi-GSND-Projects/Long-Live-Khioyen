@@ -59,5 +59,5 @@ namespace LongLiveKhioyen
             AlliesStoppable, // 友方可停，敌方阻挡
             AlliesPassable   // 友方可过，敌方阻挡
         }
-    
+        
 }
