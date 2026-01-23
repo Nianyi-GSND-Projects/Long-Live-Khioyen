@@ -10,40 +10,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
-  m_Name: Building Names_han
+  m_Name: Building Names_en-for
   m_EditorClassIdentifier: 
   m_LocaleId:
-    m_Code: han
+    m_Code: en-for
   m_SharedData: {fileID: 11400000, guid: eaf765579db7db64ba3156b3171ec01c, type: 2}
   m_Metadata:
     m_Items: []
   m_TableData:
   - m_Id: 84698423296
-    m_Localized: "\u5175\u71DF"
+    m_Localized: Military Base
     m_Metadata:
       m_Items: []
   - m_Id: 97021288448
-    m_Localized: "\u6C34\u4E95"
+    m_Localized: Water Well
     m_Metadata:
       m_Items: []
   - m_Id: 37649059588825088
-    m_Localized: "\u90FD\u5C09\u5E9C"
+    m_Localized: Commandant Office
     m_Metadata:
       m_Items: []
   - m_Id: 37649084456853504
-    m_Localized: "\u6C11\u5C45"
+    m_Localized: Citizen Dwelling
     m_Metadata:
       m_Items: []
   - m_Id: 37649106250457088
-    m_Localized: "\u7CE7\u5009"
+    m_Localized: Grain Storage
     m_Metadata:
       m_Items: []
   - m_Id: 37649118111948800
-    m_Localized: "\u9A5B\u7AD9"
+    m_Localized: Horse Station
     m_Metadata:
       m_Items: []
   - m_Id: 37649136780795904
-    m_Localized: "\u5DE5\u574A"
+    m_Localized: Workshop
     m_Metadata:
       m_Items: []
   references:

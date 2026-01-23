@@ -26,6 +26,26 @@ MonoBehaviour:
     m_Localized: Water Well
     m_Metadata:
       m_Items: []
+  - m_Id: 37649059588825088
+    m_Localized: Commandant Office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649084456853504
+    m_Localized: House
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649106250457088
+    m_Localized: Granary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649118111948800
+    m_Localized: Horse Station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649136780795904
+    m_Localized: Workshop
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

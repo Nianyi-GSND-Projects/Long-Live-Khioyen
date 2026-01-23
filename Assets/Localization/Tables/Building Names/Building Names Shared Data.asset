@@ -23,6 +23,26 @@ MonoBehaviour:
     m_Key: water-well
     m_Metadata:
       m_Items: []
+  - m_Id: 37649059588825088
+    m_Key: commandant-office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649084456853504
+    m_Key: dwelling-trio-1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649106250457088
+    m_Key: granary-rectangular
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649118111948800
+    m_Key: horse-station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37649136780795904
+    m_Key: workshop
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
