@@ -22,6 +22,7 @@ namespace LongLiveKhioyen
 			UpdateEnocomy();
 
 			SwitchBottomPanel(normalPanel);
+			inspectionUi.Building = null;
 
 			Polis.onSelectionChanged += OnSelectionChanged;
 		}
@@ -90,7 +91,6 @@ namespace LongLiveKhioyen
 		[Header("Bottom Area")]
 		public CanvasGroup bottomArea;
 		public CanvasGroup normalPanel;
-		public Transform inspectionArea;
 		public CanvasGroup constructPanel;
 
 		void SwitchBottomPanel(CanvasGroup panel)
@@ -149,22 +149,11 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Inspection
-		GameObject inspectionUi;
+		[SerializeField] InspectionUi inspectionUi;
 
 		void OnSelectionChanged(ISelectable selected)
 		{
-			if(inspectionUi != null)
-			{
-				Destroy(inspectionUi);
-				inspectionUi = null;
-			}
-
-			if(selected is Component && (selected as Component).TryGetComponent(out IInspectable inspectable))
-			{
-				inspectionUi = inspectable.MakeUi();
-				if(inspectionUi != null)
-					inspectionUi.transform.SetParent(inspectionArea, false);
-			}
+			inspectionUi.Building = selected is IBuildingLike ? (selected as IBuildingLike) : null;
 		}
 		#endregion
 

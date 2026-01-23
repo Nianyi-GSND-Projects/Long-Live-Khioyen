@@ -30,9 +30,10 @@ namespace LongLiveKhioyen
 		{
 		}
 
-		public GameObject MakeUi()
+		public virtual GameObject MakeUi()
 		{
-			return InspectionUi.CreateInstance(this).gameObject;
+			// TODO: 每个功能建筑能构造独特的 UI。
+			return null;
 		}
 		#endregion
 	}

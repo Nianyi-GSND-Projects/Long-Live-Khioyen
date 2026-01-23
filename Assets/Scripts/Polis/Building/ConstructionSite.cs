@@ -51,11 +51,6 @@ namespace LongLiveKhioyen
 		public void OnSelect()
 		{
 		}
-
-		public GameObject MakeUi()
-		{
-			return InspectionUi.CreateInstance(this).gameObject;
-		}
 		#endregion
 	}
 }

@@ -1,42 +1,60 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
-using TMPro;
 
 namespace LongLiveKhioyen
 {
 	public class InspectionUi : MonoBehaviour
 	{
+		[SerializeField] CanvasGroup canvasGroup;
 		[SerializeField] TMP_Text title;
 		[SerializeField] TMP_Text detail;
 
-		static GameObject template;
-		public static InspectionUi CreateInstance(IBuildingLike building)
-		{
-			if(template == null)
-				template = Resources.Load<GameObject>("Prefabs/Polis/UI/Inspection UI");
-			var instance = Instantiate(template).GetComponent<InspectionUi>();
-			instance.Building = building;
-			return instance;
-		}
-
-		public IBuildingLike Building { get; set; }
 		LocalizedString localizedBuildingName;
 		string buildingName;
 
-		protected void Start()
+		IBuildingLike building;
+		public IBuildingLike Building
 		{
-			localizedBuildingName = Building.Definition.GetLocalizedName();
-			localizedBuildingName.StringChanged += name =>
+			get => building;
+			set
 			{
-				buildingName = name;
+				if(building != null)
+				{
+					if(localizedBuildingName != null)
+						localizedBuildingName.StringChanged -= OnLocalizedBuildingNameChanged;
+				}
+
+				building = value;
+
+				if(building != null)
+				{
+					localizedBuildingName = building.Definition.GetLocalizedName();
+					localizedBuildingName.StringChanged += OnLocalizedBuildingNameChanged;
+				}
+
 				UpdateContent();
-			};
+			}
 		}
 
 		void UpdateContent()
 		{
-			title.text = $"{buildingName}{(Building.Placement.underConstruction ? " (constructing)" : string.Empty)}";
-			detail.text = "";
+			if(building != null)
+			{
+				title.text = $"{buildingName}{(building.Placement.underConstruction ? " (constructing)" : string.Empty)}";
+				detail.text = "TODO: Detail to be filled in here.";
+			}
+			else
+			{
+				title.text = string.Empty;
+				detail.text = "Select a building to inspect.";
+			}
+		}
+
+		void OnLocalizedBuildingNameChanged(string name)
+		{
+			buildingName = name;
+			UpdateContent();
 		}
 	}
 }
