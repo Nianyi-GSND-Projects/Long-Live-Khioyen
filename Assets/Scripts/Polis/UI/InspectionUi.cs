@@ -1,11 +1,7 @@
-using NaughtyAttributes.Test;
-using Nianyi.UnityPack;
-using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.UI;
+using TMPro;
 
 namespace LongLiveKhioyen
 {
@@ -75,7 +71,7 @@ namespace LongLiveKhioyen
 			SetupContent();
 		}
 
-		void AddActionButton(IBuildingLike.InspectionAction action)
+		void AddActionButton(InspectionAction action)
 		{
 			var go = Instantiate(Resources.Load<GameObject>(buttonPrefabPath), buttonLayoutGroup.transform);
 

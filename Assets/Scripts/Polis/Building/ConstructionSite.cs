@@ -52,14 +52,15 @@ namespace LongLiveKhioyen
 		{
 		}
 
-		public IEnumerable<IBuildingLike.InspectionAction> GetInspectionAction()
+		public IEnumerable<InspectionAction> GetInspectionAction()
 		{
 			yield break;
 		}
 
+		const string inspectionUiTemplatePath = "Prefabs/Polis/UI/Inspection/Construction Site";
 		public GameObject GetInspectionUi()
 		{
-			return Instantiate(Resources.Load<GameObject>("Prefabs/Polis/UI/Construction Site Detail"));
+			return Instantiate(Resources.Load<GameObject>(inspectionUiTemplatePath));
 		}
 		#endregion
 	}

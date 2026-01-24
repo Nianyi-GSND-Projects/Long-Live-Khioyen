@@ -31,12 +31,12 @@ namespace LongLiveKhioyen
 		{
 		}
 
-		public virtual IEnumerable<IBuildingLike.InspectionAction> GetInspectionAction()
+		public virtual IEnumerable<InspectionAction> GetInspectionAction()
 		{
 			yield break;
 		}
 
-		public GameObject GetInspectionUi()
+		public virtual GameObject GetInspectionUi()
 		{
 			return null;
 		}
