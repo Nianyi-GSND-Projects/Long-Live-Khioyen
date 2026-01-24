@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using Unity.AI.Navigation;
 using System.Collections;
 using System.Collections.Generic;
+using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
 {
@@ -13,7 +14,7 @@ namespace LongLiveKhioyen
 			return JsonUtility.FromJson<T>(JsonUtility.ToJson(source));
 		}
 
-		public static Vector3 GetRandomPositionOnNavMesh(NavMeshSurface surface)
+		public static Vector3 GetRandomPositionOnNavMesh(this NavMeshSurface surface)
 		{
 			var bounds = surface.navMeshData.sourceBounds;
 			for(int i = 0; i < 30; i++)
@@ -29,6 +30,14 @@ namespace LongLiveKhioyen
 					return hit.position;
 			}
 			return default;
+		}
+
+		public static void ClearChildren(this Transform parent)
+		{
+			if(parent == null)
+				return;
+			foreach(var c in parent.GetDirectChildren())
+				c.gameObject.Destroy();
 		}
 	}
 }

@@ -1,6 +1,10 @@
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Localization;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
 {
@@ -9,6 +13,9 @@ namespace LongLiveKhioyen
 		[SerializeField] CanvasGroup canvasGroup;
 		[SerializeField] TMP_Text title;
 		[SerializeField] TMP_Text detail;
+		[SerializeField] LayoutGroup buttonLayoutGroup;
+
+		const string buttonPrefabPath = "Prefabs/Polis/UI/Inspection Button";
 
 		LocalizedString localizedBuildingName;
 		string buildingName;
@@ -33,28 +40,41 @@ namespace LongLiveKhioyen
 					localizedBuildingName.StringChanged += OnLocalizedBuildingNameChanged;
 				}
 
-				UpdateContent();
+				SetupContent();
 			}
 		}
 
-		void UpdateContent()
+		void SetupContent()
 		{
-			if(building != null)
-			{
-				title.text = $"{buildingName}{(building.Placement.underConstruction ? " (constructing)" : string.Empty)}";
-				detail.text = "TODO: Detail to be filled in here.";
-			}
-			else
-			{
-				title.text = string.Empty;
-				detail.text = "Select a building to inspect.";
-			}
+			title.text = string.Empty;
+			detail.text = string.Empty;
+			buttonLayoutGroup.transform.ClearChildren();
+
+			if(building == null)
+				return;
+
+			title.text = $"{buildingName}{(building.Placement.underConstruction ? " (constructing)" : string.Empty)}";
+			detail.text = "TODO: Detail to be filled in here.";
+
+			AddButton("Inspect", () => print("Inspect"));
+			buttonLayoutGroup.CalculateLayoutInputVertical();
 		}
 
 		void OnLocalizedBuildingNameChanged(string name)
 		{
 			buildingName = name;
-			UpdateContent();
+			SetupContent();
+		}
+
+		void AddButton(string text, System.Action action)
+		{
+			var go = Instantiate(Resources.Load<GameObject>(buttonPrefabPath), buttonLayoutGroup.transform);
+
+			go.GetComponentInChildren<TMP_Text>().text = text;
+
+			var button = go.GetComponent<Button>();
+			if(action != null)
+				button.onClick.AddListener(() => action?.Invoke());
 		}
 	}
 }
