@@ -1739,7 +1739,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 1329727382}
   - {fileID: 1064727833}
   - {fileID: 792397362}
   m_Father: {fileID: 0}
@@ -4238,7 +4237,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 528471305}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3083851564030733744, guid: 3c62eb1e40f4e2048936b3c58397a7ab, type: 3}
       propertyPath: m_Pivot.x
@@ -7703,5 +7702,6 @@ SceneRoots:
   - {fileID: 716896470}
   - {fileID: 1714077484}
   - {fileID: 1034691333}
-  - {fileID: 528471305}
   - {fileID: 634249834}
+  - {fileID: 528471305}
+  - {fileID: 1329727374}

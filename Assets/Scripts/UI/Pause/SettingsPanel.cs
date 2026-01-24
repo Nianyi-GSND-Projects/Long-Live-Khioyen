@@ -16,7 +16,6 @@ namespace LongLiveKhioyen
 
 		#region Locale
 		public VerticalLayoutGroup localeList;
-		public List<LocaleOption> localeOptions;
 
 		void InitializeLocaleList()
 		{
@@ -25,7 +24,6 @@ namespace LongLiveKhioyen
 			{
 				var option = Instantiate(template).GetComponent<LocaleOption>();
 				option.transform.SetParent(localeList.transform, false);
-				localeOptions.Add(option);
 
 				option.Locale = locale;
 			}

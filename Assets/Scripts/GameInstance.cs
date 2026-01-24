@@ -27,6 +27,7 @@ namespace LongLiveKhioyen
 		{
 			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
 			Paused = false;
+			UiManager.onUiStateChanged += OnUiStateChanged;
 		}
 
 		/// <summary>
@@ -34,6 +35,7 @@ namespace LongLiveKhioyen
 		/// </summary>
 		void OnDestroy()
 		{
+			UiManager.onUiStateChanged -= OnUiStateChanged;
 			Paused = false;
 
 			Destroy(gameObject);
@@ -224,7 +226,7 @@ namespace LongLiveKhioyen
 		#region Pause
 		public void OpenPauseMenu()
 		{
-			OpenUi("Prefabs/UI/Pause/Pause Menu");
+			UiManager.Instance.OpenUiFromPrefabPath("Prefabs/UI/Pause/Pause Menu");
 		}
 
 		public System.Action onPauseStateChanged;
@@ -243,42 +245,9 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region UI
-		readonly Stack<GameObject> uiStack = new();
-
-		public void OpenUi(GameObject ui, bool instantiate = false)
+		void OnUiStateChanged()
 		{
-			if(ui == null)
-			{
-				Debug.LogWarning("The UI to be opened is null.");
-				return;
-			}
-			if(Instance == null)
-			{
-				Debug.LogWarning("UI can only be opened when a game instance is running.");
-				return;
-			}
-			if(instantiate)
-				ui = Instantiate(ui);
-
-			uiStack.Push(ui);
-			Paused = true;
-		}
-
-		public void OpenUi(string prefabPath)
-		{
-			OpenUi(Resources.Load<GameObject>(prefabPath), true);
-		}
-
-		public void CloseCurrentUi()
-		{
-			if(uiStack.Count == 0)
-			{
-				Debug.LogWarning("No UI is currently open.");
-				return;
-			}
-			var ui = uiStack.Pop();
-			Destroy(ui);
-			Paused = uiStack.Count > 0;
+			Paused = UiManager.Instance?.IsAnyUiOpen ?? false;
 		}
 		#endregion
 		#endregion
