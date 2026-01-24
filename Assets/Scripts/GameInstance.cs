@@ -226,7 +226,7 @@ namespace LongLiveKhioyen
 		#region Pause
 		public void OpenPauseMenu()
 		{
-			UiManager.Instance.OpenUiFromPrefabPath("Prefabs/UI/Pause/Pause Menu");
+			UiManager.Instance.OpenUiModalFromPrefabPath("Prefabs/UI/Pause/Pause Menu");
 		}
 
 		public System.Action onPauseStateChanged;
@@ -247,7 +247,7 @@ namespace LongLiveKhioyen
 		#region UI
 		void OnUiStateChanged()
 		{
-			Paused = UiManager.Instance?.IsAnyUiOpen ?? false;
+			Paused = UiManager.Instance?.IsAnyModalOpen ?? false;
 		}
 		#endregion
 		#endregion

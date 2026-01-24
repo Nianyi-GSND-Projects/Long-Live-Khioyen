@@ -29,14 +29,24 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region UI
-		readonly Stack<GameObject> uiStack = new();
-		public bool IsAnyUiOpen => uiStack.Count > 0;
+		#region Events
 		public static System.Action onUiStateChanged;
+		#endregion
 
-		public void OpenUi(GameObject ui)
+		#region Modal
+		struct UiModalRecord
 		{
-			if(ui == null)
+			public GameObject go;
+			public bool isInstantiated;
+		}
+
+		readonly Stack<UiModalRecord> modalStack = new();
+
+		public bool IsAnyModalOpen => modalStack.Count > 0;
+
+		public void OpenUiModal(GameObject go, bool isInstantiated)
+		{
+			if(go == null)
 			{
 				Debug.LogWarning("The UI to be opened is null.");
 				return;
@@ -47,34 +57,45 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			ui.transform.SetParent(transform, false);
-			uiStack.Push(ui);
+			go.transform.SetParent(transform, false);
+			modalStack.Push(new() {
+				go = go,
+				isInstantiated = isInstantiated,
+			});
 
 			onUiStateChanged?.Invoke();
 		}
 
-		public void OpenUiFromTemplate(GameObject template)
+		public void OpenUiModalFromTemplate(GameObject template)
 		{
-			OpenUi(Instantiate(template));
+			OpenUiModal(Instantiate(template), true);
 		}
 
-		public void OpenUiFromPrefabPath(string prefabPath)
+		public void OpenUiModalFromPrefabPath(string prefabPath)
 		{
-			OpenUiFromTemplate(Resources.Load<GameObject>(prefabPath));
+			OpenUiModalFromTemplate(Resources.Load<GameObject>(prefabPath));
 		}
 
-		public void CloseCurrentUi()
+		public void CloseCurrentUiModal()
 		{
-			if(uiStack.Count == 0)
+			if(modalStack.Count == 0)
 			{
 				Debug.LogWarning("No UI is currently open.");
 				return;
 			}
 
-			var ui = uiStack.Pop();
-			Destroy(ui);
+			var modal = modalStack.Pop();
+			if(modal.isInstantiated)
+			{
+				Destroy(modal.go);
+			}
+			else
+			{
+				if(modal.go != null)
+					modal.go.SetActive(false);
+			}
 
-			onUiStateChanged?.Invoke();
+				onUiStateChanged?.Invoke();
 		}
 		#endregion
 	}

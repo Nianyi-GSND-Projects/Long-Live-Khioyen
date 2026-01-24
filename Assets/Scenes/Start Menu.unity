@@ -209,7 +209,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2288653731526659348, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenUiFromTemplate
+      value: OpenUiModalFromTemplate
       objectReference: {fileID: 0}
     - target: {fileID: 2288653731526659348, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -909,7 +909,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2288653731526659348, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenUiFromTemplate
+      value: OpenUiModalFromTemplate
       objectReference: {fileID: 0}
     - target: {fileID: 2288653731526659348, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -1306,7 +1306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2288653731526659348, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenUiFromTemplate
+      value: OpenUiModalFromTemplate
       objectReference: {fileID: 0}
     - target: {fileID: 2288653731526659348, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName

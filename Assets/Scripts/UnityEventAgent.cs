@@ -33,14 +33,19 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region UI
-		public void CloseCurrentUi()
+		public void CloseCurrentUiModal()
 		{
-			UiManager.Instance.CloseCurrentUi();
+			UiManager.Instance.CloseCurrentUiModal();
 		}
 
-		public void OpenUiFromTemplate(GameObject template)
+		public void OpenUiModal(GameObject go)
 		{
-			UiManager.Instance.OpenUiFromTemplate(template);
+			UiManager.Instance.OpenUiModal(go, false);
+		}
+
+		public void OpenUiModalFromTemplate(GameObject template)
+		{
+			UiManager.Instance.OpenUiModalFromTemplate(template);
 		}
 		#endregion
 	}

@@ -15,7 +15,7 @@ namespace LongLiveKhioyen
 
 		public void Close()
 		{
-			UiManager.Instance.CloseCurrentUi();
+			UiManager.Instance.CloseCurrentUiModal();
 		}
 
 		public void QuitGame()
