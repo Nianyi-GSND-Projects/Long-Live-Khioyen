@@ -1,10 +1,11 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Localization;
+using NaughtyAttributes.Test;
+using Nianyi.UnityPack;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Nianyi.UnityPack;
+using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.UI;
 
 namespace LongLiveKhioyen
 {
@@ -12,7 +13,7 @@ namespace LongLiveKhioyen
 	{
 		[SerializeField] CanvasGroup canvasGroup;
 		[SerializeField] TMP_Text title;
-		[SerializeField] TMP_Text detail;
+		[SerializeField] LayoutGroup detailArea;
 		[SerializeField] LayoutGroup buttonLayoutGroup;
 
 		const string buttonPrefabPath = "Prefabs/Polis/UI/Inspection Button";
@@ -47,16 +48,24 @@ namespace LongLiveKhioyen
 		void SetupContent()
 		{
 			title.text = string.Empty;
-			detail.text = string.Empty;
+			detailArea.transform.ClearChildren();
 			buttonLayoutGroup.transform.ClearChildren();
 
 			if(building == null)
 				return;
 
-			title.text = $"{buildingName}{(building.Placement.underConstruction ? " (constructing)" : string.Empty)}";
-			detail.text = "TODO: Detail to be filled in here.";
+			title.text = buildingName;
+			var ui = building.GetInspectionUi();
+			if(ui != null)
+				ui.transform.SetParent(detailArea.transform, false);
+			detailArea.CalculateLayoutInputVertical();
 
-			AddButton("Inspect", () => print("Inspect"));
+			foreach(var action in building.GetInspectionAction())
+			{
+				if(action == null)
+					continue;
+				AddActionButton(action);
+			}
 			buttonLayoutGroup.CalculateLayoutInputVertical();
 		}
 
@@ -66,15 +75,15 @@ namespace LongLiveKhioyen
 			SetupContent();
 		}
 
-		void AddButton(string text, System.Action action)
+		void AddActionButton(IBuildingLike.InspectionAction action)
 		{
 			var go = Instantiate(Resources.Load<GameObject>(buttonPrefabPath), buttonLayoutGroup.transform);
 
-			go.GetComponentInChildren<TMP_Text>().text = text;
+			go.GetComponentInChildren<TMP_Text>().text = action.text;
 
 			var button = go.GetComponent<Button>();
-			if(action != null)
-				button.onClick.AddListener(() => action?.Invoke());
+			if(action.action != null)
+				button.onClick.AddListener(() => action.action?.Invoke());
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
+using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -30,9 +31,13 @@ namespace LongLiveKhioyen
 		{
 		}
 
-		public virtual GameObject MakeUi()
+		public virtual IEnumerable<IBuildingLike.InspectionAction> GetInspectionAction()
 		{
-			// TODO: 每个功能建筑能构造独特的 UI。
+			yield break;
+		}
+
+		public GameObject GetInspectionUi()
+		{
 			return null;
 		}
 		#endregion

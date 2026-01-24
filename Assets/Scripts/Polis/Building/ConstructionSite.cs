@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-using Unity.AI.Navigation;
+using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -50,6 +50,16 @@ namespace LongLiveKhioyen
 
 		public void OnSelect()
 		{
+		}
+
+		public IEnumerable<IBuildingLike.InspectionAction> GetInspectionAction()
+		{
+			yield break;
+		}
+
+		public GameObject GetInspectionUi()
+		{
+			return Instantiate(Resources.Load<GameObject>("Prefabs/Polis/UI/Construction Site Detail"));
 		}
 		#endregion
 	}
