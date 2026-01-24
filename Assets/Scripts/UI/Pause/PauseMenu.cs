@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -26,7 +25,7 @@ namespace LongLiveKhioyen
 
 		public void Close()
 		{
-			GameInstance.Instance.ClosePauseMenu();
+			GameInstance.Instance.CloseCurrentUi();
 		}
 
 		public void QuitGame()

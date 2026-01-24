@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -221,29 +222,9 @@ namespace LongLiveKhioyen
 		}
 
 		#region Pause
-		PauseMenu pauseMenu;
 		public void OpenPauseMenu()
 		{
-			if(Instance == null)
-			{
-				Debug.LogWarning("Pause menu can only be opened when a game instance is running.");
-				return;
-			}
-			if(pauseMenu != null)
-				return;
-
-			pauseMenu = Instantiate(Resources.Load<GameObject>("Prefabs/UI/Pause/Pause Menu")).GetComponent<PauseMenu>();
-			Paused = true;
-		}
-
-		public void ClosePauseMenu()
-		{
-			if(pauseMenu == null)
-				return;
-
-			Destroy(pauseMenu.gameObject);
-			pauseMenu = null;
-			Paused = false;
+			OpenUi("Prefabs/UI/Pause/Pause Menu");
 		}
 
 		public System.Action onPauseStateChanged;
@@ -258,6 +239,46 @@ namespace LongLiveKhioyen
 				UpdateActualTimeScale();
 				onPauseStateChanged?.Invoke();
 			}
+		}
+		#endregion
+
+		#region UI
+		readonly Stack<GameObject> uiStack = new();
+
+		public void OpenUi(GameObject ui, bool instantiate = false)
+		{
+			if(ui == null)
+			{
+				Debug.LogWarning("The UI to be opened is null.");
+				return;
+			}
+			if(Instance == null)
+			{
+				Debug.LogWarning("UI can only be opened when a game instance is running.");
+				return;
+			}
+			if(instantiate)
+				ui = Instantiate(ui);
+
+			uiStack.Push(ui);
+			Paused = true;
+		}
+
+		public void OpenUi(string prefabPath)
+		{
+			OpenUi(Resources.Load<GameObject>(prefabPath), true);
+		}
+
+		public void CloseCurrentUi()
+		{
+			if(uiStack.Count == 0)
+			{
+				Debug.LogWarning("No UI is currently open.");
+				return;
+			}
+			var ui = uiStack.Pop();
+			Destroy(ui);
+			Paused = uiStack.Count > 0;
 		}
 		#endregion
 		#endregion
