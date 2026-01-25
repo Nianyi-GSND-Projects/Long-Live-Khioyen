@@ -8,19 +8,20 @@ namespace LongLiveKhioyen
 	/// </summary>
 	public class CommandantOffice : Building
 	{
+		const string uiAssetName = "Commandant Office";
+
 		public override IEnumerable<InspectionAction> GetInspectionAction()
 		{
 			yield return new()
 			{
 				text = "Open",
-				action = () => print("Player opens commandant office UI"),  // TODO
+				action = () => OpenBuildingUiByName(uiAssetName),
 			};
 		}
 
-		const string inspectionUiTemplatePath = "Prefabs/Polis/UI/Inspection/Commandant Office";
-		public override GameObject GetInspectionUi()
+		public override GameObject CreateInspectionUi()
 		{
-			return Instantiate(Resources.Load<GameObject>(inspectionUiTemplatePath));
+			return GetInspectionUiByName(uiAssetName);
 		}
 	}
 }

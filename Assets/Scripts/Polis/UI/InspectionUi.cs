@@ -51,7 +51,7 @@ namespace LongLiveKhioyen
 				return;
 
 			title.text = buildingName;
-			var ui = building.GetInspectionUi();
+			var ui = building.CreateInspectionUi();
 			if(ui != null)
 				ui.transform.SetParent(detailArea.transform, false);
 			detailArea.CalculateLayoutInputVertical();

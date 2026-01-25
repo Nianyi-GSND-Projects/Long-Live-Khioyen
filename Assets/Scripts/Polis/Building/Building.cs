@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using System.Collections.Generic;
+using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
 {
@@ -9,6 +10,9 @@ namespace LongLiveKhioyen
 	{
 		public BuildingPlacement Placement { get; set; }
 		public BuildingDefinition Definition { get; set; }
+
+		public const string inspectionUiPathPrefix = "Prefabs/Polis/UI/Inspection/";
+		public const string buildingUiPathPrefix = "Prefabs/Polis/UI/Buildings/";
 
 		#region Life cycle
 		protected void Start()
@@ -25,6 +29,7 @@ namespace LongLiveKhioyen
 		#region Selection
 		public void OnSelect()
 		{
+			// TODO: 高亮显示
 		}
 
 		public void OnDeselect()
@@ -36,9 +41,36 @@ namespace LongLiveKhioyen
 			yield break;
 		}
 
-		public virtual GameObject GetInspectionUi()
+		public virtual GameObject CreateInspectionUi()
 		{
 			return null;
+		}
+
+		/// <summary>
+		/// 从 Resources 的固定路径里取得检视 UI。
+		/// </summary>
+		/// <param name="name">Prefab 文件名</param>
+		protected GameObject GetInspectionUiByName(string name)
+		{
+			return HierarchyUtility.InstantiatePrefabFromResource(inspectionUiPathPrefix + name);
+		}
+
+		/// <summary>
+		/// 从 Resources 的固定路径里取得建筑功能 UI。
+		/// </summary>
+		/// <param name="name">Prefab 文件名</param>
+		protected GameObject GetBuildingUiByName(string name)
+		{
+			return HierarchyUtility.InstantiatePrefabFromResource(buildingUiPathPrefix + name);
+		}
+
+		/// <summary>
+		/// 打开建筑功能 UI。
+		/// </summary>
+		/// <param name="name">Prefab 文件名</param>
+		protected void OpenBuildingUiByName(string name)
+		{
+			UiManager.Instance.OpenUiModalFromTemplate(GetBuildingUiByName(name));
 		}
 		#endregion
 	}

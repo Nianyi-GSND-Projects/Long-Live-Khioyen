@@ -48,12 +48,7 @@ namespace LongLiveKhioyen
 		{
 			if(go == null)
 			{
-				Debug.LogWarning("The UI to be opened is null.");
-				return;
-			}
-			if(Instance == null)
-			{
-				Debug.LogWarning("UI can only be opened when a game instance is running.");
+				Debug.LogError("The UI to be opened is null.");
 				return;
 			}
 
@@ -68,12 +63,23 @@ namespace LongLiveKhioyen
 
 		public void OpenUiModalFromTemplate(GameObject template)
 		{
+			if(template == null)
+			{
+				Debug.LogError($"The UI template to be opened is null.");
+				return;
+			}
 			OpenUiModal(Instantiate(template), true);
 		}
 
 		public void OpenUiModalFromPrefabPath(string prefabPath)
 		{
-			OpenUiModalFromTemplate(Resources.Load<GameObject>(prefabPath));
+			var prefab = Resources.Load<GameObject>(prefabPath);
+			if(prefab == null)
+			{
+				Debug.LogError($"The UI prefab at {prefabPath} doesn't exist.");
+				return;
+			}
+			OpenUiModalFromTemplate(prefab);
 		}
 
 		public void CloseCurrentUiModal()

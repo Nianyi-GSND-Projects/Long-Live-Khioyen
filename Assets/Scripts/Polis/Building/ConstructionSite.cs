@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
+using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
 {
@@ -57,10 +58,10 @@ namespace LongLiveKhioyen
 			yield break;
 		}
 
-		const string inspectionUiTemplatePath = "Prefabs/Polis/UI/Inspection/Construction Site";
-		public GameObject GetInspectionUi()
+		const string inspectionUiTemplatePath = Building.inspectionUiPathPrefix + "Construction Site";
+		public GameObject CreateInspectionUi()
 		{
-			return Instantiate(Resources.Load<GameObject>(inspectionUiTemplatePath));
+			return HierarchyUtility.InstantiatePrefabFromResource(inspectionUiTemplatePath);
 		}
 		#endregion
 	}
