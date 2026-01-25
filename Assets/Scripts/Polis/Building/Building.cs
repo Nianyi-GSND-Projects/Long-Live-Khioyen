@@ -12,7 +12,7 @@ namespace LongLiveKhioyen
 		public BuildingDefinition Definition { get; set; }
 
 		public const string inspectionUiPathPrefix = "Prefabs/Polis/UI/Inspection/";
-		public const string buildingUiPathPrefix = "Prefabs/Polis/UI/Buildings/";
+		public const string buildingUiPathPrefix = "Prefabs/Polis/UI/Building Panels/";
 
 		#region Life cycle
 		protected void Start()
