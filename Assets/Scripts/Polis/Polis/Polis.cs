@@ -67,9 +67,12 @@ namespace LongLiveKhioyen
 
 		void OnDestroy()
 		{
-			instance = null;
 			if(GameInstance.Instance)
 				GameInstance.Instance.onGameTimeAdvanced -= PassTime;
+
+			DestructGround();
+
+			instance = null;
 		}
 
 		void Update()
