@@ -16,14 +16,22 @@ namespace LongLiveKhioyen
 		#region Ground
 		void ConstructGround()
 		{
+			GameObject template = Resources.Load<GameObject>("Prefabs/Polis/Construction/Ground_tile");
+
+			Material mat = new(Shader.Find("Long Live Khioyen/Polis Ground"));
+			// Initialize material
+			mat.SetFloat("_Orientation", Data.orientation);
+
 			var ground = new GameObject("Ground").transform;
 			ground.SetParent(transform, false);
 			for(int x = 0; x < Size.x; ++x)
 			{
 				for(int y = 0; y < Size.y; ++y)
 				{
-					var tile = Instantiate(Resources.Load<GameObject>("Prefabs/Polis/Construction/Ground_tile"));
+					var tile = Instantiate(template);
 					tile.name = $"Polis Ground Tile ({x}, {y})";
+					tile.GetComponentInChildren<Renderer>().sharedMaterial = mat;
+
 					tile.transform.SetParent(ground.transform, false);
 					tile.transform.localPosition = grid.CellToLocalInterpolated(new(x, 0, y));
 				}
