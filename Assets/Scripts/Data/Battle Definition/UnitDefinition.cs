@@ -24,7 +24,6 @@ namespace LongLiveKhioyen
         
         public Sprite figure;
         public GameObject unitModelTemplate;
-        //public GameObject ModelTemplate => Resources.Load<GameObject>($"Models/Battalions/{armyId}");
         public AudioClip unitSelectedSoundEffect;
         
         #endregion

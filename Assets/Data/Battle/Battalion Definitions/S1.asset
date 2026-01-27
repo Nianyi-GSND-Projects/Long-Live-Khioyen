@@ -34,5 +34,8 @@ MonoBehaviour:
   defaultStrategy: 100
   defaultMaxSolider: 100
   defaultMaxMorale: 100
+  soldierModelPrefab: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
+  soldiersPerModel: 100
+  modelSpacing: 0.5
   battalionAttackType: 0
   attackRange: 1

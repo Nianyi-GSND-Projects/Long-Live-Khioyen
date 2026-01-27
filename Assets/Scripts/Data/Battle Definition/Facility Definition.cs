@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
+    public struct FacilityState
+    {
+        [Range(0, 1)] public float healthPercentage; // 低于这个百分比时显示
+        public GameObject stateModel; // 对应的模型预制体
+    }
+    
     [CreateAssetMenu(menuName = "Long Live Khioyen/Unit Definition/Facility Definition")]
     public class FacilityDefinition : UnitDefinition
     {
@@ -16,5 +22,8 @@ namespace LongLiveKhioyen
         public int defaultPower;
 
         public bool special;
+        
+        [Header("Visuals")]
+        public List<FacilityState> damageStates;
     }
 }

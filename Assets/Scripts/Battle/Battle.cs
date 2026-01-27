@@ -23,6 +23,78 @@ namespace LongLiveKhioyen
 		AudioSource audioSource;
 		#endregion
 		
+		#region Visual
+		
+		[Header("Global Visual Config")]
+		public GameObject globalFlagPrefab;
+		public Material playerFactionMaterial;
+		public Material enemyFactionMaterial;
+		
+		public Material GetFactionMaterial(Faction faction)
+		{
+			switch (faction)
+			{
+				case Faction.Player: return playerFactionMaterial;
+				case Faction.Enemy: return enemyFactionMaterial;
+				default: return null;
+			}
+		}
+		
+		public void SetupUnitVisuals(Unit unit)
+		{
+			GameObject go = unit.gameObject;
+			UnitVisualController visuals = null;
+
+			// 1. 根据类型挂载不同的控制器
+			if (unit is Battalion)
+			{
+				visuals = go.AddComponent<BattalionVisuals>();
+			}
+			else if (unit is Facility)
+			{
+				visuals = go.AddComponent<FacilityVisuals>();
+			}
+
+			if (visuals == null) return;
+
+			// 2. 创建模型容器子物体
+			// 检查是否已经有了，防止重复创建
+			Transform containerTrans = go.transform.Find("ModelContainer");
+			if (containerTrans == null)
+			{
+				containerTrans = new GameObject("ModelContainer").transform;
+				containerTrans.SetParent(go.transform, false);
+			}
+			visuals.modelContainer = containerTrans;
+
+			// 3. 加载并生成 UI
+			// 这里的路径可以提取为常量，或者从 Battle 配置里读
+			var uiPrefab = Resources.Load<GameObject>("Prefabs/Battle/UI/PF_UnitUI");
+			if (uiPrefab)
+			{
+				
+				var existingUI = go.GetComponentInChildren<UnitOverheadUI>();
+				if (existingUI == null)
+				{
+					var uiObj = Instantiate(uiPrefab);
+					var uiScript = uiObj.GetComponent<UnitOverheadUI>();
+					if (uiScript != null)
+					{
+						uiScript.Initialize(unit);
+						if (visuals != null) visuals.overheadUI = uiScript;
+					}
+				}
+				else
+				{
+					visuals.overheadUI = existingUI;
+				}
+			}
+    
+			// 4. (可选) 如果你希望在这里就 Initialize，也可以
+			// 但通常依靠 Unit.Start() 来调用 Initialize 更符合生命周期
+		}
+		#endregion
+		
 		#region Battle data
 
 		//TODO:加载战斗数据
@@ -76,6 +148,8 @@ namespace LongLiveKhioyen
 		}
 		
 		#endregion
+		
+		
 		
 		#region Initialization
 		
@@ -544,6 +618,7 @@ namespace LongLiveKhioyen
 			
 		}
 		#endregion
+		
 		
 		#region Valid Check
 		
@@ -1374,12 +1449,16 @@ namespace LongLiveKhioyen
 		}
 		public Battalion GenerateBattalionFromDescriptor(BattalionDescriptor battalioninfo)
 		{
-			var battalion = new GameObject().AddComponent<Battalion>();
+			var go = new GameObject($"Unit_{battalioninfo.Definition.unitName}");
+			var battalion = go.AddComponent<Battalion>();
+			
 			battalion.InstanceId = battalioninfo.armyId;
 			battalion.faction = battalioninfo.faction;
 			battalion.Definition = battalioninfo.Definition;
 			battalion.battalionCommander = battalioninfo.battalionCommander;
 			battalion.currentSoliders = battalioninfo.currentSoliders;
+			SetupUnitVisuals(battalion);
+			
 			return battalion;
 		}
 		

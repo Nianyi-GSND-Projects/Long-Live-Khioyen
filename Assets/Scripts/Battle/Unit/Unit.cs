@@ -24,6 +24,24 @@ namespace LongLiveKhioyen
         
         public List<Buff> buffs = new();
         
+        protected virtual void Start()
+        {
+            visualController = GetComponent<UnitVisualController>();
+            
+            if (visualController != null)
+            {
+                visualController.Initialize(this);
+            }
+        }
+        
+        public void OnUnitStateChanged()
+        {
+            if (visualController != null)
+            {
+                visualController.RefreshVisuals();
+            }
+        }
+        
         public bool Selected
         {
             get => selected;
@@ -55,29 +73,16 @@ namespace LongLiveKhioyen
         #endregion
         
         #region Visual state
+        
+        protected UnitVisualController visualController;
+        
         protected GameObject model;
-        protected readonly Dictionary<Renderer, Material[]> legacyMaterials = new();
-        
-        protected Material selectingMaterial;
-        
-        protected Material actionDoneMaterial;
 
         public void UpdateVisualState()
         {
-            if(selected)
+            if (visualController != null)
             {
-                foreach(var renderer in legacyMaterials.Keys)
-                    renderer.sharedMaterial = selectingMaterial;
-            }
-            else if (actionDone)
-            {
-                foreach(var renderer in legacyMaterials.Keys)
-                    renderer.sharedMaterial = actionDoneMaterial;
-            }
-            else
-            {
-                foreach(var (renderer, mats) in legacyMaterials)
-                    renderer.sharedMaterials = mats;
+                visualController.SetVisualState(selected, actionDone);
             }
         }
 
@@ -115,6 +120,7 @@ namespace LongLiveKhioyen
         }
         #endregion
     }
+    
     public abstract class Unit<T>: Unit where T: UnitDefinition
     {
         
@@ -125,21 +131,14 @@ namespace LongLiveKhioyen
         #region Life cycle
         protected void Start()
         {
+            base.Start();
             name = Definition.unitName;
-            model = Instantiate(Definition.unitModelTemplate);
-            model.name = "Model";
-            model.transform.SetParent(transform, false);
-            foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))
-                legacyMaterials[renderer] = renderer.sharedMaterials;
-            selectingMaterial = Resources.Load<Material>("Materials/Polis/Construction_site");
-            actionDoneMaterial= Resources.Load<Material>("Materials/Polis/Construction_site");
-            // TODO:改成实际材质
+            
             Vector3 size = new(1, 1, 1);
             Vector3 center = new(0,0,0);
             var collider = gameObject.AddComponent<BoxCollider>();
             collider.size = size;
             collider.center = center;
-            UpdateVisualState();
         }
         #endregion
 
