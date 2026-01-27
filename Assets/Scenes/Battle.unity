@@ -2774,6 +2774,7 @@ MonoBehaviour:
   globalFlagPrefab: {fileID: 639286118778293679, guid: a806c58e4bed260489cd6fa866ee1554, type: 3}
   playerFactionMaterial: {fileID: 2100000, guid: 4bbf67c496672644a95c4a5fdfac2999, type: 2}
   enemyFactionMaterial: {fileID: 2100000, guid: d7f9f499b2286ee41879d3172011bdea, type: 2}
+  presetMapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
   testPlayerReserveTeamCount: 0
   arrangementModal: {fileID: 1489175731}
   anchor: {fileID: 413733173}
@@ -4796,7 +4797,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1955725610}
   m_HandleRect: {fileID: 1955725609}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

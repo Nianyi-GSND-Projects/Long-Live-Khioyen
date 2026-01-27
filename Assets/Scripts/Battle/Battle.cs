@@ -30,6 +30,10 @@ namespace LongLiveKhioyen
 		public Material playerFactionMaterial;
 		public Material enemyFactionMaterial;
 		
+		[Header("Map Settings")]
+		public MapDataSO presetMapData; 
+		
+		
 		public Material GetFactionMaterial(Faction faction)
 		{
 			switch (faction)
@@ -209,7 +213,14 @@ namespace LongLiveKhioyen
 			commanderRegistry = CommanderRegistry.Instance; 
 			
 			battleResult = new BattleResult();
-			
+			if (presetMapData != null)
+			{
+				// 注意：这里我们修改的是 data 引用中的值，
+				// 如果 data 是 ScriptableObject，这会临时改变 SO 的值（编辑器下重启重置）
+				// 如果 data 是纯类实例，则只影响本次战斗
+				data.battleSize = new Vector2Int(presetMapData.width, presetMapData.height);
+				Debug.Log($"使用预设地图尺寸: {Size}");
+			}
 			mapData = new TileData[Size.x, Size.y];
 			for(int x=0; x<Size.x; x++)
 				for(int y=0; y<Size.y; y++)
@@ -646,6 +657,14 @@ namespace LongLiveKhioyen
 				return false;
 			if (!availableArrangementPositions.Contains(placement)&&CurrentStage == Stage.Arrangement) 
 				return false;
+			
+			UnitPassability terrainPass = hexTiles[placement].TerrainDefinition.unitPassability;
+			if (terrainPass == UnitPassability.Impassable) 
+				return false;
+			
+			if (mapData[placement.x, placement.y].Battalion != null)
+				return false;
+			
 			return true;
 		}
 		
@@ -1186,7 +1205,17 @@ namespace LongLiveKhioyen
 					hexTile.mapPosition = mapPos;
 					hexTiles.Add(mapPos, hexTile);
 					//TODO
-					AssignTerrainToTile(hexTile, "Plain");
+					if (presetMapData != null)
+					{
+						// 从预设数据中读取地形 ID
+						string terrainId = presetMapData.GetTerrainAt(x, y);
+						AssignTerrainToTile(hexTile, terrainId);
+					}
+					else
+					{
+						// 如果没拖地图，默认全是平原
+						AssignTerrainToTile(hexTile, "Plain");
+					}
 				}
 			}
 		}
@@ -1304,20 +1333,36 @@ namespace LongLiveKhioyen
 		{
 			int x = Random.Range(0, Size.x);
 			int y = Random.Range(0, Size.y);
-
-			if (passability == UnitPassability.Stoppable)
+			
+			int attempts = 0;
+			int maxAttempts = 1000;
+			
+			while (attempts < maxAttempts)
 			{
-				while (mapData[x, y].Battalion != null)
+				Vector2Int pos = new Vector2Int(x, y);
+                
+				// 1. 检查格子是否有单位 (现有逻辑)
+				bool isOccupied = mapData[x, y].Battalion != null || mapData[x, y].Facility != null;
+
+				UnitPassability terrainPass = hexTiles[pos].TerrainDefinition.unitPassability;
+				bool isTerrainWalkable = (terrainPass == UnitPassability.Stoppable || terrainPass == UnitPassability.Passable); 
+
+				if (!isOccupied && isTerrainWalkable)
 				{
-					x = Random.Range(0, Size.x);
-					y = Random.Range(0, Size.y);
+					return pos;
 				}
+
+				// 重试
+				x = Random.Range(0, Size.x);
+				y = Random.Range(0, Size.y);
+				attempts++;
 			}
 			
 			return new Vector2Int(x,y);
 		}
 		void GenerateDetailedMap()
 		{
+			if (presetMapData != null) return;
 			//TODO 读取数据或生成地图细节
 		}
 		void GenerateArrangementSlot()
