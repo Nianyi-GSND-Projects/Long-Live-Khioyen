@@ -119,6 +119,7 @@ namespace LongLiveKhioyen
 			else if(polis.isHostile)
 			{
 				LastPolis = polis;
+				battleMetaData = PrepareBattleMetadata();
 				Debug.Log($"Attacking polis \"{LastPolis.id}\".");
 				CurrentMode = Mode.Battle;
 			}
@@ -132,10 +133,22 @@ namespace LongLiveKhioyen
 			CurrentMode = Mode.WorldMap;
 		}
 
+		BattleMetaData battleMetaData;
+		public BattleMetaData BattleMetaData => battleMetaData;
+
+		/// <summary>生成 Battle 生成战斗场景时需要的元信息。</summary>
+		BattleMetaData PrepareBattleMetadata()
+		{
+			BattleMetaData data = new();
+			// TODO
+			return data;
+		}
+
 		/// <summary>停止进攻敌方城池，回到大地图。</summary>
 		public void ExitBattle()
 		{
 			Debug.Log($"Exiting battle against polis \"{LastPolis.id}\".");
+			battleMetaData = null;
 			ApplyBattleResult(Battle.Instance.YieldResult());
 			CurrentMode = Mode.WorldMap;
 		}
