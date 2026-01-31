@@ -14,7 +14,6 @@ namespace LongLiveKhioyen
 		public ActionDefinitionSheet actionDataBase;
 		private CommanderRegistry commanderRegistry;
 		public string[,] mapTerrainData; 
-		BattleResult battleResult;
 		#region General Config
 
 		public Color movementHighlightColor = Color.green; 
@@ -97,6 +96,7 @@ namespace LongLiveKhioyen
 			// 4. (可选) 如果你希望在这里就 Initialize，也可以
 			// 但通常依靠 Unit.Start() 来调用 Initialize 更符合生命周期
 		}
+		
 		#endregion
 		
 		#region Battle data
@@ -109,7 +109,8 @@ namespace LongLiveKhioyen
 
 		private void LoadBattleMetaData()
 		{
-			//TODO
+			data = new BattleMetaData();
+			data.GenerateMetaData();
 		}
 		#endregion
 
@@ -212,7 +213,6 @@ namespace LongLiveKhioyen
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
 			
-			battleResult = new BattleResult();
 			if (presetMapData != null)
 			{
 				// 注意：这里我们修改的是 data 引用中的值，
@@ -1909,7 +1909,6 @@ namespace LongLiveKhioyen
 		
 		private void EndGame(bool isWin)
 		{
-			battleResult.Victory = isWin;
 			
 			//TODO：跳转结算阶段
 		}
@@ -1926,10 +1925,16 @@ namespace LongLiveKhioyen
 		
 		public BattleResult YieldResult()
 		{
-			CollectLoot(battleResult);
-			return battleResult;
+			BattleResult result = new BattleResult();
+			CollectLoot(result);
+			CollectResult(result);
+			return result;
 		}
 
+		private void CollectResult(BattleResult result)
+		{
+			
+		}
 		private void CollectLoot(BattleResult result)
 		{
 			Dictionary<ItemDefinition, int> consolidatedLoot = new Dictionary<ItemDefinition, int>();

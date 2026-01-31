@@ -42,6 +42,12 @@ namespace LongLiveKhioyen
         public BattleGoal battleGoal;
 
         public int enemyCount;
+
+
+        public void GenerateMetaData()
+        {
+            //从GameInstance中取得需要的数据
+        }
         //TODO MetaData中应该包含一系列更具体指导地图生成的数据，例如：如果有预设地图，那预设地图的索引是多少；如果没有，则根据一系列参数随机生成地图。
     }
     
