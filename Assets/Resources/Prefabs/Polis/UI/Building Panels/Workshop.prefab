@@ -2599,6 +2599,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 979885924998049378}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3272508051504081847, guid: ca4935e3b644a684e9581d8f59a4e091, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8314971724667525350}
     - targetCorrespondingSourceObject: {fileID: 1887890469481969740, guid: ca4935e3b644a684e9581d8f59a4e091, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1407395794238714883}
@@ -2639,6 +2642,24 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4303421972523107291, guid: ca4935e3b644a684e9581d8f59a4e091, type: 3}
   m_PrefabInstance: {fileID: 1203918800292139462}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4458393751505762929 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3272508051504081847, guid: ca4935e3b644a684e9581d8f59a4e091, type: 3}
+  m_PrefabInstance: {fileID: 1203918800292139462}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8314971724667525350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4458393751505762929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb169f5f4c982945b6f756a50e707e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recipesLayoutGroup: {fileID: 4352275860699972245}
 --- !u!1001 &1537100303323406859
 PrefabInstance:
   m_ObjectHideFlags: 0

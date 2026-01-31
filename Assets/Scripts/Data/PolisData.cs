@@ -50,48 +50,6 @@ namespace LongLiveKhioyen
 	}
 
 	[Serializable]
-	public struct Economy
-	{
-		public float food;
-		public float material;
-		public float money;
-
-		public override readonly string ToString()
-		{
-			return $"(food:{food}, money:{money}, knowledge:{material})";
-		}
-
-		static IEnumerable<(float, float)> ValuePairs(in Economy a, in Economy b)
-		{
-			return new (float, float)[] {
-				(a.food, b.food),
-				(a.material, b.material),
-				(a.money, b.money),
-			};
-		}
-		static bool Compare(in Economy a, in Economy b, Func<float, float, bool> comparer)
-		{
-			return ValuePairs(a, b)
-				.Select(pair => comparer.Invoke(pair.Item1, pair.Item2))
-				.Aggregate((a, b) => a && b);
-		}
-
-		public static bool operator <(in Economy a, in Economy b) => Compare(a, b, (a, b) => a < b);
-		public static bool operator >(in Economy a, in Economy b) => Compare(a, b, (a, b) => a > b);
-		public static bool operator <=(in Economy a, in Economy b) => Compare(a, b, (a, b) => a <= b);
-		public static bool operator >=(in Economy a, in Economy b) => Compare(a, b, (a, b) => a >= b);
-
-		public static Economy operator -(in Economy a, in Economy b)
-		{
-			Economy result = a;
-			result.food -= b.food;
-			result.money -= b.money;
-			result.material -= b.material;
-			return result;
-		}
-	}
-
-	[Serializable]
 	public class BuildingPlacement
 	{
 		public string id;  // The building ID stored in the definition sheet.

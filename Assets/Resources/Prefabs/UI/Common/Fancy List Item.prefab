@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 5301151511021115661}
   - component: {fileID: 7911045260443279807}
   - component: {fileID: 807378442935457389}
+  - component: {fileID: 325444866200893501}
   m_Layer: 5
   m_Name: Fancy List Item
   m_TagString: Untagged
@@ -400,6 +401,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &325444866200893501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8038320250854865749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2937ec8b037498d409c7456d7bd5a6e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 2747889255450613584}
+  infoLayoutGroup: {fileID: 1510630728447317082}
 --- !u!1001 &8569290716682310487
 PrefabInstance:
   m_ObjectHideFlags: 0
