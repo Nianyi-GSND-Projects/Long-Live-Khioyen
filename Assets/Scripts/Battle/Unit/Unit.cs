@@ -129,7 +129,7 @@ namespace LongLiveKhioyen
         
         
         #region Life cycle
-        protected void Start()
+        protected new void Start()
         {
             base.Start();
             name = Definition.unitName;
