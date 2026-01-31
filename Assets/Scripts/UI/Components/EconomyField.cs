@@ -68,6 +68,9 @@ namespace LongLiveKhioyen
 				case EconomyType.Money:
 					UseIconFromResource("Money");
 					break;
+				case EconomyType.Population:
+					UseIconFromResource("Population");
+					break;
 				default:
 					throw new System.NotSupportedException($"{GetType().Name}.{nameof(SetResourceType)} only supports predefined types.");
 			}

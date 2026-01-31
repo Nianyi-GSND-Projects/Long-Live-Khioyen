@@ -55,6 +55,7 @@ namespace LongLiveKhioyen
 	{
 		Undefined = 0b0,
 		Food = 0b100, Material, Money,
+		Population = 0b1000,
 		Custom = 0xffff,
 	}
 }
