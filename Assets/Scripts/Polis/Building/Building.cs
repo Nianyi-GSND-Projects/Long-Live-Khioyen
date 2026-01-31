@@ -56,21 +56,14 @@ namespace LongLiveKhioyen
 		}
 
 		/// <summary>
-		/// 从 Resources 的固定路径里取得建筑功能 UI。
-		/// </summary>
-		/// <param name="name">Prefab 文件名</param>
-		protected GameObject GetBuildingUiByName(string name)
-		{
-			return HierarchyUtility.InstantiatePrefabFromResource(buildingUiPathPrefix + name);
-		}
-
-		/// <summary>
 		/// 打开建筑功能 UI。
 		/// </summary>
 		/// <param name="name">Prefab 文件名</param>
 		protected void OpenBuildingUiByName(string name)
 		{
-			UiManager.Instance.OpenUiModalFromTemplate(GetBuildingUiByName(name));
+			string uiTemplatePath = buildingUiPathPrefix + name;
+			var ui = HierarchyUtility.InstantiatePrefabFromResource(uiTemplatePath);
+			UiManager.Instance.OpenUiModal(ui, true);
 		}
 		#endregion
 	}

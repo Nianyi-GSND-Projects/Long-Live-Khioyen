@@ -34,6 +34,34 @@ namespace LongLiveKhioyen
 			item.SetCosts(recipe.costs);
 		}
 
+		bool CheckRecipe(Recipe recipe)
+		{
+			var polis = Polis.Instance;
+			foreach(var cost in recipe.costs)
+			{
+				switch(cost.type)
+				{
+					case EconomyType.Food:
+						if(polis.Economy.food < cost.value)
+							return false;
+						break;
+					case EconomyType.Material:
+						if(polis.Economy.material < cost.value)
+							return false;
+						break;
+					case EconomyType.Money:
+						if(polis.Economy.money < cost.value)
+							return false;
+						break;
+					case EconomyType.Population:
+						if(polis.FreePopulation < cost.value)
+							return false;
+						break;
+				}
+			}
+			return true;
+		}
+
 		public void RefreshRecipes()
 		{
 			recipesLayoutGroup.transform.ClearChildren();
@@ -43,6 +71,7 @@ namespace LongLiveKhioyen
 				var item = FancyListItem.Instantiate();
 				item.transform.SetParent(recipesLayoutGroup.transform, false);
 				ApplyRecipeToItem(recipe, item);
+				item.Interactable = CheckRecipe(recipe);
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();
@@ -61,7 +90,7 @@ namespace LongLiveKhioyen
 						new()
 						{
 							type = EconomyType.Food,
-							value = 200,
+							value = 2,
 						},
 					},
 				},
@@ -73,7 +102,7 @@ namespace LongLiveKhioyen
 						new()
 						{
 							type = EconomyType.Food,
-							value = 0,
+							value = 1,
 						},
 						new()
 						{

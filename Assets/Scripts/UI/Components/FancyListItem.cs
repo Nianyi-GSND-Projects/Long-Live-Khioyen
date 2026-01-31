@@ -10,6 +10,7 @@ namespace LongLiveKhioyen
 	{
 		[SerializeField] TMP_Text nameText;
 		[SerializeField] LayoutGroup infoLayoutGroup;
+		[SerializeField] Button button;
 
 		public string ItemName
 		{
@@ -56,6 +57,12 @@ namespace LongLiveKhioyen
 			}
 
 			infoLayoutGroup.CalculateLayoutInputVertical();
+		}
+
+		public bool Interactable
+		{
+			get => button.interactable;
+			set => button.interactable = value;
 		}
 	}
 }
