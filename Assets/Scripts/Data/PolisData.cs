@@ -25,6 +25,14 @@ namespace LongLiveKhioyen
 		public Economy economy;
 		public List<BuildingPlacement> buildings;
 
+		[Serializable]
+		public class ItemRecord
+		{
+			public string itemId;
+			public int quantity;
+		}
+		public List<ItemRecord> items;
+
 		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
 		public float lastTime;
 		[SerializeField] List<PolisTask> tasks;
