@@ -18,8 +18,7 @@ namespace LongLiveKhioyen
 			return new("Polis Names", id);
 		}
 
-		public bool isControlled;
-		public bool isHostile;
+		public PolisType type;
 
 		public Vector2Int size;
 		public int population;
@@ -47,6 +46,12 @@ namespace LongLiveKhioyen
 		{
 			tasks.Remove(task);
 		}
+	}
+
+	public enum PolisType
+	{
+		Undefined,
+		Controlled, Hostile,
 	}
 
 	[Serializable]

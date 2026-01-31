@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a91b904aaf8968a4e833f1dd0a5cc3be, type: 3}
   m_Name: Internal Game Settings
   m_EditorClassIdentifier: 
-  monthLength: 60
+  monthLength: 180

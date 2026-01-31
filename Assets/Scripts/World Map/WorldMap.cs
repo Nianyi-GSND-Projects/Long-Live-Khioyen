@@ -49,17 +49,22 @@ namespace LongLiveKhioyen
 
 		PolisMiniature SpawnPolisMiniature(PolisData polisData)
 		{
-			if(!controlledPolisMiniatureTemplate)
-				controlledPolisMiniatureTemplate = Resources.Load<GameObject>("Prefabs/World Map/Polis_miniature-controlled");
-			if(!hostilePolisMiniatureTemplate)
-				hostilePolisMiniatureTemplate = Resources.Load<GameObject>("Prefabs/World Map/Polis_miniature-hostile");
-
 			GameObject go;
-			if(polisData.isControlled)
-				go = Instantiate(controlledPolisMiniatureTemplate);
-			else if(polisData.isHostile)
-				go = Instantiate(hostilePolisMiniatureTemplate);
-			else throw new System.NotSupportedException();
+			switch(polisData.type)
+			{
+				case PolisType.Controlled:
+					if(!controlledPolisMiniatureTemplate)
+						controlledPolisMiniatureTemplate = Resources.Load<GameObject>("Prefabs/World Map/Polis_miniature-controlled");
+					go = Instantiate(controlledPolisMiniatureTemplate);
+					break;
+				case PolisType.Hostile:
+					if(!hostilePolisMiniatureTemplate)
+						hostilePolisMiniatureTemplate = Resources.Load<GameObject>("Prefabs/World Map/Polis_miniature-hostile");
+					go = Instantiate(hostilePolisMiniatureTemplate);
+					break;
+				default:
+					throw new System.NotSupportedException();
+			}
 
 			go.transform.SetParent(transform, false);
 			go.transform.localPosition = new Vector3(polisData.position.x, 0, polisData.position.y) * GameInstance.Instance.Data.world.data3D.scale;

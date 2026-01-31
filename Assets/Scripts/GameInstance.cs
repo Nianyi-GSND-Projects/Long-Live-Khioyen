@@ -110,20 +110,22 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			if(polis.isControlled)
+			switch(polis.type)
 			{
-				LastPolis = polis;
-				Debug.Log($"Entering polis \"{LastPolis.id}\".");
-				CurrentMode = Mode.Polis;
+				case PolisType.Controlled:
+					LastPolis = polis;
+					Debug.Log($"Entering polis \"{LastPolis.id}\".");
+					CurrentMode = Mode.Polis;
+					break;
+				case PolisType.Hostile:
+					LastPolis = polis;
+					battleMetaData = PrepareBattleMetadata();
+					Debug.Log($"Attacking polis \"{LastPolis.id}\".");
+					CurrentMode = Mode.Battle;
+					break;
+				default:
+					throw new System.NotSupportedException();
 			}
-			else if(polis.isHostile)
-			{
-				LastPolis = polis;
-				battleMetaData = PrepareBattleMetadata();
-				Debug.Log($"Attacking polis \"{LastPolis.id}\".");
-				CurrentMode = Mode.Battle;
-			}
-			else throw new System.NotSupportedException();
 		}
 
 		/// <summary>从我方城池出征。</summary>
