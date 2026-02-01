@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -25,7 +26,7 @@ namespace LongLiveKhioyen
 		public class Recipe
 		{
 			public string name;
-			public FancyListItem.CostDescriptor[] costs;
+			public CostDescriptor[] costs;
 		}
 
 		void ApplyRecipeToItem(Recipe recipe, FancyListItem item)
@@ -79,61 +80,15 @@ namespace LongLiveKhioyen
 
 		Recipe[] GetRecipes()
 		{
-			// TODO: DEBUG
-			return new Recipe[]
-			{
-				new()
-				{
-					name = "青椒炒蛋",
-					costs = new FancyListItem.CostDescriptor[]
+			return ItemDatabase.Instance.items
+				.Where(item => item.productable)
+				.Select(item => new Recipe()
 					{
-						new()
-						{
-							type = EconomyType.Food,
-							value = 2,
-						},
-					},
-				},
-				new()
-				{
-					name = "宋顺文炸蛋",
-					costs = new FancyListItem.CostDescriptor[]
-					{
-						new()
-						{
-							type = EconomyType.Food,
-							value = 1,
-						},
-						new()
-						{
-							type = EconomyType.Population,
-							value = 1,
-						},
-					},
-				},
-				new()
-				{
-					name = "鬼推磨",
-					costs = new FancyListItem.CostDescriptor[]
-					{
-						new()
-						{
-							type = EconomyType.Population,
-							value = -1,
-						},
-						new()
-						{
-							type = EconomyType.Material,
-							value = 10,
-						},
-						new()
-						{
-							type = EconomyType.Money,
-							value = 1000,
-						},
-					},
-				},
-			};
+						name = item.name,
+						costs = item.costs,
+					}
+				)
+				.ToArray();
 		}
 
 		public Recipe ProducingRecipe

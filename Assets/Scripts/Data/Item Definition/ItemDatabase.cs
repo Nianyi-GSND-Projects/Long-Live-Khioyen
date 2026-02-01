@@ -32,15 +32,15 @@ namespace LongLiveKhioyen
         
         public List<ItemDefinition> items = new List<ItemDefinition>();
         
-        private Dictionary<int, ItemDefinition> _lookup;
+        private Dictionary<string, ItemDefinition> _lookup;
         private Dictionary<string, ItemDefinition> _nameLookup;
         
         public void Initialize()
         {
             if (_lookup != null) return;
 
-            _lookup = new Dictionary<int, ItemDefinition>();
-            _nameLookup = new Dictionary<string, ItemDefinition>();
+            _lookup = new();
+            _nameLookup = new();
 
             foreach (var item in items)
             {
@@ -64,7 +64,7 @@ namespace LongLiveKhioyen
             }
         }
         
-        public ItemDefinition GetItem(int id)
+        public ItemDefinition GetItem(string id)
         {
             if (_lookup == null) Initialize();
             

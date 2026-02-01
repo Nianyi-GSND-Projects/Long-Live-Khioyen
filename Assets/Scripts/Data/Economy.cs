@@ -1,8 +1,8 @@
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace LongLiveKhioyen
 {
@@ -51,11 +51,24 @@ namespace LongLiveKhioyen
 	/// <summary>
 	/// 经济资源种类描述符，主要用于方便地指代几种预定义的资源。
 	/// </summary>
+	[Serializable]
 	public enum EconomyType
 	{
 		Undefined = 0b0,
 		Food = 0b100, Material, Money,
 		Population = 0b1000,
 		Custom = 0xffff,
+	}
+
+	[Serializable]
+	public struct CostDescriptor
+	{
+		public EconomyType type;
+		/// <summary>
+		/// 若此 descriptor 的 <c>type</c> 为 <c>Custom</c>，则此字段值用为图标。
+		/// </summary>
+		public Sprite customSprite;
+
+		public float value;
 	}
 }

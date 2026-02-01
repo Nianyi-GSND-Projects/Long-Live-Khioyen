@@ -45,9 +45,6 @@ namespace LongLiveKhioyen
                 }
             }
 
-            // 按 ID 排序 (可选，看着舒服)
-            db.items.Sort((a, b) => a.itemId.CompareTo(b.itemId));
-
             EditorUtility.SetDirty(db);
             Debug.Log($"<color=cyan><b>【物品库更新】</b></color> 旧数量: {oldCount} -> 新数量: {db.items.Count}");
         }

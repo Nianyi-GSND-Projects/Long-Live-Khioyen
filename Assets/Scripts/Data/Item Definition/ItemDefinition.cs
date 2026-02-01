@@ -25,14 +25,13 @@ namespace LongLiveKhioyen
     public class ItemDefinition : ScriptableObject
     {
         [Header("Identity")]
-        public int itemId;
+        public string itemId;
         public string itemName;
         
         public string[] tags;
         public string description;
         
         [Header("Visual")]
-        public GameObject itemPrefab;
         public Sprite icon;
         
         [Header("Value")]
@@ -47,6 +46,9 @@ namespace LongLiveKhioyen
         
         public int maxStackNumber = 100;
         //该物品最大可以在同一格内堆叠多少个
-        
+
+        [Header("Production")]
+        public bool productable = false;
+        public CostDescriptor[] costs;
     }
 }

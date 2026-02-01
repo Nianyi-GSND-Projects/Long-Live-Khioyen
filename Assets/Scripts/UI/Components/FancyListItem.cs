@@ -12,21 +12,17 @@ namespace LongLiveKhioyen
 		[SerializeField] LayoutGroup infoLayoutGroup;
 		[SerializeField] Button button;
 
+		public System.Action onClick;
+
+		protected void Start()
+		{
+			button.onClick.AddListener(() => onClick?.Invoke());
+		}
+
 		public string ItemName
 		{
 			get => nameText.text;
 			set => nameText.text = value;
-		}
-
-		public struct CostDescriptor
-		{
-			public EconomyType type;
-			/// <summary>
-			/// 若此 descriptor 的 <c>type</c> 为 <c>Custom</c>，则此字段值用为图标。
-			/// </summary>
-			public Sprite customSprite;
-
-			public float value;
 		}
 
 		const string prefabPath = "Prefabs/UI/Common/Fancy List Item";
