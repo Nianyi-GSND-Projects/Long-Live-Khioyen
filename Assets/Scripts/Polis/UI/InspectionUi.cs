@@ -41,6 +41,15 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		protected void OnDestroy()
+		{
+			if(building != null)
+			{
+				if(localizedBuildingName != null)
+					localizedBuildingName.StringChanged -= OnLocalizedBuildingNameChanged;
+			}
+		}
+
 		void SetupContent()
 		{
 			title.text = string.Empty;
