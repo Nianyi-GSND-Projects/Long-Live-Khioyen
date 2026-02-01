@@ -17,21 +17,33 @@ namespace LongLiveKhioyen
 
 		protected void Start()
 		{
+			Refresh();
+			Polis.Instance.onProductionStateChanged += Refresh;
+		}
+
+		protected void OnDestroy()
+		{
+			if(Polis.Instance)
+				Polis.Instance.onProductionStateChanged -= Refresh;
+		}
+
+		void Refresh()
+		{
 			RefreshRecipes();
-			ProducingRecipe = null;  // TODO
+			RefreshProducingRecipe();
 			RefreshQueued();
 			CompletedRecipe = null;  // TODO
 		}
 
 		public class Recipe
 		{
-			public string name;
+			public ItemDefinition item;
 			public CostDescriptor[] costs;
 		}
 
 		void ApplyRecipeToItem(Recipe recipe, FancyListItem item)
 		{
-			item.ItemName = recipe.name;
+			item.ItemName = recipe.item.name;
 			item.SetCosts(recipe.costs);
 		}
 
@@ -73,6 +85,7 @@ namespace LongLiveKhioyen
 				item.transform.SetParent(recipesLayoutGroup.transform, false);
 				ApplyRecipeToItem(recipe, item);
 				item.Interactable = CheckRecipe(recipe);
+				item.onClick = () => Polis.Instance.QueueProduction(recipe.item.itemId);
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();
@@ -84,7 +97,7 @@ namespace LongLiveKhioyen
 				.Where(item => item.productable)
 				.Select(item => new Recipe()
 					{
-						name = item.name,
+						item = item,
 						costs = item.costs,
 					}
 				)
@@ -106,6 +119,23 @@ namespace LongLiveKhioyen
 					ApplyRecipeToItem(value, producingItem);
 					producingNoItemSign.SetActive(false);
 				}
+			}
+		}
+
+		public void RefreshProducingRecipe()
+		{
+			if(!Polis.Instance.Data.IsProducingItem)
+			{
+				ProducingRecipe = null;
+			}
+			else
+			{
+				var itemId = Polis.Instance.Data.ProductionTask.parameters[0];
+				var item = ItemDatabase.Instance.GetItem(itemId);
+				ProducingRecipe = new() {
+					item = item,
+					costs = new CostDescriptor[0],
+				};
 			}
 		}
 

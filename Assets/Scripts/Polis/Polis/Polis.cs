@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using static UnityEditor.Progress;
 
 namespace LongLiveKhioyen
 {
@@ -11,7 +12,7 @@ namespace LongLiveKhioyen
 
 		[SerializeField] PolisUi ui;
 
-		#region Life cycle
+		#region 生命周期
 		void Awake()
 		{
 			instance = this;
@@ -83,12 +84,12 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region Data
+		#region 数据源
 		public PolisData Data => GameInstance.Instance.LastPolis;
 		Vector2Int Size => Data.size;
 		#endregion
 
-		#region Population
+		#region 人口
 		public System.Action onPopulationDataChanged;
 
 		public int Population
@@ -156,7 +157,7 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region Economy
+		#region 经济
 		public Economy Economy
 		{
 			get => Data.economy;
@@ -184,7 +185,45 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region Time
+		#region 物品与生产
+		public System.Action onProductionStateChanged;
+
+		public void QueueProduction(string itemId)
+		{
+			if(Data.IsProducingItem)
+				Data.queuedProductions.Add(itemId);
+			else
+				AddProductionTask(itemId);
+
+			onProductionStateChanged?.Invoke();
+		}
+
+		public void PerformNextProductionInQueue()
+		{
+			if(Data.queuedProductions.Count == 0)
+				return;
+
+			var itemId = Data.queuedProductions[0];
+			Data.queuedProductions.RemoveAt(0);
+			AddProductionTask(itemId);
+
+			onProductionStateChanged?.Invoke();
+		}
+
+		void AddProductionTask(string itemId)
+		{
+			AddTask(new()
+			{
+				type = PolisTaskType.completeProduction,
+				parameters = new string[] { itemId },
+				remainingTime = 10,  // TODO: 得到此种物体的制造时间。
+				requiredPopulation = 0,
+			});
+			Debug.Log($"开始制造物品：{itemId}。");
+		}
+		#endregion
+
+		#region 时间
 		float LastTime
 		{
 			get => Data.lastTime;
@@ -247,7 +286,7 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region Tasks
+		#region 任务
 		IReadOnlyList<PolisTask> Tasks => Data.Tasks;
 
 		public System.Action onTasksChanged;
@@ -264,6 +303,7 @@ namespace LongLiveKhioyen
 			onTasksChanged.Invoke();
 		}
 
+		/// <remarks>此方法内及下游不需删除 task；删除的逻辑在 PassTime_Simple 中。</remarks>
 		void ExecuteTask(PolisTask task)
 		{
 			switch(task.type)
@@ -273,6 +313,9 @@ namespace LongLiveKhioyen
 					break;
 				case PolisTaskType.monthPassed:
 					ExecuteMonthPassedTask(task);
+					break;
+				case PolisTaskType.completeProduction:
+					ExecuteCompleteProductionTask(task);
 					break;
 				default: throw new System.NotSupportedException();
 			}
@@ -296,9 +339,19 @@ namespace LongLiveKhioyen
 			Debug.Log($"Month passed in polis \"{Data.id}\". Starting month: {startingMonth}");
 			// TODO
 		}
+
+		void ExecuteCompleteProductionTask(PolisTask task)
+		{
+			string itemId = task.parameters[0];
+			Data.AddItem(itemId, 1);
+			Debug.Log($"物品 {itemId} 制造完成。");
+			onProductionStateChanged?.Invoke();
+
+			PerformNextProductionInQueue();
+		}
 		#endregion
 
-		#region Selection
+		#region 选中
 		public ISelectable selected;
 
 		public System.Action<ISelectable> onSelectionChanged;

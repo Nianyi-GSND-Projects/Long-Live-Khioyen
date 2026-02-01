@@ -9,21 +9,25 @@ namespace LongLiveKhioyen
 	[Serializable]
 	public class PolisData
 	{
+		#region 基本信息
 		public string id;
+		public PolisType type;
+
 		public Vector2 position;
+		public Vector2Int size;
 		[Range(0, 359)] public float orientation;
 
 		public LocalizedString GetLocalizedName()
 		{
 			return new("Polis Names", id);
 		}
+		#endregion
 
-		public PolisType type;
+		public List<BuildingPlacement> buildings;
 
-		public Vector2Int size;
+		#region 经济与资源
 		public int population;
 		public Economy economy;
-		public List<BuildingPlacement> buildings;
 
 		[Serializable]
 		public class ItemRecord
@@ -33,6 +37,24 @@ namespace LongLiveKhioyen
 		}
 		public List<ItemRecord> items;
 
+		public void AddItem(string itemId, int quantity)
+		{
+			var record = items.FirstOrDefault(r => r.itemId == itemId);
+			if(record == null)
+			{
+				record = new() { itemId = itemId, };
+				items.Add(record);
+			}
+			record.quantity += quantity;
+		}
+
+		public List<string> queuedProductions;
+
+		public PolisTask ProductionTask => Tasks.FirstOrDefault(t => t.type == PolisTaskType.completeProduction);
+		public bool IsProducingItem => ProductionTask != null;
+		#endregion
+
+		#region 任务
 		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
 		public float lastTime;
 		[SerializeField] List<PolisTask> tasks;
@@ -54,6 +76,7 @@ namespace LongLiveKhioyen
 		{
 			tasks.Remove(task);
 		}
+		#endregion
 	}
 
 	public enum PolisType
@@ -85,5 +108,6 @@ namespace LongLiveKhioyen
 	{
 		public const string construction = "construction";
 		public const string monthPassed = "month-passed";
+		public const string completeProduction = "complete-production";
 	}
 }
