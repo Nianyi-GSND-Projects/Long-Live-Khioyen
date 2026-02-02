@@ -31,6 +31,8 @@ namespace LongLiveKhioyen
 
 		#region Events
 		public static System.Action onUiStateChanged;
+		public static System.Action<GameObject> onUiOpened;
+		public static System.Action<GameObject> onUiClosed;
 		#endregion
 
 		#region Modal
@@ -58,6 +60,7 @@ namespace LongLiveKhioyen
 				isInstantiated = isInstantiated,
 			});
 
+			onUiOpened?.Invoke(go);
 			onUiStateChanged?.Invoke();
 		}
 
@@ -101,7 +104,8 @@ namespace LongLiveKhioyen
 					modal.go.SetActive(false);
 			}
 
-				onUiStateChanged?.Invoke();
+			onUiClosed?.Invoke(modal.go);
+			onUiStateChanged?.Invoke();
 		}
 		#endregion
 	}

@@ -11,7 +11,6 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Life cycle
-
 		void Awake()
 		{
 			if(instance != null && instance != this)
@@ -25,9 +24,11 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
+			UiManager.onUiOpened += OnUiOpened;
+			UiManager.onUiClosed += OnUiClosed;
+
 			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
 			Paused = false;
-			UiManager.onUiStateChanged += OnUiStateChanged;
 		}
 
 		/// <summary>
@@ -35,9 +36,10 @@ namespace LongLiveKhioyen
 		/// </summary>
 		void OnDestroy()
 		{
-			UiManager.onUiStateChanged -= OnUiStateChanged;
-			Paused = false;
+			UiManager.onUiOpened -= OnUiOpened;
+			UiManager.onUiClosed -= OnUiClosed;
 
+			Paused = false;
 			Destroy(gameObject);
 		}
 		#endregion
@@ -234,6 +236,8 @@ namespace LongLiveKhioyen
 			ActualTimeScale = Paused ? 0 : TimeScale;
 		}
 
+		#endregion
+
 		#region Pause
 		public void OpenPauseMenu()
 		{
@@ -256,11 +260,22 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region UI
-		void OnUiStateChanged()
+		void OnUiOpened(GameObject ui)
 		{
-			Paused = UiManager.Instance?.IsAnyModalOpen ?? false;
+			if(IsPauseUi(ui))
+				Paused = true;
 		}
-		#endregion
+
+		void OnUiClosed(GameObject ui)
+		{
+			if(IsPauseUi(ui))
+				Paused = false;
+		}
+
+		bool IsPauseUi(GameObject go)
+		{
+			return go.GetComponent<PauseMenu>() != null;
+		}
 		#endregion
 	}
 }
