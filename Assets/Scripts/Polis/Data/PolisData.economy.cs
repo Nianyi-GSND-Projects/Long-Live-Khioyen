@@ -34,6 +34,54 @@ namespace LongLiveKhioyen
 				Economy -= cost;
 			return true;
 		}
+
+		public bool CostRecipe(Recipe recipe)
+		{
+			Economy cost = default;
+			foreach(var c in recipe.costs)
+			{
+				switch(c.type)
+				{
+					case EconomyType.Food:
+						cost.food += c.value;
+						break;
+					case EconomyType.Material:
+						cost.material += c.value;
+						break;
+					case EconomyType.Money:
+						cost.money += c.value;
+						break;
+				}
+			}
+			return TryCostResource(cost, true);
+		}
+
+		public bool ValidateRecipeCost(Recipe recipe)
+		{
+			foreach(var cost in recipe.costs)
+			{
+				switch(cost.type)
+				{
+					case EconomyType.Food:
+						if(Economy.food < cost.value)
+							return false;
+						break;
+					case EconomyType.Material:
+						if(Economy.material < cost.value)
+							return false;
+						break;
+					case EconomyType.Money:
+						if(Economy.money < cost.value)
+							return false;
+						break;
+					case EconomyType.Population:
+						if(FreePopulation < cost.value)
+							return false;
+						break;
+				}
+			}
+			return true;
+		}
 		#endregion
 
 		#region 人口
@@ -118,12 +166,19 @@ namespace LongLiveKhioyen
 
 		public Action onProductionStateChanged;
 
-		public void QueueProduction(string itemId)
+		public void QueueProduction(Recipe recipe)
 		{
+			if(!ValidateRecipeCost(recipe))
+			{
+				Debug.LogWarning($"没有足够多的资源制造 {recipe.item.name}。");
+				return;
+			}
+			CostRecipe(recipe);
+
 			if(IsProducingItem)
-				queuedProductions.Add(itemId);
+				queuedProductions.Add(recipe.item.itemId);
 			else
-				AddProductionTask(itemId);
+				AddProductionTask(recipe.item.itemId);
 
 			onProductionStateChanged?.Invoke();
 		}
@@ -157,10 +212,18 @@ namespace LongLiveKhioyen
 			string itemId = task.parameters[0];
 			AddItem(itemId, 1);
 			Debug.Log($"物品 {itemId} 制造完成。");
-			onProductionStateChanged?.Invoke();
 
-			PerformNextProductionInQueue();
+			if(queuedProductions.Count == 0)
+				onProductionStateChanged?.Invoke();
+			else
+				PerformNextProductionInQueue();
 		}
 		#endregion
+	}
+
+	public class Recipe
+	{
+		public ItemDefinition item;
+		public CostDescriptor[] costs;
 	}
 }

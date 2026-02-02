@@ -21,8 +21,7 @@ namespace LongLiveKhioyen
 
 		protected void OnDestroy()
 		{
-			if(Polis.Instance)
-				Polis.Instance.Data.onProductionStateChanged -= Refresh;
+			Polis.Instance.Data.onProductionStateChanged -= Refresh;
 		}
 
 		protected void Update()
@@ -43,44 +42,10 @@ namespace LongLiveKhioyen
 		}
 
 		#region 配方
-		public class Recipe
-		{
-			public ItemDefinition item;
-			public CostDescriptor[] costs;
-		}
-
 		void ApplyRecipeToItem(Recipe recipe, FancyListItem item)
 		{
 			item.ItemName = recipe.item.name;
 			item.SetCosts(recipe.costs);
-		}
-
-		bool CheckRecipe(Recipe recipe)
-		{
-			var polis = Polis.Instance;
-			foreach(var cost in recipe.costs)
-			{
-				switch(cost.type)
-				{
-					case EconomyType.Food:
-						if(polis.Data.Economy.food < cost.value)
-							return false;
-						break;
-					case EconomyType.Material:
-						if(polis.Data.Economy.material < cost.value)
-							return false;
-						break;
-					case EconomyType.Money:
-						if(polis.Data.Economy.money < cost.value)
-							return false;
-						break;
-					case EconomyType.Population:
-						if(polis.Data.FreePopulation < cost.value)
-							return false;
-						break;
-				}
-			}
-			return true;
 		}
 		#endregion
 
@@ -94,8 +59,8 @@ namespace LongLiveKhioyen
 				var item = FancyListItem.Instantiate();
 				item.transform.SetParent(recipesLayoutGroup.transform, false);
 				ApplyRecipeToItem(recipe, item);
-				item.Interactable = CheckRecipe(recipe);
-				item.onClick = () => Polis.Instance.Data.QueueProduction(recipe.item.itemId);
+				item.Interactable = Polis.Instance.Data.ValidateRecipeCost(recipe);
+				item.onClick = () => Polis.Instance.Data.QueueProduction(recipe);
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();
@@ -155,7 +120,17 @@ namespace LongLiveKhioyen
 		{
 			queuedLayoutGroup.transform.ClearChildren();
 
-			// TODO: DEBUG
+			foreach(var itemId in Polis.Instance.Data.queuedProductions)
+			{
+				var item = FancyListItem.Instantiate();
+				item.transform.SetParent(queuedLayoutGroup.transform, false);
+				ApplyRecipeToItem(new()
+				{
+					item = ItemDatabase.Instance.GetItem(itemId),
+					costs = new CostDescriptor[0],
+				}, item);
+				item.Interactable = false;
+			}
 
 			queuedLayoutGroup.CalculateLayoutInputVertical();
 		}

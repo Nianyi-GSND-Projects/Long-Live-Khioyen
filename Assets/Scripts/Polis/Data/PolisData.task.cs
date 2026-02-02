@@ -42,7 +42,7 @@ namespace LongLiveKhioyen
 				case PolisTaskType.itemProduced:
 					ExecuteCompleteProductionTask(task);
 					break;
-				default: throw new System.NotSupportedException();
+				default: throw new NotSupportedException();
 			}
 		}
 	}

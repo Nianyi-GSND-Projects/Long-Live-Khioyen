@@ -80,8 +80,8 @@ namespace LongLiveKhioyen
 			var toBeExecuted = Tasks.Where(t => t.remainingTime <= 0).ToArray();
 			foreach(var task in toBeExecuted)
 			{
-				ExecuteTask(task);
 				RemoveTask(task);
+				ExecuteTask(task);
 			}
 			LastTime += amount;
 		}
