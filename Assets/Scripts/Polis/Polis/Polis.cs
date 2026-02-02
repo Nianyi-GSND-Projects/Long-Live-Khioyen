@@ -212,11 +212,14 @@ namespace LongLiveKhioyen
 
 		void AddProductionTask(string itemId)
 		{
+			float productionTime = 10f;  // TODO: 得到此种物体的制造时间。
 			AddTask(new()
 			{
 				type = PolisTaskType.completeProduction,
-				parameters = new string[] { itemId },
-				remainingTime = 10,  // TODO: 得到此种物体的制造时间。
+				parameters = new string[] {
+					itemId, productionTime.ToString(),
+				},
+				remainingTime = productionTime,
 				requiredPopulation = 0,
 			});
 			Debug.Log($"开始制造物品：{itemId}。");

@@ -10,6 +10,7 @@ namespace LongLiveKhioyen
 		[SerializeField] LayoutGroup recipesLayoutGroup;
 		[SerializeField] FancyListItem producingItem;
 		[SerializeField] GameObject producingNoItemSign;
+		[SerializeField] Scrollbar productionTimeBar;
 		[SerializeField] LayoutGroup queuedLayoutGroup;
 
 		protected void Start()
@@ -22,6 +23,19 @@ namespace LongLiveKhioyen
 		{
 			if(Polis.Instance)
 				Polis.Instance.onProductionStateChanged -= Refresh;
+		}
+
+		protected void Update()
+		{
+			// 更新制造进度条。
+			float progress = 0f;
+			var production = Polis.Instance.Data.ProductionTask;
+			if(production != null)
+			{
+				float totalTime = float.Parse(production.parameters[1]);
+				progress = 1 - production.remainingTime / totalTime;
+			}
+			productionTimeBar.size = progress;
 		}
 
 		void Refresh()
