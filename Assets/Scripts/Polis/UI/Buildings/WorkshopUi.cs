@@ -16,13 +16,13 @@ namespace LongLiveKhioyen
 		protected void Start()
 		{
 			Refresh();
-			Polis.Instance.onProductionStateChanged += Refresh;
+			Polis.Instance.Data.onProductionStateChanged += Refresh;
 		}
 
 		protected void OnDestroy()
 		{
 			if(Polis.Instance)
-				Polis.Instance.onProductionStateChanged -= Refresh;
+				Polis.Instance.Data.onProductionStateChanged -= Refresh;
 		}
 
 		protected void Update()
@@ -31,10 +31,7 @@ namespace LongLiveKhioyen
 			float progress = 0f;
 			var production = Polis.Instance.Data.ProductionTask;
 			if(production != null)
-			{
-				float totalTime = float.Parse(production.parameters[1]);
-				progress = 1 - production.remainingTime / totalTime;
-			}
+				progress = 1 - production.remainingTime / production.totalTime;
 			productionTimeBar.size = progress;
 		}
 
@@ -66,19 +63,19 @@ namespace LongLiveKhioyen
 				switch(cost.type)
 				{
 					case EconomyType.Food:
-						if(polis.Economy.food < cost.value)
+						if(polis.Data.Economy.food < cost.value)
 							return false;
 						break;
 					case EconomyType.Material:
-						if(polis.Economy.material < cost.value)
+						if(polis.Data.Economy.material < cost.value)
 							return false;
 						break;
 					case EconomyType.Money:
-						if(polis.Economy.money < cost.value)
+						if(polis.Data.Economy.money < cost.value)
 							return false;
 						break;
 					case EconomyType.Population:
-						if(polis.FreePopulation < cost.value)
+						if(polis.Data.FreePopulation < cost.value)
 							return false;
 						break;
 				}
@@ -98,7 +95,7 @@ namespace LongLiveKhioyen
 				item.transform.SetParent(recipesLayoutGroup.transform, false);
 				ApplyRecipeToItem(recipe, item);
 				item.Interactable = CheckRecipe(recipe);
-				item.onClick = () => Polis.Instance.QueueProduction(recipe.item.itemId);
+				item.onClick = () => Polis.Instance.Data.QueueProduction(recipe.item.itemId);
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();

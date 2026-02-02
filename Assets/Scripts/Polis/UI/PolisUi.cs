@@ -15,10 +15,10 @@ namespace LongLiveKhioyen
 			localizedPolisName = Polis.Data.GetLocalizedName();
 			localizedPolisName.StringChanged += s => polisName.text = s;
 
-			Polis.onPopulationDataChanged += UpdatePopulation;
+			Polis.Data.onPopulationDataChanged += UpdatePopulation;
 			UpdatePopulation();
 
-			Polis.onEconomyChanged += UpdateEnocomy;
+			Polis.Data.onEconomyChanged += UpdateEnocomy;
 			UpdateEnocomy();
 
 			SwitchBottomPanel(normalPanel);
@@ -30,6 +30,11 @@ namespace LongLiveKhioyen
 		protected void Update()
 		{
 			UpdateTime();
+		}
+
+		protected void OnDestroy()
+		{
+			Polis.Data.onEconomyChanged -= UpdateEnocomy;
 		}
 		#endregion
 
@@ -58,9 +63,9 @@ namespace LongLiveKhioyen
 
 		void UpdateEnocomy()
 		{
-			foodValue.text = $"{(int)Polis.Economy.food}";
-			materialValue.text = $"{(int)Polis.Economy.material}";
-			moneyValue.text = $"{(int)Polis.Economy.money}";
+			foodValue.text = $"{(int)Polis.Data.Economy.food}";
+			materialValue.text = $"{(int)Polis.Data.Economy.material}";
+			moneyValue.text = $"{(int)Polis.Data.Economy.money}";
 		}
 
 		[Header("Population")]
@@ -70,9 +75,9 @@ namespace LongLiveKhioyen
 
 		void UpdatePopulation()
 		{
-			populationValue.text = $"{Polis.Population}";
-			freePopulationValue.text = $"{Polis.FreePopulation}";
-			populationCapValue.text = $"{Polis.PopulationCap}";
+			populationValue.text = $"{Polis.Data.Population}";
+			freePopulationValue.text = $"{Polis.Data.FreePopulation}";
+			populationCapValue.text = $"{Polis.Data.PopulationCap}";
 		}
 
 		[Header("Time")]

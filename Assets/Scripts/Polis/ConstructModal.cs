@@ -8,7 +8,6 @@ namespace LongLiveKhioyen
 	{
 		public MayorMode mayorMode;
 		int orientation;
-		Polis Polis => Polis.Instance;
 		public LayoutGroup constructOptionsUi;
 
 		#region Life cycle
@@ -17,12 +16,13 @@ namespace LongLiveKhioyen
 			GenerateUi();
 			SelectedBuildingType = null;
 			ShowCostPreview = false;
-			Polis.onEconomyChanged += OnEconomyDataChanged;
-			Polis.onBuildingsChanged += UpdatePreviewModel;
+			Polis.Instance.Data.onEconomyChanged += OnEconomyDataChanged;
+			Polis.Instance.Data.onBuildingsChanged += UpdatePreviewModel;
 		}
 
 		void OnDisable()
 		{
+			Polis.Instance.Data.onEconomyChanged -= OnEconomyDataChanged;
 			SelectedBuildingType = null;
 		}
 
@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
 		{
 			if(SelectedBuildingType != null)
 			{
-				if(!(SelectedBuildingType.cost <= Polis.Economy))
+				if(!(SelectedBuildingType.cost <= Polis.Instance.Data.Economy))
 					SelectedBuildingType = null;
 			}
 		}
@@ -113,7 +113,7 @@ namespace LongLiveKhioyen
 					orientation = selectedBuildingType.defaultOrientation;
 					preview = new GameObject("Construction Preview").AddComponent<ConstructPreview>();
 					preview.Definition = selectedBuildingType;
-					preview.transform.SetParent(Polis.transform, false);
+					preview.transform.SetParent(Polis.Instance.transform, false);
 					preview.onInitialized += UpdatePreviewModel;
 				}
 			}
@@ -128,9 +128,9 @@ namespace LongLiveKhioyen
 			Vector2Int mapPos = default;
 			bool PositionMakesSense()
 			{
-				if(!Polis.ScreenToGround(mayorMode.PointerScreenPosition, out groundPos))
+				if(!Polis.Instance.ScreenToGround(mayorMode.PointerScreenPosition, out groundPos))
 					return false;
-				if(!Polis.IsValidMapPosition(mapPos = Polis.WorldToMapInt(groundPos)))
+				if(!Polis.Instance.Data.IsValidMapPosition(mapPos = Polis.Instance.WorldToMapInt(groundPos)))
 					return false;
 				return true;
 			}
@@ -141,13 +141,9 @@ namespace LongLiveKhioyen
 			}
 			preview.Visible = true;
 
-			BuildingPlacement placement = new()
-			{
-				position = mapPos,
-				orientation = orientation,
-			};
-			preview.Valid = Polis.ValidateBuildingPlacement(SelectedBuildingType, placement);
-			Polis.PositionBuilding(preview.transform, SelectedBuildingType, placement);
+			BuildingPlacement placement = new(SelectedBuildingType.id, mapPos, orientation);
+			preview.Valid = Polis.Instance.Data.ValidateBuildingPlacement(placement);
+			Polis.Instance.PositionBuilding(preview.transform, placement);
 		}
 		#endregion
 
@@ -175,31 +171,27 @@ namespace LongLiveKhioyen
 		{
 			if(SelectedBuildingType == null)
 				return;
-			if(!Polis.ScreenToGround(mayorMode.PointerScreenPosition, out Vector3 groundPosition))
+			if(!Polis.Instance.ScreenToGround(mayorMode.PointerScreenPosition, out Vector3 groundPosition))
 				return;
 
-			BuildingPlacement placement = new()
-			{
-				position = Polis.WorldToMapInt(groundPosition),
-				orientation = orientation,
-			};
-			if(!Polis.ValidateBuildingPlacement(SelectedBuildingType, placement))
+			BuildingPlacement placement = new(SelectedBuildingType.id, Polis.Instance.WorldToMapInt(groundPosition), orientation);
+			if(!Polis.Instance.Data.ValidateBuildingPlacement(placement))
 			{
 				Debug.LogWarning($"Cannot place {SelectedBuildingType.id} at {placement.position}, obstructed.");
 				return;
 			}
 
-			if(!Polis.TryCostResource(SelectedBuildingType.cost, false))
+			if(!Polis.Instance.Data.TryCostResource(SelectedBuildingType.cost, false))
 			{
 				Debug.LogWarning(
 					$"Not enough resources to build {SelectedBuildingType.id}!\n" +
-					$"Required: {SelectedBuildingType.cost}, current: {Polis.Economy}."
+					$"Required: {SelectedBuildingType.cost}, current: {Polis.Instance.Data.Economy}."
 				);
 				return;
 			}
 
-			Polis.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
-			Polis.Economy -= SelectedBuildingType.cost;
+			Polis.Instance.Data.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
+			Polis.Instance.Data.Economy -= SelectedBuildingType.cost;
 		}
 		#endregion
 	}

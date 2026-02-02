@@ -6,9 +6,6 @@ namespace LongLiveKhioyen
 {
 	public partial class PolisData
 	{
-		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
-		public float lastTime;
-
 		[SerializeField] List<PolisTask> tasks;
 		public IReadOnlyList<PolisTask> Tasks => tasks;
 
@@ -30,21 +27,52 @@ namespace LongLiveKhioyen
 		{
 			tasks.Remove(task);
 		}
+
+		/// <remarks>此方法内及下游不需删除 task；删除的逻辑在 PassTime_Simple 中。</remarks>
+		void ExecuteTask(PolisTask task)
+		{
+			switch(task.type)
+			{
+				case PolisTaskType.buildingConstructed:
+					ExecuteBuildingConstructedTask(task);
+					break;
+				case PolisTaskType.monthPassed:
+					ExecuteMonthPassedTask(task);
+					break;
+				case PolisTaskType.itemProduced:
+					ExecuteCompleteProductionTask(task);
+					break;
+				default: throw new System.NotSupportedException();
+			}
+		}
 	}
 
 	[Serializable]
 	public class PolisTask
 	{
 		public string type;
+		public float totalTime;
 		public float remainingTime;
-		public string[] parameters;
 		public int requiredPopulation;
+		public string[] parameters;
+
+		public PolisTask(string type, float totalTime, int requiredPopulation, params string[] parameters)
+		{
+			this.type = type;
+			this.totalTime = totalTime;
+			remainingTime = totalTime;
+			this.requiredPopulation = requiredPopulation;
+			this.parameters = parameters;
+		}
+
+		public PolisTask(string type, float totalTime, params string[] parameters)
+			: this(type, totalTime, 0, parameters) { }
 	}
 
 	public static class PolisTaskType
 	{
-		public const string construction = "construction";
+		public const string buildingConstructed = "building-constructed";
 		public const string monthPassed = "month-passed";
-		public const string completeProduction = "complete-production";
+		public const string itemProduced = "item-produced";
 	}
 }

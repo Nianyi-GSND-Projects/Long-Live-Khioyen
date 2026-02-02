@@ -23,7 +23,6 @@ namespace LongLiveKhioyen
 		protected void Awake()
 		{
 			group = GetComponent<CanvasGroup>();
-			Polis.onEconomyChanged += OnEconomyDataChanged;
 			button.onClick.AddListener(() => onSelected?.Invoke(this));
 		}
 
@@ -32,17 +31,19 @@ namespace LongLiveKhioyen
 			localizedBuildingName = buildingDefinition.GetLocalizedName();
 			localizedBuildingName.StringChanged += s => text.text = s;
 			image.sprite = buildingDefinition.figure;
+
+			Polis.Data.onEconomyChanged += OnEconomyDataChanged;
 		}
 
 		protected void OnDestroy()
 		{
 			if(Polis)
-				Polis.onEconomyChanged -= OnEconomyDataChanged;
+				Polis.Data.onEconomyChanged -= OnEconomyDataChanged;
 		}
 
 		void OnEconomyDataChanged()
 		{
-			if(buildingDefinition.cost <= Polis.Economy)
+			if(buildingDefinition.cost <= Polis.Data.Economy)
 			{
 				group.interactable = true;
 				group.alpha = 1;

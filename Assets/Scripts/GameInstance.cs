@@ -39,9 +39,6 @@ namespace LongLiveKhioyen
 			Paused = false;
 
 			Destroy(gameObject);
-
-			if(instance == this)
-				instance = null;
 		}
 		#endregion
 
@@ -197,15 +194,14 @@ namespace LongLiveKhioyen
 
 		void PushMonthPassToPoleis()
 		{
-			foreach(var poleis in Data.poleis)
+			foreach(var polis in Data.poleis)
 			{
-				PolisTask task = new()
-				{
-					type = PolisTaskType.monthPassed,
-					parameters = new string[] { CurrentMonth.ToString() },
-					remainingTime = GameTime - poleis.lastTime,
-				};
-				poleis.AddTask(task);
+				PolisTask task = new(
+					PolisTaskType.monthPassed,
+					GameTime - polis.LastTime,
+					CurrentMonth.ToString()
+				);
+				polis.AddTask(task);
 			}
 		}
 
