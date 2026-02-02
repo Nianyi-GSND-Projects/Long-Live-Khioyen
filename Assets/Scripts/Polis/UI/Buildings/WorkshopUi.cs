@@ -11,9 +11,6 @@ namespace LongLiveKhioyen
 		[SerializeField] FancyListItem producingItem;
 		[SerializeField] GameObject producingNoItemSign;
 		[SerializeField] LayoutGroup queuedLayoutGroup;
-		[SerializeField] FancyListItem completedItem;
-		[SerializeField] GameObject completedPlaceholder;
-		[SerializeField] Button collectButton;
 
 		protected void Start()
 		{
@@ -32,9 +29,9 @@ namespace LongLiveKhioyen
 			RefreshRecipes();
 			RefreshProducingRecipe();
 			RefreshQueued();
-			CompletedRecipe = null;  // TODO
 		}
 
+		#region 配方
 		public class Recipe
 		{
 			public ItemDefinition item;
@@ -74,7 +71,9 @@ namespace LongLiveKhioyen
 			}
 			return true;
 		}
+		#endregion
 
+		#region 左侧配方列表
 		public void RefreshRecipes()
 		{
 			recipesLayoutGroup.transform.ClearChildren();
@@ -103,7 +102,9 @@ namespace LongLiveKhioyen
 				)
 				.ToArray();
 		}
+		#endregion
 
+		#region 右侧制作中 & 制作队列
 		public Recipe ProducingRecipe
 		{
 			set
@@ -147,25 +148,6 @@ namespace LongLiveKhioyen
 
 			queuedLayoutGroup.CalculateLayoutInputVertical();
 		}
-
-		public Recipe CompletedRecipe
-		{
-			set
-			{
-				if(value == null)
-				{
-					completedItem.gameObject.SetActive(false);
-					completedPlaceholder.SetActive(true);
-					collectButton.interactable = false;
-				}
-				else
-				{
-					completedItem.gameObject.SetActive(true);
-					ApplyRecipeToItem(value, completedItem);
-					completedPlaceholder.SetActive(false);
-					collectButton.interactable = true;
-				}
-			}
-		}
+		#endregion
 	}
 }
