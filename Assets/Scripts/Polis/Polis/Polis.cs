@@ -30,6 +30,7 @@ namespace LongLiveKhioyen
 
 			InitializeConstruction();
 			InitializeBuilding();
+			InitializeTime();
 
 			// 度过累积的时间
 			float passedTime = GameInstance.Instance.GameTime - Data.LastTime;
@@ -44,13 +45,13 @@ namespace LongLiveKhioyen
 
 			FinalizeConstruction();
 			FinalizeBuilding();
+			FinalizeTime();
 		}
 
 		void Update()
 		{
 			float dt = Time.deltaTime;
-			if(dt > 0)
-				GameInstance.Instance.AdvanceTime(dt);
+			UpdateTime(dt);
 		}
 		#endregion
 

@@ -1,7 +1,8 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
-using TMPro;
 
 namespace LongLiveKhioyen
 {
@@ -89,6 +90,11 @@ namespace LongLiveKhioyen
 			float month = GameInstance.Instance.GameTime / GameManager.InternalSettings.monthLength;
 			timeText.text = $"Month {Mathf.FloorToInt(month)}";
 			timeSlider.value = month - Mathf.Floor(month);
+		}
+
+		public void SetPolisTimeScale(float timeScale)
+		{
+			GameInstance.Instance.TimeScale = timeScale;
 		}
 		#endregion
 
