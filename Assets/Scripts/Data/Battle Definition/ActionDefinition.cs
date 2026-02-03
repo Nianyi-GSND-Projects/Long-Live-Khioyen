@@ -7,7 +7,30 @@ namespace LongLiveKhioyen
     public class ActionContext
     {
         public Unit User;
-        public Unit Target;
+        public Vector2Int TargetPos;
+        public ActionDefinition ActionDef;
+        public Unit TargetUnit 
+        {
+            get
+            {
+                if (Battle.Instance == null) return null;
+                TileData tile = Battle.Instance.mapData[TargetPos.x, TargetPos.y];
+                
+                // 如果 ActionDef 提供了筛选逻辑，就用它的
+                if (ActionDef != null)
+                {
+                    // 特殊处理：如果指定了 BattalionOnly，即使设施 Block 也要穿透去拿 Battalion
+                    if (ActionDef.targetType == ActionTargetType.BattalionOnly) return tile.Battalion;
+                    if (ActionDef.targetType == ActionTargetType.FacilityOnly) return tile.Facility;
+                    
+                    // 默认走 Block 逻辑
+                    return ActionDef.GetPrimaryTargetOnTile(tile);
+                }
+                
+                // 回退逻辑
+                return tile.Battalion != null ? tile.Battalion : tile.Facility;
+            }
+        }
     }
 
     public enum TargetFactionType
@@ -16,6 +39,15 @@ namespace LongLiveKhioyen
         NonFriend,
         Enemy,
         All
+    }
+    
+    public enum ActionTargetType
+    {
+        BattalionOnly,  
+        FacilityOnly,   
+        EmptyTileOnly,  
+        UnitOnly, 
+        Any 
     }
 
     public enum TargetCountType
@@ -55,18 +87,75 @@ namespace LongLiveKhioyen
         [Header("Constraints")]
         public int range = 1; 
         public int minRange = 1;
-        public bool CanTargetEmptyTile = false;
-        public bool Perform(Unit user, Unit target)
+        
+        [Header("Targeting")]
+        public ActionTargetType targetType = ActionTargetType.UnitOnly;
+        
+        public bool IsTileValidTarget(Unit user, Vector2Int pos)
         {
-            //支付费用
-            //user.TakeActionPoint(actionPointCost);
+            if (Battle.Instance == null) return false;
+            TileData tile = Battle.Instance.mapData[pos.x, pos.y];
+
+            // 1. 获取该格子上【逻辑上的】首选目标
+            Unit primaryTarget = GetPrimaryTargetOnTile(tile);
+
+            switch (targetType)
+            {
+                case ActionTargetType.BattalionOnly:
+                    // 必须有部队，且条件满足
+                    return tile.Battalion != null && CheckUnitConditions(user, tile.Battalion);
+
+                case ActionTargetType.FacilityOnly:
+                    // 必须有设施，且条件满足
+                    return tile.Facility != null && CheckUnitConditions(user, tile.Facility);
+
+                case ActionTargetType.EmptyTileOnly:
+                    // 必须完全为空
+                    return tile.IsEmpty;
+
+                case ActionTargetType.UnitOnly:
+                    // 如果首选目标存在，且满足条件 -> OK
+                    if (primaryTarget != null) return CheckUnitConditions(user, primaryTarget);
+                    return false;
+
+                case ActionTargetType.Any:
+                    // 如果有目标，检查目标；如果是空地，直接通过
+                    if (primaryTarget != null) return CheckUnitConditions(user, primaryTarget);
+                    return true; // 空地也是合法的
+            }
+            return false;
+        }
+        
+        public Unit GetPrimaryTargetOnTile(TileData tile)
+        {
+            // 情况 A: 只有部队 -> 部队
+            if (tile.Battalion != null && tile.Facility == null) return tile.Battalion;
             
-            ActionContext ctx = new ActionContext{User = user, Target = target};
+            // 情况 B: 只有设施 -> 设施
+            if (tile.Battalion == null && tile.Facility != null) return tile.Facility;
+
+            // 情况 C: 都有 -> 看 Block
+            if (tile.Battalion != null && tile.Facility != null)
+            {
+                // 如果设施 Block 为真，设施优先（挡住了部队）
+                if (tile.Facility.Definition.block) return tile.Facility;
+                
+                // 否则部队优先
+                return tile.Battalion;
+            }
+
+            return null; // 空地
+        }
+        
+        public bool Perform(Unit user, Vector2Int targetPos)
+        {
+            // 构造 Context
+            ActionContext ctx = new ActionContext { User = user, TargetPos = targetPos, ActionDef = this };
             
-            foreach(var effect in effects) effect.Execute(ctx);
-            
-            Debug.Log($"Action {actionName} performed by {user.InstanceId} on {target.InstanceId}");
-            
+            foreach (var effect in effects) 
+                effect.Execute(ctx);
+
+            Debug.Log($"Action {actionName} performed at {targetPos}");
             return true;
         }
 
@@ -94,9 +183,8 @@ namespace LongLiveKhioyen
             return true;
         }
         
-        public bool CheckTargetConditions(Unit user, Unit target)
+        private bool CheckUnitConditions(Unit user, Unit target)
         {
-            // 1. 检查阵营是否匹配
             if (!CheckFactionLogic(user, target)) return false;
 
             // 2. 检查脚本化条件 (比如：目标必须是受损的才能治疗)

@@ -9,6 +9,7 @@ namespace LongLiveKhioyen
     {
         public Battalion Battalion;
         public Facility Facility;
+        public List<TileEffect> Effects = new List<TileEffect>();
         public bool IsEmpty => Battalion == null && Facility == null;
     }
 }

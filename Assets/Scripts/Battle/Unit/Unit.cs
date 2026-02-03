@@ -109,12 +109,27 @@ namespace LongLiveKhioyen
 
         public void UpdateBuffs()
         {
-            foreach (Buff buff in buffs)
+            for (int i = buffs.Count - 1; i >= 0; i--)
             {
+                Buff buff = buffs[i];
+                
+                // 执行逻辑钩子 (比如中毒扣血)
+                if (buff.descriptor.definition != null)
+                {
+                    buff.descriptor.definition.OnTick(this, buff);
+                }
+
+                // 计时
                 buff.TimePass();
+
+                // 移除判定
                 if (buff.currentDuration <= 0)
                 {
-                    buffs.Remove(buff);
+                    // 执行移除逻辑 (比如恢复属性)
+                    if (buff.descriptor.definition != null)
+                        buff.descriptor.definition.OnRemove(this, buff);
+
+                    buffs.RemoveAt(i);
                 }
             }
         }

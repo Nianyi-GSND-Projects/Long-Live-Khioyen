@@ -22,6 +22,8 @@ namespace LongLiveKhioyen
         public int defaultPower;
 
         public bool special;
+
+        public bool block = false;
         
         [Header("Visuals")]
         public List<FacilityState> damageStates;

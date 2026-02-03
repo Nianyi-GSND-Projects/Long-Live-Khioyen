@@ -37,9 +37,21 @@ namespace LongLiveKhioyen
     
     public abstract class BuffDefinition : ScriptableObject
     {
+        public string buffNameEn;
+        public string buffNameCh;
+        public Sprite icon;
+        
         public BuffFactionType factionType;
         
         public BuffUnitType unitType;
+        
+        public GameObject vfxPrefab; 
+        
+        public virtual void OnApply(Unit unit, Buff runtimeBuff) { }
+        
+        public virtual void OnTick(Unit unit, Buff runtimeBuff) { }
+        
+        public virtual void OnRemove(Unit unit, Buff runtimeBuff) { }
     }
    
 }

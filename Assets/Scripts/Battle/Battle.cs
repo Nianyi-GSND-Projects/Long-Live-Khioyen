@@ -834,6 +834,9 @@ namespace LongLiveKhioyen
 				CurrentTurnState = TurnState.Processing;
 				yield return new WaitForSeconds(1);
 				if (CheckGameOver()) yield break;
+				
+				UpdateAllTileEffects(); 
+				//UpdateAllUnitBuffs(); 
 			}
 
 		}
@@ -1042,33 +1045,6 @@ namespace LongLiveKhioyen
 			ChangeActionStage(PlayerActionStage.SelectingTarget);
 		}
 		
-		public Unit GetBestTargetOnTile(Vector2Int targetPosition)
-		{
-			TileData tile = mapData[targetPosition.x, targetPosition.y];
-			if (tile.IsEmpty) return null;
-
-			// 如果当前没有行动，默认逻辑 (比如返回部队)
-			if (CurrentAction == null) return tile.Battalion != null ? (Unit)tile.Battalion : tile.Facility;
-
-			// 1. 尝试获取部队
-			if (tile.Battalion != null)
-			{
-				// 检查部队是否符合当前技能的条件
-				if (CurrentAction.CheckTargetConditions(SelectedUnit, tile.Battalion))
-					return tile.Battalion;
-			}
-
-			// 2. 尝试获取设施
-			if (tile.Facility != null)
-			{
-				if (CurrentAction.CheckTargetConditions(SelectedUnit, tile.Facility))
-					return tile.Facility;
-			}
-
-			// 3. 如果都不符合条件但格子上有人，返回任意一个让后续逻辑处理（可能会报错提示无效目标）
-			return tile.Battalion != null ? (Unit)tile.Battalion : tile.Facility;
-		}
-		
 		public void ApplyAction(Vector2Int mapPosition)
 		{
 			if (!IsUnitSelected || CurrentAction == null)
@@ -1077,48 +1053,30 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			// 1. 获取目标
-			Unit targetUnit = GetBestTargetOnTile(mapPosition);
-
-			// 2. 验证目标是否存在
-			if (targetUnit == null)
+			if (!CurrentAction.IsTileValidTarget(SelectedUnit, mapPosition))
 			{
-				Debug.Log("该位置没有有效目标。");
+				Debug.Log($"位置 {mapPosition} 无效。");
 				return;
 			}
-
-			// 3. 验证目标是否合法 (再次检查条件，防止 UI 漏洞)
-			if (!CurrentAction.CheckTargetConditions(SelectedUnit, targetUnit))
-			{
-				Debug.Log($"目标 {targetUnit.name} 不满足行动 {CurrentAction.actionName} 的条件。");
-				return;
-			}
-
-			// 4. 执行逻辑
-			ExecuteActionLogic(SelectedUnit, targetUnit);
+			
+			ExecuteActionLogic(SelectedUnit, mapPosition);
 		}
 
-		private void ExecuteActionLogic(Unit source, Unit target)
+		private void ExecuteActionLogic(Unit source, Vector2Int targetPos)
 		{
-			// 执行 ActionDefinition 定义的 Perform
-			bool success = CurrentAction.Perform(source, target);
+			// [修改] 传入坐标
+			bool success = CurrentAction.Perform(source, targetPos);
 
 			if (success)
 			{
-				// 检查可能的死亡
-				CheckDeath(source);
-				CheckDeath(target);
+				// 检查该位置上的单位状态 (如果有的话)
+				TileData tile = mapData[targetPos.x, targetPos.y];
+				if (tile.Battalion != null) CheckDeath(tile.Battalion);
+				if (tile.Facility != null) CheckDeath(tile.Facility);
 
-				// 标记行动结束
 				if (SelectedUnit) SelectedUnit.actionDone = true;
-                
-				// 清理状态
-				ClearAllSelection(); // 或者 CancelAction()
+				ClearAllSelection();
 				ChangeActionStage(PlayerActionStage.None);
-			}
-			else
-			{
-				Debug.Log("Action Perform returned false.");
 			}
 		}
 		
@@ -1372,6 +1330,63 @@ namespace LongLiveKhioyen
 			for (int j = 0; j < 3; j++)
 			{
 				availableArrangementPositions.Add(new Vector2Int(i, j));
+			}
+		}
+		public void AddTileEffect(Vector2Int pos, TileEffectDefinition def, int duration, Unit source)
+		{
+			if (!IsValidMapPosition(pos)) return;
+			TileData tile = mapData[pos.x, pos.y];
+
+			// 1. 创建数据实例
+			TileEffect effect = new TileEffect(def, duration, source);
+
+			// 2. 生成视觉特效
+			if (def.vfxPrefab != null)
+			{
+				Vector3 worldPos = MapToLocal(pos);
+				// 稍微抬高一点防止穿模，或者依靠Prefab自带偏移
+				GameObject vfx = Instantiate(def.vfxPrefab, transform); 
+				vfx.transform.localPosition = worldPos;
+				effect.vfxInstance = vfx;
+			}
+
+			// 3. 加入数据
+			tile.Effects.Add(effect);
+			Debug.Log($"Tile {pos} added effect: {def.effectName}");
+		}
+		
+		public void UpdateAllTileEffects()
+		{
+			for (int x = 0; x < Size.x; x++)
+			{
+				for (int y = 0; y < Size.y; y++)
+				{
+					UpdateTileEffectsAt(new Vector2Int(x, y));
+				}
+			}
+		}
+		
+		private void UpdateTileEffectsAt(Vector2Int pos)
+		{
+			TileData tile = mapData[pos.x, pos.y];
+			if (tile.Effects.Count == 0) return;
+
+			for (int i = tile.Effects.Count - 1; i >= 0; i--)
+			{
+				TileEffect effect = tile.Effects[i];
+
+				if (effect.definition != null)
+				{
+					effect.definition.OnTick(tile, pos);
+				}
+
+				effect.currentDuration--;
+				if (effect.currentDuration <= 0)
+				{
+					// 销毁特效物体
+					if (effect.vfxInstance != null) Destroy(effect.vfxInstance);
+					tile.Effects.RemoveAt(i);
+				}
 			}
 		}
 		
@@ -1689,7 +1704,7 @@ namespace LongLiveKhioyen
 			}
 
 			// 2. 直接调用 ActionDefinition 的 Perform
-			bool success = attackAction.Perform(source, target);
+			bool success = attackAction.Perform(source, target.position);
     
 			if(success)
 			{
@@ -1778,14 +1793,7 @@ namespace LongLiveKhioyen
                 validTiles.Add(user.position);
                 return validTiles;
             }
-
-            // 使用 BFS 搜索范围 (不考虑地形阻挡，通常技能范围是无视地形的“射程”)
-            // 如果需要考虑视线阻挡(Line of Sight)，这里需要改为 Raycast 逻辑
             
-            // 简单的曼哈顿距离/六边形距离遍历
-            // 为了性能，我们可以直接遍历 range 范围内的所有坐标，然后计算距离
-            
-            // 获取当前坐标的 Cube 坐标
             Vector3Int centerCube = OffsetToCube(user.position);
             int N = action.range;
             int minN = action.minRange; // 假设你有最小射程
@@ -1808,24 +1816,10 @@ namespace LongLiveKhioyen
 
                             if (IsValidMapPosition(neighborPos))
                             {
-                                TileData tile = mapData[neighborPos.x, neighborPos.y];
-                                
-                                bool hasValidTarget = false;
-
-                                if (tile.Battalion != null && action.CheckTargetConditions(user, tile.Battalion))
-                                    hasValidTarget = true;
-                                
-                                // 检查设施
-                                if (!hasValidTarget && tile.Facility != null && action.CheckTargetConditions(user, tile.Facility))
-                                    hasValidTarget = true;
-
-                               
-                                if (action.CanTargetEmptyTile && tile.IsEmpty) hasValidTarget = true;
-
-                                if (hasValidTarget)
-                                {
-                                    validTiles.Add(neighborPos);
-                                }
+	                            if (action.IsTileValidTarget(user, neighborPos))
+	                            {
+		                            validTiles.Add(neighborPos);
+	                            }
                             }
                         }
                     }
