@@ -26,6 +26,7 @@ MonoBehaviour:
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   unitUniqueActions:
   - {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
+  - {fileID: 11400000, guid: 75b920ce36862ca41885e650af5e19e8, type: 2}
   tags: []
   defaultDiscipline: 100
   defaultPower: 100

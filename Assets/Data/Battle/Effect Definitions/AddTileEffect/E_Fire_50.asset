@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7781460f2e002a04498fd5dc1962bc62, type: 3}
-  m_Name: Action Database
+  m_Script: {fileID: 11500000, guid: 002c7efb6c3880a49bcdd0650585b4c5, type: 3}
+  m_Name: E_Fire_50
   m_EditorClassIdentifier: 
-  actionDefinitions:
-  - {fileID: 11400000, guid: 75b920ce36862ca41885e650af5e19e8, type: 2}
-  - {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
+  effectType: 0
+  tileEffectDef: {fileID: 11400000, guid: 56ddc5eba91af6247ac5a6823cdc3237, type: 2}
+  duration: 3
+  useProbability: 1
+  baseProbability: 50
