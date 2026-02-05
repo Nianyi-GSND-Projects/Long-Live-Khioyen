@@ -20,6 +20,8 @@ namespace LongLiveKhioyen
         private Transform _mainCamTransform;
         private Transform _targetUnitTransform;
         
+        private Unit _targetUnit; 
+        
         public void Initialize(Unit unit)
         {
             // 记录单位的 Transform，用于跟随位置
@@ -33,12 +35,19 @@ namespace LongLiveKhioyen
 
         void LateUpdate()
         {
-            if (_targetUnitTransform == null) 
+            if (_targetUnitTransform == null)
             {
                 Destroy(gameObject);
                 return;
             }
-
+            
+            if (!_targetUnitTransform.gameObject.activeInHierarchy)
+            {
+                gameObject.SetActive(false); 
+                return;
+            }
+            
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
             // 1. 位置跟随：始终位于单位头顶固定高度
             // 这样做的好处是：即使单位模型旋转了（比如转身），UI 也不会跟着公转
             transform.position = _targetUnitTransform.position + offset;

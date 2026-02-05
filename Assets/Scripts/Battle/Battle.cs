@@ -1725,11 +1725,11 @@ namespace LongLiveKhioyen
 		{
 			
 			HashSet<Vector2Int> validDestinations = new HashSet<Vector2Int>();
-			
 			if (!movingUnit) return validDestinations;
 			
 			Vector2Int startPos = movingUnit.position;
 			
+			validDestinations.Add(startPos); 
 			if (!IsValidMapPosition(startPos)) return validDestinations;
 			
 			
