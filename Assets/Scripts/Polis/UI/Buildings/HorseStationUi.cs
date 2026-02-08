@@ -10,7 +10,7 @@ namespace LongLiveKhioyen
 		protected void Start()
 		{
 			Polis.Instance.Data.stockedItems.onChanged += RefreshStocks;
-			Polis.Instance.Data.itemsForSale.onChanged += RefreshSell;
+			Polis.Instance.Data.forSaleItems.onChanged += RefreshSell;
 
 			IsSellOpen = true;
 
@@ -22,7 +22,7 @@ namespace LongLiveKhioyen
 			if(Polis.Instance)
 			{
 				Polis.Instance.Data.stockedItems.onChanged -= RefreshStocks;
-				Polis.Instance.Data.itemsForSale.onChanged -= RefreshSell;
+				Polis.Instance.Data.forSaleItems.onChanged -= RefreshSell;
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace LongLiveKhioyen
 		{
 			sellGoodsLayoutGroup.transform.ClearChildren();
 
-			var records = Polis.Instance.Data.itemsForSale;
+			var records = Polis.Instance.Data.forSaleItems;
 			foreach(var itemDefinition in records.Definitions)
 			{
 				var item = FancyListItem.Instantiate();
@@ -103,7 +103,7 @@ namespace LongLiveKhioyen
 						value = itemDefinition.sellPrice,
 					}
 				);
-				//item.onClick += () => Polis.Instance.Data.SetItemForSale(itemDefinition.itemId, 1);
+				item.onClick += () => Polis.Instance.Data.UnsetItemForSale(itemDefinition.itemId, 1);
 			}
 		}
 		#endregion

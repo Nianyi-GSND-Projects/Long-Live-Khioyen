@@ -212,26 +212,49 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 交易
-		public ItemRecords itemsForSale;
+		public ItemRecords forSaleItems;
 
 		public void SetItemForSale(string itemId, int quantity)
 		{
-			if(quantity <= 0)
-				return;
+			if(!TransferItemRecord(itemId, quantity, stockedItems, forSaleItems))
+				Debug.LogWarning($"尝试寄卖 {quantity} 个 {itemId} 失败。");
+		}
 
-			var record = stockedItems.FirstOrDefault(r => r.itemId == itemId);
+		public void UnsetItemForSale(string itemId, int quantity)
+		{
+			if(!TransferItemRecord(itemId, quantity, forSaleItems, stockedItems))
+				Debug.LogWarning($"尝试取消寄卖 {quantity} 个 {itemId} 失败。");
+		}
+
+		bool TransferItemRecord(string itemId, int quantity, ItemRecords from, ItemRecords to)
+		{
+			if(quantity <= 0)
+				return false;
+
+			var record = from.FirstOrDefault(r => r.itemId == itemId);
 			if(record == null)
-			{
-				Debug.LogWarning($"尝试卖出 {quantity} 个 {itemId}，但无库存，失败。");
-				return;
-			}
+				return false;
+
 			if(record.quantity < quantity)
-			{
-				Debug.LogWarning($"尝试卖出 {quantity} 个 {itemId}，但仅有 {record.quantity} 个库存，截断。");
 				quantity = record.quantity;
-			}
-			stockedItems.ChangeItemQuantity(itemId, -quantity);
-			itemsForSale.ChangeItemQuantity(itemId, quantity);
+
+			from.ChangeItemQuantity(itemId, -quantity);
+			to.ChangeItemQuantity(itemId, quantity);
+			return true;
+		}
+
+		/// <summary>
+		/// 月尾将驿站寄卖的物品折现。
+		/// </summary>
+		void CashForSaleItemsAtEndOfMonth()
+		{
+			float sum = 0;
+			foreach(var itemDefinition in forSaleItems.Definitions)
+				sum += itemDefinition.sellPrice;
+
+			forSaleItems.Clear();
+			economy.money += sum;
+			onEconomyChanged?.Invoke();
 		}
 		#endregion
 	}

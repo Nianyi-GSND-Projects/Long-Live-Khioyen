@@ -42,11 +42,15 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 任务
+		/// <summary>
+		/// 月度更迭时要执行的逻辑，可根据需求填充。
+		/// </summary>
 		void ExecuteMonthPassedTask(PolisTask task)
 		{
 			int startingMonth = int.Parse(task.parameters[0]);
 			Debug.Log($"Month passed in polis \"{id}\". Starting month: {startingMonth}");
-			// TODO
+
+			CashForSaleItemsAtEndOfMonth();
 		}
 		#endregion
 
