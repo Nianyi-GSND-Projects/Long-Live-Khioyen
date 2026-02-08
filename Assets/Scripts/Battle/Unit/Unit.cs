@@ -94,7 +94,45 @@ namespace LongLiveKhioyen
         public abstract void TakeDamage(int damage);//该单位受到伤害
 
         public abstract float GetPower(); //获取该单位的攻击力
+        
+        public void ReceiveForcedMove(Vector2Int newPosition)
+        {
+            Vector2Int oldPosition = this.position;
+            
+            // 1. 更新数据坐标
+            this.position = newPosition;
 
+            // 2. 更新视觉位置 (直接瞬移，或者你可以改成 Tween 动画)
+            if (Battle.Instance != null)
+            {
+                transform.localPosition = Battle.Instance.MapToLocal(newPosition);
+            }
+
+            // 3. 通知视觉控制器 (例如刷新 UI跟随，或者播放尘土特效)
+            if (visualController != null)
+            {
+                visualController.RefreshVisuals(); // 或者专门写一个 OnMove 接口
+            }
+
+            // 4. [核心] 触发移动钩子
+            OnPostForcedMove(oldPosition, newPosition);
+        }
+        
+        protected virtual void OnPostForcedMove(Vector2Int oldPos, Vector2Int newPos)
+        {
+            Debug.Log($"{name} 从 {oldPos} 被强制推到了 {newPos}");
+            
+            /*
+            if (Battle.Instance != null)
+            {
+                var tile = Battle.Instance.mapData[newPos.x, newPos.y];
+                foreach(var effect in tile.Effects)
+                {
+                    effect.definition.OnEnter(this);
+                }
+            }
+            */
+        }
         public abstract void ApplyBuff(BuffDescriptor buffDescriptor);
 
         public void ClearAllBuff()

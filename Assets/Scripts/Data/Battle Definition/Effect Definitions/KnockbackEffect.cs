@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Effects/Knockback")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Knockback")]
     public class KnockbackEffect : EffectDefinition
     {
         [Header("Settings")]

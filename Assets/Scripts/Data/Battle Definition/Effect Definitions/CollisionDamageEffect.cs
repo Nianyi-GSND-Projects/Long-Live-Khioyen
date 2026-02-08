@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Effects/Collision Damage")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Collision Damage")]
     public class CollisionDamageEffect : EffectDefinition
     {
         [Header("Settings")]

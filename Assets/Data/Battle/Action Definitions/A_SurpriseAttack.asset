@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37ebe457fc6c8784d8f70352ea9796d2, type: 3}
-  m_Name: A_Bash
+  m_Name: A_SurpriseAttack
   m_EditorClassIdentifier: 
-  actionName: "\u7A81\u523A"
+  actionName: "\u5077\u88AD"
   actionId: 0
   description: 
   icon: {fileID: 0}
@@ -22,8 +22,8 @@ MonoBehaviour:
   displayConditions: []
   useConditions: []
   effects:
-  - {fileID: 11400000, guid: 34120fcf14a47214c8cb38259992408f, type: 2}
-  - {fileID: 11400000, guid: 64f26e890cf27a14f9a8e7a59be13308, type: 2}
+  - {fileID: 11400000, guid: 10d0d1774c5e67241a3c21320954941f, type: 2}
+  - {fileID: 11400000, guid: 03756d16644a91548abf9e6789ff396e, type: 2}
   range: 1
   minRange: 1
   targetType: 3

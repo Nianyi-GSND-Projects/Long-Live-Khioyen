@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Unit Definition/Battalion Definition")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Definitions/Battalion Definition")]
     public class BattalionDefinition : UnitDefinition
     {
         

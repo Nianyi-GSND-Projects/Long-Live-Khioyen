@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Effects/Add Tile Effect")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Add Tile Effect")]
     public class AddTileEffectEffect : EffectDefinition
     {
         [Header("Effect Settings")] 

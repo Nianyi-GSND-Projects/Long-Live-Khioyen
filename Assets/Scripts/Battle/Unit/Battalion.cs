@@ -32,7 +32,10 @@ namespace LongLiveKhioyen
 
         public override float GetPower()
         {
-            return Definition.defaultPower * currentSoliders*1.0f / Definition.defaultMaxSolider;
+            if (Definition.defaultMaxSolider == 0) return 0;
+            float result = Definition.defaultPower * ((float)currentSoliders / Definition.defaultMaxSolider);
+            Debug.Log($"User {name} Power: {result}");
+            return result;
             //Todo 将领系数影响
         }
 

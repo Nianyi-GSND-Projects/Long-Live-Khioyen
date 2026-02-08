@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Action Definition Sheet")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Database/Action Database")]
     public class ActionDefinitionSheet : ScriptableObject
     {
         [SerializeField] List<ActionDefinition> actionDefinitions = new List<ActionDefinition>();

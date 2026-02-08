@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Effects/Conditional Execution")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Conditional Execution")]
     public class ConditionalEffect : EffectDefinition
     {
         [Header("Condition")]

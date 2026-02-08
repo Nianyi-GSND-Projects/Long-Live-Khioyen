@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Terrain/Terrain Database")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Database/Terrain Database")]
     public class TerrainDB : ScriptableObject
     {
         private const string RESOURCE_PATH = "Data/TerrainDB";

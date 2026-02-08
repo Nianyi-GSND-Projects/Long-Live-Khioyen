@@ -10,7 +10,7 @@ namespace LongLiveKhioyen
         public GameObject stateModel; // 对应的模型预制体
     }
     
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Unit Definition/Facility Definition")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Definitions/Facility Definition")]
     public class FacilityDefinition : UnitDefinition
     {
         public string[] tags;

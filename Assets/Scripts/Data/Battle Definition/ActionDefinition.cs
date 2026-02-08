@@ -9,6 +9,9 @@ namespace LongLiveKhioyen
         public Unit User;
         public Vector2Int TargetPos;
         public ActionDefinition ActionDef;
+        
+        public Unit OriginalTargetUnit; 
+        
         public Unit TargetUnit 
         {
             get
@@ -70,7 +73,7 @@ namespace LongLiveKhioyen
         Multiple
     }
     
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Action Definition")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Definitions/Action Definition")]
     public class ActionDefinition : ScriptableObject
     {
         [Header("Basic Info")]
@@ -162,7 +165,15 @@ namespace LongLiveKhioyen
         public bool Perform(Unit user, Vector2Int targetPos)
         {
             // 构造 Context
-            ActionContext ctx = new ActionContext { User = user, TargetPos = targetPos, ActionDef = this };
+            Unit initialTarget = null;
+            
+            if (Battle.Instance != null)
+            {
+                var tile = Battle.Instance.mapData[targetPos.x, targetPos.y];
+                initialTarget = GetPrimaryTargetOnTile(tile);
+            }
+            
+            ActionContext ctx = new ActionContext { User = user, TargetPos = targetPos, ActionDef = this, OriginalTargetUnit = initialTarget};
             
             foreach (var effect in effects) 
                 effect.Execute(ctx);

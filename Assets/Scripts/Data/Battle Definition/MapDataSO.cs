@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Game/Map/Map Data")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Map Data")]
     public class MapDataSO : ScriptableObject
     {
         public int width;

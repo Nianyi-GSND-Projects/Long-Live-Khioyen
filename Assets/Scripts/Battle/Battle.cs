@@ -1237,7 +1237,7 @@ namespace LongLiveKhioyen
 				if (tile.Facility != null) Debug.LogError($"位置 {pos} 已有设施！");
 				tile.Facility = fac;
 			}
-			unit.position = pos;
+			//unit.position = pos;
 		}
 		
 		public void RemoveUnitFromMap(Unit unit)
@@ -1583,13 +1583,17 @@ namespace LongLiveKhioyen
 			if (unit == null || !IsValidMapPosition(newPos)) return;
 
 			RemoveUnitFromMap(unit);
-			PlaceUnitOnMap(unit, newPos);
-
-			unit.transform.localPosition = MapToLocal(newPos);
-            
-			unit.OnUnitStateChanged();
-            
-			Debug.Log($"{unit.name} 被强制位移至 {newPos}");
+			TileData newTile = mapData[newPos.x, newPos.y];
+			if (unit is Battalion bat) newTile.Battalion = bat;
+			else if (unit is Facility fac) newTile.Facility = fac;
+			unit.ReceiveForcedMove(newPos);
+			// PlaceUnitOnMap(unit, newPos);
+			//
+			// unit.transform.localPosition = MapToLocal(newPos);
+   //          
+			// unit.OnUnitStateChanged();
+   //          
+			// Debug.Log($"{unit.name} 被强制位移至 {newPos}");
 		}
 
 		public Vector3Int GetHexDirection(Vector2Int start, Vector2Int target)
