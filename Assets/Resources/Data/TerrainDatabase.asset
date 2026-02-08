@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74705f620997b9d478aedf0e1243e6a3, type: 3}
-  m_Name: TerrainDB
+  m_Name: TerrainDatabase
   m_EditorClassIdentifier: 
   terrainDefinitions:
   - {fileID: 11400000, guid: e63520b6247f9604b92d2b1980fe9152, type: 2}

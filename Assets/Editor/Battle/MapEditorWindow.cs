@@ -10,7 +10,7 @@ namespace LongLiveKhioyen
         // 数据部分
         // ----------------------------------------------------
         private MapDataSO currentMapAsset; // 当前正在编辑的资源文件
-        private TerrainDB terrainDB; // 用于获取地形列表和颜色
+        private TerrainDatabase _terrainDatabase; // 用于获取地形列表和颜色
 
         private int mapWidth = 10;
         private int mapHeight = 10;
@@ -22,8 +22,8 @@ namespace LongLiveKhioyen
         // 笔刷设置
         private int selectedTerrainIndex = 0; // 当前选中的地形在 DB 列表中的索引
 
-        private string CurrentBrushId => terrainDB != null && terrainDB.terrainDefinitions.Count > 0
-            ? terrainDB.terrainDefinitions[selectedTerrainIndex].terrainName
+        private string CurrentBrushId => _terrainDatabase != null && _terrainDatabase.terrainDefinitions.Count > 0
+            ? _terrainDatabase.terrainDefinitions[selectedTerrainIndex].terrainName
             : "Plain";
 
         // 视觉设置
@@ -45,17 +45,17 @@ namespace LongLiveKhioyen
             // 自动寻找 TerrainDatabase
             // 注意：这里假设你之前已经把 TerrainDatabase 改为了 Resources 单例模式
             // 如果没有，这里尝试用 AssetDatabase 查找
-            if (terrainDB == null)
+            if (_terrainDatabase == null)
             {
-                terrainDB = Resources.Load<TerrainDB>("Data/TerrainDB");
-                if (terrainDB == null)
+                _terrainDatabase = Resources.Load<TerrainDatabase>("Data/TerrainDatabase");
+                if (_terrainDatabase == null)
                 {
                     // 备用方案：全项目搜索
-                    string[] guids = AssetDatabase.FindAssets("t:TerrainDB");
+                    string[] guids = AssetDatabase.FindAssets("t:TerrainDatabase");
                     if (guids.Length > 0)
                     {
                         string path = AssetDatabase.GUIDToAssetPath(guids[0]);
-                        terrainDB = AssetDatabase.LoadAssetAtPath<TerrainDB>(path);
+                        _terrainDatabase = AssetDatabase.LoadAssetAtPath<TerrainDatabase>(path);
                     }
                 }
             }
@@ -66,11 +66,11 @@ namespace LongLiveKhioyen
         // ----------------------------------------------------
         private void OnGUI()
         {
-            if (terrainDB == null)
+            if (_terrainDatabase == null)
             {
                 // 尝试自动加载
-                terrainDB = Resources.Load<TerrainDB>("Data/TerrainDB");
-                if (terrainDB == null)
+                _terrainDatabase = Resources.Load<TerrainDatabase>("Data/TerrainDatabase");
+                if (_terrainDatabase == null)
                 {
                     EditorGUILayout.HelpBox("未找到 TerrainDatabase！", MessageType.Error);
                     return;
@@ -138,18 +138,18 @@ namespace LongLiveKhioyen
             GUILayout.Label("Brush:", GUILayout.Width(45));
 
             // 安全检查与重新加载逻辑
-            if (terrainDB == null || terrainDB.terrainDefinitions == null)
+            if (_terrainDatabase == null || _terrainDatabase.terrainDefinitions == null)
             {
-                terrainDB = Resources.Load<TerrainDB>("Data/TerrainDB");
-                if (terrainDB == null) return;
+                _terrainDatabase = Resources.Load<TerrainDatabase>("Data/TerrainDatabase");
+                if (_terrainDatabase == null) return;
             }
 
             // 实时构建列表
-            int count = terrainDB.terrainDefinitions.Count;
+            int count = _terrainDatabase.terrainDefinitions.Count;
             string[] options = new string[count];
             for (int i = 0; i < count; i++)
             {
-                options[i] = terrainDB.terrainDefinitions[i] != null ? terrainDB.terrainDefinitions[i].terrainName : "Null";
+                options[i] = _terrainDatabase.terrainDefinitions[i] != null ? _terrainDatabase.terrainDefinitions[i].terrainName : "Null";
             }
 
             if (selectedTerrainIndex >= count) selectedTerrainIndex = 0;
@@ -158,9 +158,9 @@ namespace LongLiveKhioyen
             selectedTerrainIndex = EditorGUILayout.Popup(selectedTerrainIndex, options, GUILayout.Width(120));
 
             // 颜色预览小方块
-            if (options.Length > 0 && selectedTerrainIndex < terrainDB.terrainDefinitions.Count)
+            if (options.Length > 0 && selectedTerrainIndex < _terrainDatabase.terrainDefinitions.Count)
             {
-                var def = terrainDB.terrainDefinitions[selectedTerrainIndex];
+                var def = _terrainDatabase.terrainDefinitions[selectedTerrainIndex];
                 Color previewColor = Color.white;
                 if (def != null && def.material != null && def.material.HasProperty("_Color"))
                     previewColor = def.material.color;
@@ -176,10 +176,10 @@ namespace LongLiveKhioyen
             GUILayout.BeginHorizontal("box");
             GUILayout.Label("Brush: ", GUILayout.Width(50));
 
-            string[] options = new string[terrainDB.terrainDefinitions.Count];
-            for (int i = 0; i < terrainDB.terrainDefinitions.Count; i++)
+            string[] options = new string[_terrainDatabase.terrainDefinitions.Count];
+            for (int i = 0; i < _terrainDatabase.terrainDefinitions.Count; i++)
             {
-                options[i] = terrainDB.terrainDefinitions[i].terrainName;
+                options[i] = _terrainDatabase.terrainDefinitions[i].terrainName;
             }
 
             selectedTerrainIndex = EditorGUILayout.Popup(selectedTerrainIndex, options, GUILayout.Width(150));
@@ -187,7 +187,7 @@ namespace LongLiveKhioyen
             // 显示当前选中的颜色预览
             if (options.Length > 0)
             {
-                var def = terrainDB.terrainDefinitions[selectedTerrainIndex];
+                var def = _terrainDatabase.terrainDefinitions[selectedTerrainIndex];
                 // 尝试从材质获取颜色，如果材质没颜色属性则用白色
                 Color previewColor = Color.white;
                 if (def.material != null && def.material.HasProperty("_Color"))
@@ -309,7 +309,7 @@ namespace LongLiveKhioyen
             if (string.IsNullOrEmpty(id)) return Color.gray;
 
             // 查找定义
-            var def = terrainDB.terrainDefinitions.Find(t => t.terrainName == id);
+            var def = _terrainDatabase.terrainDefinitions.Find(t => t.terrainName == id);
             if (def != null && def.material != null && def.material.HasProperty("_Color"))
             {
                 return def.material.color;

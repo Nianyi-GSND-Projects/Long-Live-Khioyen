@@ -5,19 +5,19 @@ using UnityEngine;
 namespace LongLiveKhioyen
 {
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Database/Terrain Database")]
-    public class TerrainDB : ScriptableObject
+    public class TerrainDatabase : ScriptableObject
     {
-        private const string RESOURCE_PATH = "Data/TerrainDB";
+        private const string RESOURCE_PATH = "Data/TerrainDatabase";
         
-        private static TerrainDB _instance;
-        public static TerrainDB Instance
+        private static TerrainDatabase _instance;
+        public static TerrainDatabase Instance
         {
             get
             {
                 if (_instance == null)
                 {
                     // 尝试从 Resources 文件夹加载
-                    _instance = Resources.Load<TerrainDB>(RESOURCE_PATH);
+                    _instance = Resources.Load<TerrainDatabase>(RESOURCE_PATH);
                     
                     if (_instance == null)
                     {

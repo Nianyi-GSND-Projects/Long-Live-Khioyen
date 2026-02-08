@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5065c0a3000bc1c42b51ab21bf42f7ff, type: 3}
   m_Name: Facility Definition
   m_EditorClassIdentifier: 
+  databaseType: 1
   unitDefinitions: []

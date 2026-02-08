@@ -5,8 +5,8 @@ using System.Collections.Generic;
 namespace LongLiveKhioyen
 {
     // 绑定到 TerrainDatabase 类型
-    [CustomEditor(typeof(TerrainDB))]
-    public class TerrainDBEditor : Editor
+    [CustomEditor(typeof(TerrainDatabase))]
+    public class TerrainDatabaseEditor : Editor
     {
         public override void OnInspectorGUI()
         {
@@ -14,7 +14,7 @@ namespace LongLiveKhioyen
             DrawDefaultInspector();
 
             // 2. 获取当前选中的 ScriptableObject 对象
-            TerrainDB database = (TerrainDB)target;
+            TerrainDatabase database = (TerrainDatabase)target;
 
             GUILayout.Space(15);
 
@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
             EditorGUILayout.HelpBox("点击按钮将自动查找项目中所有的 TerrainDefinition 并填充到上方列表。", MessageType.Info);
         }
 
-        private void CollectTerrains(TerrainDB database)
+        private void CollectTerrains(TerrainDatabase database)
         {
             // 初始化列表防止空引用
             if (database.terrainDefinitions == null)

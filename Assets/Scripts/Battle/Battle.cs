@@ -11,7 +11,7 @@ namespace LongLiveKhioyen
 		static Battle _instance;
 		public static Battle Instance => _instance;
 		public System.Action onInitialized;
-		public ActionDefinitionSheet actionDataBase;
+		public ActionDatabase actionDataBase;
 		private CommanderRegistry commanderRegistry;
 		public string[,] mapTerrainData; 
 		#region General Config
@@ -1200,7 +1200,7 @@ namespace LongLiveKhioyen
 
 		public void AssignTerrainToTile(HexTile tile, string terrainType)
 		{
-			TerrainDefinition def = TerrainDB.Instance.GetTerrain(terrainType);
+			TerrainDefinition def = TerrainDatabase.Instance.GetTerrain(terrainType);
 			if (def != null)
 			{
 				tile.SetTerrain(def);
@@ -1823,7 +1823,7 @@ namespace LongLiveKhioyen
 					
 					if (!CanUnitPassThroughTile(movingUnit, neighborPos)) continue;
  
-					// int moveCost = TerrainDB.Instance.GetTerrain(mapTerrainData[neighborPos.x, neighborPos.y]).movementCost;
+					// int moveCost = TerrainDatabase.Instance.GetTerrain(mapTerrainData[neighborPos.x, neighborPos.y]).movementCost;
 					int moveCost = 1; 
 					int newCost = CostSofar[currentPos] + moveCost;
 

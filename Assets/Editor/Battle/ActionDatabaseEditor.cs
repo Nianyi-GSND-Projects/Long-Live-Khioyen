@@ -6,14 +6,14 @@ using UnityEditor;
 namespace LongLiveKhioyen
 {
     
-    [CustomEditor(typeof(ActionDefinitionSheet))]
+    [CustomEditor(typeof(ActionDatabase))]
     public class ActionDatabaseEditor : Editor
     {
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
             
-            ActionDefinitionSheet sheet = (ActionDefinitionSheet)target;
+            ActionDatabase sheet = (ActionDatabase)target;
 
             GUILayout.Space(10);
             

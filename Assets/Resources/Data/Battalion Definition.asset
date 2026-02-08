@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5065c0a3000bc1c42b51ab21bf42f7ff, type: 3}
   m_Name: Battalion Definition
   m_EditorClassIdentifier: 
+  databaseType: 0
   unitDefinitions:
   - {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
