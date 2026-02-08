@@ -30,3 +30,5 @@ MonoBehaviour:
   - type: 8
     customSprite: {fileID: 0}
     value: 1
+  sellPrice: 80
+  buyPrice: 100

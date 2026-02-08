@@ -35,10 +35,10 @@ namespace LongLiveKhioyen
 			return true;
 		}
 
-		public bool CostRecipe(Recipe recipe)
+		public bool CostByDescriptor(IEnumerable<CostDescriptor> costs)
 		{
 			Economy cost = default;
-			foreach(var c in recipe.costs)
+			foreach(var c in costs)
 			{
 				switch(c.type)
 				{
@@ -55,10 +55,11 @@ namespace LongLiveKhioyen
 			}
 			return TryCostResource(cost, true);
 		}
+		public bool CostByDescriptor(params CostDescriptor[] costs) => CostByDescriptor(costs as IEnumerable<CostDescriptor>);
 
-		public bool ValidateRecipeCost(Recipe recipe)
+		public bool ValidateRecipeCost(IEnumerable<CostDescriptor> costs)
 		{
-			foreach(var cost in recipe.costs)
+			foreach(var cost in costs)
 			{
 				switch(cost.type)
 				{
@@ -138,24 +139,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 物品
-		[Serializable]
-		public class ItemRecord
-		{
-			public string itemId;
-			public int quantity;
-		}
-		public List<ItemRecord> items;
-
-		public void AddItem(string itemId, int quantity)
-		{
-			var record = items.FirstOrDefault(r => r.itemId == itemId);
-			if(record == null)
-			{
-				record = new() { itemId = itemId, };
-				items.Add(record);
-			}
-			record.quantity += quantity;
-		}
+		public ItemRecords stockedItems;
 		#endregion
 
 		#region 制造
@@ -166,19 +150,26 @@ namespace LongLiveKhioyen
 
 		public Action onProductionStateChanged;
 
-		public void QueueProduction(Recipe recipe)
+		public void QueueProduction(string itemId)
 		{
-			if(!ValidateRecipeCost(recipe))
+			var item = ItemDatabase.Instance.GetItem(itemId);
+			if(item == null)
 			{
-				Debug.LogWarning($"没有足够多的资源制造 {recipe.item.name}。");
+				Debug.LogWarning($"无法生产 ID 为 {itemId} 的物品：无效 ID。");
 				return;
 			}
-			CostRecipe(recipe);
+
+			if(!ValidateRecipeCost(item.costs))
+			{
+				Debug.LogWarning($"没有足够多的资源制造 {itemId}。");
+				return;
+			}
+			CostByDescriptor(item.costs);
 
 			if(IsProducingItem)
-				queuedProductions.Add(recipe.item.itemId);
+				queuedProductions.Add(itemId);
 			else
-				AddProductionTask(recipe.item.itemId);
+				AddProductionTask(itemId);
 
 			onProductionStateChanged?.Invoke();
 		}
@@ -210,7 +201,7 @@ namespace LongLiveKhioyen
 		void ExecuteCompleteProductionTask(PolisTask task)
 		{
 			string itemId = task.parameters[0];
-			AddItem(itemId, 1);
+			stockedItems.ChangeItemQuantity(itemId, 1);
 			Debug.Log($"物品 {itemId} 制造完成。");
 
 			if(queuedProductions.Count == 0)
@@ -219,11 +210,29 @@ namespace LongLiveKhioyen
 				PerformNextProductionInQueue();
 		}
 		#endregion
-	}
 
-	public class Recipe
-	{
-		public ItemDefinition item;
-		public CostDescriptor[] costs;
+		#region 交易
+		public ItemRecords itemsForSale;
+
+		public void SetItemForSale(string itemId, int quantity)
+		{
+			if(quantity <= 0)
+				return;
+
+			var record = stockedItems.FirstOrDefault(r => r.itemId == itemId);
+			if(record == null)
+			{
+				Debug.LogWarning($"尝试卖出 {quantity} 个 {itemId}，但无库存，失败。");
+				return;
+			}
+			if(record.quantity < quantity)
+			{
+				Debug.LogWarning($"尝试卖出 {quantity} 个 {itemId}，但仅有 {record.quantity} 个库存，截断。");
+				quantity = record.quantity;
+			}
+			stockedItems.ChangeItemQuantity(itemId, -quantity);
+			itemsForSale.ChangeItemQuantity(itemId, quantity);
+		}
+		#endregion
 	}
 }

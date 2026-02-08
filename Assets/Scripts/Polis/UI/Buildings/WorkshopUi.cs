@@ -41,47 +41,27 @@ namespace LongLiveKhioyen
 			RefreshQueued();
 		}
 
-		#region 配方
-		void ApplyRecipeToItem(Recipe recipe, FancyListItem item)
-		{
-			item.ItemName = recipe.item.name;
-			item.SetCosts(recipe.costs);
-		}
-		#endregion
-
 		#region 左侧配方列表
 		public void RefreshRecipes()
 		{
 			recipesLayoutGroup.transform.ClearChildren();
 
-			foreach(var recipe in GetRecipes())
+			foreach(var itemDefinition in ItemDatabase.Instance.items.Where(item => item.productable))
 			{
 				var item = FancyListItem.Instantiate();
 				item.transform.SetParent(recipesLayoutGroup.transform, false);
-				ApplyRecipeToItem(recipe, item);
-				item.Interactable = Polis.Instance.Data.ValidateRecipeCost(recipe);
-				item.onClick = () => Polis.Instance.Data.QueueProduction(recipe);
+				item.ItemName = itemDefinition.name;
+				item.SetCosts(itemDefinition.costs);
+				item.Interactable = Polis.Instance.Data.ValidateRecipeCost(itemDefinition.costs);
+				item.onClick = () => Polis.Instance.Data.QueueProduction(itemDefinition.itemId);
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();
 		}
-
-		Recipe[] GetRecipes()
-		{
-			return ItemDatabase.Instance.items
-				.Where(item => item.productable)
-				.Select(item => new Recipe()
-					{
-						item = item,
-						costs = item.costs,
-					}
-				)
-				.ToArray();
-		}
 		#endregion
 
 		#region 右侧制作中 & 制作队列
-		public Recipe ProducingRecipe
+		public ItemDefinition ProducingItem
 		{
 			set
 			{
@@ -93,7 +73,8 @@ namespace LongLiveKhioyen
 				else
 				{
 					producingItem.gameObject.SetActive(true);
-					ApplyRecipeToItem(value, producingItem);
+					producingItem.ItemName = value.name;
+					producingItem.SetCosts();
 					producingNoItemSign.SetActive(false);
 				}
 			}
@@ -102,17 +83,11 @@ namespace LongLiveKhioyen
 		public void RefreshProducingRecipe()
 		{
 			if(!Polis.Instance.Data.IsProducingItem)
-			{
-				ProducingRecipe = null;
-			}
+				ProducingItem = null;
 			else
 			{
 				var itemId = Polis.Instance.Data.ProductionTask.parameters[0];
-				var item = ItemDatabase.Instance.GetItem(itemId);
-				ProducingRecipe = new() {
-					item = item,
-					costs = new CostDescriptor[0],
-				};
+				ProducingItem = ItemDatabase.Instance.GetItem(itemId);
 			}
 		}
 
@@ -124,11 +99,9 @@ namespace LongLiveKhioyen
 			{
 				var item = FancyListItem.Instantiate();
 				item.transform.SetParent(queuedLayoutGroup.transform, false);
-				ApplyRecipeToItem(new()
-				{
-					item = ItemDatabase.Instance.GetItem(itemId),
-					costs = new CostDescriptor[0],
-				}, item);
+				var itemDefinition = ItemDatabase.Instance.GetItem(itemId);
+				item.ItemName = itemDefinition.name;
+				item.SetCosts();
 				item.Interactable = false;
 			}
 

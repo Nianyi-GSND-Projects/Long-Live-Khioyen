@@ -23,17 +23,7 @@ MonoBehaviour:
         mapAddress: 
     lastPolis: juyan
     poleis:
-    - id: juyan
-      position: {x: 0, y: 0}
-      orientation: 22.5
-      type: 1
-      size: {x: 40, y: 40}
-      population: 10
-      economy:
-        food: 1000
-        material: 0
-        money: 800
-      buildings:
+    - buildings:
       - id: water-well
         position: {x: 19, y: 19}
         orientation: 2
@@ -46,45 +36,87 @@ MonoBehaviour:
         position: {x: 16, y: 26}
         orientation: 0
         underConstruction: 0
-      lastTime: 0
+      - id: horse-station
+        position: {x: 23, y: 16}
+        orientation: 0
+        underConstruction: 0
+      id: juyan
+      type: 1
+      position: {x: 0, y: 0}
+      size: {x: 40, y: 40}
+      orientation: 22.5
+      economy:
+        food: 1000
+        material: 0
+        money: 800
+      population: 10
+      items:
+      - itemId: debug-item-1
+        quantity: 2
+      - itemId: debug-item-2
+        quantity: 3
+      - itemId: debug-item-3
+        quantity: 1
+      stockedItems:
+        records:
+        - itemId: debug-item-1
+          quantity: 2
+        - itemId: debug-item-2
+          quantity: 3
+        - itemId: debug-item-3
+          quantity: 1
+      queuedProductions: []
       tasks: []
-    - id: fanhe
+      lastTime: 0
+    - buildings: []
+      id: fanhe
+      type: 1
       position: {x: -5000, y: 1000}
-      orientation: 15
-      type: 1
       size: {x: 20, y: 20}
-      population: 0
+      orientation: 15
       economy:
         food: 0
         material: 0
         money: 0
-      buildings: []
-      lastTime: 0
+      population: 0
+      items: []
+      stockedItems:
+        records: []
+      queuedProductions: []
       tasks: []
-    - id: dunhuang
-      position: {x: 5000, y: -3000}
-      orientation: 0
+      lastTime: 0
+    - buildings: []
+      id: dunhuang
       type: 1
+      position: {x: 5000, y: -3000}
       size: {x: 50, y: 50}
-      population: 0
+      orientation: 0
       economy:
         food: 0
         material: 0
         money: 0
-      buildings: []
-      lastTime: 0
+      population: 0
+      items: []
+      stockedItems:
+        records: []
+      queuedProductions: []
       tasks: []
-    - id: huns-debug
-      position: {x: 0, y: 5000}
-      orientation: 45
+      lastTime: 0
+    - buildings: []
+      id: huns-debug
       type: 2
+      position: {x: 0, y: 5000}
       size: {x: 10, y: 10}
-      population: 0
+      orientation: 45
       economy:
         food: 0
         material: 0
         money: 0
-      buildings: []
-      lastTime: 0
+      population: 0
+      items: []
+      stockedItems:
+        records: []
+      queuedProductions: []
       tasks: []
+      lastTime: 0
     gameTime: 0

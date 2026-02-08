@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 namespace LongLiveKhioyen
 {
@@ -50,5 +49,11 @@ namespace LongLiveKhioyen
         [Header("Production")]
         public bool productable = false;
         public CostDescriptor[] costs;
+
+        [Header("Trading")]
+        public bool canSell = true;
+        [ShowIf("canSell"), Min(0)] public float sellPrice;
+        public bool canBuy = true;
+        [ShowIf("canBuy"), Min(0)] public float buyPrice;
     }
 }

@@ -27,3 +27,5 @@ MonoBehaviour:
   - type: 4
     customSprite: {fileID: 0}
     value: 2
+  sellPrice: 40
+  buyPrice: 50
