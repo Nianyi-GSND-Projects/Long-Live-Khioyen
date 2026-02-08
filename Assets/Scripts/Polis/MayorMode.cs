@@ -43,6 +43,9 @@ namespace LongLiveKhioyen
 
 		protected void OnDrag(InputValue value)
 		{
+			if(isPointerOverGameObjects)
+				return;
+
 			var raw = value.Get<Vector2>();
 
 			if(isPrimaryButtonDown)
@@ -53,6 +56,9 @@ namespace LongLiveKhioyen
 
 		protected void OnScroll(InputValue value)
 		{
+			if(isPointerOverGameObjects)
+				return;
+
 			var raw = value.Get<float>();
 			Zoom(raw);
 		}
