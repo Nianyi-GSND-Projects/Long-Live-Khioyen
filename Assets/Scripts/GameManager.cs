@@ -61,7 +61,6 @@ namespace LongLiveKhioyen
 		#region Settings
 		static readonly string settingsPath = Path.Combine(Application.persistentDataPath, "settings.json");
 		static GameSettings settings = null;
-		static readonly Action onSettingsChanged;
 
 		static void EnsureSettingsPath()
 		{
@@ -92,8 +91,6 @@ namespace LongLiveKhioyen
 				settings = new();
 				WriteSettings();
 			}
-
-			onSettingsChanged?.Invoke();
 		}
 
 		public static void WriteSettings()
