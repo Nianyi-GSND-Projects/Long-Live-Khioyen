@@ -25,7 +25,9 @@ namespace LongLiveKhioyen
         {
             currentSoliders -= damage;
             Debug.Log($"Battalion {InstanceId} take {damage} damage, current soliders: {currentSoliders}");
-            OnUnitStateChanged();
+            
+            if (Battle.Instance != null) 
+                Battle.Instance.MarkUnitDirty(this);
         }
 
         public override float GetPower()

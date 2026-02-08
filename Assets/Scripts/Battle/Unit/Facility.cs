@@ -11,6 +11,8 @@ namespace LongLiveKhioyen
         public override void TakeDamage(int damage)
         {
             currentDurability -= damage;
+            if (Battle.Instance != null) 
+                Battle.Instance.MarkUnitDirty(this);
         }
         
         public override float GetPower()

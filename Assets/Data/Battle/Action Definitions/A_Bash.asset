@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37ebe457fc6c8784d8f70352ea9796d2, type: 3}
+  m_Name: A_Bash
+  m_EditorClassIdentifier: 
+  actionName: "\u51B2\u9635"
+  actionId: 0
+  description: 
+  icon: {fileID: 0}
+  actionPointCost: 0
+  targetFactionType: 2
+  targetCountType: 1
+  displayConditions: []
+  useConditions: []
+  effects:
+  - {fileID: 11400000, guid: 34120fcf14a47214c8cb38259992408f, type: 2}
+  - {fileID: 11400000, guid: 64f26e890cf27a14f9a8e7a59be13308, type: 2}
+  range: 1
+  minRange: 1
+  targetType: 3

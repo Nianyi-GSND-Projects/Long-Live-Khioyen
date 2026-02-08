@@ -16,20 +16,33 @@ namespace LongLiveKhioyen
                 if (Battle.Instance == null) return null;
                 TileData tile = Battle.Instance.mapData[TargetPos.x, TargetPos.y];
                 
-                // 如果 ActionDef 提供了筛选逻辑，就用它的
                 if (ActionDef != null)
                 {
-                    // 特殊处理：如果指定了 BattalionOnly，即使设施 Block 也要穿透去拿 Battalion
                     if (ActionDef.targetType == ActionTargetType.BattalionOnly) return tile.Battalion;
                     if (ActionDef.targetType == ActionTargetType.FacilityOnly) return tile.Facility;
                     
-                    // 默认走 Block 逻辑
                     return ActionDef.GetPrimaryTargetOnTile(tile);
                 }
                 
-                // 回退逻辑
                 return tile.Battalion != null ? tile.Battalion : tile.Facility;
             }
+        }
+        
+        private Dictionary<string, object> _blackboard = new Dictionary<string, object>();
+        
+        public void SetData(string key, object value)
+        {
+            if (_blackboard.ContainsKey(key)) _blackboard[key] = value;
+            else _blackboard.Add(key, value);
+        }
+
+        public T GetData<T>(string key)
+        {
+            if (_blackboard.TryGetValue(key, out object val))
+            {
+                return (T)val;
+            }
+            return default(T);
         }
     }
 
@@ -96,7 +109,6 @@ namespace LongLiveKhioyen
             if (Battle.Instance == null) return false;
             TileData tile = Battle.Instance.mapData[pos.x, pos.y];
 
-            // 1. 获取该格子上【逻辑上的】首选目标
             Unit primaryTarget = GetPrimaryTargetOnTile(tile);
 
             switch (targetType)

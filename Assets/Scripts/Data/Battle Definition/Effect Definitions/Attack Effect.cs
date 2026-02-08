@@ -15,6 +15,9 @@ namespace LongLiveKhioyen
         
         public GameObject hitEffect;
         
+        [Header("Output")]
+        public string outputDamageKey = "LastDamageAmount";
+        
         public override void Execute(ActionContext ctx)
         {
             Unit target = ctx.TargetUnit;
@@ -31,10 +34,17 @@ namespace LongLiveKhioyen
                 return;
             }
             
+            float basePower = ctx.User.GetPower();
+            int finalDamage = Mathf.CeilToInt(basePower * multiplier);
 
-            target.TakeDamage((int)(multiplier * ctx.User.GetPower()));
+            target.TakeDamage((int)(finalDamage));
+            
+            if (!string.IsNullOrEmpty(outputDamageKey))
+            {
+                ctx.SetData(outputDamageKey, finalDamage);
+            }
                 
-            if(beCountered) ctx.User.TakeDamage((int)(multiplier * target.GetPower()));//反击生效
+            if(beCountered) ctx.User.TakeDamage((int)(target.GetPower()));//反击生效
                 
             if(hitEffect != null) Instantiate(hitEffect, target.transform.position, Quaternion.identity);
 

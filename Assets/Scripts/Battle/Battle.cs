@@ -636,6 +636,29 @@ namespace LongLiveKhioyen
 		private HashSet<Vector2Int> availableMovePositions;
 		private HashSet<Vector2Int> availableArrangementPositions;
 		private HashSet<Vector2Int> availableTargetPositions;
+		private HashSet<Unit> dirtyUnits = new HashSet<Unit>();
+		
+		public void MarkUnitDirty(Unit unit)
+		{
+			if (unit != null && !dirtyUnits.Contains(unit))
+			{
+				dirtyUnits.Add(unit);
+			}
+		}
+		
+		private void ResolveDirtyUnits()
+		{
+			if (dirtyUnits.Count == 0) return;
+
+			List<Unit> unitsToCheck = new List<Unit>(dirtyUnits);
+            
+			foreach (var unit in unitsToCheck)
+			{
+				CheckDeath(unit);
+				unit.OnUnitStateChanged();
+			}
+			dirtyUnits.Clear();
+		}
 		
 		public bool TestAvailableMovePositions(Vector2Int mapPosition)
 		{
@@ -1064,15 +1087,12 @@ namespace LongLiveKhioyen
 
 		private void ExecuteActionLogic(Unit source, Vector2Int targetPos)
 		{
-			// [修改] 传入坐标
+
 			bool success = CurrentAction.Perform(source, targetPos);
 
 			if (success)
 			{
-				// 检查该位置上的单位状态 (如果有的话)
-				TileData tile = mapData[targetPos.x, targetPos.y];
-				if (tile.Battalion != null) CheckDeath(tile.Battalion);
-				if (tile.Facility != null) CheckDeath(tile.Facility);
+				ResolveDirtyUnits();
 
 				if (SelectedUnit) SelectedUnit.actionDone = true;
 				ClearAllSelection();
@@ -1550,13 +1570,45 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			
 		}
 		
 		public void PositionBattalion(Battalion battalion)
 		{
 			battalion.transform.SetParent(transform, false);
 			battalion.transform.localPosition = MapToLocal(battalion.position);
+		}
+		
+		public void ForceMoveUnit(Unit unit, Vector2Int newPos)
+		{
+			if (unit == null || !IsValidMapPosition(newPos)) return;
+
+			RemoveUnitFromMap(unit);
+			PlaceUnitOnMap(unit, newPos);
+
+			unit.transform.localPosition = MapToLocal(newPos);
+            
+			unit.OnUnitStateChanged();
+            
+			Debug.Log($"{unit.name} 被强制位移至 {newPos}");
+		}
+
+		public Vector3Int GetHexDirection(Vector2Int start, Vector2Int target)
+		{
+			Vector3Int startCube = OffsetToCube(start);
+			Vector3Int targetCube = OffsetToCube(target);
+			Vector3Int diff = targetCube - startCube;
+			
+			int len = Mathf.Max(Mathf.Abs(diff.x), Mathf.Abs(diff.y), Mathf.Abs(diff.z));
+			if (len == 0) return Vector3Int.zero;
+
+			return new Vector3Int(diff.x / len, diff.y / len, diff.z / len);
+		}
+
+		public Vector2Int GetTileInDirection(Vector2Int start, Vector3Int directionCube, int distance)
+		{
+			Vector3Int startCube = OffsetToCube(start);
+			Vector3Int destCube = startCube + (directionCube * distance);
+			return CubeToOffset(destCube);
 		}
 		
 		public HashSet<Unit> GetUnitsByFaction(Faction faction)
