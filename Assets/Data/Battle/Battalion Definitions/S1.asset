@@ -15,7 +15,7 @@ MonoBehaviour:
   unitName: 
   unitType: 0
   figure: {fileID: 21300000, guid: db863fa59d809cb4b80bc3d95bdd2b6e, type: 3}
-  unitModelTemplate: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
+  unitModelTemplate: {fileID: 2229188164278447998, guid: d1a54dc2c620ac14890546b7e4f38a12, type: 3}
   unitSelectedSoundEffect: {fileID: 8300000, guid: 177ed77be30b12c4180ce6493d7f9183, type: 3}
   passability: 0
   movable: 1
@@ -36,7 +36,7 @@ MonoBehaviour:
   defaultStrategy: 100
   defaultMaxSolider: 100
   defaultMaxMorale: 100
-  soldierModelPrefab: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
+  soldierModelPrefab: {fileID: 2229188164278447998, guid: d1a54dc2c620ac14890546b7e4f38a12, type: 3}
   soldiersPerModel: 100
   modelSpacing: 0.5
   battalionAttackType: 0

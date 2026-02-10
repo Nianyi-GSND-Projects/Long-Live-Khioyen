@@ -57,7 +57,16 @@ namespace LongLiveKhioyen
                 soldier.transform.localPosition = pos;
                 
                 // 随机朝向 (但大体朝前)
-                soldier.transform.localRotation = Quaternion.Euler(0, Random.Range(-15, 15), 0);
+                //soldier.transform.localRotation = Quaternion.Euler(0, Random.Range(-15, 15), 0);
+                
+                var sr = soldier.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.flipX = Random.value > 0.5f;
+                    
+                    // 如果你要应用阵营颜色 (简单的 Color 覆盖)
+                    // sr.color = Battle.Instance.GetFactionColor(_ownerUnit.faction); // 需在 Battle 中实现 GetFactionColor 返回 Color
+                }
                 
                 activeSoldiers.Add(soldier);
             }
