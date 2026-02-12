@@ -40,6 +40,10 @@ MonoBehaviour:
         position: {x: 23, y: 16}
         orientation: 0
         underConstruction: 0
+      - id: barracks
+        position: {x: 20, y: 30}
+        orientation: 2
+        underConstruction: 0
       id: juyan
       type: 1
       position: {x: 0, y: 0}
@@ -50,13 +54,6 @@ MonoBehaviour:
         material: 0
         money: 800
       population: 10
-      items:
-      - itemId: debug-item-1
-        quantity: 2
-      - itemId: debug-item-2
-        quantity: 3
-      - itemId: debug-item-3
-        quantity: 1
       stockedItems:
         records:
         - itemId: debug-item-1
@@ -66,6 +63,8 @@ MonoBehaviour:
         - itemId: debug-item-3
           quantity: 1
       queuedProductions: []
+      forSaleItems:
+        records: []
       tasks: []
       lastTime: 0
     - buildings: []
@@ -79,10 +78,11 @@ MonoBehaviour:
         material: 0
         money: 0
       population: 0
-      items: []
       stockedItems:
         records: []
       queuedProductions: []
+      forSaleItems:
+        records: []
       tasks: []
       lastTime: 0
     - buildings: []
@@ -96,10 +96,11 @@ MonoBehaviour:
         material: 0
         money: 0
       population: 0
-      items: []
       stockedItems:
         records: []
       queuedProductions: []
+      forSaleItems:
+        records: []
       tasks: []
       lastTime: 0
     - buildings: []
@@ -113,10 +114,11 @@ MonoBehaviour:
         material: 0
         money: 0
       population: 0
-      items: []
       stockedItems:
         records: []
       queuedProductions: []
+      forSaleItems:
+        records: []
       tasks: []
       lastTime: 0
     gameTime: 0
