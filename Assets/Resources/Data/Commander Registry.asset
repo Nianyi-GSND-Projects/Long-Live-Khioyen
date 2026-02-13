@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eda7684dc4eb49248a5469241e7a4737, type: 3}
-  m_Name: CommanderSettings
+  m_Script: {fileID: 11500000, guid: 3904960e0bd54574583b42a8092522ae, type: 3}
+  m_Name: Commander Registry
   m_EditorClassIdentifier: 
-  generatorConfig: {fileID: 11400000, guid: 11e53885ccfa1774f9cca31aa5b5d315, type: 2}
-  presetCommanders:
-  - {fileID: 11400000, guid: 887cdba62a43fac4383e8d0f278a7b7d, type: 2}
+  activeCommanders: []

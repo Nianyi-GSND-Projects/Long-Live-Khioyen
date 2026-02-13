@@ -7,6 +7,8 @@ namespace LongLiveKhioyen
 	[Serializable]
 	public partial class PolisData
 	{
+		public static PolisData Current => Polis.Instance.Data;
+
 		public string id;
 		public PolisType type;
 

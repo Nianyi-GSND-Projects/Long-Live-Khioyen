@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -88,6 +89,7 @@ namespace LongLiveKhioyen
         
     }
 
+    [Serializable]
     public class GameCommander
     {
         public int commanderId;

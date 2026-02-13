@@ -16,13 +16,13 @@ namespace LongLiveKhioyen
 			GenerateUi();
 			SelectedBuildingType = null;
 			ShowCostPreview = false;
-			Polis.Instance.Data.onEconomyChanged += OnEconomyDataChanged;
-			Polis.Instance.Data.onBuildingsChanged += UpdatePreviewModel;
+			PolisData.Current.onEconomyChanged += OnEconomyDataChanged;
+			PolisData.Current.onBuildingsChanged += UpdatePreviewModel;
 		}
 
 		void OnDisable()
 		{
-			Polis.Instance.Data.onEconomyChanged -= OnEconomyDataChanged;
+			PolisData.Current.onEconomyChanged -= OnEconomyDataChanged;
 			SelectedBuildingType = null;
 		}
 
@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
 		{
 			if(SelectedBuildingType != null)
 			{
-				if(!(SelectedBuildingType.cost <= Polis.Instance.Data.Economy))
+				if(!(SelectedBuildingType.cost <= PolisData.Current.Economy))
 					SelectedBuildingType = null;
 			}
 		}
@@ -130,7 +130,7 @@ namespace LongLiveKhioyen
 			{
 				if(!Polis.Instance.ScreenToGround(mayorMode.PointerScreenPosition, out groundPos))
 					return false;
-				if(!Polis.Instance.Data.IsValidMapPosition(mapPos = Polis.Instance.WorldToMapInt(groundPos)))
+				if(!PolisData.Current.IsValidMapPosition(mapPos = Polis.Instance.WorldToMapInt(groundPos)))
 					return false;
 				return true;
 			}
@@ -142,7 +142,7 @@ namespace LongLiveKhioyen
 			preview.Visible = true;
 
 			BuildingPlacement placement = new(SelectedBuildingType.id, mapPos, orientation);
-			preview.Valid = Polis.Instance.Data.ValidateBuildingPlacement(placement);
+			preview.Valid = PolisData.Current.ValidateBuildingPlacement(placement);
 			Polis.Instance.PositionBuilding(preview.transform, placement);
 		}
 		#endregion
@@ -175,23 +175,23 @@ namespace LongLiveKhioyen
 				return;
 
 			BuildingPlacement placement = new(SelectedBuildingType.id, Polis.Instance.WorldToMapInt(groundPosition), orientation);
-			if(!Polis.Instance.Data.ValidateBuildingPlacement(placement))
+			if(!PolisData.Current.ValidateBuildingPlacement(placement))
 			{
 				Debug.LogWarning($"Cannot place {SelectedBuildingType.id} at {placement.position}, obstructed.");
 				return;
 			}
 
-			if(!Polis.Instance.Data.TryCostResource(SelectedBuildingType.cost, false))
+			if(!PolisData.Current.TryCostResource(SelectedBuildingType.cost, false))
 			{
 				Debug.LogWarning(
 					$"Not enough resources to build {SelectedBuildingType.id}!\n" +
-					$"Required: {SelectedBuildingType.cost}, current: {Polis.Instance.Data.Economy}."
+					$"Required: {SelectedBuildingType.cost}, current: {PolisData.Current.Economy}."
 				);
 				return;
 			}
 
-			Polis.Instance.Data.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
-			Polis.Instance.Data.Economy -= SelectedBuildingType.cost;
+			PolisData.Current.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
+			PolisData.Current.Economy -= SelectedBuildingType.cost;
 		}
 		#endregion
 	}

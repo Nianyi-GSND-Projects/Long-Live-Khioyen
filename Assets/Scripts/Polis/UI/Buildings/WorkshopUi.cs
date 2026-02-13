@@ -16,19 +16,19 @@ namespace LongLiveKhioyen
 		protected void Start()
 		{
 			Refresh();
-			Polis.Instance.Data.onProductionStateChanged += Refresh;
+			PolisData.Current.onProductionStateChanged += Refresh;
 		}
 
 		protected void OnDestroy()
 		{
-			Polis.Instance.Data.onProductionStateChanged -= Refresh;
+			PolisData.Current.onProductionStateChanged -= Refresh;
 		}
 
 		protected void Update()
 		{
 			// 更新制造进度条。
 			float progress = 0f;
-			var production = Polis.Instance.Data.ProductionTask;
+			var production = PolisData.Current.ProductionTask;
 			if(production != null)
 				progress = 1 - production.remainingTime / production.totalTime;
 			productionTimeBar.size = progress;
@@ -52,8 +52,8 @@ namespace LongLiveKhioyen
 				item.transform.SetParent(recipesLayoutGroup.transform, false);
 				item.ItemName = itemDefinition.name;
 				item.SetCosts(itemDefinition.costs);
-				item.Interactable = Polis.Instance.Data.ValidateRecipeCost(itemDefinition.costs);
-				item.onClick = () => Polis.Instance.Data.QueueProduction(itemDefinition.itemId);
+				item.Interactable = PolisData.Current.ValidateRecipeCost(itemDefinition.costs);
+				item.onClick = () => PolisData.Current.QueueProduction(itemDefinition.itemId);
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();
@@ -82,11 +82,11 @@ namespace LongLiveKhioyen
 
 		public void RefreshProducingRecipe()
 		{
-			if(!Polis.Instance.Data.IsProducingItem)
+			if(!PolisData.Current.IsProducingItem)
 				ProducingItem = null;
 			else
 			{
-				var itemId = Polis.Instance.Data.ProductionTask.parameters[0];
+				var itemId = PolisData.Current.ProductionTask.parameters[0];
 				ProducingItem = ItemDatabase.Instance.GetItem(itemId);
 			}
 		}
@@ -95,7 +95,7 @@ namespace LongLiveKhioyen
 		{
 			queuedLayoutGroup.transform.ClearChildren();
 
-			foreach(var itemId in Polis.Instance.Data.queuedProductions)
+			foreach(var itemId in PolisData.Current.queuedProductions)
 			{
 				var item = FancyListItem.Instantiate();
 				item.transform.SetParent(queuedLayoutGroup.transform, false);

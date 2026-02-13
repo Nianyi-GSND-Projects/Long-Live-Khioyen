@@ -9,8 +9,8 @@ namespace LongLiveKhioyen
 	{
 		protected void Start()
 		{
-			Polis.Instance.Data.stockedItems.onChanged += RefreshStocks;
-			Polis.Instance.Data.forSaleItems.onChanged += RefreshSell;
+			PolisData.Current.stockedItems.onChanged += RefreshStocks;
+			PolisData.Current.forSaleItems.onChanged += RefreshSell;
 
 			IsSellOpen = true;
 
@@ -21,8 +21,8 @@ namespace LongLiveKhioyen
 		{
 			if(Polis.Instance)
 			{
-				Polis.Instance.Data.stockedItems.onChanged -= RefreshStocks;
-				Polis.Instance.Data.forSaleItems.onChanged -= RefreshSell;
+				PolisData.Current.stockedItems.onChanged -= RefreshStocks;
+				PolisData.Current.forSaleItems.onChanged -= RefreshSell;
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace LongLiveKhioyen
 		{
 			stockedGoodsLayoutGroup.transform.ClearChildren();
 
-			var records = Polis.Instance.Data.stockedItems;
+			var records = PolisData.Current.stockedItems;
 			foreach(var itemDefinition in records.Definitions.Where(d => d.canSell))
 			{
 				var item = FancyListItem.Instantiate();
@@ -73,7 +73,7 @@ namespace LongLiveKhioyen
 						value = itemDefinition.sellPrice,
 					}
 				);
-				item.onClick += () => Polis.Instance.Data.SetItemForSale(itemDefinition.itemId, 1);
+				item.onClick += () => PolisData.Current.SetItemForSale(itemDefinition.itemId, 1);
 			}
 		}
 		#endregion
@@ -87,7 +87,7 @@ namespace LongLiveKhioyen
 		{
 			sellGoodsLayoutGroup.transform.ClearChildren();
 
-			var records = Polis.Instance.Data.forSaleItems;
+			var records = PolisData.Current.forSaleItems;
 			foreach(var itemDefinition in records.Definitions)
 			{
 				var item = FancyListItem.Instantiate();
@@ -103,7 +103,7 @@ namespace LongLiveKhioyen
 						value = itemDefinition.sellPrice,
 					}
 				);
-				item.onClick += () => Polis.Instance.Data.UnsetItemForSale(itemDefinition.itemId, 1);
+				item.onClick += () => PolisData.Current.UnsetItemForSale(itemDefinition.itemId, 1);
 			}
 		}
 		#endregion
