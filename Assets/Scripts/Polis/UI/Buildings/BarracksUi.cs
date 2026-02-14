@@ -9,8 +9,8 @@ namespace LongLiveKhioyen
 		#region Life cycle
 		protected void Start()
 		{
-			PolisData.Current.onGarrisonChanged += () => RefreshCommanders();
-			PolisData.Current.onNextPromotableCommanderChanged += () => RefreshPromotion();
+			PolisData.Current.onGarrisonChanged += RefreshCommanders;
+			PolisData.Current.onNextPromotableCommanderChanged += RefreshPromotion;
 
 			Refresh();
 			InspectCommander(null);
@@ -18,8 +18,8 @@ namespace LongLiveKhioyen
 
 		protected void OnDestroy()
 		{
-			PolisData.Current.onGarrisonChanged -= () => RefreshCommanders();
-			PolisData.Current.onNextPromotableCommanderChanged -= () => RefreshPromotion();
+			PolisData.Current.onGarrisonChanged -= RefreshCommanders;
+			PolisData.Current.onNextPromotableCommanderChanged -= RefreshPromotion;
 		}
 
 		void Refresh()
