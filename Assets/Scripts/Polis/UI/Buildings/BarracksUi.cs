@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace LongLiveKhioyen
 {
@@ -15,6 +13,7 @@ namespace LongLiveKhioyen
 			PolisData.Current.onNextPromotableCommanderChanged += () => RefreshPromotion();
 
 			Refresh();
+			InspectCommander(null);
 		}
 
 		protected void OnDestroy()
@@ -49,6 +48,8 @@ namespace LongLiveKhioyen
 		{
 			GameCommander commander = PolisData.Current.GetPromotableCommander();
 			ApplyCommanderToItem(commander, promotionItem);
+			promotionItem.Interactable = false;
+			promotionButton.interactable = commander != null;
 		}
 
 		public void Promote()
@@ -75,9 +76,22 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 右侧细节面板
+		[Header("右侧细节")]
+		[SerializeField] Image commanderAvatarImage;
+		[SerializeField] TMP_Text commanderNameText;
+		[SerializeField] TMP_Text zhiText, xinText, renText, yongText, yanText;
+
 		void InspectCommander(GameCommander commander)
 		{
-			//
+			commanderAvatarImage.gameObject.SetActive(commander?.portrait != null);
+			commanderAvatarImage.sprite = commander?.portrait;
+			commanderNameText.text = commander?.commanderName ?? string.Empty;
+
+			zhiText.text = commander?.Zhi.ToString();
+			xinText.text = commander?.Xin.ToString();
+			renText.text = commander?.Ren.ToString();
+			yongText.text = commander?.Yong.ToString();
+			yanText.text = commander?.Yan.ToString();
 		}
 		#endregion
 	}

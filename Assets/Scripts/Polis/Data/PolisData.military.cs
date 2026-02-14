@@ -18,6 +18,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 提拔
+		// 此值应序列化，否则按照现有的随机生成设计，不能保证每次打开存档都能稳定复现。
 		[SerializeField] GameCommander nextPromotableCommander;
 
 		public Action onNextPromotableCommanderChanged;
