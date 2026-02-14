@@ -11,5 +11,8 @@ namespace LongLiveKhioyen
         public Facility Facility;
         public List<TileEffect> Effects = new List<TileEffect>();
         public bool IsEmpty => Battalion == null && Facility == null;
+        
+        public bool isExtractionPoint = false;
+        public GameObject TileVFX; 
     }
 }

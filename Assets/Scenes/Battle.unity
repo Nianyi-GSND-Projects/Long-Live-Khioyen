@@ -2775,6 +2775,7 @@ MonoBehaviour:
   playerFactionMaterial: {fileID: 2100000, guid: 4bbf67c496672644a95c4a5fdfac2999, type: 2}
   enemyFactionMaterial: {fileID: 2100000, guid: d7f9f499b2286ee41879d3172011bdea, type: 2}
   presetMapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
+  extractionPointPrefab: {fileID: 6287820582879260375, guid: 0e547dc9077fead43a986ce455d6147a, type: 3}
   testPlayerReserveTeamCount: 0
   arrangementModal: {fileID: 1489175731}
   anchor: {fileID: 413733173}

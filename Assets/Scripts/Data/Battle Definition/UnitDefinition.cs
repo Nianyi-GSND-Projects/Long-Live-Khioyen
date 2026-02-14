@@ -47,6 +47,8 @@ namespace LongLiveKhioyen
         [Header("Actions")]
         [Tooltip("单位的基础攻击方式 (例如：普通攻击)")]
         public ActionDefinition defaultAttack;
+        public ActionDefinition defaultRetreat;
+        public ActionDefinition defaultInteract;
         
         public List<ActionDefinition> unitUniqueActions = new List<ActionDefinition>();
         

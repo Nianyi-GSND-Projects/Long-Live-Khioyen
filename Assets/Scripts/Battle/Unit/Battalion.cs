@@ -14,6 +14,8 @@ namespace LongLiveKhioyen
         public int currentTraining;
         
         public int currentMovement;
+        
+        
 
         public Battalion()
         {
@@ -54,6 +56,14 @@ namespace LongLiveKhioyen
                 buffs.Add(newBuff);
                 
             }
+        }
+        
+        public override void OnTurnStart()
+        {
+            actionDone = false;
+            hasMovedThisTurn = false;
+            currentMovement = Definition.defaultFlexibility / 10;
+            //TODO
         }
     }
     

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37ebe457fc6c8784d8f70352ea9796d2, type: 3}
+  m_Name: A_Retreat
+  m_EditorClassIdentifier: 
+  actionName: "\u64A4\u79BB"
+  actionId: 0
+  description: "\u4ECE\u6218\u6597\u4E2D\u64A4\u79BB"
+  icon: {fileID: 0}
+  actionPointCost: 0
+  targetFactionType: 0
+  targetCountType: 0
+  displayConditions: []
+  useConditions:
+  - operandA:
+      sourceType: 10
+      constantValue: 0
+    compareOp: 4
+    operandB:
+      sourceType: 0
+      constantValue: 1
+  - operandA:
+      sourceType: 11
+      constantValue: 0
+    compareOp: 4
+    operandB:
+      sourceType: 0
+      constantValue: 1
+  effects:
+  - {fileID: 11400000, guid: c22aea635a97bc04286e4c141e5ae917, type: 2}
+  range: 1
+  minRange: 1
+  targetType: 3

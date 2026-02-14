@@ -31,6 +31,8 @@ namespace LongLiveKhioyen
         
         // --- 全局/战斗属性 (可扩展) ---
         Battle_TurnCount,
+        Unit_IsOnExtractionPoint,
+        Unit_HasNotMoved
     }
     
     [Serializable]
@@ -72,7 +74,19 @@ namespace LongLiveKhioyen
                 // --- 全局属性 ---
                 case ValueSourceType.Battle_TurnCount:
                     return Battle.Instance != null ? Battle.Instance.TurnCount : 0;
-
+                
+                case ValueSourceType.Unit_IsOnExtractionPoint:
+                    if (Battle.Instance != null && contextUser != null)
+                    {
+                        var tile = Battle.Instance.mapData[contextUser.position.x, contextUser.position.y];
+                        return tile.isExtractionPoint ? 1f : 0f;
+                    }
+                    return 0f;
+                
+                case ValueSourceType.Unit_HasNotMoved:
+                    return !contextUser.hasMovedThisTurn ? 1f : 0f;
+                    
+                
                 default:
                     return 0;
             }

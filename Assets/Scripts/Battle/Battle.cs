@@ -31,7 +31,7 @@ namespace LongLiveKhioyen
 		[Header("Map Settings")]
 		public MapDataSO presetMapData; 
 		
-		
+		public GameObject extractionPointPrefab;
 		public Material GetFactionMaterial(Faction faction)
 		{
 			switch (faction)
@@ -193,6 +193,11 @@ namespace LongLiveKhioyen
 			AnchorPosition = MapToWorld(new Vector2Int(data.battleSize.x/2, data.battleSize.y/2));
 			GenerateDetailedMap();
 			GenerateArrangementSlot();
+			
+			#if BATTLE_TEST
+				Debug_SetMapBorderAsExtraction();
+			#endif
+			
 		}
 		
 		private void InitializeComponent()
@@ -287,7 +292,27 @@ namespace LongLiveKhioyen
 			
 			//TODO 
 		}
+		
+		public void CreateExtractionPoint(Vector2Int pos)
+		{
+			if (!IsValidMapPosition(pos)) return;
+            
+			TileData tile = mapData[pos.x, pos.y];
+			tile.isExtractionPoint = true;
 
+			// 生成永久视觉标记 (不同于那些临时的高亮格子)
+			// 假设你有一个 extractionPointPrefab
+			if (extractionPointPrefab != null) // 记得在 Battle 中加这个变量并拖拽 Prefab
+			{
+				Vector3 worldPos = MapToLocal(pos);
+				// 稍微抬高一点防止穿模
+				GameObject vfx = Instantiate(extractionPointPrefab, transform);
+				vfx.transform.localPosition = worldPos;
+                
+				// 记录下来，方便以后可能的移除
+				tile.TileVFX = vfx; 
+			}
+		}
 		
 		#endregion
 		
@@ -401,6 +426,10 @@ namespace LongLiveKhioyen
 				
 				case Stage.Battle:
 					if (CurrentActionStage != PlayerActionStage.MovingBattalion) break;
+					if (mapPosition != SelectedUnit.position)
+					{
+						SelectedUnit.hasMovedThisTurn = true;
+					}
 					RemoveUnitFromMap(SelectedUnit);
 					SelectedUnit.position = mapPosition;
 					//TODO:移动实际减少移动力
@@ -864,10 +893,7 @@ namespace LongLiveKhioyen
 
 			foreach (var unit in factionActiveUnits[Faction.Player])
 			{
-				if(unit is Battalion bat)
-				bat.currentMovement = bat.Definition.defaultFlexibility/10;
-				//改成实际数值
-				unit.actionDone = false;
+				unit.OnTurnStart();
 			}
 			//
 			OnPlayerTurnStarted?.Invoke();
@@ -973,7 +999,7 @@ namespace LongLiveKhioyen
 			PlaceUnitOnMap( SelectedUnit,initialUnitPosition);
 			if(SelectedUnit is Battalion bat) bat.currentMovement = initialUnitMovement;
 			SelectedUnit.transform.localPosition = MapToLocal(initialUnitPosition);
-			
+			SelectedUnit.hasMovedThisTurn = false;
 			availableMovePositions = GetAccessableTilesInRange(SelectedUnit, initialUnitMovement);
 		}
 
@@ -1189,6 +1215,23 @@ namespace LongLiveKhioyen
 					}
 				}
 			}
+		}
+		public void Debug_SetMapBorderAsExtraction()
+		{
+			if (mapData == null) return;
+
+			for (int x = 0; x < Size.x; x++)
+			{
+				for (int y = 0; y < Size.y; y++)
+				{
+					// 边缘判定：x=0, x=max, y=0, y=max
+					if (x == 0 || x == Size.x - 1 || y == 0 || y == Size.y - 1)
+					{
+						CreateExtractionPoint(new Vector2Int(x, y));
+					}
+				}
+			}
+			Debug.Log("Debug: Map borders set as extraction points.");
 		}
 
 		public void AssignTerrainToTile(HexTile tile, string terrainType)
@@ -1473,6 +1516,18 @@ namespace LongLiveKhioyen
 		public BattalionDefinition defaultReserveTeamDefinition;
 		public BattalionDefinition defaultEnemyDefinition;
 		
+		public void WithdrawUnit(Unit unit)
+		{
+			if (factionActiveUnits.ContainsKey(unit.faction))
+			{
+				factionActiveUnits[unit.faction].Remove(unit);
+			}
+            
+			// 如果需要，可以在这里把单位加入一个 "RetreatedUnits" 列表，方便结算
+            
+			ClearAllSelection(); // 防止 UI 还留着
+		}
+		
 		Battalion SpawnBattalion(BattalionDescriptor battalioninfo, Vector2Int position)
 		{
 			Battalion battalion = GenerateBattalionFromDescriptor(battalioninfo);
@@ -1490,6 +1545,9 @@ namespace LongLiveKhioyen
 		{
 			//默认攻击（对于设施来说，默认攻击不显示，因此等于没有）
 			unit.DefaultAttack = unit.unitDefinition.defaultAttack;
+			unit.DefaultRetreat = unit.unitDefinition.defaultRetreat;
+			unit.DefaultInteract = unit.unitDefinition.defaultInteract;
+			
 			//单位原生行动
 			if (unit.unitDefinition.unitUniqueActions != null)
 			{

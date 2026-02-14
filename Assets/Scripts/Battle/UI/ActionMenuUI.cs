@@ -93,8 +93,35 @@ namespace LongLiveKhioyen
             {
                 CreateButton(mainMenuContainer, "普通攻击", null, interactable: false);
             }
-
-            // --- 按钮 3: 部队技能 (Unit Actions) ---
+            
+            // --- 按钮 3: 交互 (Interact) ---
+            if (currentUnit is Battalion b1 && b1.DefaultInteract != null)
+            {
+                // 检查条件 (例如：只有在特定格子上才能交互)
+                bool canInteract = b1.DefaultInteract.CheckUseConditions(currentUnit);
+            
+                CreateButton(mainMenuContainer, "交互", () =>
+                {
+                    // 交互通常是立即执行，或者是选择目标
+                    // 假设是立即执行 (Self Target)
+                    Battle.Instance.PrepareAction(b1.DefaultInteract);
+                }, interactable: canInteract);
+            }
+            
+            // --- 按钮 4: 撤离 (Retreat) ---
+            if (currentUnit is Battalion b2 && b2.DefaultRetreat != null)
+            {
+                // 检查条件 (IsOnExtractionPoint && HasFullMove)
+                bool canRetreat = b2.DefaultRetreat.CheckUseConditions(currentUnit);
+            
+                CreateButton(mainMenuContainer, "撤离", () =>
+                {
+                    // 撤离是对自己的操作 (TargetCountType.Self)
+                    // PrepareAction 会处理 Self 类型
+                    Battle.Instance.PrepareAction(b2.DefaultRetreat);
+                }, interactable: canRetreat);
+            }
+            // --- 按钮 5: 部队技能 (Unit Actions) ---
             bool hasUnitActions = currentUnit.runtimeUnitActions != null && currentUnit.runtimeUnitActions.Count > 0;
             CreateButton(mainMenuContainer, "部队战法", () =>
             {
@@ -102,7 +129,7 @@ namespace LongLiveKhioyen
                 PopulateSubMenu(currentUnit.runtimeUnitActions);
             }, interactable: hasUnitActions);
 
-            // --- 按钮 4: 指挥官技能 (Commander Actions) ---
+            // --- 按钮 6: 指挥官技能 (Commander Actions) ---
             bool hasCmdActions = currentUnit.runtimeCommanderActions != null && currentUnit.runtimeCommanderActions.Count > 0;
             CreateButton(mainMenuContainer, "计略", () =>
             {

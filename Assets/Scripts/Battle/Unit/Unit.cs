@@ -19,6 +19,7 @@ namespace LongLiveKhioyen
         
         public bool selected;
         public bool actionDone;
+        public bool hasMovedThisTurn = false;
         public Faction faction;
         public abstract UnitDefinition unitDefinition { get; }
         
@@ -62,10 +63,18 @@ namespace LongLiveKhioyen
             }
         }
         
+        public virtual void OnTurnStart()
+        {
+            actionDone = false;
+            hasMovedThisTurn = false;
+        }
+        
         #region Action
         
         public ActionDefinition DefaultAttack;
-
+        public ActionDefinition DefaultRetreat;
+        public ActionDefinition DefaultInteract;
+        
         public List<ActionDefinition> runtimeUnitActions = new List<ActionDefinition>();
 
         public List<ActionDefinition> runtimeCommanderActions = new List<ActionDefinition>();

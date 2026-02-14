@@ -29,6 +29,7 @@ namespace LongLiveKhioyen
         
         public BattalionAttackType battalionAttackType;
         public int attackRange;
-
+        
+        
     }
 }
