@@ -76,11 +76,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		// 临时保存：在出城（出征）时从 `PolisData` 中抽取的驻军列表。
-		// 这些驻军在玩家处于大地图时由 `GameInstance` 持有，返回城池时会恢复回原城池。
-		List<ArmyStatus> extractedGarrisonArmies;
-		// 表示这些驻军来源于哪个 polis（用于在回到相同 polis 时恢复）。
-		string garrisonSourcePolisId;
+		public ArmyStatus ActiveArmy { get; private set; }
 
 		public enum Mode { Polis, WorldMap, Battle }
 		Mode currentMode = Mode.Polis;
@@ -119,35 +115,23 @@ namespace LongLiveKhioyen
 			{
 				case PolisType.Controlled:
 					LastPolis = polis;
-					// 如果此前在出城时把本城的驻军抽出并由 GameInstance 持有，且现在回到同一城池，
-				// 则把这些驻军恢复回 polis 中（把驻军放回城内）。
-				if(extractedGarrisonArmies != null && garrisonSourcePolisId == polis.id)
-				{
-					polis.RestoreGarrison(extractedGarrisonArmies);
-					extractedGarrisonArmies = null;
-						garrisonSourcePolisId = null;
-					}
+
+					// 军队入城
+					polis.GarrisonArmy(ActiveArmy);
+					ActiveArmy = null;
+
 					Debug.Log($"Entering polis \"{LastPolis.id}\".");
 					CurrentMode = Mode.Polis;
 					break;
+
 				case PolisType.Hostile:
 					LastPolis = polis;
 					battleMetaData = PrepareBattleMetadata();
-					// 如果在离开城池时抽取了驻军（extractedGarrisonArmies 非空），
-					// 在进入战斗（攻城）场景前用这些数据初始化 `ArmyStatus`。
-					if(extractedGarrisonArmies != null && extractedGarrisonArmies.Count > 0)
-					{
-						var army = ArmyStatus.Instance;
-						army.armyCommander = extractedGarrisonArmies[0].armyCommander;
-						army.battalionStatuses.Clear();
-						foreach(var garrisonArmy in extractedGarrisonArmies)
-						{
-							army.battalionStatuses.AddRange(garrisonArmy.battalionStatuses);
-						}
-					}
+
 					Debug.Log($"Attacking polis \"{LastPolis.id}\".");
 					CurrentMode = Mode.Battle;
 					break;
+
 				default:
 					throw new System.NotSupportedException();
 			}
@@ -157,12 +141,15 @@ namespace LongLiveKhioyen
 		public void DepartFromPolis()
 		{
 			Debug.Log($"Departing from polis \"{LastPolis.id}\".");
+
+			// 军队出城
 			if(LastPolis != null)
 			{
-				// 从城池抽出驻军并由 GameInstance 暂存（大地图期间持有），以便战斗场景使用或回城恢复
-				extractedGarrisonArmies = LastPolis.ExtractGarrison();
-				garrisonSourcePolisId = LastPolis.id;
+				var commanders = LastPolis.GetGarrisonedCommanders();
+				// TODO: 根据出征 UI 决定军队编制与携带军粮量。
+				ActiveArmy = LastPolis.LetOutGarrison(commanders[0], 0, commanders);
 			}
+
 			CurrentMode = Mode.WorldMap;
 		}
 

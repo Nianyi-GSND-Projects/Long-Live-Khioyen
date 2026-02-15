@@ -1,57 +1,41 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
 	public partial class PolisData
 	{
 		#region 驻扎
-		// 城池内部保存的驻军列表（可序列化保存到存档）
-		// 每个驻军为一个完整的 ArmyStatus，包含指挥官与其兵团状态
-		// 注意：序列化字段名不宜随意更改，以免影响旧存档兼容性。
-		[SerializeField] List<ArmyStatus> garrisonedArmies;
+		[SerializeField] List<BattalionStatus> garrisonedBattalions = new();
 
 		public Action onGarrisonChanged;
 
 		public IReadOnlyList<GameCommander> GetGarrisonedCommanders()
 		{
-			var list = new List<GameCommander>();
-			if(garrisonedArmies != null)
+			return garrisonedBattalions.Select(b => b.battalionCommander).ToList();
+		}
+
+		/// <summary>使军队出城。</summary>
+		public ArmyStatus LetOutGarrison(GameCommander headCommander, float foodAmount, IReadOnlyList<GameCommander> battalionCommanders)
+		{
+			var battalions = garrisonedBattalions.Where(b => battalionCommanders.Contains(b.battalionCommander)).ToList();
+			foreach(var b in battalions)
+				garrisonedBattalions.Remove(b);
+			ArmyStatus army = new()
 			{
-				foreach(var army in garrisonedArmies)
-					if(army != null && army.armyCommander != null)
-						list.Add(army.armyCommander);
-			}
-			return list;
+				armyCommander = headCommander,
+				battalionStatuses = battalions,
+				carriedFood = foodAmount,
+			};
+			return army;
 		}
 
-		public IReadOnlyList<ArmyStatus> GetGarrisonedArmies()
+		/// <summary>使军队驻扎到城内。</summary>
+		public void GarrisonArmy(ArmyStatus army)
 		{
-			return garrisonedArmies;
-		}
-
-		public List<ArmyStatus> ExtractGarrison()
-		{
-			// 从城池中抽出驻军数据（通常在出征/离开城池时调用），
-			// 返回一个可由外部持有的副本，同时清空城池内的驻军列表。
-			if(garrisonedArmies == null)
-				garrisonedArmies = new List<ArmyStatus>();
-			var copy = new List<ArmyStatus>(garrisonedArmies);
-			garrisonedArmies.Clear();
-			onGarrisonChanged?.Invoke();
-			return copy;
-		}
-
-		public void RestoreGarrison(List<ArmyStatus> armies)
-		{
-			// 恢复驻军数据到城池（通常在进入/回到城池场景时调用），
-			// 注意传入的 armies 会被直接添加到城池列表中，调用方应保证引用的有效性。
-			if(armies == null)
-				return;
-			if(garrisonedArmies == null)
-				garrisonedArmies = new List<ArmyStatus>();
-			garrisonedArmies.AddRange(armies);
+			garrisonedBattalions.AddRange(army.battalionStatuses);
 			onGarrisonChanged?.Invoke();
 		}
 
@@ -77,21 +61,22 @@ namespace LongLiveKhioyen
 
 		public void PromoteCommander()
 		{
-			GameCommander promoted = GetPromotableCommander();
+			GameCommander promotedCommander = GetPromotableCommander();
 
-			if(promoted == null)
+			if(promotedCommander == null)
 			{
 				Debug.LogWarning("提拔失败：没有可提拔的指挥官。");
 				return;
 			}
 
 			// 把当前的加到驻军列表里去
-			if(garrisonedArmies == null)
-				garrisonedArmies = new List<ArmyStatus>();
-			var newArmy = new ArmyStatus();
-			newArmy.armyCommander = promoted;
-			garrisonedArmies.Add(newArmy);
-			Debug.Log($"提拔了武将“{promoted.commanderName}”");
+			BattalionStatus battalion = new()
+			{
+				battalionCommander = promotedCommander,
+			};
+			garrisonedBattalions.Add(battalion);
+
+			Debug.Log($"提拔了武将“{promotedCommander.commanderName}”");
 			onGarrisonChanged?.Invoke();
 
 			// 刷新下一个

@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
-using UnityEditor.Build.Pipeline.Tasks;
 
 namespace LongLiveKhioyen
 {
@@ -106,15 +105,9 @@ namespace LongLiveKhioyen
 		public ArmyStatus armyStatus;
 		public Vector2Int Size => data.battleSize;
 		public string BattleName => data.battleName;
-
-		private void LoadBattleMetaData()
-		{
-			data = new BattleMetaData();
-			data.GenerateMetaData();
-		}
 		#endregion
 
-		
+
 		#region Life cycle
 		void Awake()
 		{
@@ -161,7 +154,7 @@ namespace LongLiveKhioyen
 		
 		private void ImportArmyData()
 		{
-			ArmyStatus armyStatus = ArmyStatus.Instance;
+			ArmyStatus armyStatus = GameInstance.Instance.ActiveArmy;
 
 			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
 				playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
@@ -209,7 +202,7 @@ namespace LongLiveKhioyen
 		
 		private void InitializeData()
 		{
-			armyStatus = ArmyStatus.Instance;
+			armyStatus = GameInstance.Instance.ActiveArmy;
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
 			
@@ -321,7 +314,7 @@ namespace LongLiveKhioyen
 		private void GenerateTestArmyData()
 		{
 			//PlayerReserveTeam
-			ArmyStatus armyStatus = ArmyStatus.Instance;
+			ArmyStatus armyStatus = GameInstance.Instance.ActiveArmy;
 			if(armyStatus == null) Debug.LogError("ArmyStatus is null!");
 			armyStatus.armyCommander = CommanderRegistry.Instance.GetAllFreeCommanders()
 				.Find(c => c.commanderName == "王 念一");
