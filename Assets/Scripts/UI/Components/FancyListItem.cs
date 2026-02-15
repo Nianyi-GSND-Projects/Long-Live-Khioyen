@@ -1,8 +1,9 @@
+using Nianyi.UnityPack;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections.Generic;
-using Nianyi.UnityPack;
+using static UnityEditor.Progress;
 
 namespace LongLiveKhioyen
 {
@@ -21,6 +22,21 @@ namespace LongLiveKhioyen
 		{
 			button.onClick.AddListener(() => onClick?.Invoke());
 		}
+
+		#region 实例化
+		const string prefabPath = "Prefabs/UI/Common/Fancy List Item";
+		public static FancyListItem Instantiate()
+		{
+			return HierarchyUtility.InstantiatePrefabFromResource<FancyListItem>(prefabPath);
+		}
+
+		public static FancyListItem Instantiate(Transform parent)
+		{
+			var instance = Instantiate();
+			instance.transform.SetParent(parent, false);
+			return instance;
+		}
+		#endregion
 
 		#region 外观与行为
 		#region ID
@@ -89,14 +105,22 @@ namespace LongLiveKhioyen
 			set => button.interactable = value;
 		}
 		#endregion
-		#endregion
 
-		#region 实例化
-		const string prefabPath = "Prefabs/UI/Common/Fancy List Item";
-		public static FancyListItem Instantiate()
+		#region 特定类型的辅助方法
+		public void ApplyItem(ItemDefinition item)
 		{
-			return HierarchyUtility.InstantiatePrefabFromResource<FancyListItem>(prefabPath);
+			ItemName = item.name;
+			SetCosts(item.costs);
 		}
+
+		public void ApplyCommander(GameCommander commander)
+		{
+			Interactable = commander != null;
+			ItemName = commander?.commanderName ?? string.Empty;
+			IconSprite = commander?.portrait;
+			SetCosts();
+		}
+		#endregion
 		#endregion
 	}
 }

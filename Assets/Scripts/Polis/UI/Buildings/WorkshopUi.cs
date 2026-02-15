@@ -48,10 +48,8 @@ namespace LongLiveKhioyen
 
 			foreach(var itemDefinition in ItemDatabase.Instance.items.Where(item => item.productable))
 			{
-				var item = FancyListItem.Instantiate();
-				item.transform.SetParent(recipesLayoutGroup.transform, false);
-				item.ItemName = itemDefinition.name;
-				item.SetCosts(itemDefinition.costs);
+				var item = FancyListItem.Instantiate(recipesLayoutGroup.transform);
+				item.ApplyItem(itemDefinition);
 				item.Interactable = PolisData.Current.ValidateRecipeCost(itemDefinition.costs);
 				item.onClick = () => PolisData.Current.QueueProduction(itemDefinition.itemId);
 			}
@@ -97,10 +95,10 @@ namespace LongLiveKhioyen
 
 			foreach(var itemId in PolisData.Current.queuedProductions)
 			{
-				var item = FancyListItem.Instantiate();
-				item.transform.SetParent(queuedLayoutGroup.transform, false);
 				var itemDefinition = ItemDatabase.Instance.GetItem(itemId);
-				item.ItemName = itemDefinition.name;
+
+				var item = FancyListItem.Instantiate(queuedLayoutGroup.transform);
+				item.ApplyItem(itemDefinition);
 				item.SetCosts();
 				item.Interactable = false;
 			}

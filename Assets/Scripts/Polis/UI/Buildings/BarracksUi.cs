@@ -29,16 +29,6 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region 辅助
-		void ApplyCommanderToItem(GameCommander commander, FancyListItem item)
-		{
-			item.Interactable = commander != null;
-			item.ItemName = commander?.commanderName ?? string.Empty;
-			item.IconSprite = commander?.portrait;
-			item.SetCosts();
-		}
-		#endregion
-
 		#region 提拔
 		[SerializeField] Button promotionButton;
 		[SerializeField] LayoutGroup promotionSlot;  // 暂时不用，如果将来改成同时可提拔多个再开。
@@ -47,7 +37,7 @@ namespace LongLiveKhioyen
 		void RefreshPromotion()
 		{
 			GameCommander commander = PolisData.Current.GetPromotableCommander();
-			ApplyCommanderToItem(commander, promotionItem);
+			promotionItem.ApplyCommander(commander);
 			promotionItem.Interactable = false;
 			promotionButton.interactable = commander != null;
 		}
@@ -67,9 +57,8 @@ namespace LongLiveKhioyen
 			var currentCommanders = PolisData.Current.GetGarrisonedCommanders();
 			foreach(var commander in currentCommanders)
 			{
-				FancyListItem item = FancyListItem.Instantiate();
-				item.transform.SetParent(commandersLayoutGroup.transform, false);
-				ApplyCommanderToItem(commander, item);
+				FancyListItem item = FancyListItem.Instantiate(commandersLayoutGroup.transform);
+				item.ApplyCommander(commander);
 				item.onClick += () => InspectCommander(commander);
 			}
 		}

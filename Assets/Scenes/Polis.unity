@@ -1474,11 +1474,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
-  far clip plane: 1000
-  field of view: 10
+  near clip plane: 0.1
+  far clip plane: 250
+  field of view: 60
   orthographic: 0
-  orthographic size: 10
+  orthographic size: 20
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -1502,8 +1502,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 425449516}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.23911719, y: 0.36964393, z: -0.09904557, w: 0.89239925}
-  m_LocalPosition: {x: -30.618643, y: 24.99996, z: -30.618639}
+  m_LocalRotation: {x: 0.18891856, y: 0.000000027600716, z: -0.0000000053099045, w: 0.9819928}
+  m_LocalPosition: {x: -0.00000005220113, y: 0.7710333, z: -1.4286196}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -3846,10 +3846,6 @@ PrefabInstance:
     - target: {fileID: 5388852720383875462, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 277447870946929767, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
-      propertyPath: m_Name
-      value: 0x
       objectReference: {fileID: 0}
     - target: {fileID: 8300583478118239071, guid: 4a22a2c3f49809a419819bc51735d77c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -6850,7 +6846,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DepartFromPolis
+      value: OpenExpeditionPanel
       objectReference: {fileID: 0}
     - target: {fileID: 3173642577713359654, guid: 52bdc4b80d0010d499daf96ebdd32efe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

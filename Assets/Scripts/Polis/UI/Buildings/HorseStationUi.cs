@@ -61,10 +61,8 @@ namespace LongLiveKhioyen
 			var records = PolisData.Current.stockedItems;
 			foreach(var itemDefinition in records.Definitions.Where(d => d.canSell))
 			{
-				var item = FancyListItem.Instantiate();
-				item.transform.SetParent(stockedGoodsLayoutGroup.transform, false);
-
-				item.ItemName = itemDefinition.name;
+				var item = FancyListItem.Instantiate(stockedGoodsLayoutGroup.transform);
+				item.ApplyItem(itemDefinition);
 				item.ShowQuantity = true;
 				item.Quantity = records.GetRecord(itemDefinition).quantity;
 				item.SetCosts(
@@ -90,10 +88,8 @@ namespace LongLiveKhioyen
 			var records = PolisData.Current.forSaleItems;
 			foreach(var itemDefinition in records.Definitions)
 			{
-				var item = FancyListItem.Instantiate();
-				item.transform.SetParent(sellGoodsLayoutGroup.transform, false);
-
-				item.ItemName = itemDefinition.name;
+				var item = FancyListItem.Instantiate(sellGoodsLayoutGroup.transform);
+				item.ApplyItem(itemDefinition);
 				item.ShowQuantity = true;
 				item.Quantity = records.GetRecord(itemDefinition).quantity;
 				item.SetCosts(

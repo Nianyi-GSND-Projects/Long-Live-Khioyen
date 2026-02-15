@@ -49,11 +49,6 @@ namespace LongLiveKhioyen
 		{
 			GameInstance.Instance.OpenPauseMenu();
 		}
-
-		public void DepartFromPolis()
-		{
-			GameInstance.Instance.DepartFromPolis();
-		}
 		#endregion
 
 		#region Status Bar
@@ -118,6 +113,11 @@ namespace LongLiveKhioyen
 
 			if(!flag)  // If nothing has been switched to, display the normal panel.
 				SwitchBottomPanel(normalPanel);
+		}
+
+		public void OpenExpeditionPanel()
+		{
+			UiManager.Instance.OpenUiModalFromPrefabPath("Prefabs/Polis/UI/Expedition Panel");
 		}
 		#endregion
 
