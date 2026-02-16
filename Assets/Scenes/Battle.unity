@@ -2768,6 +2768,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionDataBase: {fileID: 11400000, guid: f14839d6bac28cb41a750e238bd1fc53, type: 2}
+  useLevelPreset: 1
+  levelPreset: {fileID: 11400000, guid: cc2965b2784b79646bd702ad40d6d9c9, type: 2}
   movementHighlightColor: {r: 0, g: 1, b: 0, a: 1}
   arrangementHighlightColor: {r: 0, g: 0, b: 1, a: 1}
   attackHighlightColor: {r: 1, g: 0, b: 0, a: 1}

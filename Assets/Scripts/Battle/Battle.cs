@@ -13,6 +13,11 @@ namespace LongLiveKhioyen
 		public ActionDatabase actionDataBase;
 		private CommanderRegistry commanderRegistry;
 		public string[,] mapTerrainData; 
+		
+		[Header("Level Preset Settings")]
+		public bool useLevelPreset = false;
+		public BattlePresetSO levelPreset;
+		
 		#region General Config
 
 		public Color movementHighlightColor = Color.green; 
@@ -189,12 +194,22 @@ namespace LongLiveKhioyen
 			gameObject.isStatic = true;
 			GenerateHexGrid();
 			AnchorPosition = MapToWorld(new Vector2Int(data.battleSize.x/2, data.battleSize.y/2));
-			GenerateDetailedMap();
-			GenerateArrangementSlot();
-			
-			#if BATTLE_TEST
+			if (useLevelPreset && levelPreset != null)
+			{
+				foreach(var p in levelPreset.extractionPoints) CreateExtractionPoint(p);
+                
+				// 3. 读取布阵点
+				availableArrangementPositions.Clear();
+				foreach(var p in levelPreset.playerDeployPoints) availableArrangementPositions.Add(p);
+			}
+			else
+			{
+				GenerateArrangementSlot();
+#if BATTLE_TEST
 				Debug_SetMapBorderAsExtraction();
-			#endif
+#endif
+			}
+			
 			
 		}
 		
@@ -214,24 +229,26 @@ namespace LongLiveKhioyen
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
 			
+			mapTerrainData = new string[Size.x, Size.y];
+			availableMovePositions = new HashSet<Vector2Int>();
+			availableArrangementPositions = new HashSet<Vector2Int>();
+			availableTargetPositions = new HashSet<Vector2Int>();
+			
+			if (useLevelPreset && levelPreset != null) 
+				presetMapData = levelPreset.mapData;
+			
 			if (presetMapData != null)
 			{
-				// 注意：这里我们修改的是 data 引用中的值，
-				// 如果 data 是 ScriptableObject，这会临时改变 SO 的值（编辑器下重启重置）
-				// 如果 data 是纯类实例，则只影响本次战斗
 				data.battleSize = new Vector2Int(presetMapData.width, presetMapData.height);
 				Debug.Log($"使用预设地图尺寸: {Size}");
 			}
+			
 			mapData = new TileData[Size.x, Size.y];
 			for(int x=0; x<Size.x; x++)
 				for(int y=0; y<Size.y; y++)
 					mapData[x,y] = new TileData();
 			
-			mapTerrainData = new string[Size.x, Size.y];
 			
-			availableMovePositions = new HashSet<Vector2Int>();
-			availableArrangementPositions = new HashSet<Vector2Int>();
-			availableTargetPositions = new HashSet<Vector2Int>();
 			
 			playerReserveTeam = new List<BattalionDescriptor>();
 			
@@ -257,7 +274,45 @@ namespace LongLiveKhioyen
 		private void PlaceNonPlayerBattalionUnit()
 		{
 			List<BattalionDescriptor> enemyReserveTeam = new List<BattalionDescriptor>();
+
+			if (useLevelPreset && levelPreset != null)
+			{
+				foreach (var spawnData in levelPreset.preplacedUnits)
+				{
+					if (spawnData.isFacility)
+					{
+						Facility facility = SpawnUnit<Facility, FacilityDefinition>(
+							spawnData.facilityDef,
+							spawnData.position,
+							spawnData.faction
+						);
 			
+						factionActiveUnits[Faction.Player].Add(facility);
+					}
+					else
+					{
+						// 构造临时的 Descriptor
+						BattalionDescriptor desc = new BattalionDescriptor
+						{
+							Definition = spawnData.battalionDef,
+							faction = spawnData.faction,
+							armyId = -1,
+							placed = false,
+							maxSolider = spawnData.battalionDef.defaultMaxSolider,
+							currentSoliders = spawnData.battalionDef.defaultMaxSolider,
+                    
+							maxMorale = spawnData.battalionDef.defaultMaxMorale,
+							currentMurale = spawnData.battalionDef.defaultMaxMorale,
+                    
+							maxTraining = 100,
+							currentTraining = 50,
+							battalionCommander = null
+						};
+						SpawnBattalion(desc, spawnData.position);
+					}
+				}
+				return; // [关键] 既然读了预设，就跳过后面的随机生成
+			}
 			#if BATTLE_TEST
 			for (int i = 0; i < data.enemyCount; i++)
 			{
@@ -1440,11 +1495,7 @@ namespace LongLiveKhioyen
 			
 			return new Vector2Int(x,y);
 		}
-		void GenerateDetailedMap()
-		{
-			if (presetMapData != null) return;
-			//TODO 读取数据或生成地图细节
-		}
+
 		void GenerateArrangementSlot()
 		{
 			//TODO:根据玩家进入战斗的角度，在合适的位置创建部署区
