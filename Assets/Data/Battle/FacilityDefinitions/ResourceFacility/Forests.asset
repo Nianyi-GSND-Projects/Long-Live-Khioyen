@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccfd271d83c94fa44be5df1d9ef63d13, type: 3}
+  m_Name: Forests
+  m_EditorClassIdentifier: 
+  unitName: 
+  unitType: 1
+  figure: {fileID: 0}
+  unitModelTemplate: {fileID: 919132149155446097, guid: 1bacad875c4c2df48bb4f2a6ce8c0e62, type: 3}
+  unitSelectedSoundEffect: {fileID: 0}
+  passability: 0
+  movable: 0
+  actionable: 0
+  beAttacked: 0
+  beInteracted: 1
+  beMoved: 0
+  defaultAttack: {fileID: 0}
+  defaultRetreat: {fileID: 0}
+  defaultInteract: {fileID: 0}
+  unitUniqueActions: []
+  tags: []
+  defaultMaxDurability: 1000
+  defaultCost: 0
+  defaultPower: 0
+  special: 0
+  block: 0
+  isInteractable: 1
+  itemToGive: {fileID: 11400000, guid: eed1fc4557682d840a1b8552f251ba30, type: 2}
+  baseAmount: 10
+  durabilityCost: 1000

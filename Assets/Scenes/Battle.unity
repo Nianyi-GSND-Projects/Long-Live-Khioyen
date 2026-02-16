@@ -2777,6 +2777,7 @@ MonoBehaviour:
   presetMapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
   extractionPointPrefab: {fileID: 6287820582879260375, guid: 0e547dc9077fead43a986ce455d6147a, type: 3}
   testPlayerReserveTeamCount: 0
+  testFacilityDefinition: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
   arrangementModal: {fileID: 1489175731}
   anchor: {fileID: 413733173}
   camera: {fileID: 983281796}

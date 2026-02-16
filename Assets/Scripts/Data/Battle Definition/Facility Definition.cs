@@ -27,5 +27,13 @@ namespace LongLiveKhioyen
         
         [Header("Visuals")]
         public List<FacilityState> damageStates;
+        
+        [Header("Interaction")]
+        public bool isInteractable = false;
+        
+        public virtual void OnInteract(Unit user, Facility facility)
+        {
+            Debug.Log($"{user.name} 与 {facility.name} 交互了，但什么也没发生。");
+        }
     }
 }

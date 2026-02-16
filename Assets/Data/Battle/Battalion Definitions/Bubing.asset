@@ -25,7 +25,7 @@ MonoBehaviour:
   beMoved: 1
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
-  defaultInteract: {fileID: 0}
+  defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
   unitUniqueActions:
   - {fileID: 11400000, guid: d7a8bcb37faec344487882201b3f5c96, type: 2}
   - {fileID: 11400000, guid: 3b3a3bfed2bb32b4487a4aef6a1ec2c5, type: 2}

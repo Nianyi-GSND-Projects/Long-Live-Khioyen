@@ -79,11 +79,12 @@ namespace LongLiveKhioyen
             // --- 按钮 2: 普通攻击 (Attack) ---
             // 检查是否有默认攻击手段
             bool canAttack = currentUnit.DefaultAttack != null;
+            
             if (canAttack)
             {
                 // 进一步检查使用条件 (例如是否被缴械)
                 bool conditionMet = currentUnit.DefaultAttack.CheckUseConditions(currentUnit);
-                
+                if(!currentUnit.DefaultAttack.HasValidTargetsInRange(currentUnit)) conditionMet = false;
                 CreateButton(mainMenuContainer, "普通攻击", () =>
                 {
                     Battle.Instance.PrepareAction(currentUnit.DefaultAttack);
@@ -99,7 +100,10 @@ namespace LongLiveKhioyen
             {
                 // 检查条件 (例如：只有在特定格子上才能交互)
                 bool canInteract = b1.DefaultInteract.CheckUseConditions(currentUnit);
-            
+                if (canInteract)
+                {
+                    canInteract = b1.DefaultInteract.HasValidTargetsInRange(currentUnit);
+                }
                 CreateButton(mainMenuContainer, "交互", () =>
                 {
                     // 交互通常是立即执行，或者是选择目标
@@ -163,7 +167,10 @@ namespace LongLiveKhioyen
             {
                 // 检查使用条件 (决定按钮是否置灰)
                 bool isUsable = action.CheckUseConditions(currentUnit);
-                
+                if (isUsable)
+                {
+                    isUsable = action.HasValidTargetsInRange(currentUnit);
+                }
                 CreateButton(subMenuContainer, action.actionName, () =>
                 {
                     Battle.Instance.PrepareAction(action);

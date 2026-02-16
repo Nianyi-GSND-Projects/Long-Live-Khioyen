@@ -154,8 +154,6 @@ namespace LongLiveKhioyen
 		
 		private void ImportArmyData()
 		{
-			ArmyStatus armyStatus = GameInstance.Instance.ActiveArmy;
-
 			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
 				playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
 		}
@@ -207,7 +205,12 @@ namespace LongLiveKhioyen
 		
 		private void InitializeData()
 		{
+			#if BATTLE_TEST
+			armyStatus = new ArmyStatus();
+			#else
 			armyStatus = GameInstance.Instance.ActiveArmy;
+			#endif
+			
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
 			
@@ -240,6 +243,7 @@ namespace LongLiveKhioyen
 			
 			#if BATTLE_TEST
 			testPlayerReserveTeamCount = 3;
+			
 			#endif
 		}
 		
@@ -285,11 +289,13 @@ namespace LongLiveKhioyen
 				}
 				factionActiveUnits[Faction.Enemy].Add(SpawnBattalion(battalionDescriptor,pos));
 			}
-			#else 
+
+			GenerateTestFacilities();
+#else
 			GenerateEnemyData();
-			#endif
-			
-			
+#endif
+
+
 			//TODO 
 		}
 		
@@ -319,6 +325,8 @@ namespace LongLiveKhioyen
 		#region Test
 		
 		public int testPlayerReserveTeamCount;
+		[Header("Test Config")]
+		public FacilityDefinition testFacilityDefinition;
 		private void GenerateTestData()
 		{
 			data = new BattleMetaData()
@@ -333,18 +341,31 @@ namespace LongLiveKhioyen
 				battleGoal = BattleGoal.Annihilate,
 				enemyCount = 4
 			};
+		}
+		
+		private void GenerateTestFacilities()
+		{
+			if (testFacilityDefinition == null) return;
+
+			// 找一个可以停的随机位置
+			Vector2Int pos = GetRandomValidPosition(UnitPassability.Stoppable);
 			
+			Facility facility = SpawnUnit<Facility, FacilityDefinition>(
+				testFacilityDefinition,
+				pos,
+				Faction.Player
+			);
+			
+			factionActiveUnits[Faction.Player].Add(facility);
+			Debug.Log($"生成了测试设施 {testFacilityDefinition.unitName} at {pos}");
 		}
 		
 		private void GenerateTestArmyData()
 		{
 			//PlayerReserveTeam
-			ArmyStatus armyStatus = GameInstance.Instance.ActiveArmy;
-			if(armyStatus == null) Debug.LogError("ArmyStatus is null!");
 			armyStatus.armyCommander = CommanderRegistry.Instance.GetAllFreeCommanders()
 				.Find(c => c.commanderName == "王 念一");
 			
-			Debug.Log("Army Commander name: " + armyStatus.armyCommander.commanderName);
 			armyStatus.battalionStatuses.Clear();
 			
 			for (int i = 0; i < testPlayerReserveTeamCount; i++)
@@ -680,6 +701,51 @@ namespace LongLiveKhioyen
 				unit.OnUnitStateChanged();
 			}
 			dirtyUnits.Clear();
+		}
+		
+		public bool HasAnyValidTarget(Unit user, ActionDefinition action)
+		{
+			if (user == null || action == null) return false;
+
+			// 1. Self 类型：只检查自己脚下
+			if (action.targetCountType == TargetCountType.Self)
+			{
+				return action.IsTileValidTarget(user, user.position);
+			}
+
+			// 2. 范围搜索：找到一个就返回 True
+			Vector3Int centerCube = OffsetToCube(user.position);
+			int N = action.range;
+			int minN = action.minRange;
+
+			for (int q = -N; q <= N; q++)
+			{
+				for (int r = -N; r <= N; r++)
+				{
+					for (int s = -N; s <= N; s++)
+					{
+						if (q + r + s == 0)
+						{
+							int dist = (Mathf.Abs(q) + Mathf.Abs(r) + Mathf.Abs(s)) / 2;
+							if (dist > N || dist < minN) continue;
+
+							Vector3Int neighborCube = centerCube + new Vector3Int(q, r, s);
+							Vector2Int neighborPos = CubeToOffset(neighborCube);
+
+							if (IsValidMapPosition(neighborPos))
+							{
+								// [核心优化] 只要找到一个合法的，立刻返回 true
+								if (action.IsTileValidTarget(user, neighborPos))
+								{
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return false; // 找遍了也没找到
 		}
 		
 		public bool TestAvailableMovePositions(Vector2Int mapPosition)
@@ -1528,16 +1594,79 @@ namespace LongLiveKhioyen
 			ClearAllSelection(); // 防止 UI 还留着
 		}
 		
-		Battalion SpawnBattalion(BattalionDescriptor battalioninfo, Vector2Int position)
+		public TUnit SpawnUnit<TUnit, TDef>(TDef definition, Vector2Int pos, Faction faction, int instanceId = -1) 
+			where TUnit : Unit<TDef>
+			where TDef : UnitDefinition
 		{
-			Battalion battalion = GenerateBattalionFromDescriptor(battalioninfo);
-			battalion.position = position;
-			PositionBattalion(battalion);
-			//audioSource.PlayOneShot(compilation.battalionDefinition.SelectedSoundEffect);
-			factionActiveUnits[battalioninfo.faction].Add(battalion);
-			PlaceUnitOnMap(battalion, position);
-			battalioninfo.placed = true;
-			InitializeUnitActions(battalion);
+			// 1. 创建 GameObject
+			var go = new GameObject($"{typeof(TUnit).Name}_{definition.unitName}");
+            
+			// 2. 挂载组件
+			var unit = go.AddComponent<TUnit>();
+            
+			// 3. 通用数据初始化
+			unit.Definition = definition;
+			unit.InstanceId = instanceId;
+			unit.faction = faction;
+			unit.position = pos;
+            
+			// 4. 特殊初始化 (通过虚方法或类型判断)
+			if (unit is Facility fac)
+			{
+				// 假设 FacilityDefinition 有 maxDurability 字段，或者是复用 defaultMaxSolider
+				fac.currentDurability = fac.Definition.defaultMaxDurability; 
+				// 你也可以在 Facility 类里写一个 Initialize() 方法来处理这些
+			}
+			else if (unit is Battalion bat)
+			{
+				// 部队属性初始化
+				bat.currentSoliders = bat.Definition.defaultMaxSolider; // 默认满员，如果是预备队生成，后续会覆盖
+				bat.currentMurale = bat.Definition.defaultMaxMorale;
+				// 注意：BattalionDescriptor 里的数据会在 SpawnBattalion 的包装层里覆盖这里
+			}
+
+			// 5. 视觉初始化
+			SetupUnitVisuals(unit);
+            
+			// 6. 放置到地图数据层
+			PlaceUnitOnMap(unit, pos);
+            
+			// 7. 设置 Transform 父物体和位置
+			unit.transform.SetParent(transform, false);
+			unit.transform.localPosition = MapToLocal(pos);
+            
+			// 8. 技能初始化
+			InitializeUnitActions(unit);
+
+			return unit;
+		}
+		
+		Battalion SpawnBattalion(BattalionDescriptor descriptor, Vector2Int position)
+		{
+			// [调用通用方法]
+			Battalion battalion = SpawnUnit<Battalion, BattalionDefinition>(
+				descriptor.Definition, 
+				position, 
+				descriptor.faction, 
+				descriptor.armyId
+			);
+
+			// [覆盖特定数据] (因为 Descriptor 里存了存档数据，比如兵力不一定是满的)
+			battalion.battalionCommander = descriptor.battalionCommander;
+			battalion.currentSoliders = descriptor.currentSoliders;
+			battalion.currentMurale = descriptor.currentMurale;
+			battalion.currentTraining = descriptor.currentTraining;
+            
+			// 加入活跃列表
+			factionActiveUnits[descriptor.faction].Add(battalion);
+            
+			// 标记已放置
+			descriptor.placed = true;
+            
+			// 再次初始化技能 (因为 Commander 赋值了，可能有了新技能)
+			// 虽然 SpawnUnit 里调了一次，但那时还没 Commander，所以得刷新一下
+			InitializeUnitActions(battalion); 
+
 			return battalion;
 		}
 		
@@ -1578,55 +1707,34 @@ namespace LongLiveKhioyen
 				}
 			}
 		}
-		public Battalion GenerateBattalionFromDescriptor(BattalionDescriptor battalioninfo)
-		{
-			var go = new GameObject($"Unit_{battalioninfo.Definition.unitName}");
-			var battalion = go.AddComponent<Battalion>();
-			
-			battalion.InstanceId = battalioninfo.armyId;
-			battalion.faction = battalioninfo.faction;
-			battalion.Definition = battalioninfo.Definition;
-			battalion.battalionCommander = battalioninfo.battalionCommander;
-			battalion.currentSoliders = battalioninfo.currentSoliders;
-			SetupUnitVisuals(battalion);
-			
-			return battalion;
-		}
-		
-		public void RemoveBattalionWhileArrangement(Battalion battalion)
-		{
-			factionActiveUnits[battalion.faction].Remove(battalion);
-			RemoveUnitFromMap(battalion);
-			if(SelectedUnit == battalion) ClearAllSelection();
-			playerReserveTeam[battalion.InstanceId].placed = false;
-			Destroy(battalion.gameObject);
-		}
-		
+
 		public void RemoveUnitFromBattle(Unit unit)
 		{
 			if(unit == null) return;
 			
-			if (unit is Battalion bat)
+			RemoveUnitFromMap(unit);
+			
+			if (SelectedUnit == unit) 
 			{
-				factionActiveUnits[bat.faction].Remove(bat);
-				RemoveUnitFromMap(bat);
-				if(SelectedUnit == bat) ClearAllSelection();
-				bat.gameObject.SetActive(false);
-				bat.transform.SetParent(null);
-				return;
-			}
-
-			if (unit is Facility fac)
-			{
-				return;
+				ClearAllSelection();
 			}
 			
-		}
-		
-		public void PositionBattalion(Battalion battalion)
-		{
-			battalion.transform.SetParent(transform, false);
-			battalion.transform.localPosition = MapToLocal(battalion.position);
+			if (factionActiveUnits.ContainsKey(unit.faction))
+			{
+				if (factionActiveUnits[unit.faction].Contains(unit))
+				{
+					factionActiveUnits[unit.faction].Remove(unit);
+				}
+			}
+			else
+			{
+				// 如果是特殊的阵营（比如 Neutral），且没有初始化进字典，这里会漏掉
+				// 建议确保 InitializeData 里所有 Faction 都初始化了
+			}
+			unit.gameObject.SetActive(false);
+			// 或者 Destroy(unit.gameObject); // 取决于你的对象池策略
+			unit.transform.SetParent(null);
+			
 		}
 		
 		public void ForceMoveUnit(Unit unit, Vector2Int newPos)

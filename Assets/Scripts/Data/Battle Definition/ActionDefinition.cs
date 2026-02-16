@@ -237,5 +237,12 @@ namespace LongLiveKhioyen
                     return false;
             }
         }
+        
+        public bool HasValidTargetsInRange(Unit user)
+        {
+            if (Battle.Instance == null) return false;
+            
+            return Battle.Instance.HasAnyValidTarget(user, this);
+        }
     }
 }
