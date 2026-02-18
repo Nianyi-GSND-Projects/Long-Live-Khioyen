@@ -39,12 +39,6 @@ MonoBehaviour:
     battalionDef: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
-  - position: {x: 8, y: 6}
-    faction: 2
-    isFacility: 0
-    battalionDef: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
-    facilityDef: {fileID: 0}
-    overrideSoldiers: -1
   - position: {x: 7, y: 5}
     faction: 2
     isFacility: 0
@@ -64,18 +58,6 @@ MonoBehaviour:
     facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
     overrideSoldiers: -1
   - position: {x: 8, y: 5}
-    faction: 2
-    isFacility: 0
-    battalionDef: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
-    facilityDef: {fileID: 0}
-    overrideSoldiers: -1
-  - position: {x: 9, y: 6}
-    faction: 2
-    isFacility: 0
-    battalionDef: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
-    facilityDef: {fileID: 0}
-    overrideSoldiers: -1
-  - position: {x: 7, y: 7}
     faction: 2
     isFacility: 0
     battalionDef: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}

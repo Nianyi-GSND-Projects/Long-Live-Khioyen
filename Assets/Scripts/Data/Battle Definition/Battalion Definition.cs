@@ -10,7 +10,10 @@ namespace LongLiveKhioyen
         
         public string[] tags;
         
+        public bool isTrainable = false;
+        
         #region Battalion Attributes
+        
         public int defaultDiscipline;
         public int defaultPower;
         public int defaultDefence;
@@ -29,7 +32,5 @@ namespace LongLiveKhioyen
         
         public BattalionAttackType battalionAttackType;
         public int attackRange;
-        
-        
     }
 }

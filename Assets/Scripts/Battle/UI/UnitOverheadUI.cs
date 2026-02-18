@@ -24,7 +24,6 @@ namespace LongLiveKhioyen
         
         public void Initialize(Unit unit)
         {
-            // 记录单位的 Transform，用于跟随位置
             _targetUnitTransform = unit.transform;
             
             if (Camera.main != null) 
@@ -48,11 +47,8 @@ namespace LongLiveKhioyen
             }
             
             if (!gameObject.activeSelf) gameObject.SetActive(true);
-            // 1. 位置跟随：始终位于单位头顶固定高度
-            // 这样做的好处是：即使单位模型旋转了（比如转身），UI 也不会跟着公转
             transform.position = _targetUnitTransform.position + offset;
 
-            // 2. 旋转跟随（Billboard）：始终保持与摄像机相同的旋转角度
             if (_mainCamTransform != null)
             {
                 transform.rotation = _mainCamTransform.rotation;
@@ -63,13 +59,13 @@ namespace LongLiveKhioyen
         {
             if (unit is Battalion bat)
             {
-                string cmdName = bat.battalionCommander != null ? bat.battalionCommander.commanderName : "无指挥官";
+                string cmdName = bat.battalionCommander != null ? bat.battalionCommander.commanderName : "";
                 commanderNameText.text = cmdName;
                 unitInfoText.text = $"{bat.Definition.unitName} | {bat.currentSoliders}";
             }
             else if (unit is Facility fac)
             {
-                commanderNameText.text = ""; // 设施通常没有指挥官
+                commanderNameText.text = "";
                 unitInfoText.text = $"{fac.Definition.unitName} | HP:{fac.currentDurability}";
             }
             
