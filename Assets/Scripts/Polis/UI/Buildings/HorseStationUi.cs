@@ -9,7 +9,7 @@ namespace LongLiveKhioyen
 	{
 		protected void Start()
 		{
-			PolisData.Current.stockedItems.onChanged += RefreshStocks;
+			PolisData.Current.StockedItems.onChanged += RefreshStocks;
 			PolisData.Current.forSaleItems.onChanged += RefreshSell;
 
 			IsSellOpen = true;
@@ -21,7 +21,7 @@ namespace LongLiveKhioyen
 		{
 			if(Polis.Instance)
 			{
-				PolisData.Current.stockedItems.onChanged -= RefreshStocks;
+				PolisData.Current.StockedItems.onChanged -= RefreshStocks;
 				PolisData.Current.forSaleItems.onChanged -= RefreshSell;
 			}
 		}
@@ -58,7 +58,7 @@ namespace LongLiveKhioyen
 		{
 			stockedGoodsLayoutGroup.transform.ClearChildren();
 
-			var records = PolisData.Current.stockedItems;
+			var records = PolisData.Current.StockedItems;
 			foreach(var itemDefinition in records.Definitions.Where(d => d.canSell))
 			{
 				var item = FancyListItem.Instantiate(stockedGoodsLayoutGroup.transform);
@@ -66,9 +66,9 @@ namespace LongLiveKhioyen
 				item.ShowQuantity = true;
 				item.Quantity = records.GetRecord(itemDefinition).quantity;
 				item.SetCosts(
-					new CostDescriptor() {
-						type = EconomyType.Money,
-						value = itemDefinition.sellPrice,
+					new ResourceDescriptor() {
+						type = ResourceType.Money,
+						quantity = itemDefinition.sellPrice,
 					}
 				);
 				item.onClick += () => PolisData.Current.SetItemForSale(itemDefinition.itemId, 1);
@@ -93,10 +93,10 @@ namespace LongLiveKhioyen
 				item.ShowQuantity = true;
 				item.Quantity = records.GetRecord(itemDefinition).quantity;
 				item.SetCosts(
-					new CostDescriptor()
+					new ResourceDescriptor()
 					{
-						type = EconomyType.Money,
-						value = itemDefinition.sellPrice,
+						type = ResourceType.Money,
+						quantity = itemDefinition.sellPrice,
 					}
 				);
 				item.onClick += () => PolisData.Current.UnsetItemForSale(itemDefinition.itemId, 1);

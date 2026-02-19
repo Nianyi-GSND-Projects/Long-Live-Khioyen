@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
 		{
 			if(SelectedBuildingType != null)
 			{
-				if(!(SelectedBuildingType.cost <= PolisData.Current.Economy))
+				if(!PolisData.Current.Economy.CanCover(SelectedBuildingType.cost))
 					SelectedBuildingType = null;
 			}
 		}
@@ -191,7 +191,7 @@ namespace LongLiveKhioyen
 			}
 
 			PolisData.Current.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
-			PolisData.Current.Economy -= SelectedBuildingType.cost;
+			PolisData.Current.Economy.Cost(SelectedBuildingType.cost);
 		}
 		#endregion
 	}

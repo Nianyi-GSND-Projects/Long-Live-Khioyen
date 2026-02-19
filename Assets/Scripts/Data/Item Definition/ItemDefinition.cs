@@ -48,7 +48,7 @@ namespace LongLiveKhioyen
 
         [Header("Production")]
         public bool productable = false;
-        public CostDescriptor[] costs;
+        public ResourceDescriptor[] costs;
 
         [Header("Trading")]
         public bool canSell = true;

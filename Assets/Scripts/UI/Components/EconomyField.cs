@@ -55,20 +55,20 @@ namespace LongLiveKhioyen
 		/// <summary>
 		/// 为预定义的几种资源类型设置的方便接口。
 		/// </summary>
-		public void SetResourceType(EconomyType type)
+		public void SetResourceType(ResourceType type)
 		{
 			switch(type)
 			{
-				case EconomyType.Food:
+				case ResourceType.Food:
 					UseIconFromResource("Food");
 					break;
-				case EconomyType.Material:
+				case ResourceType.Material:
 					UseIconFromResource("Material");
 					break;
-				case EconomyType.Money:
+				case ResourceType.Money:
 					UseIconFromResource("Money");
 					break;
-				case EconomyType.Population:
+				case ResourceType.Population:
 					UseIconFromResource("Population");
 					break;
 				default:

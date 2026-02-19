@@ -43,7 +43,7 @@ namespace LongLiveKhioyen
 
 		void OnEconomyDataChanged()
 		{
-			if(buildingDefinition.cost <= Polis.Data.Economy)
+			if(Polis.Data.Economy.CanCover(buildingDefinition.cost))
 			{
 				group.interactable = true;
 				group.alpha = 1;

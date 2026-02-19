@@ -8,9 +8,8 @@ namespace LongLiveKhioyen
 	public partial class PolisData
 	{
 		#region 资源
-		public Action onEconomyChanged;
-
 		[SerializeField] public Economy economy;
+		public ItemRecords StockedItems => economy.items;
 		public Economy Economy
 		{
 			get => economy;
@@ -21,9 +20,11 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		public Action onEconomyChanged;
+
 		public bool CheckResourceAffordance(Economy cost)
 		{
-			return cost <= Economy;
+			return Economy.CanCover(cost);
 		}
 
 		public bool TryCostResource(Economy cost, bool actuallyCost = true)
@@ -31,52 +32,48 @@ namespace LongLiveKhioyen
 			if(!CheckResourceAffordance(cost))
 				return false;
 			if(actuallyCost)
-				Economy -= cost;
+				Economy.Cost(cost);
 			return true;
 		}
 
-		public bool CostByDescriptor(IEnumerable<CostDescriptor> costs)
+		public bool CostByDescriptor(IEnumerable<ResourceDescriptor> costs)
 		{
 			Economy cost = default;
 			foreach(var c in costs)
 			{
 				switch(c.type)
 				{
-					case EconomyType.Food:
-						cost.food += c.value;
+					case ResourceType.Food:
+						cost.food += c.quantity;
 						break;
-					case EconomyType.Material:
-						cost.material += c.value;
+					case ResourceType.Material:
+						cost.material += c.quantity;
 						break;
-					case EconomyType.Money:
-						cost.money += c.value;
+					case ResourceType.Money:
+						cost.money += c.quantity;
 						break;
 				}
 			}
 			return TryCostResource(cost, true);
 		}
-		public bool CostByDescriptor(params CostDescriptor[] costs) => CostByDescriptor(costs as IEnumerable<CostDescriptor>);
+		public bool CostByDescriptor(params ResourceDescriptor[] costs) => CostByDescriptor(costs as IEnumerable<ResourceDescriptor>);
 
-		public bool ValidateRecipeCost(IEnumerable<CostDescriptor> costs)
+		public bool ValidateRecipeCost(IEnumerable<ResourceDescriptor> costs)
 		{
 			foreach(var cost in costs)
 			{
 				switch(cost.type)
 				{
-					case EconomyType.Food:
-						if(Economy.food < cost.value)
+					case ResourceType.Food:
+						if(Economy.food < cost.quantity)
 							return false;
 						break;
-					case EconomyType.Material:
-						if(Economy.material < cost.value)
+					case ResourceType.Material:
+						if(Economy.material < cost.quantity)
 							return false;
 						break;
-					case EconomyType.Money:
-						if(Economy.money < cost.value)
-							return false;
-						break;
-					case EconomyType.Population:
-						if(FreePopulation < cost.value)
+					case ResourceType.Money:
+						if(Economy.money < cost.quantity)
 							return false;
 						break;
 				}
@@ -138,10 +135,6 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region 物品
-		public ItemRecords stockedItems;
-		#endregion
-
 		#region 制造
 		public List<string> queuedProductions;
 
@@ -201,7 +194,7 @@ namespace LongLiveKhioyen
 		void ExecuteCompleteProductionTask(PolisTask task)
 		{
 			string itemId = task.parameters[0];
-			stockedItems.ChangeItemQuantity(itemId, 1);
+			StockedItems.ChangeItemQuantity(itemId, 1);
 			Debug.Log($"物品 {itemId} 制造完成。");
 
 			if(queuedProductions.Count == 0)
@@ -216,13 +209,13 @@ namespace LongLiveKhioyen
 
 		public void SetItemForSale(string itemId, int quantity)
 		{
-			if(!TransferItemRecord(itemId, quantity, stockedItems, forSaleItems))
+			if(!TransferItemRecord(itemId, quantity, StockedItems, forSaleItems))
 				Debug.LogWarning($"尝试寄卖 {quantity} 个 {itemId} 失败。");
 		}
 
 		public void UnsetItemForSale(string itemId, int quantity)
 		{
-			if(!TransferItemRecord(itemId, quantity, forSaleItems, stockedItems))
+			if(!TransferItemRecord(itemId, quantity, forSaleItems, StockedItems))
 				Debug.LogWarning($"尝试取消寄卖 {quantity} 个 {itemId} 失败。");
 		}
 

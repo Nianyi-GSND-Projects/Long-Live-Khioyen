@@ -22,12 +22,32 @@ namespace LongLiveKhioyen
 		public Action onChanged;
 
 		#region 接口
+		public void SetItemQuantity(string itemId, int quantity)
+		{
+			var record = GetRecord(itemId);
+			if(record == null)
+			{
+				record = new() { itemId = itemId, };
+				records.Add(record);
+			}
+			record.quantity = quantity;
+			if(record.quantity <= 0)
+				records.Remove(record);
+
+			onChanged?.Invoke();
+		}
+
+		public int GetItemQuantity(string itemId)
+		{
+			return GetRecord(itemId)?.quantity ?? 0;
+		}
+
 		public void ChangeItemQuantity(string itemId, int quantity)
 		{
 			if(quantity == 0)
 				return;
 
-			var record = records.FirstOrDefault(r => r.itemId == itemId);
+			var record = GetRecord(itemId);
 			if(record == null)
 			{
 				record = new() { itemId = itemId, };

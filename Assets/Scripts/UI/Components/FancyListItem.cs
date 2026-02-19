@@ -71,7 +71,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 花费
-		public void SetCosts(IEnumerable<CostDescriptor> costs)
+		public void SetCosts(IEnumerable<ResourceDescriptor> costs)
 		{
 			infoLayoutGroup.transform.ClearChildren();
 
@@ -80,22 +80,14 @@ namespace LongLiveKhioyen
 				var field = EconomyField.Instantiate();
 				field.transform.SetParent(infoLayoutGroup.transform, false);
 
-				switch(cost.type)
-				{
-					case EconomyType.Custom:
-						field.IconSprite = cost.customSprite;
-						break;
-					default:
-						field.SetResourceType(cost.type);
-						break;
-				}
-				field.ValueFloat = cost.value;
+				field.SetResourceType(cost.type);
+				field.ValueFloat = cost.quantity;
 			}
 
 			infoLayoutGroup.CalculateLayoutInputVertical();
 		}
 
-		public void SetCosts(params CostDescriptor[] costs) => SetCosts(costs as IEnumerable<CostDescriptor>);
+		public void SetCosts(params ResourceDescriptor[] costs) => SetCosts(costs as IEnumerable<ResourceDescriptor>);
 		#endregion
 
 		#region 交互
