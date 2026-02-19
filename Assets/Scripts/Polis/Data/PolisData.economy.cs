@@ -187,8 +187,8 @@ namespace LongLiveKhioyen
 		void CashForSaleItemsAtEndOfMonth()
 		{
 			float sum = 0;
-			foreach(var itemDefinition in forSaleItems.Definitions)
-				sum += itemDefinition.sellPrice;
+			foreach(var record in forSaleItems)
+				sum += record.Definition.sellPrice * record.quantity;
 
 			forSaleItems.Clear();
 			economy.money += sum;
