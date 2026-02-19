@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace LongLiveKhioyen
@@ -50,7 +49,7 @@ namespace LongLiveKhioyen
 			{
 				var item = FancyListItem.Instantiate(recipesLayoutGroup.transform);
 				item.ApplyItem(itemDefinition);
-				item.Interactable = PolisData.Current.ValidateRecipeCost(itemDefinition.costs);
+				item.Interactable = PolisData.Current.Economy.CanCover(itemDefinition.costs);
 				item.onClick = () => PolisData.Current.QueueProduction(itemDefinition.itemId);
 			}
 

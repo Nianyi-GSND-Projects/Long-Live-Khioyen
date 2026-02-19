@@ -181,7 +181,8 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			if(!PolisData.Current.TryCostResource(SelectedBuildingType.cost, false))
+			// 先 try 再 cost 是因为如果直接 cost，SelectedBuildingType 会在 construct 之前变成 null，进而报错。
+			if(!PolisData.Current.Economy.TryCost(SelectedBuildingType.cost, false))
 			{
 				Debug.LogWarning(
 					$"Not enough resources to build {SelectedBuildingType.id}!\n" +
@@ -189,7 +190,6 @@ namespace LongLiveKhioyen
 				);
 				return;
 			}
-
 			PolisData.Current.ConstructBuilding(SelectedBuildingType.id, placement.position, orientation);
 			PolisData.Current.Economy.Cost(SelectedBuildingType.cost);
 		}

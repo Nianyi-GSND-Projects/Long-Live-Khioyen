@@ -20,65 +20,10 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public Action onEconomyChanged;
-
-		public bool CheckResourceAffordance(Economy cost)
+		public Action onEconomyChanged
 		{
-			return Economy.CanCover(cost);
-		}
-
-		public bool TryCostResource(Economy cost, bool actuallyCost = true)
-		{
-			if(!CheckResourceAffordance(cost))
-				return false;
-			if(actuallyCost)
-				Economy.Cost(cost);
-			return true;
-		}
-
-		public bool CostByDescriptor(IEnumerable<ResourceDescriptor> costs)
-		{
-			Economy cost = default;
-			foreach(var c in costs)
-			{
-				switch(c.type)
-				{
-					case ResourceType.Food:
-						cost.food += c.quantity;
-						break;
-					case ResourceType.Material:
-						cost.material += c.quantity;
-						break;
-					case ResourceType.Money:
-						cost.money += c.quantity;
-						break;
-				}
-			}
-			return TryCostResource(cost, true);
-		}
-		public bool CostByDescriptor(params ResourceDescriptor[] costs) => CostByDescriptor(costs as IEnumerable<ResourceDescriptor>);
-
-		public bool ValidateRecipeCost(IEnumerable<ResourceDescriptor> costs)
-		{
-			foreach(var cost in costs)
-			{
-				switch(cost.type)
-				{
-					case ResourceType.Food:
-						if(Economy.food < cost.quantity)
-							return false;
-						break;
-					case ResourceType.Material:
-						if(Economy.material < cost.quantity)
-							return false;
-						break;
-					case ResourceType.Money:
-						if(Economy.money < cost.quantity)
-							return false;
-						break;
-				}
-			}
-			return true;
+			get => Economy.onChanged;
+			set => Economy.onChanged = value;
 		}
 		#endregion
 
@@ -95,7 +40,7 @@ namespace LongLiveKhioyen
 		public int Population
 		{
 			get => population;
-			private set
+			set
 			{
 				population = Mathf.Min(value, PopulationCap);
 				onPopulationDataChanged?.Invoke();
@@ -152,12 +97,12 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			if(!ValidateRecipeCost(item.costs))
+			if(!Economy.CanCover(item.costs))
 			{
 				Debug.LogWarning($"没有足够多的资源制造 {itemId}。");
 				return;
 			}
-			CostByDescriptor(item.costs);
+			Economy.Cost(item.costs);
 
 			if(IsProducingItem)
 				queuedProductions.Add(itemId);

@@ -25,10 +25,12 @@ MonoBehaviour:
   productable: 1
   costs:
   - type: 4
-    customSprite: {fileID: 0}
-    value: 1
+    itemId: 
+    quantity: 1
   - type: 8
-    customSprite: {fileID: 0}
-    value: 1
+    itemId: 
+    quantity: 1
+  canSell: 1
   sellPrice: 80
+  canBuy: 1
   buyPrice: 100

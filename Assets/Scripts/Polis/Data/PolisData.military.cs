@@ -27,7 +27,7 @@ namespace LongLiveKhioyen
 				garrisonedBattalions.Remove(b);
 
 			// 取出食物
-			CostByDescriptor(new ResourceDescriptor()
+			Economy.Cost(new ResourceDescriptor()
 			{
 				type = ResourceType.Food,
 				quantity = foodAmount,

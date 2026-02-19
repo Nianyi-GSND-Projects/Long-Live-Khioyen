@@ -12,6 +12,7 @@ namespace LongLiveKhioyen
 	{
 		Undefined = 0b0,
 		Food = 0x4, Material, Money,
+		Population = 0x8,
 		Item = 0x10,
 		Custom = 0xffff,
 	}
@@ -27,7 +28,7 @@ namespace LongLiveKhioyen
 	}
 
 	[Serializable]
-	public struct Economy
+	public class Economy
 	{
 		#region 内容
 		// 数值资源
@@ -36,11 +37,13 @@ namespace LongLiveKhioyen
 		public float money;
 
 		// 物品
-		public ItemRecords items;
+		public ItemRecords items = new();
 		#endregion
 
+		public Action onChanged;
+
 		#region 基础 IO
-		public readonly IEnumerable<ResourceDescriptor> ToDescriptors()
+		public IEnumerable<ResourceDescriptor> ToDescriptors()
 		{
 			yield return new ResourceDescriptor() { type = ResourceType.Food, quantity = food, };
 			yield return new ResourceDescriptor() { type = ResourceType.Material, quantity = material, };
@@ -56,18 +59,13 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public readonly IEnumerable<(ResourceType, ResourceDescriptor)> ToPairs()
+		public IEnumerable<(ResourceType, ResourceDescriptor)> ToPairs()
 		{
 			return ToDescriptors().Select(d => (d.type, d));
 		}
 
 		public Economy(IEnumerable<ResourceDescriptor> descriptors)
 		{
-			food = default;
-			material = default;
-			money = default;
-			items = new();
-
 			foreach(var d in descriptors)
 				Set(d);
 		}
@@ -76,7 +74,10 @@ namespace LongLiveKhioyen
 
 		public Economy(Economy economy) : this(economy.ToDescriptors()) { }
 
-		public void Set(in ResourceDescriptor descriptor)
+		public static implicit operator ResourceDescriptor[](Economy economy)
+			=> economy.ToDescriptors().ToArray();
+
+		void Set(in ResourceDescriptor descriptor)
 		{
 			switch(descriptor.type)
 			{
@@ -92,29 +93,30 @@ namespace LongLiveKhioyen
 				case ResourceType.Item:
 					items.SetItemQuantity(descriptor.itemId, (int)descriptor.quantity);
 					break;
+				case ResourceType.Population:
+					if(PolisData.Current == null)
+						throw new InvalidOperationException("无法在不在城池中时设置人口数量。");
+					PolisData.Current.Population = (int)descriptor.quantity;
+					break;
 				default:
 					throw new NotSupportedException($"不支持设置类型为 {descriptor.type} 的资源数量。");
 			}
 		}
 
-		public readonly float Get(in ResourceDescriptor descriptor)
+		float Get(in ResourceDescriptor descriptor)
 		{
-			switch(descriptor.type)
+			return descriptor.type switch
 			{
-				case ResourceType.Food:
-					return descriptor.quantity;
-				case ResourceType.Material:
-					return descriptor.quantity;
-				case ResourceType.Money:
-					return descriptor.quantity;
-				case ResourceType.Item:
-					return items.GetItemQuantity(descriptor.itemId);
-				default:
-					throw new NotSupportedException($"不支持独去类型为 {descriptor.type} 的资源数量。");
-			}
+				ResourceType.Food => food,
+				ResourceType.Material => material,
+				ResourceType.Money => money,
+				ResourceType.Item => items.GetItemQuantity(descriptor.itemId),
+				ResourceType.Population => PolisData.Current?.Population ?? 0,
+				_ => throw new NotSupportedException($"不支持读取类型为 {descriptor.type} 的资源数量。"),
+			};
 		}
 
-		public void ChangeBy(in ResourceDescriptor descriptor)
+		void ChangeBy(in ResourceDescriptor descriptor)
 		{
 			switch(descriptor.type)
 			{
@@ -130,23 +132,22 @@ namespace LongLiveKhioyen
 				case ResourceType.Item:
 					items.ChangeItemQuantity(descriptor.itemId, (int)descriptor.quantity);
 					break;
+				case ResourceType.Population:
+					if(PolisData.Current == null)
+						throw new InvalidOperationException("无法在不在城池中时更改人口数量。");
+					PolisData.Current.Population += (int)descriptor.quantity;
+					break;
 				default:
 					throw new NotSupportedException($"不支持更改类型为 {descriptor.type} 的资源数量。");
 			}
 		}
 
-		public void ChangeBy(in Economy delta)
-		{
-			foreach(var d in delta.ToDescriptors())
-				ChangeBy(d);
-		}
+		public Economy Copy() => new(this);
 
-		public readonly Economy Copy() => new(this);
-
-		public readonly Economy CopyFn(Func<ResourceDescriptor, ResourceDescriptor> fn)
+		public Economy CopyFn(Func<ResourceDescriptor, ResourceDescriptor> fn)
 		 => new(ToDescriptors().Select(fn));
 
-		public readonly Economy CopyFn(Func<float, float> fn)
+		public Economy CopyFn(Func<float, float> fn)
 		{
 			return CopyFn((ResourceDescriptor d) =>
 			{
@@ -157,70 +158,36 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 四则运算
-		/// <remarks>AI generated</remarks>
-		public static bool operator ==(in Economy a, in Economy b)
+		public override bool Equals(object obj)
 		{
-			// 将两个 Economy 对象转换为 Dictionary，比较键值是否完全相同
-			var dictA = a.ToDescriptors().GroupBy(d => (d.type, d.itemId))
-				.ToDictionary(g => g.Key, g => g.First().quantity);
-			var dictB = b.ToDescriptors().GroupBy(d => (d.type, d.itemId))
-				.ToDictionary(g => g.Key, g => g.First().quantity);
-
-			// 如果键的个数不同，则不相等
-			if(dictA.Count != dictB.Count)
+			if(obj is not Economy)
 				return false;
+			var b = (Economy)obj;
 
-			// 比较所有键值
-			foreach(var kvp in dictA)
+			foreach(var d in ToDescriptors())
 			{
-				if(!dictB.TryGetValue(kvp.Key, out var valueB) || !kvp.Value.Equals(valueB))
+				if(b.Get(d) != d.quantity)
+					return false;
+			}
+
+			foreach(var d in b.ToDescriptors())
+			{
+				if(Get(d) != d.quantity)
 					return false;
 			}
 
 			return true;
 		}
 
-		public static bool operator !=(in Economy a, in Economy b)
-			=> !(a == b);
-
-		/// <remarks>AI generated</remarks>
-		public static bool operator <(in Economy a, in Economy b)
-		{
-			// a < b 当且仅当 a 的所有资源都小于等于 b，且至少有一个资源严格小于 b
-			bool anyLess = false;
-
-			foreach(var descriptorA in a.ToDescriptors())
-			{
-				var quantityB = b.Get(descriptorA);
-				if(descriptorA.quantity > quantityB)
-					return false; // 发现有一个资源 a 大于 b，不满足条件
-				if(descriptorA.quantity < quantityB)
-					anyLess = true; // 发现至少有一个资源 a 小于 b
-			}
-
-			// 还需要检查 b 中是否有 a 中不存在的资源（都视为 0）
-			foreach(var descriptorB in b.ToDescriptors())
-			{
-				var quantityA = a.Get(descriptorB);
-				if(quantityA == 0 && descriptorB.quantity > 0)
-					anyLess = true; // b 中有 a 没有的资源
-			}
-
-			return anyLess;
-		}
-
-		/// <remarks>AI generated</remarks>
-		public static bool operator >(in Economy a, in Economy b)
-		{
-			// a > b 当且仅当 b < a
-			return b < a;
-		}
-
-		public static bool operator <=(in Economy a, in Economy b)
-			=> a < b || a == b;
+		// Make C# happy.
+		public override int GetHashCode()
+			=> base.GetHashCode();
 
 		public static bool operator >=(in Economy a, in Economy b)
-			=> a > b || a == b;
+			=> a.CanCover(b);
+
+		public static bool operator <=(in Economy a, in Economy b)
+			=> b >= a;
 
 		public static Economy operator *(in Economy economy, float scalar)
 		{
@@ -247,21 +214,32 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 基础操作
-		public readonly bool CanCover(in Economy cost)
+		public bool CanCover(params ResourceDescriptor[] costs)
 		{
-			return cost <= this;
+			foreach(var d in costs)
+			{
+				if(Get(d) < d.quantity)
+					return false;
+			}
+
+			return true;
 		}
 
-		public void Cost(in Economy delta)
+		public void Cost(IEnumerable<ResourceDescriptor> costs)
 		{
 			// 手动循环是因为对于 item 来说负数会被自动截断到 0。
-			foreach(var d in delta.ToDescriptors())
+			foreach(var d in costs)
 			{
 				var cost = d;
 				cost.quantity = -d.quantity;
 				ChangeBy(cost);
 			}
+
+			onChanged?.Invoke();
 		}
+
+		public void Cost(params ResourceDescriptor[] costs)
+			=> Cost(costs as IEnumerable<ResourceDescriptor>);
 
 		public bool TryCost(in Economy cost, bool actuallyCost = true)
 		{

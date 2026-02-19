@@ -18,7 +18,7 @@ namespace LongLiveKhioyen
 	[Serializable]
 	public class ItemRecords : IList<ItemRecord>, IReadOnlyList<ItemRecord>
 	{
-		[SerializeField] List<ItemRecord> records;
+		[SerializeField] List<ItemRecord> records = new();
 		public Action onChanged;
 
 		#region 接口
