@@ -18,6 +18,7 @@ namespace LongLiveKhioyen
 		}
 
 		/// <summary>使军队出城。</summary>
+		/// <param name="headCommander">暂时不用。</param>
 		public ArmyStatus LetOutGarrison(GameCommander headCommander, float foodAmount, IReadOnlyList<GameCommander> battalionCommanders)
 		{
 			var battalions = garrisonedBattalions.Where(b => battalionCommanders.Contains(b.battalionCommander)).ToList();
@@ -25,7 +26,7 @@ namespace LongLiveKhioyen
 				garrisonedBattalions.Remove(b);
 			ArmyStatus army = new()
 			{
-				armyCommander = headCommander,
+				armyCommander = null,
 				battalionStatuses = battalions,
 				carriedFood = foodAmount,
 			};

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -138,16 +139,23 @@ namespace LongLiveKhioyen
 		}
 
 		/// <summary>从我方城池出征。</summary>
-		public void DepartFromPolis()
+		public void DepartFromPolis(IReadOnlyList<GameCommander> commanders)
 		{
+			var garrisonedCommanders = LastPolis.GetGarrisonedCommanders();
+			var validatedCommanders = commanders.Where(garrisonedCommanders.Contains).ToArray();
+			if(!(validatedCommanders.Length > 0))
+			{
+				Debug.LogWarning("出城军队必须至少有一个指挥官！");
+				return;
+			}
+
 			Debug.Log($"Departing from polis \"{LastPolis.id}\".");
 
 			// 军队出城
 			if(LastPolis != null)
 			{
-				var commanders = LastPolis.GetGarrisonedCommanders();
 				// TODO: 根据出征 UI 决定军队编制与携带军粮量。
-				ActiveArmy = LastPolis.LetOutGarrison(commanders[0], 0, commanders);
+				ActiveArmy = LastPolis.LetOutGarrison(null, 0, validatedCommanders);
 			}
 
 			CurrentMode = Mode.WorldMap;
