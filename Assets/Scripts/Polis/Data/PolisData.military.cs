@@ -21,9 +21,18 @@ namespace LongLiveKhioyen
 		/// <param name="headCommander">暂时不用。</param>
 		public ArmyStatus LetOutGarrison(GameCommander headCommander, float foodAmount, IReadOnlyList<GameCommander> battalionCommanders)
 		{
+			// 移除城中军队
 			var battalions = garrisonedBattalions.Where(b => battalionCommanders.Contains(b.battalionCommander)).ToList();
 			foreach(var b in battalions)
 				garrisonedBattalions.Remove(b);
+
+			// 取出食物
+			CostByDescriptor(new CostDescriptor()
+			{
+				type = EconomyType.Food,
+				value = foodAmount,
+			});
+
 			ArmyStatus army = new()
 			{
 				armyCommander = null,
@@ -36,7 +45,12 @@ namespace LongLiveKhioyen
 		/// <summary>使军队驻扎到城内。</summary>
 		public void GarrisonArmy(ArmyStatus army)
 		{
+			// 添加军队到城中
 			garrisonedBattalions.AddRange(army.battalionStatuses);
+
+			// 归置资源
+			// TODO
+
 			onGarrisonChanged?.Invoke();
 		}
 
@@ -86,6 +100,4 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 	}
-
-
 }

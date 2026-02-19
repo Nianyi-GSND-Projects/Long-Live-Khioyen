@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -14,11 +15,15 @@ namespace LongLiveKhioyen
 			Refresh();
 
 			PolisData.Current.onGarrisonChanged += Refresh;
+			PolisData.Current.onEconomyChanged += RefreshFood;
+			foodSlider.onValueChanged.AddListener(SetFoodValue);
 		}
 
 		protected void OnDestroy()
 		{
 			PolisData.Current.onGarrisonChanged -= Refresh;
+			PolisData.Current.onEconomyChanged -= RefreshFood;
+			foodSlider.onValueChanged.RemoveListener(SetFoodValue);
 		}
 
 		void Refresh()
@@ -26,6 +31,7 @@ namespace LongLiveKhioyen
 			RefreshCommanders();
 			RefreshSelecteds();
 			RefreshDepartButton();
+			RefreshFood();
 		}
 		#endregion
 
@@ -86,6 +92,27 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
+		#region 军粮
+		[SerializeField] Slider foodSlider;
+		[SerializeField] TMP_Text foodValueText, foodTotalText;
+		/// <summary>百分比。</summary>
+		float foodValue;
+		float FoodAmount => foodValue * FoodTotal;
+		float FoodTotal => PolisData.Current.Economy.food;
+
+		void RefreshFood()
+		{
+			foodValueText.text = $"{FoodAmount}";
+			foodTotalText.text = $"{FoodTotal}";
+		}
+
+		public void SetFoodValue(float value)
+		{
+			foodValue = value;
+			RefreshFood();
+		}
+		#endregion
+
 		#region 出城
 		[SerializeField] Button departButton;
 
@@ -96,7 +123,7 @@ namespace LongLiveKhioyen
 
 		public void Depart()
 		{
-			GameInstance.Instance.DepartFromPolis(selectedCommanders.ToArray());
+			GameInstance.Instance.DepartFromPolis(selectedCommanders.ToArray(), FoodAmount);
 		}
 		#endregion
 	}

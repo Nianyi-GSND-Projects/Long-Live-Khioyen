@@ -139,7 +139,7 @@ namespace LongLiveKhioyen
 		}
 
 		/// <summary>从我方城池出征。</summary>
-		public void DepartFromPolis(IReadOnlyList<GameCommander> commanders)
+		public void DepartFromPolis(IReadOnlyList<GameCommander> commanders, float foodAmount)
 		{
 			var garrisonedCommanders = LastPolis.GetGarrisonedCommanders();
 			var validatedCommanders = commanders.Where(garrisonedCommanders.Contains).ToArray();
@@ -155,7 +155,7 @@ namespace LongLiveKhioyen
 			if(LastPolis != null)
 			{
 				// TODO: 根据出征 UI 决定军队编制与携带军粮量。
-				ActiveArmy = LastPolis.LetOutGarrison(null, 0, validatedCommanders);
+				ActiveArmy = LastPolis.LetOutGarrison(null, foodAmount, validatedCommanders);
 			}
 
 			CurrentMode = Mode.WorldMap;
