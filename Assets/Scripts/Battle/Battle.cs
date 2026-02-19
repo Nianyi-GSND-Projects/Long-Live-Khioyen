@@ -148,6 +148,11 @@ namespace LongLiveKhioyen
 			PlaceNonPlayerBattalionUnit();
 			
 			onInitialized?.Invoke();
+			
+			if (BattleEventManager.Instance != null)
+			{
+				BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnBattleStart);
+			}
 		}
 		
 		#endregion
@@ -987,9 +992,16 @@ namespace LongLiveKhioyen
 			Debug.Log("Battle Start!");
 			while (true)
 			{
+				
 				CurrentTurnState = TurnState.PlayerTurn;
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnTurnStart);
+				
 				yield return StartCoroutine(PlayerTurnCoroutine());
-				//
+				
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnTurnEnd);
+
 				CurrentTurnState = TurnState.Processing;
 				yield return new WaitForSeconds(1);
 				if (CheckGameOver()) yield break;
@@ -1237,6 +1249,10 @@ namespace LongLiveKhioyen
 				if (SelectedUnit) SelectedUnit.actionDone = true;
 				ClearAllSelection();
 				ChangeActionStage(PlayerActionStage.None);
+				
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerActionEnd);
+
 			}
 		}
 		
