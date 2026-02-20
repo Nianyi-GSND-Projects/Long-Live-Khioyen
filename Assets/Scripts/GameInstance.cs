@@ -25,9 +25,6 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
-			UiManager.onUiOpened += OnUiOpened;
-			UiManager.onUiClosed += OnUiClosed;
-
 			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
 			Paused = false;
 		}
@@ -37,9 +34,6 @@ namespace LongLiveKhioyen
 		/// </summary>
 		void OnDestroy()
 		{
-			UiManager.onUiOpened -= OnUiOpened;
-			UiManager.onUiClosed -= OnUiClosed;
-
 			Paused = false;
 			Destroy(gameObject);
 		}
@@ -283,25 +277,6 @@ namespace LongLiveKhioyen
 				UpdateActualTimeScale();
 				onPauseStateChanged?.Invoke();
 			}
-		}
-		#endregion
-
-		#region UI
-		void OnUiOpened(GameObject ui)
-		{
-			if(IsPauseUi(ui))
-				Paused = true;
-		}
-
-		void OnUiClosed(GameObject ui)
-		{
-			if(IsPauseUi(ui))
-				Paused = false;
-		}
-
-		bool IsPauseUi(GameObject go)
-		{
-			return go.GetComponent<PauseMenu>() != null;
 		}
 		#endregion
 	}

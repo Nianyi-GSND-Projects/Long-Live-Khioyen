@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 6931249094203917829}
   - component: {fileID: 2033687525677683673}
   - component: {fileID: 4727808665370811056}
+  - component: {fileID: 924604131742056906}
   m_Layer: 5
   m_Name: Standard UI Panel
   m_TagString: Untagged
@@ -365,6 +366,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &924604131742056906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3272508051504081847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d73001c9cf8dc948a26a74c0ab6babd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseOnOpen: 1
 --- !u!1001 &8283439066587646109
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -412,6 +426,10 @@ PrefabInstance:
     - target: {fileID: 7930717403736776959, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_text
       value: Cancel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7930717403736776959, guid: 302c858005a075240bc22454fc7595b9, type: 3}
+      propertyPath: m_fontSize
+      value: 48
       objectReference: {fileID: 0}
     - target: {fileID: 8599266505763023125, guid: 302c858005a075240bc22454fc7595b9, type: 3}
       propertyPath: m_Pivot.x
