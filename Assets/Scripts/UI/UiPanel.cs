@@ -24,7 +24,7 @@ namespace LongLiveKhioyen
 
 		protected void OnDestroy()
 		{
-			if(UiManager.Instance.IsAnyModalOpen)
+			if(UiManager.Instance && UiManager.Instance.IsAnyModalOpen)
 				return;
 
 			GameInstance.Instance.Paused = isPausedWhenOpened;

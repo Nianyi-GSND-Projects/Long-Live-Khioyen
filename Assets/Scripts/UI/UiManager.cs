@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -42,9 +43,29 @@ namespace LongLiveKhioyen
 			public bool isInstantiated;
 		}
 
-		readonly Stack<UiModalRecord> modalStack = new();
+		readonly List<UiModalRecord> modalStack = new();
 
-		public bool IsAnyModalOpen => modalStack.Count > 0;
+		/// <summary>
+		/// 把失效的（已经 destroyed）的 UI 清理出栈。
+		/// </summary>
+		void ValidateOpenedModals()
+		{
+			var validated = modalStack.Where(m => m.go != null).ToArray();
+			if(modalStack.Count == validated.Length)
+				return;
+			modalStack.Clear();
+			modalStack.AddRange(validated);
+			onUiStateChanged?.Invoke();
+		}
+
+		public bool IsAnyModalOpen
+		{
+			get
+			{
+				ValidateOpenedModals();
+				return modalStack.Count > 0;
+			}
+		}
 
 		public void OpenUiModal(GameObject go, bool isInstantiated)
 		{
@@ -54,8 +75,10 @@ namespace LongLiveKhioyen
 				return;
 			}
 
+			ValidateOpenedModals();
+
 			go.transform.SetParent(transform, false);
-			modalStack.Push(new() {
+			modalStack.Add(new() {
 				go = go,
 				isInstantiated = isInstantiated,
 			});
@@ -87,13 +110,16 @@ namespace LongLiveKhioyen
 
 		public void CloseCurrentUiModal()
 		{
+			ValidateOpenedModals();
+
 			if(modalStack.Count == 0)
 			{
 				Debug.LogWarning("No UI is currently open.");
 				return;
 			}
 
-			var modal = modalStack.Pop();
+			var modal = modalStack[^1];
+			modalStack.RemoveAt(modalStack.Count - 1);
 			if(modal.isInstantiated)
 			{
 				Destroy(modal.go);
