@@ -35,11 +35,9 @@ namespace LongLiveKhioyen
 				return;
 			}
 
-			// 从配置中提取数据
 			this.generatorConfig = settings.generatorConfig;
 			this.presetCommanders = settings.presetCommanders;
 
-			// 开始注册预设名将
 			LoadPresetCommanders();
 
 			Debug.Log("CommanderRegistry 初始化完成 (Auto-Spawned)");
@@ -62,7 +60,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		int GenerateID() => idCounter++;
+		public int GenerateID() => idCounter++;
 		
 		public GameCommander GenerateCommander(CommanderGenerationProfile profile)
 		{

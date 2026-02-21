@@ -1,23 +1,28 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 namespace LongLiveKhioyen
 {
-    [System.Serializable]
-    public class UnitSpawnData
+    [Serializable]
+    public class PreplacedUnitData
     {
+        public string unitName; // 方便编辑器显示
         public Vector2Int position;
         public Faction faction;
+        public bool isFacility;
         
-        // 区分是部队还是设施
-        public bool isFacility; 
+        public BattalionDefinition battalionDef;
+        public FacilityDefinition facilityDef;
+
+        [Header("Overrides")]
+        public int overrideSoldiers = -1; // -1 = Default
+        public int overrideMorale = -1;   // -1 = Default
         
-        // 数据引用
-        public BattalionDefinition battalionDef; // 如果是部队
-        public FacilityDefinition facilityDef;   // 如果是设施
-        
-        // 可选：指挥官、初始兵力等覆盖数据
-        public int overrideSoldiers = -1;
+        [Header("Commander")]
+        public CommanderTemplateSO commanderTemplate; // 指定名将
+        public CommanderGenerationProfile randomCommanderProfile; // 随机生成配置
+        public bool useRandomCommander = false; // 开关
     }
 
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Level/Battle Preset")]
@@ -34,6 +39,6 @@ namespace LongLiveKhioyen
         public List<Vector2Int> extractionPoints = new List<Vector2Int>();   // 撤离点
 
         [Header("Units")]
-        public List<UnitSpawnData> preplacedUnits = new List<UnitSpawnData>(); // 预设的敌人/中立设施
+        public List<PreplacedUnitData> preplacedUnits = new List<PreplacedUnitData>(); // 预设的敌人/中立设施
     }
 }

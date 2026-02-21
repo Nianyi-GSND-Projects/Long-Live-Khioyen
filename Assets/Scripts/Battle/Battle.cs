@@ -304,15 +304,29 @@ namespace LongLiveKhioyen
 							armyId = -1,
 							placed = false,
 							maxSolider = spawnData.battalionDef.defaultMaxSolider,
-							currentSoliders = spawnData.battalionDef.defaultMaxSolider,
-                    
+							currentSoliders = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.battalionDef.defaultMaxSolider,
+                  
 							maxMorale = spawnData.battalionDef.defaultMaxMorale,
-							currentMurale = spawnData.battalionDef.defaultMaxMorale,
-                    
+							currentMurale = spawnData.overrideMorale > 0 ? spawnData.overrideMorale : spawnData.battalionDef.defaultMaxMorale,
+                  
 							maxTraining = 100,
-							currentTraining = 50,
-							battalionCommander = null
+							currentTraining = 50
 						};
+						if (spawnData.commanderTemplate != null)
+						{
+							// 使用模板
+							desc.battalionCommander = spawnData.commanderTemplate.CreateInstance(CommanderRegistry.Instance.GenerateID());
+						}
+						else if (spawnData.useRandomCommander)
+						{
+							// 使用随机生成
+							desc.battalionCommander = CommanderRegistry.Instance.GenerateCommander(spawnData.randomCommanderProfile);
+						}
+						else
+						{
+							desc.battalionCommander = null;
+						}
+						
 						SpawnBattalion(desc, spawnData.position);
 					}
 				}
