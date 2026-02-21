@@ -25,16 +25,18 @@ namespace LongLiveKhioyen
             }
         }
 
-        public void Show(bool isWin)
+        public void Show(BattleResult result)
         {
             if (panel != null) panel.SetActive(true);
             if (inputBlocker != null) inputBlocker.SetActive(true);
-            
+    
             if (resultText != null)
             {
-                resultText.text = isWin ? "VICTORY" : "DEFEAT";
-                resultText.color = isWin ? Color.green : Color.red;
+                resultText.text = result.Victory ? "VICTORY" : "DEFEAT";
+                resultText.color = result.Victory ? Color.yellow : Color.red;
             }
+
+            // TODO: 显示 result.Loot
         }
 
         private void OnExitClicked()

@@ -118,6 +118,11 @@ namespace LongLiveKhioyen
             
             to.TakeDamage(amount);
             
+            if (from is Battalion attackerBat)
+            {
+                attackerBat.AddExp(amount);
+            }
+            
             if (!isCounter && !string.IsNullOrEmpty(outputDamageKey))
             {
                 ctx.SetData(outputDamageKey, amount);

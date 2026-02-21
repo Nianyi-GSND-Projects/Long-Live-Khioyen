@@ -1682,6 +1682,8 @@ namespace LongLiveKhioyen
 		public List<BattalionDescriptor> playerReserveTeam;
 		
 		private Dictionary<Faction,HashSet<Unit>> factionActiveUnits;
+		public List<Unit> retreatedUnits = new List<Unit>();
+		public List<Unit> deadUnits = new List<Unit>();
 		
 		#endregion
 		public BattalionDescriptor CurrentBattalionDescriptor{ get; set; }
@@ -1696,10 +1698,16 @@ namespace LongLiveKhioyen
 			{
 				factionActiveUnits[unit.faction].Remove(unit);
 			}
+			RemoveUnitFromMap(unit);
             
-			// 如果需要，可以在这里把单位加入一个 "RetreatedUnits" 列表，方便结算
-            
-			ClearAllSelection(); // 防止 UI 还留着
+			ClearAllSelection();
+			
+			unit.gameObject.SetActive(false);
+          
+			if (!retreatedUnits.Contains(unit))
+			{
+				retreatedUnits.Add(unit);
+			}
 		}
 		
 		public TUnit SpawnUnit<TUnit, TDef, TDesc>(TDesc descriptor, Vector2Int pos) 
@@ -1754,7 +1762,7 @@ namespace LongLiveKhioyen
 		
 		Battalion SpawnBattalion(BattalionDescriptor descriptor, Vector2Int position)
 		{
-			// [调用通用方法]
+			descriptor.instanceId = descriptor.armyId;
 			Battalion battalion = SpawnUnit<Battalion, BattalionDefinition,BattalionDescriptor>(
 				descriptor,
 				position
@@ -1841,8 +1849,12 @@ namespace LongLiveKhioyen
 				// 建议确保 InitializeData 里所有 Faction 都初始化了
 			}
 			unit.gameObject.SetActive(false);
-			// 或者 Destroy(unit.gameObject); // 取决于你的对象池策略
 			unit.transform.SetParent(null);
+			
+			if (!deadUnits.Contains(unit))
+			{
+				deadUnits.Add(unit);
+			}
 			
 		}
 		
@@ -2239,24 +2251,62 @@ namespace LongLiveKhioyen
 	
 			// 1. 切换阶段
 			ChangeStage(Stage.Settlement);
+			
+			BattleResult result = YieldResult();
+			result.Victory = isWin;
 
 			// 2. 显示结算 UI (这里假设有一个 BattleResultUI 单例)
 			if (BattleResultUI.Instance != null)
 			{
-				BattleResultUI.Instance.Show(isWin);
+				BattleResultUI.Instance.Show(result);
 			}
 			else
 			{
 				Debug.LogError("BattleResultUI Instance not found!");
-				// 临时 fallback: 直接退出
-				// ExitBattle(); 
 			}
 		}
 
-		private void ApplyArmyChangesToArmyStatus()
+		private void ApplyArmyChangesToArmyStatus() 
 		{
-			//TODO:将战斗损耗应用回军队状态
-			//TODO：更新指挥官经验值、等级或死亡与负伤
+			if (armyStatus == null || armyStatus.battalionStatuses == null) return;
+			
+			Dictionary<int, Battalion> survivors = new Dictionary<int, Battalion>();
+			
+			if (factionActiveUnits.ContainsKey(Faction.Player))
+			{
+				foreach (var unit in factionActiveUnits[Faction.Player])
+				{
+					if (unit is Battalion bat) survivors[bat.InstanceId] = bat;
+				}
+			}
+			
+			foreach (var unit in retreatedUnits)
+			{
+				if (unit is Battalion bat && unit.faction == Faction.Player) 
+					survivors[bat.InstanceId] = bat;
+			}
+
+			for (int i = armyStatus.battalionStatuses.Count - 1; i >= 0; i--)
+			{
+				var status = armyStatus.battalionStatuses[i];
+              
+				if (survivors.TryGetValue(status.battalionId, out Battalion bat))
+				{
+					// 存活 (在场或撤退)
+					status.currentSolider = bat.currentSoliders;
+					status.currentMorale = bat.currentMurale;
+					status.currentExp += bat.exp;//TODO：经验值转化
+                  
+					Debug.Log($"[Sync] Battalion {status.battalionName} survived. HP: {status.currentSolider}, EXP: +{bat.exp}");
+				}
+				else
+				{
+					// 死亡 (既不在场也不在撤退列表)
+					// 也可以双重检查 deadUnits 以确保万无一失
+					Debug.Log($"[Sync] Battalion {status.battalionName} KIA. Removing from army.");
+					armyStatus.battalionStatuses.RemoveAt(i);
+				}
+			}
 		}
 		
 		#endregion
@@ -2266,6 +2316,7 @@ namespace LongLiveKhioyen
 		public BattleResult YieldResult()
 		{
 			BattleResult result = new BattleResult();
+			ApplyArmyChangesToArmyStatus();
 			CollectLoot(result);
 			CollectResult(result);
 			return result;
@@ -2278,10 +2329,11 @@ namespace LongLiveKhioyen
 		private void CollectLoot(BattleResult result)
 		{
 			Dictionary<ItemDefinition, int> consolidatedLoot = new Dictionary<ItemDefinition, int>();
-            
-			foreach (var unit in factionActiveUnits[Faction.Player])
+          
+			// 辅助方法：处理单个单位的战利品
+			void ProcessUnitLoot(Unit unit)
 			{
-				if (unit is Battalion bat)
+				if (unit is Battalion bat && unit.faction == Faction.Player)
 				{
 					foreach (inBattleItem item in bat.inventory)
 					{
@@ -2298,9 +2350,24 @@ namespace LongLiveKhioyen
 					}
 				}
 			}
-			
+
+			// 1. 遍历在场单位
+			if (factionActiveUnits.ContainsKey(Faction.Player))
+			{
+				foreach (var unit in factionActiveUnits[Faction.Player])
+				{
+					ProcessUnitLoot(unit);
+				}
+			}
+          
+			// 2. [新增] 遍历撤退单位
+			foreach (var unit in retreatedUnits)
+			{
+				ProcessUnitLoot(unit);
+			}
+	
 			if (result.Loot == null) result.Loot = new List<inBattleItem>();
-			
+	
 			foreach (var kvp in consolidatedLoot)
 			{
 				ItemDefinition def = kvp.Key;

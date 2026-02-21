@@ -18,7 +18,8 @@ namespace LongLiveKhioyen
         public int currentMurale;
         public int currentTraining;
         public int currentMovement;
-
+        
+        public int exp = 0;
         
 
         public Battalion()
@@ -110,6 +111,25 @@ namespace LongLiveKhioyen
                 buffs.Add(newBuff);
                 
             }
+        }
+        
+        public override void TakeDamage(int rawDamage)
+        {
+            int oldHealth = currentHealth;
+            base.TakeDamage(rawDamage);
+        
+            if (currentHealth < oldHealth)
+            {
+                //TODO:经验值公式 
+                AddExp(oldHealth-currentHealth); 
+            }
+        }
+        
+        public void AddExp(int amount)
+        {
+            exp += amount;
+            Debug.Log($"Battalion {name} gained {amount} EXP. Total: {exp}");
+            // TODO: 战斗内升级？或者只累积到战后结算
         }
         
         public override void OnTurnStart()
