@@ -69,7 +69,7 @@ namespace LongLiveKhioyen
 		{
 			// nextPromotableCommander 可能会被 Unity 的序列化设置为非 null 但全空的值
 			if(nextPromotableCommander == null || string.IsNullOrEmpty(nextPromotableCommander.commanderName))
-				nextPromotableCommander = CommanderRegistry.Instance.GenerateRandomCommander();
+				nextPromotableCommander = CommanderRegistry.Instance.GenerateCommander(CommanderGenerationProfile.Default);
 
 			return nextPromotableCommander;
 		}

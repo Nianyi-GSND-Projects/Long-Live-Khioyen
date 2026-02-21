@@ -6,32 +6,54 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Commander/Generator Settings")]
     public class CommanderGeneratorSO : ScriptableObject
     {
-        [Header("Name Pool")]
-        public List<string> firstNames; // 姓
-        public List<string> lastNames;  // 名
+        [Header("Rule Libraries")]
+        public List<CommanderIdentityRuleSO> identityRules = new List<CommanderIdentityRuleSO>();
+        public List<CommanderStatsRuleSO> statsRules = new List<CommanderStatsRuleSO>();
+        public List<CommanderTraitsRuleSO> traitsRules = new List<CommanderTraitsRuleSO>();
 
-        [Header("Portrait Pool")]
-        public List<Sprite> randomPortraits;
-
-        [Header("Stat Generation")]
-        public int minStatTotal = 150; // 五维总和最小值
-        public int maxStatTotal = 350; // 五维总和最大值
-        public int minSingleStat = 10;
-        public int maxSingleStat = 90;
-
-        // 生成随机名字
-        public string GetRandomName()
+        public GameCommander Generate(CommanderGenerationProfile profile, int newId)
         {
-            string first = firstNames.Count > 0 ? firstNames[Random.Range(0, firstNames.Count)] : "Unknown";
-            string last = lastNames.Count > 0 ? lastNames[Random.Range(0, lastNames.Count)] : "Commander";
-            return last + first; // 根据语言习惯调整中间是否加空格
-        }
+            GameCommander cmd = new GameCommander();
+            cmd.commanderId = newId;
 
-        // 生成随机头像
-        public Sprite GetRandomPortrait()
-        {
-            if (randomPortraits.Count == 0) return null;
-            return randomPortraits[Random.Range(0, randomPortraits.Count)];
+            // 1. Identity
+            var identityRule = identityRules.Find(r => r.ruleName == profile.identityRule);
+            if (identityRule == null && identityRules.Count > 0) identityRule = identityRules[0]; // Fallback
+            
+            if (identityRule != null)
+            {
+                cmd.commanderName = identityRule.GenerateName();
+                cmd.portrait = identityRule.GetRandomPortrait();
+            }
+            else
+            {
+                cmd.commanderName = "Unknown";
+            }
+
+            // 2. Stats
+            var statsRule = statsRules.Find(r => r.ruleName == profile.statsRule);
+            if (statsRule == null && statsRules.Count > 0) statsRule = statsRules[0]; // Fallback
+
+            if (statsRule != null)
+            {
+                statsRule.ApplyStats(cmd);
+            }
+            else
+            {
+                // 默认属性
+                cmd.Zhi = cmd.Xin = cmd.Ren = cmd.Yong = cmd.Yan = 50;
+            }
+
+            // 3. Traits
+            var traitsRule = traitsRules.Find(r => r.ruleName == profile.traitsRule);
+            if (traitsRule == null && traitsRules.Count > 0) traitsRule = traitsRules[0]; // Fallback
+
+            if (traitsRule != null)
+            {
+                traitsRule.ApplyTraits(cmd);
+            }
+
+            return cmd;
         }
     }
 }

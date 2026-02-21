@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0467332bf89d3b468e4acb745cae4db, type: 3}
+  m_Name: Balanced
+  m_EditorClassIdentifier: 
+  ruleName: Balanced
+  zhiRange: {x: 30, y: 80}
+  xinRange: {x: 30, y: 80}
+  renRange: {x: 30, y: 80}
+  yongRange: {x: 30, y: 80}
+  yanRange: {x: 30, y: 80}

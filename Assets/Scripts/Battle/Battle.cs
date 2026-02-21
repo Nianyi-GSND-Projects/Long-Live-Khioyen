@@ -434,17 +434,7 @@ namespace LongLiveKhioyen
 				{
 					battalionId = i,
 					battalionName = "TestBattalion" + i,
-					// battalionCommander = new GameCommander()
-					// {
-					// 	commanderId = 0,
-					// 	commanderName = "TestBattalionCommander" + i,
-					// 	Zhi = 50,
-					// 	Xin = 50,
-					// 	Ren = 50,
-					// 	Yong = 50,
-					// 	Yan = 50
-					// },
-					battalionCommander = CommanderRegistry.Instance.GenerateRandomCommander(),
+					battalionCommander = CommanderRegistry.Instance.GenerateCommander(CommanderGenerationProfile.Default),
 					battalionDefinition = defaultReserveTeamDefinition
 				};
 				

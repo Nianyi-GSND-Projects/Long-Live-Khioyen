@@ -63,26 +63,16 @@ namespace LongLiveKhioyen
 		}
 
 		int GenerateID() => idCounter++;
-
-		public GameCommander GenerateRandomCommander()
+		
+		public GameCommander GenerateCommander(CommanderGenerationProfile profile)
 		{
-			if(generatorConfig == null)
+			if (generatorConfig == null)
 			{
-				Debug.LogError("Generator Config 未加载，无法生成指挥官");
+				Debug.LogError("Generator Config 未加载");
 				return null;
 			}
 
-			GameCommander newCmd = new();
-			newCmd.commanderId = GenerateID();
-			newCmd.commanderName = generatorConfig.GetRandomName();
-			newCmd.portrait = generatorConfig.GetRandomPortrait();
-
-			newCmd.Zhi = Random.Range(generatorConfig.minSingleStat, generatorConfig.maxSingleStat);
-			newCmd.Xin = Random.Range(generatorConfig.minSingleStat, generatorConfig.maxSingleStat);
-			newCmd.Ren = Random.Range(generatorConfig.minSingleStat, generatorConfig.maxSingleStat);
-			newCmd.Yong = Random.Range(generatorConfig.minSingleStat, generatorConfig.maxSingleStat);
-			newCmd.Yan = Random.Range(generatorConfig.minSingleStat, generatorConfig.maxSingleStat);
-
+			GameCommander newCmd = generatorConfig.Generate(profile, GenerateID());
 			RegisterCommander(newCmd);
 			return newCmd;
 		}
