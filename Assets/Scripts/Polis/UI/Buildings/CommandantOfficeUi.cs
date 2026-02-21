@@ -30,7 +30,6 @@ namespace LongLiveKhioyen
 		#region 时间
 		[Header("Time")]
 		[SerializeField] TMP_Text currentTime;
-		[SerializeField] TMP_Text passedTime;
 
 		void OnGameTimeAdvanced(float dt)
 		{
@@ -39,7 +38,7 @@ namespace LongLiveKhioyen
 
 		void RefreshTime()
 		{
-			currentTime.text = Utilities.LocalizeTimeSinceGameStart(GameInstance.Instance.Data.time);
+			currentTime.text = GameInstance.Instance.Data.time.ToLocalizedString();
 		}
 		#endregion
 	}

@@ -1,5 +1,7 @@
-using UnityEngine;
+using Nianyi.UnityPack;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace LongLiveKhioyen
 {
@@ -8,15 +10,24 @@ namespace LongLiveKhioyen
 	{
 		#region 定义及转换
 		/// <summary>以月计。</summary>
-		[SerializeField] float months_Interpolated;
+		[SerializeField] float monthsElapsed;
 
-		public static implicit operator float(GameTime gt) => gt.months_Interpolated;
+		public static implicit operator float(GameTime gt) => gt.monthsElapsed;
 
 		static float MonthToGameTime => GameManager.InternalSettings.monthLength;
-		public float CurrentMonth_Interpolated => months_Interpolated;
-		public int CurrentMonth => (int)months_Interpolated;
+		/// <summary>游戏开始于公元前 121 年。</summary>
+		const float startTime = -121 * 12;
+		public static float ElapsedMonthsToAbsolute(float months) => months + startTime;
+
+		public float AbsoluteMonth_Interpolated => ElapsedMonthsToAbsolute(monthsElapsed);
+		public int AbsoluteMonth => Mathf.FloorToInt(AbsoluteMonth_Interpolated);
+		public float AbsoluteMonth_Frac => AbsoluteMonth_Interpolated - AbsoluteMonth;
+		public float Month_Interpolated => MathUtility.Mod(AbsoluteMonth_Interpolated, 12);
+		public int Month => Mathf.FloorToInt(Month_Interpolated);
+		public int Year => Mathf.FloorToInt(AbsoluteMonth_Interpolated / 12);
 		#endregion
 
+		#region 步进
 		public Action<float> onAdvancedByMonth;
 		public Action<float> onAdvancedByGameTime;
 		public Action onMonthPassed;
@@ -31,14 +42,13 @@ namespace LongLiveKhioyen
 		{
 			while(true)
 			{
-				int estimatedMonth = (int)(months_Interpolated + dMonth);
-				if(estimatedMonth == CurrentMonth)
+				int estimatedAbsoluteMonth = Mathf.FloorToInt(AbsoluteMonth_Interpolated + dMonth);
+				if(estimatedAbsoluteMonth == AbsoluteMonth)
 					break;
 
-				float currentDMonth = estimatedMonth - months_Interpolated;
+				float currentDMonth = estimatedAbsoluteMonth - AbsoluteMonth_Interpolated;
 				AdvanceNoticedSimple(currentDMonth);
 				onMonthPassed?.Invoke();
-				months_Interpolated = estimatedMonth;  // 防止浮点误差
 				dMonth -= currentDMonth;
 			}
 
@@ -50,9 +60,62 @@ namespace LongLiveKhioyen
 		/// <param name="dMonth">以月计。</param>
 		void AdvanceNoticedSimple(float dMonth)
 		{
-			months_Interpolated += dMonth;
+			monthsElapsed += dMonth;
 			onAdvancedByGameTime?.Invoke(dMonth);
 			onAdvancedByMonth?.Invoke(dMonth * MonthToGameTime);
 		}
+		#endregion
+
+		#region 本地化
+		public string ToLocalizedString(string locale = "en")
+		{
+			return $"{LocalizeMonth(Month, locale)}, {LocalizeAbsoluteYear(Year)}";
+		}
+
+		static string[] englishMonths = new string[]
+		{ "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+		static string[] chineseNumbers = new string[]
+		{ "〇", "一", "二", "三", "四", "五", "六", "七", "八", "九",  "十", "十一", "十二", };
+		static string ToChineseNumberLiteral(int number)
+		{
+			if(number <= 0)
+				return number == 0 ? chineseNumbers[0] : $"负{ToChineseNumberLiteral(-number)}";
+
+			List<string> digits = new();
+			while(number > 0)
+			{
+				digits.Add(chineseNumbers[number % 10]);
+				number /= 10;
+			}
+			digits.Reverse();
+			return string.Join("", digits);
+		}
+
+		public static string LocalizeMonth(int month, string locale = "en")
+		{
+			int i = Mathf.FloorToInt(MathUtility.Mod(month, 12));
+			switch(locale)
+			{
+				case "zh-Hans":
+					return $"{chineseNumbers[i]}月";
+				case "en":
+				default:
+					return englishMonths[i];
+			}
+		}
+
+		public static string LocalizeAbsoluteYear(int year, string locale = "en")
+		{
+			bool isAd = year >= 0;
+			switch(locale)
+			{
+				case "zh-Hans":
+					return isAd ? $"公元 {ToChineseNumberLiteral(year + 1)} 年" : $"公元前 {ToChineseNumberLiteral(-year)} 年";
+				case "en":
+				default:
+					return isAd ? $"{year + 1} AD" : $"{-year} BC";
+			}
+		}
+		#endregion
 	}
 }

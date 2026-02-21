@@ -191,13 +191,13 @@ namespace LongLiveKhioyen
 
 		void PushMonthPassToPoleis()
 		{
-			Debug.Log($"游戏整体度月。当前时间：{Data.time}。");
+			Debug.Log($"游戏整体度月。当前时间：{Data.time.ToLocalizedString()}。");
 			foreach(var polis in Data.poleis)
 			{
 				PolisTask task = new(
 					PolisTaskType.monthPassed,
 					Data.time - polis.LastTime,
-					Data.time.CurrentMonth.ToString()
+					Data.time.Month.ToString()
 				);
 				polis.AddTask(task);
 			}

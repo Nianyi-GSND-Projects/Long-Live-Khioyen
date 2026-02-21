@@ -86,9 +86,8 @@ namespace LongLiveKhioyen
 
 		void UpdateTime()
 		{
-			float month = GameInstance.Instance.Data.time.CurrentMonth_Interpolated;
-			timeText.text = $"Month {(int)month}";
-			timeSlider.value = month - (int)month;
+			timeText.text = GameTime.LocalizeMonth(GameInstance.Instance.Data.time.AbsoluteMonth);
+			timeSlider.value = GameInstance.Instance.Data.time.AbsoluteMonth_Frac;
 		}
 
 		public void SetPolisTimeScale(float timeScale)

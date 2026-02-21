@@ -23,7 +23,7 @@ namespace LongLiveKhioyen
 		public void PassTime(float amount)
 		{
 			int previousMonth = GameManager.ConvertToMonth(GameInstance.Instance.Data.time - amount);
-			int currentMonth = GameInstance.Instance.Data.time.CurrentMonth;
+			int currentMonth = GameInstance.Instance.Data.time.Month;
 			bool willPassMonth = currentMonth != 0 && previousMonth != currentMonth;
 
 			PassTime_Internal(amount);
@@ -48,7 +48,7 @@ namespace LongLiveKhioyen
 		void ExecuteMonthPassedTask(PolisTask task)
 		{
 			int startingMonth = int.Parse(task.parameters[0]);
-			Debug.Log($"城池 {id} 度月。现开始第 {startingMonth}（0~11）月。");
+			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(startingMonth, "zh-Hans")}。");
 
 			CashForSaleItemsAtEndOfMonth();
 		}
