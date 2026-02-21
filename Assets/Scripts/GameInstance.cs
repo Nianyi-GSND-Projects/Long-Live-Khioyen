@@ -27,6 +27,7 @@ namespace LongLiveKhioyen
 		{
 			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
 			Paused = false;
+			Data.time.onMonthPassed += PushMonthPassToPoleis;
 		}
 
 		/// <summary>
@@ -183,46 +184,20 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Time
-		public float GameTime
+		public void AdvanceTime_Scaled(float dt)
 		{
-			get => Data.gameTime;
-			private set => Data.gameTime = value;
-		}
-		public int CurrentMonth => GameManager.ConvertToMonth(GameTime);
-		static float MonthLength => GameManager.InternalSettings.monthLength;
-
-		public void AdvanceTime(float dt)
-		{
-			if(dt <= 0)
-			{
-				Debug.LogWarning("Time must be advanced positively.");
-				return;
-			}
-
-			int targetMonth = GameManager.ConvertToMonth(GameTime + dt);
-			float remaining = dt;
-			while(CurrentMonth != targetMonth)
-			{
-				float nextMonthStart = (CurrentMonth + 1) * MonthLength;
-				float advanced = nextMonthStart - GameTime;
-				GameTime = nextMonthStart;
-				remaining -= advanced;
-
-				PushMonthPassToPoleis();
-			}
-			GameTime += remaining;
-
-			onGameTimeAdvanced?.Invoke(dt);
+			Data.time.AdvanceByInGameTime(dt * ActualTimeScale);
 		}
 
 		void PushMonthPassToPoleis()
 		{
+			Debug.Log($"游戏整体度月。当前时间：{Data.time}。");
 			foreach(var polis in Data.poleis)
 			{
 				PolisTask task = new(
 					PolisTaskType.monthPassed,
-					GameTime - polis.LastTime,
-					CurrentMonth.ToString()
+					Data.time - polis.LastTime,
+					Data.time.CurrentMonth.ToString()
 				);
 				polis.AddTask(task);
 			}
@@ -249,14 +224,17 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public System.Action<float> onGameTimeAdvanced;
+		public System.Action<float> onGameTimeAdvanced
+		{
+			get => Data.time.onAdvancedByGameTime;
+			set => Data.time.onAdvancedByGameTime = value;
+		}
 		public System.Action onActualTimeScaleChanged;
 
 		void UpdateActualTimeScale()
 		{
 			ActualTimeScale = Paused ? 0 : TimeScale;
 		}
-
 		#endregion
 
 		#region Pause

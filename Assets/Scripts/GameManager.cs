@@ -60,7 +60,7 @@ namespace LongLiveKhioyen
 		#region Local data
 		#region Settings
 		static readonly string settingsPath = Path.Combine(Application.persistentDataPath, "settings.json");
-		static GameSettings settings = null;
+		public static GameSettings settings { get; private set; }
 
 		static void EnsureSettingsPath()
 		{

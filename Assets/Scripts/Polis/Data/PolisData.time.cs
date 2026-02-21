@@ -22,8 +22,8 @@ namespace LongLiveKhioyen
 		#region 接口
 		public void PassTime(float amount)
 		{
-			int previousMonth = GameManager.ConvertToMonth(GameInstance.Instance.GameTime - amount);
-			int currentMonth = GameInstance.Instance.CurrentMonth;
+			int previousMonth = GameManager.ConvertToMonth(GameInstance.Instance.Data.time - amount);
+			int currentMonth = GameInstance.Instance.Data.time.CurrentMonth;
 			bool willPassMonth = currentMonth != 0 && previousMonth != currentMonth;
 
 			PassTime_Internal(amount);
@@ -48,7 +48,7 @@ namespace LongLiveKhioyen
 		void ExecuteMonthPassedTask(PolisTask task)
 		{
 			int startingMonth = int.Parse(task.parameters[0]);
-			Debug.Log($"Month passed in polis \"{id}\". Starting month: {startingMonth}");
+			Debug.Log($"城池 {id} 度月。现开始第 {startingMonth}（0~11）月。");
 
 			CashForSaleItemsAtEndOfMonth();
 		}

@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
 		void Update()
 		{
 			float dt = Time.deltaTime;
-			GameInstance.Instance.AdvanceTime(dt);
+			GameInstance.Instance.AdvanceTime_Scaled(dt);
 		}
 		#endregion
 

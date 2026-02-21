@@ -26,6 +26,8 @@ namespace LongLiveKhioyen
 			inspectionUi.Building = null;
 
 			Polis.onSelectionChanged += OnSelectionChanged;
+
+			GameInstance.Instance.Data.time.onMonthPassed += OnMonthPassed;
 		}
 
 		protected void Update()
@@ -35,7 +37,9 @@ namespace LongLiveKhioyen
 
 		protected void OnDestroy()
 		{
+			Polis.Data.onPopulationDataChanged -= UpdatePopulation;
 			Polis.Data.onEconomyChanged -= UpdateEnocomy;
+			GameInstance.Instance.Data.time.onMonthPassed -= OnMonthPassed;
 		}
 		#endregion
 
@@ -82,9 +86,9 @@ namespace LongLiveKhioyen
 
 		void UpdateTime()
 		{
-			float month = GameInstance.Instance.GameTime / GameManager.InternalSettings.monthLength;
-			timeText.text = $"Month {Mathf.FloorToInt(month)}";
-			timeSlider.value = month - Mathf.Floor(month);
+			float month = GameInstance.Instance.Data.time.CurrentMonth_Interpolated;
+			timeText.text = $"Month {(int)month}";
+			timeSlider.value = month - (int)month;
 		}
 
 		public void SetPolisTimeScale(float timeScale)
@@ -172,10 +176,13 @@ namespace LongLiveKhioyen
 		[Header("Month pass")]
 		public CanvasGroup monthPassPanel;
 
-		public void ShowMonthPassPanel()
+		void OnMonthPassed()
 		{
-			GameInstance.Instance.Paused = true;
-			monthPassPanel.gameObject.SetActive(true);
+			if(GameManager.settings.showMonthPassedPanel)
+			{
+				GameInstance.Instance.Paused = true;
+				monthPassPanel.gameObject.SetActive(true);
+			}
 		}
 
 		public void HideMonthPassPanel()

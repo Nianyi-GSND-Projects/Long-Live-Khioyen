@@ -9,7 +9,8 @@ namespace LongLiveKhioyen
 		public WorldData world;
 		public string lastPolis;
 		public List<PolisData> poleis = new();
-		public float gameTime;
+		/// <summary>以月份为单位。</summary>
+		public GameTime time;
 	}
 
 	[Serializable]
@@ -32,6 +33,4 @@ namespace LongLiveKhioyen
 		}
 		public WorldData2D data2D;
 	}
-	
-	
 }

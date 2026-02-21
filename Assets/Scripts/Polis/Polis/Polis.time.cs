@@ -14,7 +14,7 @@ namespace LongLiveKhioyen
 		void UpdateTime(float dt)
 		{
 			if(dt > 0)
-				GameInstance.Instance.AdvanceTime(dt);
+				GameInstance.Instance.AdvanceTime_Scaled(dt);
 		}
 
 		void FinalizeTime()
