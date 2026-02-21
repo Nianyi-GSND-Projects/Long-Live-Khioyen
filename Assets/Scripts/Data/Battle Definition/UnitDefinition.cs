@@ -16,6 +16,8 @@ namespace LongLiveKhioyen
     
     public abstract class UnitDefinition : ScriptableObject
     {
+        [Header("Database Info")]
+        public int id;
         public string unitName;
         public UnitType unitType;
         

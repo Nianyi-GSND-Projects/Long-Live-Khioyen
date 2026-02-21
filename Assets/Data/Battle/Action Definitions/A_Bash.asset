@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_Bash
   m_EditorClassIdentifier: 
   actionName: "\u7A81\u523A"
-  actionId: 0
+  actionId: 2
   description: 
   icon: {fileID: 0}
   actionPointCost: 0

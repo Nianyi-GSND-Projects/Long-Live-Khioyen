@@ -1,52 +1,56 @@
 using UnityEngine;
 using UnityEditor;
+using LongLiveKhioyen;
 using System.Collections.Generic;
 
-namespace LongLiveKhioyen
+[CustomEditor(typeof(ItemDatabase))]
+public class ItemDatabaseEditor : Editor
 {
-    [CustomEditor(typeof(ItemDatabase))]
-    public class ItemDatabaseEditor : Editor
+    public override void OnInspectorGUI()
     {
-        public override void OnInspectorGUI()
+        base.OnInspectorGUI();
+        if (GUILayout.Button("Collect All Items")) Collect((ItemDatabase)target);
+    }
+
+    private void Collect(ItemDatabase db)
+    {
+        string[] guids = AssetDatabase.FindAssets("t:ItemDefinition");
+        List<ItemDefinition> all = new List<ItemDefinition>();
+        foreach (string guid in guids)
         {
-            DrawDefaultInspector();
-
-            ItemDatabase db = (ItemDatabase)target;
-
-            GUILayout.Space(15);
-            GUI.backgroundColor = new Color(0.7f, 1f, 1f); // 浅蓝色
-
-            if (GUILayout.Button("搜集所有物品 (Collect All Items)", GUILayout.Height(40)))
-            {
-                CollectItems(db);
-            }
-            GUI.backgroundColor = Color.white;
-            GUILayout.Space(10);
-            EditorGUILayout.HelpBox("自动查找项目中所有 ItemDefinition 并注册。", MessageType.Info);
+            var asset = AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+            if (asset != null) all.Add(asset);
         }
 
-        private void CollectItems(ItemDatabase db)
+        // 假设你已经添加了 id 字段 (注意：不是 itemId 字符串)
+        AssignIds(all, (i) => i.id, (i, id) => i.id = id);
+
+        db.items = all;
+        db.items.Sort((a, b) => a.id.CompareTo(b.id));
+        
+        EditorUtility.SetDirty(db);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"Collected {all.Count} items.");
+    }
+    
+    // ... Copy AssignIds helper ...
+    private void AssignIds<T>(List<T> items, System.Func<T, int> getId, System.Action<T, int> setId) where T : Object
+    {
+        HashSet<int> used = new HashSet<int>();
+        List<T> toAssign = new List<T>();
+        foreach (var item in items)
         {
-            if (db.items == null) db.items = new List<ItemDefinition>();
-            
-            int oldCount = db.items.Count;
-            db.items.Clear();
-
-            // 查找所有 ItemDefinition
-            string[] guids = AssetDatabase.FindAssets("t:ItemDefinition");
-
-            foreach (string guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                ItemDefinition item = AssetDatabase.LoadAssetAtPath<ItemDefinition>(path);
-                if (item != null)
-                {
-                    db.items.Add(item);
-                }
-            }
-
-            EditorUtility.SetDirty(db);
-            Debug.Log($"<color=cyan><b>【物品库更新】</b></color> 旧数量: {oldCount} -> 新数量: {db.items.Count}");
+            int id = getId(item);
+            if (id > 0 && !used.Contains(id)) used.Add(id);
+            else toAssign.Add(item);
+        }
+        int next = 1;
+        foreach (var item in toAssign)
+        {
+            while (used.Contains(next)) next++;
+            setId(item, next);
+            used.Add(next);
+            EditorUtility.SetDirty(item);
         }
     }
 }

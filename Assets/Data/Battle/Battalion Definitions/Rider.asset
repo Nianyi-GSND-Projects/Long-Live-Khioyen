@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
   m_Name: Rider
   m_EditorClassIdentifier: 
+  id: 2
   unitName: "\u9A91\u624B"
   unitType: 0
   figure: {fileID: 21300000, guid: db863fa59d809cb4b80bc3d95bdd2b6e, type: 3}

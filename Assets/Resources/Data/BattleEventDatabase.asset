@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a60d95e45a38b14d83bed3a167080a7, type: 3}
-  m_Name: BattleEvent1
+  m_Script: {fileID: 11500000, guid: 2f457ed4c7b2df84fa4d42277eb510f5, type: 3}
+  m_Name: BattleEventDatabase
   m_EditorClassIdentifier: 
-  id: 1
-  eventName: Test
-  triggerType: 0
-  conditions: []
-  actions:
-  - {fileID: 11400000, guid: 92aac8cea9310084698593d4cd0c706a, type: 2}
+  events:
+  - {fileID: 11400000, guid: ddc408e4284ad674cab21796a6366232, type: 2}

@@ -1,81 +1,102 @@
 using UnityEngine;
-using UnityEditor; // 必须引用
+using UnityEditor;
+using LongLiveKhioyen;
 using System.Collections.Generic;
 
-namespace LongLiveKhioyen
+[CustomEditor(typeof(UnitDatabase))]
+public class UnitDatabaseEditor : Editor
 {
-    [CustomEditor(typeof(UnitDatabase))]
-    public class UnitDatabaseEditor : UnityEditor.Editor
+    public override void OnInspectorGUI()
     {
-        public override void OnInspectorGUI()
+        base.OnInspectorGUI();
+
+        UnitDatabase db = (UnitDatabase)target;
+
+        if (GUILayout.Button("Collect Units (Global ID Check)"))
         {
-            // 1. 绘制默认的 Inspector (显示 List 和 Enum)
-            DrawDefaultInspector();
+            CollectUnits(db);
+        }
+    }
 
-            // 获取目标对象
-            UnitDatabase database = (UnitDatabase)target;
+    private void CollectUnits(UnitDatabase db)
+    {
+        // 1. 扫描项目中所有的 UnitDefinition (包括 Battalion 和 Facility)
+        string[] guids = AssetDatabase.FindAssets("t:UnitDefinition");
+        List<UnitDefinition> allGlobalUnits = new List<UnitDefinition>();
 
-            GUILayout.Space(20); // 添加一点间距
-
-            // 2. 添加按钮
-            if (GUILayout.Button("Find & Populate Units", GUILayout.Height(40)))
-            {
-                PopulateDatabase(database);
-            }
-            
-            // 提示信息
-            EditorGUILayout.HelpBox($"Clicking the button will search the project for all {database.databaseType} assets and replace the list below.", MessageType.Info);
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            UnitDefinition unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(path);
+            if (unit != null) allGlobalUnits.Add(unit);
         }
 
-        private void PopulateDatabase(UnitDatabase db)
+        // 2. 全局 ID 分配 (确保所有单位 ID 唯一且持久)
+        AssignGlobalIds(allGlobalUnits);
+
+        // 3. 根据当前 Database 的类型进行筛选
+        List<UnitDefinition> filteredUnits = new List<UnitDefinition>();
+
+        foreach (var unit in allGlobalUnits)
         {
-            // 记录撤销操作，防止误点按钮导致数据丢失无法恢复
-            Undo.RecordObject(db, "Populate Unit Database");
-
-            // 准备搜索过滤器字符串 (t:Type)
-            string searchFilter = "";
-
+            bool include = false;
             switch (db.databaseType)
             {
+                case UnitDatabaseType.All:
+                    include = true;
+                    break;
                 case UnitDatabaseType.BattalionOnly:
-                    // 搜索所有继承自 BattalionDefinition 的资源
-                    searchFilter = "t:BattalionDefinition"; 
+                    include = (unit is BattalionDefinition); // 假设你有这个子类
+                    // 或者 include = (unit.unitType == UnitType.Battalion);
                     break;
                 case UnitDatabaseType.FacilityOnly:
-                    // 搜索所有继承自 FacilityDefinition 的资源
-                    searchFilter = "t:FacilityDefinition";
-                    break;
-                case UnitDatabaseType.All:
-                    // 搜索基类 (会包含所有子类)
-                    searchFilter = "t:UnitDefinition";
+                    include = (unit is FacilityDefinition); // 假设你有这个子类
+                    // 或者 include = (unit.unitType == UnitType.Facility);
                     break;
             }
 
-            // 使用 AssetDatabase 查找 GUIDs
-            string[] guids = AssetDatabase.FindAssets(searchFilter);
-            
-            // 初始化新列表
-            List<UnitDefinition> newUnits = new List<UnitDefinition>();
-
-            foreach (string guid in guids)
+            if (include)
             {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                UnitDefinition unit = AssetDatabase.LoadAssetAtPath<UnitDefinition>(path);
-
-                if (unit != null)
-                {
-                    newUnits.Add(unit);
-                }
+                filteredUnits.Add(unit);
             }
+        }
 
-            // 更新数据
-            db.unitDefinitions = newUnits;
+        // 4. 更新 Database
+        db.unitDefinitions = filteredUnits;
+        db.unitDefinitions.Sort((a, b) => a.id.CompareTo(b.id));
 
-            // 标记对象为已修改 (Dirty)，确保 Unity 保存更改
-            EditorUtility.SetDirty(db);
+        EditorUtility.SetDirty(db);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"Collected {filteredUnits.Count} units into database (Type: {db.databaseType}). Scanned {allGlobalUnits.Count} total units.");
+    }
+
+    private void AssignGlobalIds(List<UnitDefinition> allUnits)
+    {
+        HashSet<int> usedIds = new HashSet<int>();
+        List<UnitDefinition> toAssign = new List<UnitDefinition>();
+
+        // 第一轮：保留合法的现有 ID
+        foreach (var unit in allUnits)
+        {
+            if (unit.id > 0 && !usedIds.Contains(unit.id))
+            {
+                usedIds.Add(unit.id);
+            }
+            else
+            {
+                toAssign.Add(unit); // ID 为 0 或重复
+            }
+        }
+
+        // 第二轮：分配新 ID
+        int nextId = 1;
+        foreach (var unit in toAssign)
+        {
+            while (usedIds.Contains(nextId)) nextId++;
             
-            // 打印日志
-            Debug.Log($"<color=green>UnitDatabase Updated:</color> Found {newUnits.Count} items for mode {db.databaseType}.");
+            unit.id = nextId;
+            usedIds.Add(nextId);
+            EditorUtility.SetDirty(unit); // 标记 SO 修改
         }
     }
 }

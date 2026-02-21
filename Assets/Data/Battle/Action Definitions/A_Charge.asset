@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_Charge
   m_EditorClassIdentifier: 
   actionName: "\u51B2\u9635"
-  actionId: 0
+  actionId: 3
   description: 
   icon: {fileID: 0}
   actionPointCost: 0

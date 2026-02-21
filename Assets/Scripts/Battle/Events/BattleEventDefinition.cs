@@ -16,6 +16,7 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Events/Battle Event Definition")]
     public class BattleEventDefinition : ScriptableObject
     {
+        [Header("id")] public int id;
         public string eventName;
         public BattleEventTriggerType triggerType;
         

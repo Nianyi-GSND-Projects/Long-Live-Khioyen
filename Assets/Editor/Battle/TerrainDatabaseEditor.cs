@@ -1,70 +1,55 @@
 using UnityEngine;
-using UnityEditor; // 必须引用这个
+using UnityEditor;
+using LongLiveKhioyen;
 using System.Collections.Generic;
 
-namespace LongLiveKhioyen
+[CustomEditor(typeof(TerrainDatabase))]
+public class TerrainDatabaseEditor : Editor
 {
-    // 绑定到 TerrainDatabase 类型
-    [CustomEditor(typeof(TerrainDatabase))]
-    public class TerrainDatabaseEditor : Editor
+    public override void OnInspectorGUI()
     {
-        public override void OnInspectorGUI()
+        base.OnInspectorGUI();
+        if (GUILayout.Button("Collect All Terrains")) Collect((TerrainDatabase)target);
+    }
+
+    private void Collect(TerrainDatabase db)
+    {
+        string[] guids = AssetDatabase.FindAssets("t:TerrainDefinition");
+        List<TerrainDefinition> all = new List<TerrainDefinition>();
+        foreach (string guid in guids)
         {
-            // 1. 绘制默认的 Inspector (显示列表本身)
-            DrawDefaultInspector();
-
-            // 2. 获取当前选中的 ScriptableObject 对象
-            TerrainDatabase database = (TerrainDatabase)target;
-
-            GUILayout.Space(15);
-
-            // 3. 绘制绿色大按钮
-            GUI.backgroundColor = new Color(0.7f, 1f, 0.7f); 
-            if (GUILayout.Button("搜集所有地形定义 (Collect All Terrains)", GUILayout.Height(40)))
-            {
-                CollectTerrains(database);
-            }
-            GUI.backgroundColor = Color.white; // 恢复颜色
-
-            GUILayout.Space(10);
-            EditorGUILayout.HelpBox("点击按钮将自动查找项目中所有的 TerrainDefinition 并填充到上方列表。", MessageType.Info);
+            var asset = AssetDatabase.LoadAssetAtPath<TerrainDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+            if (asset != null) all.Add(asset);
         }
 
-        private void CollectTerrains(TerrainDatabase database)
+        // 假设你已经添加了 id 字段
+        AssignIds(all, (t) => t.id, (t, id) => t.id = id);
+
+        db.terrainDefinitions = all;
+        db.terrainDefinitions.Sort((a, b) => a.id.CompareTo(b.id));
+        
+        EditorUtility.SetDirty(db);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"Collected {all.Count} terrains.");
+    }
+
+    private void AssignIds<T>(List<T> items, System.Func<T, int> getId, System.Action<T, int> setId) where T : Object
+    {
+        HashSet<int> used = new HashSet<int>();
+        List<T> toAssign = new List<T>();
+        foreach (var item in items)
         {
-            // 初始化列表防止空引用
-            if (database.terrainDefinitions == null)
-                database.terrainDefinitions = new List<TerrainDefinition>();
-
-            // 记录旧数量用于显示日志
-            int oldCount = database.terrainDefinitions.Count;
-            
-            // 清空列表，准备重新填充
-            database.terrainDefinitions.Clear();
-
-            // === 核心魔法：搜索所有类型为 TerrainDefinition 的资源 ===
-            string[] guids = AssetDatabase.FindAssets("t:TerrainDefinition");
-
-            foreach (string guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                TerrainDefinition terrainDef = AssetDatabase.LoadAssetAtPath<TerrainDefinition>(path);
-
-                if (terrainDef != null)
-                {
-                    // 只有当列表中还没有这个地形时才添加 (虽然Clear了通常不需要判断，但为了保险)
-                    if (!database.terrainDefinitions.Contains(terrainDef))
-                    {
-                        database.terrainDefinitions.Add(terrainDef);
-                    }
-                }
-            }
-
-            // === 关键：标记脏数据，强制 Unity 保存更改 ===
-            EditorUtility.SetDirty(database);
-
-            Debug.Log($"<color=green><b>【地形库更新】</b> 操作完成！</color>\n" +
-                      $"旧数量: {oldCount}  ->  新数量: {database.terrainDefinitions.Count}");
+            int id = getId(item);
+            if (id > 0 && !used.Contains(id)) used.Add(id);
+            else toAssign.Add(item);
+        }
+        int next = 1;
+        foreach (var item in toAssign)
+        {
+            while (used.Contains(next)) next++;
+            setId(item, next);
+            used.Add(next);
+            EditorUtility.SetDirty(item);
         }
     }
 }

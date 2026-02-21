@@ -7,7 +7,8 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Definitions/Terrain Definition")]
         public class TerrainDefinition : ScriptableObject
         {
-            [Header("Identity")]
+            [Header("Database Info")]
+            public int id;
             public string terrainName;
     
             [Header("Visuals")]

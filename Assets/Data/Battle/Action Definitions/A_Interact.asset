@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_Interact
   m_EditorClassIdentifier: 
   actionName: DefaultInteract
-  actionId: 0
+  actionId: 4
   description: 
   icon: {fileID: 0}
   actionPointCost: 0

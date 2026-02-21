@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RegularAttack
   m_EditorClassIdentifier: 
   actionName: RegularAttack
-  actionId: 0
+  actionId: 7
   description: 'Regular Attack
 
 '
@@ -25,3 +25,6 @@ MonoBehaviour:
   useConditions: []
   effects:
   - {fileID: 11400000, guid: 03756d16644a91548abf9e6789ff396e, type: 2}
+  range: 1
+  minRange: 1
+  targetType: 3

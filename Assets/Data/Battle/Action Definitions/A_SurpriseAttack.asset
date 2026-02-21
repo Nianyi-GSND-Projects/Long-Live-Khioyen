@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_SurpriseAttack
   m_EditorClassIdentifier: 
   actionName: "\u5077\u88AD"
-  actionId: 0
+  actionId: 6
   description: 
   icon: {fileID: 0}
   actionPointCost: 0

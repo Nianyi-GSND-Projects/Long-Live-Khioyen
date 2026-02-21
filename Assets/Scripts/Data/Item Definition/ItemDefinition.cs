@@ -23,6 +23,9 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Item/Item Definition")]
     public class ItemDefinition : ScriptableObject
     {
+        [Header("Database Info")]
+        public int id;
+        
         [Header("Identity")]
         public string itemId;
         public string itemName;

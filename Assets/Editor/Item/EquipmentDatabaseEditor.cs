@@ -1,53 +1,55 @@
 using UnityEngine;
 using UnityEditor;
+using LongLiveKhioyen;
 using System.Collections.Generic;
 
-namespace LongLiveKhioyen
+[CustomEditor(typeof(EquipmentDatabase))]
+public class EquipmentDatabaseEditor : Editor
 {
-    [CustomEditor(typeof(EquipmentDatabase))]
-    public class EquipmentDatabaseEditor : Editor
+    public override void OnInspectorGUI()
     {
-        public override void OnInspectorGUI()
+        base.OnInspectorGUI();
+        if (GUILayout.Button("Collect All Equipments")) Collect((EquipmentDatabase)target);
+    }
+
+    private void Collect(EquipmentDatabase db)
+    {
+        string[] guids = AssetDatabase.FindAssets("t:EquipmentDefinition");
+        List<EquipmentDefinition> all = new List<EquipmentDefinition>();
+        foreach (string guid in guids)
         {
-            DrawDefaultInspector();
-
-            EquipmentDatabase db = (EquipmentDatabase)target;
-
-            GUILayout.Space(15);
-            GUI.backgroundColor = new Color(1f, 0.7f, 0.7f); // 浅红色
-
-            if (GUILayout.Button("搜集所有装备 (Collect All Equipment)", GUILayout.Height(40)))
-            {
-                CollectEquipment(db);
-            }
-            GUI.backgroundColor = Color.white;
-            GUILayout.Space(10);
-            EditorGUILayout.HelpBox("自动查找项目中所有 EquipmentDefinition 并注册。", MessageType.Info);
+            var asset = AssetDatabase.LoadAssetAtPath<EquipmentDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+            if (asset != null) all.Add(asset);
         }
 
-        private void CollectEquipment(EquipmentDatabase db)
+        AssignIds(all, (e) => e.equipmentId, (e, id) => e.equipmentId = id);
+
+        db.equipments = all;
+        db.equipments.Sort((a, b) => a.equipmentId.CompareTo(b.equipmentId));
+        
+        EditorUtility.SetDirty(db);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"Collected {all.Count} equipments.");
+    }
+    
+    // ... Copy AssignIds helper ...
+    private void AssignIds<T>(List<T> items, System.Func<T, int> getId, System.Action<T, int> setId) where T : Object
+    {
+        HashSet<int> used = new HashSet<int>();
+        List<T> toAssign = new List<T>();
+        foreach (var item in items)
         {
-            if (db.equipments == null) db.equipments = new List<EquipmentDefinition>();
-            
-            int oldCount = db.equipments.Count;
-            db.equipments.Clear();
-
-            string[] guids = AssetDatabase.FindAssets("t:EquipmentDefinition");
-
-            foreach (string guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                EquipmentDefinition eq = AssetDatabase.LoadAssetAtPath<EquipmentDefinition>(path);
-                if (eq != null)
-                {
-                    db.equipments.Add(eq);
-                }
-            }
-
-            db.equipments.Sort((a, b) => a.equipmentId.CompareTo(b.equipmentId));
-
-            EditorUtility.SetDirty(db);
-            Debug.Log($"<color=orange><b>【装备库更新】</b></color> 旧数量: {oldCount} -> 新数量: {db.equipments.Count}");
+            int id = getId(item);
+            if (id > 0 && !used.Contains(id)) used.Add(id);
+            else toAssign.Add(item);
+        }
+        int next = 1;
+        foreach (var item in toAssign)
+        {
+            while (used.Contains(next)) next++;
+            setId(item, next);
+            used.Add(next);
+            EditorUtility.SetDirty(item);
         }
     }
 }

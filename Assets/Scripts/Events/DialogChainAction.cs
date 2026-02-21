@@ -28,6 +28,7 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Events/Actions/Dialog Chain")]
     public class DialogChainAction : GameEventAction
     {
+        [Header("id")] public int id;
         [Header("Dialog Sequence")]
         public List<DialogData> dialogList = new List<DialogData>();
 

@@ -32,34 +32,45 @@ namespace LongLiveKhioyen
         
         public List<ItemDefinition> items = new List<ItemDefinition>();
         
+        // 原有的基于 String ID 的查找表
         private Dictionary<string, ItemDefinition> _lookup;
         private Dictionary<string, ItemDefinition> _nameLookup;
+        
+        // [新增] 基于 Int ID 的查找表
+        private Dictionary<int, ItemDefinition> _intIdLookup;
         
         public void Initialize()
         {
             if (_lookup != null) return;
 
-            _lookup = new();
-            _nameLookup = new();
+            _lookup = new Dictionary<string, ItemDefinition>();
+            _nameLookup = new Dictionary<string, ItemDefinition>();
+            _intIdLookup = new Dictionary<int, ItemDefinition>(); // 初始化
 
             foreach (var item in items)
             {
                 if (item == null) continue;
 
-                // ID 索引
+                // String ID 索引
                 if (!_lookup.ContainsKey(item.itemId))
                 {
                     _lookup.Add(item.itemId, item);
                 }
-                else
-                {
-                    Debug.LogWarning($"物品ID冲突: {item.itemId} 已存在 ({item.itemName})");
-                }
 
-                // 名字索引 (可选，方便调试)
+                // Name 索引
                 if (!_nameLookup.ContainsKey(item.itemName))
                 {
                     _nameLookup.Add(item.itemName, item);
+                }
+
+                // [新增] Int ID 索引
+                if (!_intIdLookup.ContainsKey(item.id))
+                {
+                    _intIdLookup.Add(item.id, item);
+                }
+                else
+                {
+                    Debug.LogWarning($"ItemDatabase: Duplicate Int ID {item.id} for {item.itemName}");
                 }
             }
         }
@@ -71,7 +82,6 @@ namespace LongLiveKhioyen
             if (_lookup.TryGetValue(id, out var item))
                 return item;
             
-            Debug.LogWarning($"未找到ID为 {id} 的物品");
             return null;
         }
         
@@ -84,5 +94,20 @@ namespace LongLiveKhioyen
             
             return null;
         }
+
+        // [新增] 基于 Int ID 获取物品
+        public ItemDefinition GetItem(int id)
+        {
+            if (_intIdLookup == null) Initialize();
+
+            if (_intIdLookup.TryGetValue(id, out var item))
+            {
+                return item;
+            }
+            
+            Debug.LogWarning($"ItemDatabase: Item Int ID {id} not found.");
+            return null;
+        }
     }
+    
 }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccfd271d83c94fa44be5df1d9ef63d13, type: 3}
   m_Name: Forests
   m_EditorClassIdentifier: 
+  id: 5
   unitName: 
   unitType: 1
   figure: {fileID: 0}
