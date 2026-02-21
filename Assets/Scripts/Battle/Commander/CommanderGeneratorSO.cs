@@ -24,10 +24,12 @@ namespace LongLiveKhioyen
             {
                 cmd.commanderName = identityRule.GenerateName();
                 cmd.portrait = identityRule.GetRandomPortrait();
+                cmd.race = identityRule.race;
             }
             else
             {
                 cmd.commanderName = "Unknown";
+                cmd.race = Race.Han;
             }
 
             // 2. Stats
@@ -50,9 +52,16 @@ namespace LongLiveKhioyen
 
             if (traitsRule != null)
             {
-                traitsRule.ApplyTraits(cmd);
+                traitsRule.ApplyTraits(cmd,profile.level);
             }
-
+            int targetLevel = profile.level;
+            cmd.level = 1;
+            
+            for (int i = 1; i < targetLevel; i++)
+            {
+                cmd.LevelUp();
+            }
+            
             return cmd;
         }
     }

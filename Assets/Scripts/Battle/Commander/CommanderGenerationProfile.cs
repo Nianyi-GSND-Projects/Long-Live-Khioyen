@@ -8,12 +8,14 @@ namespace LongLiveKhioyen
         public string identityRule; 
         public string statsRule;
         public string traitsRule;
+        public int level;
 
         public static CommanderGenerationProfile Default => new CommanderGenerationProfile
         {
             identityRule = "Han",
             statsRule = "Balanced",
-            traitsRule = "Standard"
+            traitsRule = "Standard",
+            level = 1
         };
     }
 }

@@ -13,3 +13,9 @@ MonoBehaviour:
   m_Name: Standard
   m_EditorClassIdentifier: 
   ruleName: Standard
+  possiblePersonalities:
+  - {fileID: 11400000, guid: d7daa87ce2afdd34ab42ced61de6b1f3, type: 2}
+  possibleTraits:
+  - {fileID: 11400000, guid: 1b240a6e57ff91e40832398a76636da1, type: 2}
+  possibleActions:
+  - {fileID: 0}

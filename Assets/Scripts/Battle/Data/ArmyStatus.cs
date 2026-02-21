@@ -72,22 +72,4 @@ namespace LongLiveKhioyen
 
 	}
 
-	[Serializable]
-	public class GameCommander
-	{
-		public int commanderId;
-		public string commanderName;
-		public Sprite portrait;
-
-		public int Zhi;
-		public int Xin;
-		public int Ren;
-		public int Yong;
-		public int Yan;
-
-		public bool isAssigned;
-
-		public List<ActionDefinition> commanderActions = new List<ActionDefinition>();
-	}
-
 }

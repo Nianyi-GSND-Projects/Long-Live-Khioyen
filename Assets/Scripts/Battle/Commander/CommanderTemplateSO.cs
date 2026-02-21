@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
@@ -8,6 +9,8 @@ namespace LongLiveKhioyen
         [Header("Basic Info")]
         public string commanderName;
         public Sprite portrait;
+        public Race race;
+        [Min(1)] public int level = 1;
         
         [Header("Stats")]
         [Range(1, 100)] public int Zhi = 50;
@@ -16,6 +19,11 @@ namespace LongLiveKhioyen
         [Range(1, 100)] public int Yong = 50;
         [Range(1, 100)] public int Yan = 50;
         
+        [Header("Traits & Skills")]
+        public CommanderPersonalitySO personality;
+        public List<CommanderTraitSO> traits;
+        public List<ActionDefinition> commanderActions;
+        
         public GameCommander CreateInstance(int newId)
         {
             return new GameCommander()
@@ -23,11 +31,19 @@ namespace LongLiveKhioyen
                 commanderId = newId,
                 commanderName = commanderName,
                 portrait = portrait,
+                race = race,
+                level = level,
+            
                 Zhi = Zhi,
                 Xin = Xin,
                 Ren = Ren,
                 Yong = Yong,
                 Yan = Yan,
+            
+                personality = personality,
+                traits = new List<CommanderTraitSO>(traits),
+                commanderActions = new List<ActionDefinition>(commanderActions),
+            
                 isAssigned = false
             };
         }
