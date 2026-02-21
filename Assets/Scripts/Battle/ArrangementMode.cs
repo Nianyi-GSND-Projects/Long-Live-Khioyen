@@ -61,8 +61,6 @@ namespace LongLiveKhioyen
 
        protected void OnPrimaryClick(InputValue value)
        {
-           
-           Debug.Log("Primary Click");
            var raw = value.isPressed;
            isPrimaryButtonDown = raw;
            

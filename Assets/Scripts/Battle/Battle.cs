@@ -487,7 +487,8 @@ namespace LongLiveKhioyen
 			factionActiveUnits[Faction.Player].Add(SpawnBattalion(battalionDescriptor,mapPosition));
 			ClearReserveTeamSelection();
 		}
-		
+		public bool IsUnitMoving { get; private set; } = false;
+
 		public void MovingBattalion(Vector2Int mapPosition)
 		{
 			if (!IsUnitSelected)
@@ -495,7 +496,7 @@ namespace LongLiveKhioyen
 				Debug.Log("No battalion selected.");
 				return;
 			}
-			
+			if (IsUnitMoving) return;
 			switch (CurrentStage)
 			{
 				case Stage.Arrangement:
@@ -507,22 +508,45 @@ namespace LongLiveKhioyen
 				
 				case Stage.Battle:
 					if (CurrentActionStage != PlayerActionStage.MovingBattalion) break;
-					if (mapPosition != SelectedUnit.position)
-					{
-						SelectedUnit.hasMovedThisTurn = true;
-					}
-					RemoveUnitFromMap(SelectedUnit);
-					SelectedUnit.position = mapPosition;
-					//TODO:移动实际减少移动力
-					SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
-					PlaceUnitOnMap(SelectedUnit, SelectedUnit.position);
-					ChangeActionStage(PlayerActionStage.SelectingAction);
+					StartCoroutine(PerformPlayerMove(SelectedUnit, mapPosition));
 					break;
 				
 				default:
 					break;
 			}
 			
+		}
+		
+		private IEnumerator PerformPlayerMove(Unit unit, Vector2Int targetPos)
+		{
+			IsUnitMoving = true;
+	
+			// 1. 计算路径
+			// 注意：FindPath 需要在 Battle.cs 中实现 (之前为 AI 加的那个)
+			List<Vector2Int> path = FindPath(unit.position, targetPos, unit);
+	
+			if (path != null && path.Count > 0)
+			{
+				// 2. 执行移动动画
+				yield return StartCoroutine(MoveUnit(unit, path));
+		
+				// 3. 移动后逻辑
+				if (targetPos != initialUnitPosition) // 检查是否真的动了
+				{
+					unit.hasMovedThisTurn = true;
+				}
+		
+				// TODO: 移动实际减少移动力 (目前简化为不减，或者在 MoveUnit 里减)
+				// unit.currentMovement -= path.Count; 
+
+				ChangeActionStage(PlayerActionStage.SelectingAction);
+			}
+			else
+			{
+				Debug.LogError($"无法找到通往 {targetPos} 的路径！");
+			}
+
+			IsUnitMoving = false;
 		}
 		#endregion
 
@@ -595,7 +619,7 @@ namespace LongLiveKhioyen
 		public void InteractWithTile(Vector2Int gridPos)
 		{
 			if (!IsValidMapPosition(gridPos)) return;
-			
+			if (IsUnitMoving) return;
 			if (CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget) 
 				return;
 			
@@ -749,7 +773,7 @@ namespace LongLiveKhioyen
 			}
 		}
 		
-		private void ResolveDirtyUnits()
+		public void ResolveDirtyUnits()
 		{
 			if (dirtyUnits.Count == 0) return;
 
@@ -1001,13 +1025,19 @@ namespace LongLiveKhioyen
 				
 				if (BattleEventManager.Instance != null)
 					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnTurnEnd);
-
+				
+				CheckBattleEnd();
+				if (CurrentStage == Stage.Settlement) yield break;
+				
 				CurrentTurnState = TurnState.Processing;
 				yield return new WaitForSeconds(1);
 				if (CheckGameOver()) yield break;
 				
 				CurrentTurnState = TurnState.EnemyTurn;
 				yield return StartCoroutine(EnemyTurnCoroutine());
+				
+				CheckBattleEnd();
+				if (CurrentStage == Stage.Settlement) yield break;
 				
 				CurrentTurnState = TurnState.Processing;
 				yield return new WaitForSeconds(1);
@@ -1044,37 +1074,42 @@ namespace LongLiveKhioyen
 			}
 			OnPlayerTurnEnded?.Invoke();
 		}
-		
+
 		private IEnumerator EnemyTurnCoroutine()
 		{
-			
 			Debug.Log("Enemy Turn!");
-			yield return new WaitForSeconds(2.0f); 
+			yield return new WaitForSeconds(1.0f); 
+			
+			
+			// 获取所有敌方单位
 			List<Unit> enemyUnits = new List<Unit>(factionActiveUnits[Faction.Enemy]);
+			
 			foreach (var unit in enemyUnits)
 			{
-				
-				if (unit == null || !unit.gameObject.activeSelf) continue;
-				if (unit is not Battalion aiBattalion) continue;
-				
-				aiBattalion.currentMovement = aiBattalion.Definition.defaultFlexibility/10;
-				
-				yield return new WaitForSeconds(0.5f);
-				
-				yield return StartCoroutine(ProcessAIUnitTurn(aiBattalion));
-				
-				yield return new WaitForSeconds(0.3f);
+				if (unit != null && unit.gameObject.activeSelf)
+				{
+					unit.OnTurnStart();
+				}
 			}
+				
+			// 确保 AIController 存在
+			if (AIController.Instance == null)
+			{
+				// 如果场景里没挂，临时挂一个
+				gameObject.AddComponent<AIController>();
+			}
+
+			// 交给 AIController 处理
+			yield return StartCoroutine(AIController.Instance.ProcessTurn(enemyUnits));
 			
-			//TODO：加入敌人逻辑
 			Debug.Log("Enemy Turn End!");
 			
+			// 重置状态
 			foreach (var unit in factionActiveUnits[Faction.Enemy])
 			{
 				unit.actionDone = false;
 			}
 		}
-		
 		
 		public void EndPlayerTurn()
 		{
@@ -1256,6 +1291,41 @@ namespace LongLiveKhioyen
 			}
 		}
 		
+		public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path)
+		{
+			if (unit == null || path == null || path.Count == 0) yield break;
+
+			// 1. 标记移动开始
+			unit.hasMovedThisTurn = true;
+			
+			// 2. 逐步移动 (简单的协程动画)
+			foreach (var pos in path)
+			{
+				// 移除旧位置占位
+				RemoveUnitFromMap(unit);
+				
+				// 更新数据坐标
+				unit.position = pos;
+				
+				// 放置新位置占位
+				PlaceUnitOnMap(unit, pos);
+				
+				// 更新视觉位置 (简单的插值动画)
+				Vector3 startPos = unit.transform.localPosition;
+				Vector3 endPos = MapToLocal(pos);
+				float t = 0;
+				while (t < 1f)
+				{
+					t += Time.deltaTime * 5f; // 移动速度
+					unit.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+					yield return null;
+				}
+				unit.transform.localPosition = endPos;
+			}
+			
+			// 3. 移动结束处理
+			unit.OnUnitStateChanged();
+		}
 		#endregion
 		
 		#region View Control
@@ -1890,117 +1960,6 @@ namespace LongLiveKhioyen
 		
 		#endregion
 		
-		#region AI
-		
-		private IEnumerator ProcessAIUnitTurn(Battalion aiUnit)
-		{
-			//Testing 只有攻击指令
-			Debug.Log("Enemy Action Start!");
-			
-			Faction targetFaction = Faction.Player;
-			Unit target = FindNearestUnit(aiUnit, targetFaction,UnitTypeFilter.BattalionOnly);
-
-			if (target == null)
-			{
-				Debug.Log($"Enemy {aiUnit.InstanceId} has no target.");
-				yield break;
-			}
-			
-			int dist = GetHexDistance(aiUnit.position, target.position);
-			
-			if (dist <= aiUnit.Definition.attackRange)
-			{
-				Debug.Log($"Enemy {aiUnit.InstanceId} attacks directly.");
-				DoAIAttack(aiUnit, target);
-			}
-			else
-			{
-				
-				HashSet<Vector2Int> moveableTiles = GetAccessableTilesInRange(aiUnit, aiUnit.currentMovement);
-				
-				Vector2Int bestPos = aiUnit.position;
-				int minDistanceToTarget = int.MaxValue;
-				bool canAttackFromBestPos = false;
-
-				foreach (var pos in moveableTiles)
-				{
-					if (pos != aiUnit.position && !CanUnitStopOnTile(aiUnit,pos)) continue;
-
-					int d = GetHexDistance(pos, target.position);
-					
-					bool inRange = d <= aiUnit.Definition.attackRange;
-					
-					if (inRange && !canAttackFromBestPos)
-					{
-						bestPos = pos;
-						minDistanceToTarget = d;
-						canAttackFromBestPos = true;
-					}
-					else if (inRange == canAttackFromBestPos)
-					{
-						if (d < minDistanceToTarget)
-						{
-							bestPos = pos;
-							minDistanceToTarget = d;
-						}
-					}
-				}
-				
-				if (bestPos != aiUnit.position)
-				{
-
-					DoAIMove(aiUnit, bestPos);
-					yield return new WaitForSeconds(0.5f);
-					
-					if (GetHexDistance(aiUnit.position, target.position) <= aiUnit.Definition.attackRange)
-					{
-						DoAIAttack(aiUnit, target);
-					}
-				}
-			}
-
-			aiUnit.actionDone = true;
-		}
-		
-		private void DoAIMove(Battalion unit, Vector2Int targetPos)
-		{
-			RemoveUnitFromMap(unit);
-			
-			unit.position = targetPos;
-			
-			PlaceUnitOnMap(unit, targetPos);
-			
-			unit.transform.localPosition = MapToLocal(unit.position);
-			
-			Debug.Log($"Enemy moved to {targetPos}");
-		}
-		
-		private void DoAIAttack(Battalion source, Unit target)
-		{
-			ActionDefinition attackAction = source.DefaultAttack;
-
-			if (attackAction == null)
-			{
-				Debug.LogError($"Unit {source.name} has no DefaultAttack defined!");
-				return;
-			}
-
-			// 2. 直接调用 ActionDefinition 的 Perform
-			bool success = attackAction.Perform(source, target.position);
-    
-			if(success)
-			{
-				Debug.Log($"Enemy attacked {target.name}");
-				
-				CheckDeath(source);
-				CheckDeath(target);
-        
-				source.actionDone = true; 
-			}
-		}
-		
-		#endregion
-		
 		#region Range
 		
 		public HashSet<Vector2Int> GetAccessableTilesInRange(Unit movingUnit, int range)
@@ -2064,6 +2023,60 @@ namespace LongLiveKhioyen
 			return validDestinations;
 		}
 		
+		// 简单的 BFS 寻路，返回路径列表
+		public List<Vector2Int> FindPath(Vector2Int start, Vector2Int end, Unit unit)
+		{
+			List<Vector2Int> path = new List<Vector2Int>();
+			if (start == end) return path;
+
+			Queue<Vector2Int> frontier = new Queue<Vector2Int>();
+			frontier.Enqueue(start);
+			
+			Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+			cameFrom[start] = start; // 标记起点
+
+			while (frontier.Count > 0)
+			{
+				Vector2Int current = frontier.Dequeue();
+
+				if (current == end) break;
+
+				int parity = current.y & 1;
+				foreach (var offset in neighborOffsets[parity])
+				{
+					Vector2Int next = current + offset;
+					
+					if (!IsValidMapPosition(next)) continue;
+					if (cameFrom.ContainsKey(next)) continue;
+					
+					// 检查通行性 (如果是终点，允许停留检查；如果是中间点，允许穿过检查)
+					bool isEnd = (next == end);
+					if (isEnd)
+					{
+						if (!CanUnitStopOnTile(unit, next)) continue;
+					}
+					else
+					{
+						if (!CanUnitPassThroughTile(unit, next)) continue;
+					}
+
+					frontier.Enqueue(next);
+					cameFrom[next] = current;
+				}
+			}
+
+			if (!cameFrom.ContainsKey(end)) return null; // 无法到达
+
+			// 重建路径
+			Vector2Int curr = end;
+			while (curr != start)
+			{
+				path.Add(curr);
+				curr = cameFrom[curr];
+			}
+			path.Reverse();
+			return path;
+		}
 		
 		public HashSet<Vector2Int> GetValidActionTargetTiles(Unit user, ActionDefinition action)
         {
@@ -2183,10 +2196,87 @@ namespace LongLiveKhioyen
 		
 		#region End Game
 		
-		private void EndGame(bool isWin)
+		public void CheckBattleEnd()
 		{
-			
-			//TODO：跳转结算阶段
+			if (CurrentStage == Stage.Settlement) return; // 防止重复触发
+
+			bool isBattleOver = false;
+			bool isWin = false;
+
+			switch (data.battleGoal)
+			{
+				case BattleGoal.Annihilate:
+					(isBattleOver, isWin) = CheckAnnihilateCondition();
+					break;
+		
+				// TODO: 其他模式 (Capture, Survive, etc.)
+				// case BattleGoal.Capture: ...
+		
+				default:
+					Debug.LogWarning($"未实现的战斗目标: {data.battleGoal}");
+					break;
+			}
+
+			if (isBattleOver)
+			{
+				EndBattle(isWin);
+			}
+		}
+		
+		private (bool isOver, bool isWin) CheckAnnihilateCondition()
+		{
+			bool enemyWipedOut = true;
+			if (factionActiveUnits.ContainsKey(Faction.Enemy))
+			{
+				foreach (var unit in factionActiveUnits[Faction.Enemy])
+				{
+					if (unit != null && unit.gameObject.activeSelf)
+					{
+						enemyWipedOut = false;
+						break;
+					}
+				}
+			}
+	
+			if (enemyWipedOut) return (true, true);
+
+			bool playerWipedOut = true;
+			if (factionActiveUnits.ContainsKey(Faction.Player))
+			{
+				foreach (var unit in factionActiveUnits[Faction.Player])
+				{
+					if (unit != null && unit.gameObject.activeSelf)
+					{
+						playerWipedOut = false;
+						break;
+					}
+				}
+			}
+
+			if (playerWipedOut) return (true, false);
+
+			return (false, false);
+		}
+		
+		
+		private void EndBattle(bool isWin)
+		{
+			Debug.Log($"战斗结束！结果: {(isWin ? "胜利" : "失败")}");
+	
+			// 1. 切换阶段
+			ChangeStage(Stage.Settlement);
+
+			// 2. 显示结算 UI (这里假设有一个 BattleResultUI 单例)
+			if (BattleResultUI.Instance != null)
+			{
+				BattleResultUI.Instance.Show(isWin);
+			}
+			else
+			{
+				Debug.LogError("BattleResultUI Instance not found!");
+				// 临时 fallback: 直接退出
+				// ExitBattle(); 
+			}
 		}
 
 		private void ApplyArmyChangesToArmyStatus()
