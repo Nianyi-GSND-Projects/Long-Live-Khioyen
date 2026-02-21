@@ -520,7 +520,14 @@ namespace LongLiveKhioyen
 		private IEnumerator PerformPlayerMove(Unit unit, Vector2Int targetPos)
 		{
 			IsUnitMoving = true;
-	
+			
+			if (targetPos == unit.position)
+			{
+				// 直接进入行动选择阶段
+				ChangeActionStage(PlayerActionStage.SelectingAction);
+				IsUnitMoving = false;
+				yield break;
+			}
 			// 1. 计算路径
 			// 注意：FindPath 需要在 Battle.cs 中实现 (之前为 AI 加的那个)
 			List<Vector2Int> path = FindPath(unit.position, targetPos, unit);
@@ -2225,35 +2232,37 @@ namespace LongLiveKhioyen
 		
 		private (bool isOver, bool isWin) CheckAnnihilateCondition()
 		{
-			bool enemyWipedOut = true;
+			bool enemyBattalionWipedOut = true;
 			if (factionActiveUnits.ContainsKey(Faction.Enemy))
 			{
 				foreach (var unit in factionActiveUnits[Faction.Enemy])
 				{
-					if (unit != null && unit.gameObject.activeSelf)
+					if (unit is Battalion bat && bat.gameObject.activeSelf && bat.currentSoliders > 0)
 					{
-						enemyWipedOut = false;
+						enemyBattalionWipedOut = false;
 						break;
 					}
 				}
 			}
 	
-			if (enemyWipedOut) return (true, true);
+			if (enemyBattalionWipedOut) return (true, true);
 
-			bool playerWipedOut = true;
+			bool playerBattalionWipedOut = true;
 			if (factionActiveUnits.ContainsKey(Faction.Player))
 			{
 				foreach (var unit in factionActiveUnits[Faction.Player])
 				{
-					if (unit != null && unit.gameObject.activeSelf)
+					// 关键修改：只检查 Battalion 类型
+					if (unit is Battalion bat && bat.gameObject.activeSelf && bat.currentSoliders > 0)
 					{
-						playerWipedOut = false;
+						playerBattalionWipedOut = false;
 						break;
 					}
 				}
 			}
 
-			if (playerWipedOut) return (true, false);
+			if (playerBattalionWipedOut) return (true, false); // 我方部队全灭 -> 失败
+
 
 			return (false, false);
 		}
