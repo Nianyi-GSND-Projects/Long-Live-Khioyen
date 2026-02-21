@@ -18,8 +18,6 @@ namespace LongLiveKhioyen
         public int defaultMaxDurability;
         
         public int defaultCost;
-        
-        public int defaultPower;
 
         public bool special;
 

@@ -30,6 +30,12 @@ namespace LongLiveKhioyen
         
         #endregion
         
+        #region Stats
+        
+        public int defaultPower;
+        public int defaultDefense;
+        
+        #endregion
         
         #region Accessibility
         

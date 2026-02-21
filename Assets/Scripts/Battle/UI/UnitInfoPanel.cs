@@ -51,8 +51,7 @@ namespace LongLiveKhioyen
         public void UpdateUI(BattalionDescriptor desc)
         {
 
-            int baseMove = desc.Definition != null ? desc.Definition.defaultFlexibility / 10 : 0;
-            
+            int baseMove = desc.flexibility / 10;
             DisplayInfo(
                 desc.Definition.unitName,
                 desc.currentSoliders, desc.maxSolider,

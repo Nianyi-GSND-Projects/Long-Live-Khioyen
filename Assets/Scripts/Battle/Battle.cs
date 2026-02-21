@@ -286,10 +286,20 @@ namespace LongLiveKhioyen
 				{
 					if (spawnData.isFacility)
 					{
-						Facility facility = SpawnUnit<Facility, FacilityDefinition>(
-							spawnData.facilityDef,
-							spawnData.position,
-							spawnData.faction
+						FacilityDescriptor facDesc = new FacilityDescriptor
+						{
+							Definition = spawnData.facilityDef,
+							faction = spawnData.faction,
+							instanceId = -1, // 或者生成一个 ID
+                          
+							// 应用 Override (如果有)
+							maxDurability = spawnData.facilityDef.defaultMaxDurability,
+							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
+						};
+						
+						Facility facility = SpawnUnit<Facility, FacilityDefinition,FacilityDescriptor>(
+							facDesc,
+							spawnData.position
 						);
 			
 						factionActiveUnits[Faction.Player].Add(facility);
@@ -332,42 +342,9 @@ namespace LongLiveKhioyen
 				}
 				return; // [关键] 既然读了预设，就跳过后面的随机生成
 			}
-			#if BATTLE_TEST
-			for (int i = 0; i < data.enemyCount; i++)
-			{
-				BattalionDescriptor battalionDescriptor = new()
-				{
-					armyId = -1,
-					Definition = defaultEnemyDefinition,
-					faction = Faction.Enemy,
-					battalionCommander = null,
-					currentSoliders = defaultEnemyDefinition.defaultMaxSolider,
-					currentMurale = defaultEnemyDefinition.defaultMaxMorale,
-					currentTraining = 0,
-					maxSolider = defaultEnemyDefinition.defaultMaxSolider,
-					maxMorale = defaultEnemyDefinition.defaultMaxMorale,
-					maxTraining = 0,
-					placed = false
-				};
-				enemyReserveTeam.Add(battalionDescriptor);
-			}
-			
-			
-			
-			foreach (BattalionDescriptor battalionDescriptor in enemyReserveTeam)
-			{
-				Vector2Int pos = GetRandomValidPosition(UnitPassability.Stoppable);
-				while (availableArrangementPositions.Contains(pos))
-				{
-					pos = GetRandomValidPosition(UnitPassability.Stoppable);
-				}
-				factionActiveUnits[Faction.Enemy].Add(SpawnBattalion(battalionDescriptor,pos));
-			}
 
-			GenerateTestFacilities();
-#else
-			GenerateEnemyData();
-#endif
+			//GenerateEnemyData();
+
 
 
 			//TODO 
@@ -415,23 +392,6 @@ namespace LongLiveKhioyen
 				battleGoal = BattleGoal.Annihilate,
 				enemyCount = 4
 			};
-		}
-		
-		private void GenerateTestFacilities()
-		{
-			if (testFacilityDefinition == null) return;
-
-			// 找一个可以停的随机位置
-			Vector2Int pos = GetRandomValidPosition(UnitPassability.Stoppable);
-			
-			Facility facility = SpawnUnit<Facility, FacilityDefinition>(
-				testFacilityDefinition,
-				pos,
-				Faction.Player
-			);
-			
-			factionActiveUnits[Faction.Player].Add(facility);
-			Debug.Log($"生成了测试设施 {testFacilityDefinition.unitName} at {pos}");
 		}
 		
 		private void GenerateTestArmyData()
@@ -1742,20 +1702,21 @@ namespace LongLiveKhioyen
 			ClearAllSelection(); // 防止 UI 还留着
 		}
 		
-		public TUnit SpawnUnit<TUnit, TDef>(TDef definition, Vector2Int pos, Faction faction, int instanceId = -1) 
+		public TUnit SpawnUnit<TUnit, TDef, TDesc>(TDesc descriptor, Vector2Int pos) 
 			where TUnit : Unit<TDef>
 			where TDef : UnitDefinition
+			where TDesc : UnitDescriptor
 		{
 			// 1. 创建 GameObject
-			var go = new GameObject($"{typeof(TUnit).Name}_{definition.unitName}");
-            
+			var go = new GameObject($"{typeof(TUnit).Name}_{descriptor.Definition.unitName}");
+
 			// 2. 挂载组件
 			var unit = go.AddComponent<TUnit>();
             
 			// 3. 通用数据初始化
-			unit.Definition = definition;
-			unit.InstanceId = instanceId;
-			unit.faction = faction;
+			unit.Definition = (TDef)descriptor.Definition; 
+			unit.InstanceId = descriptor.instanceId;
+			unit.faction = descriptor.faction;
 			unit.position = pos;
             
 			// 4. 特殊初始化 (通过虚方法或类型判断)
@@ -1772,7 +1733,9 @@ namespace LongLiveKhioyen
 				bat.currentMurale = bat.Definition.defaultMaxMorale;
 				// 注意：BattalionDescriptor 里的数据会在 SpawnBattalion 的包装层里覆盖这里
 			}
-
+			
+			unit.CalculateEntryStats(descriptor);
+			
 			// 5. 视觉初始化
 			SetupUnitVisuals(unit);
             
@@ -1792,11 +1755,9 @@ namespace LongLiveKhioyen
 		Battalion SpawnBattalion(BattalionDescriptor descriptor, Vector2Int position)
 		{
 			// [调用通用方法]
-			Battalion battalion = SpawnUnit<Battalion, BattalionDefinition>(
-				descriptor.Definition, 
-				position, 
-				descriptor.faction, 
-				descriptor.armyId
+			Battalion battalion = SpawnUnit<Battalion, BattalionDefinition,BattalionDescriptor>(
+				descriptor,
+				position
 			);
 
 			// [覆盖特定数据] (因为 Descriptor 里存了存档数据，比如兵力不一定是满的)

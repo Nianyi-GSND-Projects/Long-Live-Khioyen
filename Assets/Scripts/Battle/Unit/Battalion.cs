@@ -9,12 +9,16 @@ namespace LongLiveKhioyen
         public List<inBattleItem> inventory;
         public GameCommander battalionCommander;
         
-        public int currentSoliders;
+        public int currentSoliders
+        {
+            get => currentHealth;
+            set => currentHealth = value;
+        }
+        
         public int currentMurale;
         public int currentTraining;
-        
         public int currentMovement;
-        
+
         
 
         public Battalion()
@@ -23,24 +27,74 @@ namespace LongLiveKhioyen
             inventory = new List<inBattleItem>();
         }
 
-        public override void TakeDamage(int damage)
-        {
-            currentSoliders -= damage;
-            Debug.Log($"Battalion {InstanceId} take {damage} damage, current soliders: {currentSoliders}");
-            
-            if (Battle.Instance != null) 
-                Battle.Instance.MarkUnitDirty(this);
-        }
-
         public override float GetPower()
         {
-            if (Definition.defaultMaxSolider == 0) return 0;
-            float result = Definition.defaultPower * ((float)currentSoliders / Definition.defaultMaxSolider);
-            Debug.Log($"User {name} Power: {result}");
-            return result;
-            //Todo 将领系数影响
+            if (entryStats == null) return 0;
+            float baseVal = entryStats.attackPower;
+            float ratio = (float)currentSoliders / entryStats.maxHealth;
+            //TODO：其他修正
+            
+            return baseVal * ratio;
         }
-
+        
+        public override float GetDefense()
+        {
+            if (entryStats == null) return 0;
+        
+            float baseVal = entryStats.defensePower;
+            float ratio = 1.0f;
+            //TODO:修正
+        
+            return baseVal * ratio;
+        }
+        
+        public float CurrentFlexibility
+        {
+            get
+            {
+                if (entryStats == null) return 0;
+            
+                float baseVal = entryStats.flexibility;
+            
+                float ratio = 1.0f;
+                //TODO:修正
+        
+                return baseVal * ratio;
+            }
+        }
+        
+        public int MaxMovement => Mathf.FloorToInt(CurrentFlexibility)/10;
+        
+        public float CurrentDiscipline
+        {
+            get
+            {
+                if (entryStats == null) return 0;
+                
+                float baseVal = entryStats.discipline;
+            
+                float ratio = 1.0f;
+                //TODO:修正
+        
+                return baseVal * ratio;
+            }
+        }
+        
+        public float CurrentStrategy
+        {
+            get
+            {
+                if (entryStats == null) return 0;
+                float baseVal = entryStats.strategy;
+            
+                float ratio = 1.0f;
+                //TODO:修正
+        
+                return baseVal * ratio;
+            }
+        }
+        
+        
         public override void ApplyBuff(BuffDescriptor buffDescriptor)
         {
             if (buffDescriptor.definition.unitType == BuffUnitType.Battalion ||
@@ -62,25 +116,42 @@ namespace LongLiveKhioyen
         {
             actionDone = false;
             hasMovedThisTurn = false;
-            currentMovement = Definition.defaultFlexibility / 10;
+            currentMovement = MaxMovement;
             //TODO
+        }
+        
+        public override void CalculateEntryStats(UnitDescriptor desc)
+        {
+            base.CalculateEntryStats(desc);
+        
+            if (desc is not BattalionDescriptor batDesc) return;
+
+            // 1. 基础值
+            float baseAttack = Definition.defaultPower;
+            float baseDef = Definition.defaultDefense;
+            int rawFlex = batDesc.flexibility > 0 ? batDesc.flexibility : Definition.defaultFlexibility;
+            int rawDisc = batDesc.discipline > 0 ? batDesc.discipline : Definition.defaultDiscipline; // 假设有
+            int rawStrat = batDesc.strategy > 0 ? batDesc.strategy : Definition.defaultStrategy; // 假设有
+
+            // 2. 指挥官属性修正
+            //3. 科技修正
+            //4.指挥官技能修正
+            //TODO
+            entryStats.maxHealth = batDesc.maxSolider;
+            entryStats.maxMorale = batDesc.maxMorale;
+            
+            entryStats.defensePower = baseDef;
+            entryStats.attackPower = baseAttack;
+            entryStats.discipline = rawDisc;
+            entryStats.strategy = rawStrat;
+            entryStats.flexibility = rawFlex;
+            //设置初始状态
+            currentHealth = batDesc.currentSoliders; // 从 Descriptor 读取初始兵力
+            currentMurale = batDesc.currentMurale;
+            currentTraining = batDesc.currentTraining;
+            Debug.Log($"[Stats] Battalion {name} Entry Stats Calculated.");
         }
     }
     
-    public class BattalionDescriptor
-    {
-        public int armyId;//部队在军队列表中的索引
-        public Faction faction;
-        public Vector2Int position;
-        public BattalionDefinition Definition;
-        public GameCommander battalionCommander;
-        public int maxSolider;
-        public int maxMorale;
-        public int maxTraining;
-        public int currentSoliders;
-        public int currentMurale;
-        public int currentTraining;
-        
-        public bool placed = false;
-    }
+    
 }

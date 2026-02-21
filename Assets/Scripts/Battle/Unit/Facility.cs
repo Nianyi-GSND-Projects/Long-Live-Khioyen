@@ -6,19 +6,37 @@ namespace LongLiveKhioyen
 {
     public class Facility : Unit<FacilityDefinition>
     {
-        public int currentDurability;
-        
-        public override void TakeDamage(int damage)
+        public int currentDurability
         {
-            currentDurability -= damage;
-            if (Battle.Instance != null) 
-                Battle.Instance.MarkUnitDirty(this);
+            get => currentHealth;
+            set => currentHealth = value;
         }
         
         public override float GetPower()
         {
-            return Definition.defaultPower;
+            if (entryStats == null) return 0;
+            float ratio = 1.0f;
+            return entryStats.attackPower * ratio; 
         }
+        
+        public override float GetDefense()
+        {
+            if (entryStats == null) return 0;
+            float ratio = 1.0f;
+            return entryStats.defensePower* ratio;
+        }
+        
+        public int CurrentCost
+        {
+            get
+            {
+                if (entryStats == null) return 0;
+                
+                float ratio = 1.0f;
+                return Mathf.FloorToInt(entryStats.cost * ratio);
+            }
+        }
+        
         public override void ApplyBuff(BuffDescriptor buffDescriptor)
         {
             if (buffDescriptor.definition.unitType == BuffUnitType.Facility ||
@@ -34,13 +52,31 @@ namespace LongLiveKhioyen
                 buffs.Add(newBuff);
             }
         }
+        
+        public override void CalculateEntryStats(UnitDescriptor desc)
+        {
+            base.CalculateEntryStats(desc);
+        
+            if (desc is not FacilityDescriptor facDesc) return;
+            float baseDef = Definition.defaultDefense;
+            float basePower = Definition.defaultPower;
+            int rawCost = facDesc.cost > 0 ? facDesc.cost : Definition.defaultCost; // 假设 FacilityDefinition 有 defaultCost
+
+
+            // 2. 科技修正 (假设有)
+            // float techMod = TechManager.Instance.GetBuildingHealthBonus();
+
+            // 3. 赋值
+            entryStats.defensePower = baseDef;
+            entryStats.maxHealth = facDesc.maxDurability;
+            entryStats.attackPower = basePower;
+            
+            entryStats.cost = rawCost;
+            
+            currentHealth = facDesc.currentDurability;
+            
+            Debug.Log($"[Stats] Facility {name} Entry Stats Calculated.");
+        }
     }
     
-    public class FacilityDescriptor
-    {
-        public int InstanceId;
-        public Vector2Int position;
-        public FacilityDefinition Definition;
-        public int currentDurability;
-    }
 }

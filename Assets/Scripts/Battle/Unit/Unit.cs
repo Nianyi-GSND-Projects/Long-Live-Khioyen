@@ -15,15 +15,18 @@ namespace LongLiveKhioyen
     public abstract class Unit : MonoBehaviour
     {
         public int InstanceId { get; set; } 
-        public Vector2Int position { get; set; }
+        public Faction faction;
         
+        public abstract UnitDefinition unitDefinition { get; }
+        public UnitEntryStats entryStats;
+        
+        [Header("InBattle State")]
+        public int currentHealth;
+        public List<Buff> buffs = new();
         public bool selected;
         public bool actionDone;
         public bool hasMovedThisTurn = false;
-        public Faction faction;
-        public abstract UnitDefinition unitDefinition { get; }
-        
-        public List<Buff> buffs = new();
+        public Vector2Int position { get; set; }
         
         protected virtual void Start()
         {
@@ -33,6 +36,11 @@ namespace LongLiveKhioyen
             {
                 visualController.Initialize(this);
             }
+        }
+        
+        public virtual void CalculateEntryStats(UnitDescriptor desc)
+        {
+            entryStats = new UnitEntryStats();
         }
         
         public void OnUnitStateChanged()
@@ -67,6 +75,7 @@ namespace LongLiveKhioyen
         {
             actionDone = false;
             hasMovedThisTurn = false;
+            
         }
         
         #region Action
@@ -100,10 +109,42 @@ namespace LongLiveKhioyen
 
         #region Effect
 
-        public abstract void TakeDamage(int damage);//该单位受到伤害
-
-        public abstract float GetPower(); //获取该单位的攻击力
+        public virtual void TakeDamage(int rawDamage)
+        {
+            if (entryStats == null) return;
+            
+            float threshold = Mathf.Max(1.0f, entryStats.defensePower);
+            int healthLoss = Mathf.FloorToInt(rawDamage / threshold);
+            
+            if (healthLoss > 0)
+            {
+                currentHealth -= healthLoss;
+                currentHealth = Mathf.Max(0, currentHealth);
+                
+                Debug.Log($"{name} took {rawDamage} raw damage. Threshold: {threshold}. Lost {healthLoss} HP. Remaining: {currentHealth}");
+                
+                OnHealthChanged();
+                
+                if (Battle.Instance != null) 
+                    Battle.Instance.MarkUnitDirty(this);
+            }
+            else
+            {
+                Debug.Log($"{name} took {rawDamage} raw damage but resisted (Threshold: {threshold}).");
+            }
+        }
         
+        protected virtual void OnHealthChanged() { }
+
+        public virtual float GetPower()
+        {
+            return entryStats != null ? entryStats.attackPower : 0;
+        }
+        
+        public virtual float GetDefense() 
+        {
+            return entryStats != null ? entryStats.defensePower : 0;
+        }
         public void ReceiveForcedMove(Vector2Int newPosition)
         {
             Vector2Int oldPosition = this.position;
