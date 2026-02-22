@@ -7565,6 +7565,10 @@ PrefabInstance:
       propertyPath: m_Maskable
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 977683873038332387, guid: ec6921ca7bc91d649a69b75e25fe88f8, type: 3}
+      propertyPath: pauseOnOpen
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1485741576956895949, guid: ec6921ca7bc91d649a69b75e25fe88f8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
