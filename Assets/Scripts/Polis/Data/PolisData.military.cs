@@ -45,6 +45,9 @@ namespace LongLiveKhioyen
 		/// <summary>使军队驻扎到城内。</summary>
 		public void GarrisonArmy(ArmyStatus army)
 		{
+			if(army == null)
+				return;
+
 			// 添加军队到城中
 			garrisonedBattalions.AddRange(army.battalionStatuses);
 
