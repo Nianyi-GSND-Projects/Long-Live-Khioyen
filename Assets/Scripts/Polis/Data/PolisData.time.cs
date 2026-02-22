@@ -22,7 +22,7 @@ namespace LongLiveKhioyen
 		#region 接口
 		public void PassTime(float amount)
 		{
-			int previousMonth = GameManager.ConvertToMonth(GameInstance.Instance.Data.time - amount);
+			int previousMonth = Mathf.FloorToInt((GameInstance.Instance.Data.time.ElapsedGameTime - amount) / GameTime.MonthToGameTime);
 			int currentMonth = GameInstance.Instance.Data.time.Month;
 			bool willPassMonth = currentMonth != 0 && previousMonth != currentMonth;
 

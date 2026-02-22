@@ -14,7 +14,7 @@ namespace LongLiveKhioyen
 
 		public static implicit operator float(GameTime gt) => gt.monthsElapsed;
 
-		static float MonthToGameTime => GameManager.InternalSettings.monthLength;
+		public static float MonthToGameTime => GameManager.InternalSettings.monthLength;
 		/// <summary>游戏开始于公元前 121 年。</summary>
 		const float startTime = -121 * 12;
 		public static float ElapsedMonthsToAbsolute(float months) => months + startTime;
@@ -25,6 +25,7 @@ namespace LongLiveKhioyen
 		public float Month_Interpolated => MathUtility.Mod(AbsoluteMonth_Interpolated, 12);
 		public int Month => Mathf.FloorToInt(Month_Interpolated);
 		public int Year => Mathf.FloorToInt(AbsoluteMonth_Interpolated / 12);
+		public float ElapsedGameTime => monthsElapsed * MonthToGameTime;
 		#endregion
 
 		#region 步进

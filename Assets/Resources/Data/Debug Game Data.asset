@@ -1,0 +1,124 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd43ed6a2e414342bef6272366feb4e, type: 3}
+  m_Name: Debug Game Data
+  m_EditorClassIdentifier: 
+  gameData:
+    world:
+      data3D:
+        scale: 0.025
+        terrainAddress: 
+        skyboxAddress: 
+      data2D:
+        scale: 0.0001
+        mapAddress: 
+    lastPolis: juyan
+    poleis:
+    - buildings:
+      - id: water-well
+        position: {x: 19, y: 19}
+        orientation: 2
+        underConstruction: 0
+      - id: commandant-office
+        position: {x: 24, y: 23}
+        orientation: 0
+        underConstruction: 0
+      - id: dwelling-trio-1
+        position: {x: 16, y: 26}
+        orientation: 0
+        underConstruction: 0
+      - id: horse-station
+        position: {x: 23, y: 16}
+        orientation: 0
+        underConstruction: 0
+      - id: barracks
+        position: {x: 20, y: 30}
+        orientation: 2
+        underConstruction: 0
+      id: juyan
+      type: 1
+      position: {x: 0, y: 0}
+      size: {x: 40, y: 40}
+      orientation: 22.5
+      economy:
+        food: 1000
+        material: 0
+        money: 800
+      population: 10
+      stockedItems:
+        records:
+        - itemId: debug-item-1
+          quantity: 2
+        - itemId: debug-item-2
+          quantity: 3
+        - itemId: debug-item-3
+          quantity: 1
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      tasks: []
+      lastTime: 0
+    - buildings: []
+      id: fanhe
+      type: 1
+      position: {x: -5000, y: 1000}
+      size: {x: 20, y: 20}
+      orientation: 15
+      economy:
+        food: 0
+        material: 0
+        money: 0
+      population: 0
+      stockedItems:
+        records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      tasks: []
+      lastTime: 0
+    - buildings: []
+      id: dunhuang
+      type: 1
+      position: {x: 5000, y: -3000}
+      size: {x: 50, y: 50}
+      orientation: 0
+      economy:
+        food: 0
+        material: 0
+        money: 0
+      population: 0
+      stockedItems:
+        records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      tasks: []
+      lastTime: 0
+    - buildings: []
+      id: huns-debug
+      type: 2
+      position: {x: 0, y: 5000}
+      size: {x: 10, y: 10}
+      orientation: 45
+      economy:
+        food: 0
+        material: 0
+        money: 0
+      population: 0
+      stockedItems:
+        records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      tasks: []
+      lastTime: 0
+    gameTime: 0

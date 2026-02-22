@@ -37,7 +37,7 @@ namespace LongLiveKhioyen
 			if(SceneManager.GetActiveScene().buildIndex != 0)
 			{
 				abruptDebug = true;
-				StartNewGame();
+				StartDebugGame();
 			}
 #endif
 		}
@@ -53,14 +53,14 @@ namespace LongLiveKhioyen
 			definition = BuildingDefinitions.Find(d => d.id == id);
 			return definition != null;
 		}
-		
-		
+
+
 		#endregion
-		
+
 		#region Local data
 		#region Settings
 		static readonly string settingsPath = Path.Combine(Application.persistentDataPath, "settings.json");
-		public static GameSettings settings { get; private set; }
+		public static GameSettings Settings { get; private set; }
 
 		static void EnsureSettingsPath()
 		{
@@ -76,19 +76,19 @@ namespace LongLiveKhioyen
 			{
 				try
 				{
-					settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText(settingsPath));
+					Settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText(settingsPath));
 				}
 				catch(Exception e)
 				{
 					Debug.LogWarning($"Failed to read game settings at {settingsPath}.");
 					Debug.LogError(e);
-					settings = null;
+					Settings = null;
 				}
 			}
 
-			if(settings == null)
+			if(Settings == null)
 			{
-				settings = new();
+				Settings = new();
 				WriteSettings();
 			}
 		}
@@ -98,18 +98,13 @@ namespace LongLiveKhioyen
 			try
 			{
 				EnsureSettingsPath();
-				File.WriteAllText(settingsPath, JsonUtility.ToJson(settings));
+				File.WriteAllText(settingsPath, JsonUtility.ToJson(Settings));
 			}
 			catch(Exception e)
 			{
 				Debug.LogWarning($"Failed to write game settings to {settingsPath}.");
 				Debug.LogError(e);
 			}
-		}
-
-		public static int ConvertToMonth(float time)
-		{
-			return Mathf.FloorToInt(time / InternalSettings.monthLength);
 		}
 		#endregion
 
@@ -235,6 +230,15 @@ namespace LongLiveKhioyen
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Initial Game Data").gameData);
 			StartGameInstanceWithData(data);
 		}
+
+#if UNITY_EDITOR
+		static void StartDebugGame()
+		{
+			Debug.LogWarning("启动 debug 存档。");
+			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Debug Game Data").gameData);
+			StartGameInstanceWithData(data);
+		}
+#endif
 
 		public static void LoadGame(string filename)
 		{

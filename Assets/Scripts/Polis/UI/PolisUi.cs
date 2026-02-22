@@ -177,7 +177,7 @@ namespace LongLiveKhioyen
 
 		void OnMonthPassed()
 		{
-			if(GameManager.settings.showMonthPassedPanel)
+			if(GameManager.Settings.showMonthPassedPanel)
 			{
 				GameInstance.Instance.Paused = true;
 				monthPassPanel.gameObject.SetActive(true);
