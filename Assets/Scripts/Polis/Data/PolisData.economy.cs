@@ -25,6 +25,44 @@ namespace LongLiveKhioyen
 			get => Economy.onChanged;
 			set => Economy.onChanged = value;
 		}
+
+		public List<ResourceDescriptor> MonthlyResourceChanges { get; private set; } = new();
+		/// <summary>度月时资源增长。</summary>
+		void UpdateResourcesMonthly()
+		{
+			MonthlyResourceChanges.Clear();
+			MonthlyResourceChanges.AddRange(CalculateMonthlyResourceChanges());
+			economy.Add(MonthlyResourceChanges);
+			NotifyPossiblePopulationChange();
+		}
+
+		IEnumerable<ResourceDescriptor> CalculateMonthlyResourceChanges()
+		{
+			// #### 钱财 ####
+
+			float dMoney = 0;
+
+			// 将驿站寄卖的物品折现
+			foreach(var record in forSaleItems)
+				dMoney += record.Definition.sellPrice * record.quantity;
+			forSaleItems.Clear();
+
+			yield return new() { type = ResourceType.Money, quantity = dMoney, };
+
+
+			// #### 粮食 ####
+			
+			yield return new() { type = ResourceType.Food, quantity = 100, };  // TODO: 粮食增长公式
+
+
+			// #### 人口 ####
+
+			int dPopulation = 2;  // TODO: “理应”的人口增长公式
+			if(Population + dPopulation > PopulationCap)
+				dPopulation = PopulationCap - Population;
+
+			yield return new() { type = ResourceType.Population, quantity = dPopulation, };
+		}
 		#endregion
 
 		#region 人口
@@ -43,7 +81,7 @@ namespace LongLiveKhioyen
 			set
 			{
 				population = Mathf.Min(value, PopulationCap);
-				onPopulationDataChanged?.Invoke();
+				NotifyPossiblePopulationChange();
 			}
 		}
 
@@ -179,20 +217,6 @@ namespace LongLiveKhioyen
 			from.ChangeItemQuantity(itemId, -quantity);
 			to.ChangeItemQuantity(itemId, quantity);
 			return true;
-		}
-
-		/// <summary>
-		/// 月尾将驿站寄卖的物品折现。
-		/// </summary>
-		void CashForSaleItemsAtEndOfMonth()
-		{
-			float sum = 0;
-			foreach(var record in forSaleItems)
-				sum += record.Definition.sellPrice * record.quantity;
-
-			forSaleItems.Clear();
-			economy.money += sum;
-			onEconomyChanged?.Invoke();
 		}
 		#endregion
 	}

@@ -9,14 +9,6 @@ namespace LongLiveKhioyen
 		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
 		[SerializeField] public GameTime lastTime = new();
 
-		#region 事件
-		void OnMonthPassed()
-		{
-			CashForSaleItemsAtEndOfMonth();
-			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(lastTime.Month, "zh-Hans")}。");
-		}
-		#endregion
-
 		#region 度时
 		public void PassTime(float amount)
 		{
@@ -51,6 +43,15 @@ namespace LongLiveKhioyen
 				ExecuteTask(task);
 			}
 			lastTime.AdvanceByInGameTime(amount);
+		}
+		#endregion
+
+		#region 度月
+		void OnMonthPassed()
+		{
+			UpdateResourcesMonthly();
+
+			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(lastTime.Month, "zh-Hans")}。");
 		}
 		#endregion
 	}
