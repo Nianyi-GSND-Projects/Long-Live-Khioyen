@@ -7,9 +7,9 @@ namespace LongLiveKhioyen
 	public partial class PolisData
 	{
 		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
-		[SerializeField] float lastTime;
+		[SerializeField] GameTime lastTime;
 
-		public float LastTime
+		public GameTime LastTime
 		{
 			get => lastTime;
 			set => lastTime = value;
@@ -87,7 +87,7 @@ namespace LongLiveKhioyen
 				RemoveTask(task);
 				ExecuteTask(task);
 			}
-			LastTime += amount;
+			LastTime.AdvanceByInGameTime(amount);
 		}
 		#endregion
 	}

@@ -33,7 +33,7 @@ namespace LongLiveKhioyen
 			InitializeTime();
 
 			// 度过累积的时间
-			float passedTime = GameInstance.Instance.Data.time - Data.LastTime;
+			float passedTime = GameInstance.Instance.Data.time.ElapsedGameTime - Data.LastTime.ElapsedGameTime;
 			Data.PassTime(passedTime);
 			GameInstance.Instance.onGameTimeAdvanced += Data.PassTime;
 		}
