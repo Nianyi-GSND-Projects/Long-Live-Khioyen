@@ -42,6 +42,9 @@ namespace LongLiveKhioyen
 				case PolisTaskType.itemProduced:
 					ExecuteCompleteProductionTask(task);
 					break;
+				case PolisTaskType.startDialog:
+					ExecuteStartDialogTask(task);
+					break;
 				default: throw new NotSupportedException();
 			}
 		}
@@ -74,5 +77,6 @@ namespace LongLiveKhioyen
 		public const string buildingConstructed = "building-constructed";
 		public const string monthPassed = "month-passed";
 		public const string itemProduced = "item-produced";
+		public const string startDialog = "start-dialog";
 	}
 }

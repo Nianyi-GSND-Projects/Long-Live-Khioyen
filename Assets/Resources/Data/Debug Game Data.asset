@@ -53,20 +53,36 @@ MonoBehaviour:
         food: 1000
         material: 0
         money: 800
+        items:
+          records: []
       population: 10
-      stockedItems:
-        records:
-        - itemId: debug-item-1
-          quantity: 2
-        - itemId: debug-item-2
-          quantity: 3
-        - itemId: debug-item-3
-          quantity: 1
       queuedProductions: []
       forSaleItems:
         records: []
-      tasks: []
-      lastTime: 0
+      nextPromotableCommander:
+        commanderId: 0
+        commanderName: 
+        portrait: {fileID: 0}
+        race: 0
+        level: 1
+        Zhi: 0
+        Xin: 0
+        Ren: 0
+        Yong: 0
+        Yan: 0
+        isAssigned: 0
+        personality: {fileID: 0}
+        traits: []
+        commanderActions: []
+      tasks:
+      - type: start-dialog
+        totalTime: 0
+        remainingTime: 0
+        requiredPopulation: 0
+        parameters:
+        - 2
+      lastTime:
+        monthsElapsed: 0
     - buildings: []
       id: fanhe
       type: 1
@@ -77,14 +93,30 @@ MonoBehaviour:
         food: 0
         material: 0
         money: 0
+        items:
+          records: []
       population: 0
-      stockedItems:
-        records: []
       queuedProductions: []
       forSaleItems:
         records: []
+      nextPromotableCommander:
+        commanderId: 0
+        commanderName: 
+        portrait: {fileID: 0}
+        race: 0
+        level: 1
+        Zhi: 0
+        Xin: 0
+        Ren: 0
+        Yong: 0
+        Yan: 0
+        isAssigned: 0
+        personality: {fileID: 0}
+        traits: []
+        commanderActions: []
       tasks: []
-      lastTime: 0
+      lastTime:
+        monthsElapsed: 0
     - buildings: []
       id: dunhuang
       type: 1
@@ -95,14 +127,30 @@ MonoBehaviour:
         food: 0
         material: 0
         money: 0
+        items:
+          records: []
       population: 0
-      stockedItems:
-        records: []
       queuedProductions: []
       forSaleItems:
         records: []
+      nextPromotableCommander:
+        commanderId: 0
+        commanderName: 
+        portrait: {fileID: 0}
+        race: 0
+        level: 1
+        Zhi: 0
+        Xin: 0
+        Ren: 0
+        Yong: 0
+        Yan: 0
+        isAssigned: 0
+        personality: {fileID: 0}
+        traits: []
+        commanderActions: []
       tasks: []
-      lastTime: 0
+      lastTime:
+        monthsElapsed: 0
     - buildings: []
       id: huns-debug
       type: 2
@@ -113,12 +161,29 @@ MonoBehaviour:
         food: 0
         material: 0
         money: 0
+        items:
+          records: []
       population: 0
-      stockedItems:
-        records: []
       queuedProductions: []
       forSaleItems:
         records: []
+      nextPromotableCommander:
+        commanderId: 0
+        commanderName: 
+        portrait: {fileID: 0}
+        race: 0
+        level: 1
+        Zhi: 0
+        Xin: 0
+        Ren: 0
+        Yong: 0
+        Yan: 0
+        isAssigned: 0
+        personality: {fileID: 0}
+        traits: []
+        commanderActions: []
       tasks: []
-      lastTime: 0
-    gameTime: 0
+      lastTime:
+        monthsElapsed: 0
+    time:
+      monthsElapsed: 0
