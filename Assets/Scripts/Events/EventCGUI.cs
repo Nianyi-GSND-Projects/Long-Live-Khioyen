@@ -28,7 +28,8 @@ namespace LongLiveKhioyen
 
             cgImage.sprite = sprite;
             cgImage.gameObject.SetActive(true);
-
+            canvasGroup.blocksRaycasts = true;
+            
             float t = 0;
             while (t < 1f)
             {
@@ -51,6 +52,7 @@ namespace LongLiveKhioyen
                 yield return null;
             }
             canvasGroup.alpha = 0;
+            canvasGroup.blocksRaycasts = false;
             cgImage.gameObject.SetActive(false);
         }
     }
