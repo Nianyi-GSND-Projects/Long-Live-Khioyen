@@ -9,6 +9,11 @@ namespace LongLiveKhioyen
 		void InitializeTime()
 		{
 			GameInstance.Instance.TimeScale = 1.0f;
+
+			// 度过累积的时间
+			float passedTime = GameInstance.Instance.Data.time.ElapsedGameTime - Data.lastTime.ElapsedGameTime;
+			Data.PassTime(passedTime);
+			GameInstance.Instance.onGameTimeAdvanced += Data.PassTime;
 		}
 
 		void UpdateTime(float dt)
@@ -19,7 +24,11 @@ namespace LongLiveKhioyen
 
 		void FinalizeTime()
 		{
-			GameInstance.Instance.TimeScale = 1.0f;
+			if(GameInstance.Instance)
+			{
+				GameInstance.Instance.onGameTimeAdvanced -= Data.PassTime;
+				GameInstance.Instance.TimeScale = 1.0f;
+			}
 		}
 	}
 }

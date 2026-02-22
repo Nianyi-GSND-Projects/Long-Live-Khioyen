@@ -31,18 +31,10 @@ namespace LongLiveKhioyen
 			InitializeConstruction();
 			InitializeBuilding();
 			InitializeTime();
-
-			// 度过累积的时间
-			float passedTime = GameInstance.Instance.Data.time.ElapsedGameTime - Data.LastTime.ElapsedGameTime;
-			Data.PassTime(passedTime);
-			GameInstance.Instance.onGameTimeAdvanced += Data.PassTime;
 		}
 
 		void OnDestroy()
 		{
-			if(GameInstance.Instance)
-				GameInstance.Instance.onGameTimeAdvanced -= Data.PassTime;
-
 			FinalizeConstruction();
 			FinalizeBuilding();
 			FinalizeTime();

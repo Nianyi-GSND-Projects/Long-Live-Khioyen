@@ -36,9 +36,6 @@ namespace LongLiveKhioyen
 				case PolisTaskType.buildingConstructed:
 					ExecuteBuildingConstructedTask(task);
 					break;
-				case PolisTaskType.monthPassed:
-					ExecuteMonthPassedTask(task);
-					break;
 				case PolisTaskType.itemProduced:
 					ExecuteCompleteProductionTask(task);
 					break;
@@ -78,7 +75,6 @@ namespace LongLiveKhioyen
 	public static class PolisTaskType
 	{
 		public const string buildingConstructed = "building-constructed";
-		public const string monthPassed = "month-passed";
 		public const string itemProduced = "item-produced";
 		public const string startDialog = "start-dialog";
 		public const string scheduleDialog = "schedule-dialog";

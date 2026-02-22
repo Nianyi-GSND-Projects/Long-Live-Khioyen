@@ -16,6 +16,11 @@ namespace LongLiveKhioyen
 		public Vector2Int size;
 		[Range(0, 359)] public float orientation;
 
+		public PolisData()
+		{
+			lastTime.onMonthPassed += OnMonthPassed;
+		}
+
 		public LocalizedString GetLocalizedName()
 		{
 			return new("Polis Names", id);

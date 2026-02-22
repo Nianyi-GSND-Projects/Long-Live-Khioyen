@@ -7,55 +7,18 @@ namespace LongLiveKhioyen
 	public partial class PolisData
 	{
 		/// <summary>最后一次更新过此城池状态的游戏时间。</summary>
-		[SerializeField] GameTime lastTime;
-
-		public GameTime LastTime
-		{
-			get => lastTime;
-			set => lastTime = value;
-		}
+		[SerializeField] public GameTime lastTime = new();
 
 		#region 事件
-		public Action onMonthPassed;
-		#endregion
-
-		#region 接口
-		public void PassTime(float amount)
+		void OnMonthPassed()
 		{
-			int previousMonth = Mathf.FloorToInt((GameInstance.Instance.Data.time.ElapsedGameTime - amount) / GameTime.MonthToGameTime);
-			int currentMonth = GameInstance.Instance.Data.time.Month;
-			bool willPassMonth = currentMonth != 0 && previousMonth != currentMonth;
-
-			PassTime_Internal(amount);
-
-			if(willPassMonth)
-			{
-				// 这些信息现在还没用到，之后会显示在月度更迭的界面里。
-#pragma warning disable CS0219
-				int monthsPassed = currentMonth - previousMonth;
-				bool justReturned = false;  // 是否刚从外面回城。
-#pragma warning restore CS0219
-
-				onMonthPassed?.Invoke();
-			}
-		}
-		#endregion
-
-		#region 任务
-		/// <summary>
-		/// 月度更迭时要执行的逻辑，可根据需求填充。
-		/// </summary>
-		void ExecuteMonthPassedTask(PolisTask task)
-		{
-			int startingMonth = int.Parse(task.parameters[0]);
-			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(startingMonth, "zh-Hans")}。");
-
 			CashForSaleItemsAtEndOfMonth();
+			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(lastTime.Month, "zh-Hans")}。");
 		}
 		#endregion
 
-		#region 辅助
-		void PassTime_Internal(float amount)
+		#region 度时
+		public void PassTime(float amount)
 		{
 			if(Efficiency == 0)
 			{
@@ -87,7 +50,7 @@ namespace LongLiveKhioyen
 				RemoveTask(task);
 				ExecuteTask(task);
 			}
-			LastTime.AdvanceByInGameTime(amount);
+			lastTime.AdvanceByInGameTime(amount);
 		}
 		#endregion
 	}

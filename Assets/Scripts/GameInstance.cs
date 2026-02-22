@@ -27,7 +27,6 @@ namespace LongLiveKhioyen
 		{
 			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
 			Paused = false;
-			Data.time.onMonthPassed += PushMonthPassToPoleis;
 		}
 
 		/// <summary>
@@ -187,20 +186,6 @@ namespace LongLiveKhioyen
 		public void AdvanceTime_Scaled(float dt)
 		{
 			Data.time.AdvanceByInGameTime(dt * ActualTimeScale);
-		}
-
-		void PushMonthPassToPoleis()
-		{
-			Debug.Log($"游戏整体度月。当前时间：{Data.time.ToLocalizedString()}。");
-			foreach(var polis in Data.poleis)
-			{
-				PolisTask task = new(
-					PolisTaskType.monthPassed,
-					Data.time - polis.LastTime,
-					Data.time.Month.ToString()
-				);
-				polis.AddTask(task);
-			}
 		}
 
 		float timeScale = 1.0f;

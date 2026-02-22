@@ -62,8 +62,8 @@ namespace LongLiveKhioyen
 		void AdvanceNoticedSimple(float dMonth)
 		{
 			monthsElapsed += dMonth;
-			onAdvancedByGameTime?.Invoke(dMonth);
-			onAdvancedByMonth?.Invoke(dMonth * MonthToGameTime);
+			onAdvancedByGameTime?.Invoke(dMonth * MonthToGameTime);
+			onAdvancedByMonth?.Invoke(dMonth);
 		}
 		#endregion
 
@@ -98,7 +98,7 @@ namespace LongLiveKhioyen
 			switch(locale)
 			{
 				case "zh-Hans":
-					return $"{chineseNumbers[i]}月";
+					return $"{chineseNumbers[i + 1]}月";
 				case "en":
 				default:
 					return englishMonths[i];

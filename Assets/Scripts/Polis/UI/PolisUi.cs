@@ -27,7 +27,7 @@ namespace LongLiveKhioyen
 
 			Polis.onSelectionChanged += OnSelectionChanged;
 
-			GameInstance.Instance.Data.time.onMonthPassed += OnMonthPassed;
+			Polis.Data.lastTime.onMonthPassed += OnMonthPassed;
 		}
 
 		protected void Update()
@@ -39,7 +39,7 @@ namespace LongLiveKhioyen
 		{
 			Polis.Data.onPopulationDataChanged -= UpdatePopulation;
 			Polis.Data.onEconomyChanged -= UpdateEnocomy;
-			GameInstance.Instance.Data.time.onMonthPassed -= OnMonthPassed;
+			Polis.Data.lastTime.onMonthPassed -= OnMonthPassed;
 		}
 		#endregion
 
