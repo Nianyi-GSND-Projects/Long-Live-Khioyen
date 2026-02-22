@@ -75,12 +75,13 @@ MonoBehaviour:
         traits: []
         commanderActions: []
       tasks:
-      - type: start-dialog
+      - type: schedule-dialog
         totalTime: 0
         remainingTime: 0
         requiredPopulation: 0
         parameters:
         - 2
+        - 0
       lastTime:
         monthsElapsed: 0
     - buildings: []

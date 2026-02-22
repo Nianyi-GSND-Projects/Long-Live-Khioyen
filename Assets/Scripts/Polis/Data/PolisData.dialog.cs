@@ -4,15 +4,16 @@ namespace LongLiveKhioyen
 {
 	public partial class PolisData
 	{
-		public void PlanFutureDialog(int dialogId, float delay = 0)
+		public void ScheduleDialog(int dialogId, float delay = 0, bool instant = false)
 		{
-			PolisTask task = new(PolisTaskType.startDialog, delay, 0, $"{dialogId}");
+			var taskType = instant ? PolisTaskType.startDialog : PolisTaskType.scheduleDialog;
+			PolisTask task = new(taskType, delay, 0, $"{dialogId}");
 			AddTask(task);
 		}
 
 		void ExecuteStartDialogTask(PolisTask task)
 		{
-			var dialogId = int.Parse(task.parameters[0]);  // TODO: 应改为 string 更合理
+			var dialogId = int.Parse(task.parameters[0]);
 			var dialog = DialogDatabase.Instance.GetDialog(dialogId);
 			if(dialog == null)
 			{
@@ -26,6 +27,14 @@ namespace LongLiveKhioyen
 			dialogUi.onHidden += uiManager.CloseCurrentUiModal;
 			uiManager.OpenUiModal(dialogUi.gameObject, true);
 			dialogUi.StartDialogChain(dialog);
+		}
+
+		void ExecuteScheduleDialogTask(PolisTask task)
+		{
+			var dialogId = int.Parse(task.parameters[0]);
+			float delayTime = float.Parse(task.parameters[1]);
+
+			ScheduleDialog(dialogId, delayTime, true);
 		}
 	}
 }
