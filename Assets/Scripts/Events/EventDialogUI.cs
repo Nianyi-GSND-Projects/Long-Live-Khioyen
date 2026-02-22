@@ -21,7 +21,9 @@ namespace LongLiveKhioyen
 
         // 新增：对话队列
         private Queue<DialogData> _dialogQueue = new Queue<DialogData>();
-
+        
+        public bool IsActive => dialogPanel != null && dialogPanel.activeSelf;
+        
         private void Awake()
         {
             if (Instance != null && Instance != this)

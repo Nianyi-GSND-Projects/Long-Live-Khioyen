@@ -7677,6 +7677,10 @@ PrefabInstance:
       propertyPath: portraitImage
       value: 
       objectReference: {fileID: 1927986811}
+    - target: {fileID: 4271206616659533009, guid: ec6921ca7bc91d649a69b75e25fe88f8, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5154833298923256638, guid: ec6921ca7bc91d649a69b75e25fe88f8, type: 3}
       propertyPath: m_Maskable
       value: 1

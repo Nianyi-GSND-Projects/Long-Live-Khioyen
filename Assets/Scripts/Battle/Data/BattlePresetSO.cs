@@ -7,6 +7,9 @@ namespace LongLiveKhioyen
     [Serializable]
     public class PreplacedUnitData
     {
+        [Header("Identity")]
+        public int instanceId;
+        
         public string unitName; // 方便编辑器显示
         public Vector2Int position;
         public Faction faction;

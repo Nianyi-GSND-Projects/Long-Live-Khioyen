@@ -231,7 +231,7 @@ namespace LongLiveKhioyen
             if (_selectedUnitData == null) return;
 
             GUILayout.BeginVertical("box");
-            GUILayout.Label($"Unit Configuration ({_selectedUnitData.position})", EditorStyles.boldLabel);
+            GUILayout.Label($"Unit Configuration (ID: {_selectedUnitData.instanceId})", EditorStyles.boldLabel); // 显示 ID
             
             EditorGUI.BeginChangeCheck();
 
@@ -378,9 +378,11 @@ namespace LongLiveKhioyen
         private void PlaceUnit(Vector2Int pos, bool isFacility)
         {
             currentPreset.preplacedUnits.RemoveAll(u => u.position == pos);
-
+            int newId = GetNextAvailableId();
+            
             PreplacedUnitData newData = new PreplacedUnitData
             {
+                instanceId = newId,
                 position = pos,
                 faction = selectedFaction,
                 isFacility = isFacility,
@@ -403,6 +405,26 @@ namespace LongLiveKhioyen
             {
                 _selectedUnitData = null;
             }
+        }
+        
+        private int GetNextAvailableId()
+        {
+            if (currentPreset.preplacedUnits == null || currentPreset.preplacedUnits.Count == 0) return 1;
+
+            // 获取所有已占用的 ID 并排序
+            var usedIds = currentPreset.preplacedUnits
+                .Select(u => u.instanceId)
+                .Where(id => id > 0) // 忽略无效 ID
+                .OrderBy(id => id)
+                .ToList();
+
+            int next = 1;
+            foreach (var id in usedIds)
+            {
+                if (id == next) next++;
+                else if (id > next) return next; // 发现空缺 (例如有 1, 3, 返回 2)
+            }
+            return next; // 没有空缺，返回最大值 + 1
         }
 
         private void DrawOverlays(Vector2Int pos, Rect rect)

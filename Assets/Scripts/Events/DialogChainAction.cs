@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace LongLiveKhioyen
 {
@@ -37,6 +38,20 @@ namespace LongLiveKhioyen
             if (EventDialogUI.Instance != null)
             {
                 EventDialogUI.Instance.StartDialogChain(this);
+            }
+        }
+        
+        public override IEnumerator ExecuteCoroutine()
+        {
+            if (EventDialogUI.Instance != null)
+            {
+                EventDialogUI.Instance.StartDialogChain(this);
+        
+                // 等待直到 UI 关闭
+                while (EventDialogUI.Instance.IsActive)
+                {
+                    yield return null;
+                }
             }
         }
     }

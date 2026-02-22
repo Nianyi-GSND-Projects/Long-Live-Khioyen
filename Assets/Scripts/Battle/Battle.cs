@@ -101,6 +101,34 @@ namespace LongLiveKhioyen
 			// 但通常依靠 Unit.Start() 来调用 Initialize 更符合生命周期
 		}
 		
+		public void FocusCamera(Vector3 targetPos, float duration = 1.0f)
+		{
+			// 假设 Anchor 是摄像机的父物体或控制点
+			// 如果是瞬间移动
+			if (duration <= 0)
+			{
+				AnchorPosition = targetPos;
+			}
+			else
+			{
+				StartCoroutine(SmoothFocus(targetPos, duration));
+			}
+		}
+		
+		private IEnumerator SmoothFocus(Vector3 targetPos, float duration)
+		{
+			Vector3 startPos = AnchorPosition;
+			float t = 0;
+          
+			while (t < 1f)
+			{
+				t += Time.deltaTime / duration;
+				AnchorPosition = Vector3.Lerp(startPos, targetPos, Mathf.SmoothStep(0, 1, t));
+				yield return null;
+			}
+			AnchorPosition = targetPos;
+		}
+		
 		#endregion
 		
 		#region Battle data
@@ -306,7 +334,7 @@ namespace LongLiveKhioyen
 						{
 							Definition = spawnData.facilityDef,
 							faction = spawnData.faction,
-							instanceId = -1, // 或者生成一个 ID
+							instanceId = spawnData.instanceId,
                           
 							// 应用 Override (如果有)
 							maxDurability = spawnData.facilityDef.defaultMaxDurability,
@@ -327,7 +355,8 @@ namespace LongLiveKhioyen
 						{
 							Definition = spawnData.battalionDef,
 							faction = spawnData.faction,
-							armyId = -1,
+							instanceId = spawnData.instanceId,
+							armyId = spawnData.instanceId,
 							placed = false,
 							maxSolider = spawnData.battalionDef.defaultMaxSolider,
 							currentSoliders = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.battalionDef.defaultMaxSolider,
@@ -434,7 +463,6 @@ namespace LongLiveKhioyen
 				
 				armyStatus.battalionStatuses.Add(battalionStatus);
 				battalionStatus.battalionCommander.isAssigned = true;
-				Debug.Log("Commander name: " + battalionStatus.battalionCommander.commanderName);
 			}
 
 		}
@@ -1726,6 +1754,35 @@ namespace LongLiveKhioyen
 			}
 		}
 		
+		public Unit GetUnitByInstanceId(int id)
+		{
+			if (factionActiveUnits == null) return null;
+
+			foreach (var kvp in factionActiveUnits)
+			{
+				if (kvp.Value == null) continue;
+
+				foreach (var unit in kvp.Value)
+				{
+					// [新增] 空检查
+					if (unit == null) continue; 
+
+					if (unit.InstanceId == id) return unit;
+				}
+			}
+          
+			if (retreatedUnits != null)
+			{
+				foreach (var unit in retreatedUnits)
+				{
+					if (unit == null) continue;
+					if (unit.InstanceId == id) return unit;
+				}
+			}
+
+			return null;
+		}
+		
 		public TUnit SpawnUnit<TUnit, TDef, TDesc>(TDesc descriptor, Vector2Int pos) 
 			where TUnit : Unit<TDef>
 			where TDef : UnitDefinition
@@ -1822,7 +1879,6 @@ namespace LongLiveKhioyen
 					}
 				}
 				
-				Debug.Log($"Unit {unit.name} has {unit.runtimeUnitActions.Count} actions.");
 			}
 			//对于部队，还有来自指挥官的行动
 			if (unit is Battalion bat)

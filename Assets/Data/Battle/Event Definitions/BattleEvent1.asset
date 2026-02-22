@@ -1,5 +1,23 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8191312269569628735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
+  m_Name: FocusCameraAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  useBlackboard: 1
+  inputKey: TargetPos
+  targetCoordinates: {x: 0, y: 0}
+  duration: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18,3 +36,21 @@ MonoBehaviour:
   conditions: []
   actions:
   - {fileID: 11400000, guid: 92aac8cea9310084698593d4cd0c706a, type: 2}
+  - {fileID: 1347849705615816321}
+  - {fileID: -8191312269569628735}
+--- !u!114 &1347849705615816321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59a00fbb642437f459137b121f847f87, type: 3}
+  m_Name: GetUnitPositionAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  targetUnitInstanceId: 1
+  outputKey: TargetPos
