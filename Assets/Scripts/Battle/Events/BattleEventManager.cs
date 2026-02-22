@@ -13,7 +13,26 @@ namespace LongLiveKhioyen
         // 用于防止事件重复触发的记录（可选，视需求而定）
         private HashSet<BattleEventDefinition> triggeredEvents = new HashSet<BattleEventDefinition>();
         public BattleEventDefinition CurrentEvent { get; private set; }
+        public BattleEventContext CurrentContext { get; private set; }
+        private Dictionary<string, object> _globalBlackboard = new Dictionary<string, object>();
 
+        public void SetGlobalData(string key, object value)
+        {
+            if (_globalBlackboard.ContainsKey(key)) _globalBlackboard[key] = value;
+            else _globalBlackboard.Add(key, value);
+        }
+
+        public T GetGlobalData<T>(string key)
+        {
+            if (_globalBlackboard.TryGetValue(key, out object val))
+            {
+                if (val is T tVal) return tVal;
+            }
+            return default(T);
+        }
+        
+        
+        
         public void StartEventExecution(BattleEventDefinition evt)
         {
             CurrentEvent = evt;
@@ -33,17 +52,18 @@ namespace LongLiveKhioyen
             }
         }
 
-        public void OnEventTrigger(BattleEventTriggerType type)
+        public void OnEventTrigger(BattleEventTriggerType type,Unit contextUnit = null)
         {
+            BattleEventContext ctx = new BattleEventContext(type, contextUnit);
+            CurrentContext = ctx;
             foreach (var evt in levelEvents)
             {
-                // if (triggeredEvents.Contains(evt)) continue; 
-
-                if (evt.triggerType == type && evt.CheckConditions())
+                if (evt == null) continue;
+        
+                // [修改] 传入 Context
+                if (evt.triggerType == type && evt.CheckConditions(ctx))
                 {
-                    Debug.Log($"[BattleEvent] Triggering event: {evt.eventName}");
                     StartCoroutine(evt.TriggerCoroutine());
-                    // triggeredEvents.Add(evt);
                 }
             }
         }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8191312269569628735
+--- !u!114 &-4597098782632564560
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,51 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
-  m_Name: FocusCameraAction
-  m_EditorClassIdentifier: 
-  description: 
-  isBlocking: 1
-  useBlackboard: 1
-  inputKey: TargetPos
-  targetCoordinates: {x: 0, y: 0}
-  duration: 1
---- !u!114 &-5326273969630666167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a9f4185281afaf46926db1a25a2822d, type: 3}
-  m_Name: DialogChainAction
-  m_EditorClassIdentifier: 
-  description: 
-  isBlocking: 1
-  id: 0
-  dialogList:
-  - character: {fileID: 0}
-    overrideName: 
-    overridePortrait: {fileID: 0}
-    dialogText: 111
---- !u!114 &-1618688029153848128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b1a25ee723561e43b5b54d6c5bde03c, type: 3}
-  m_Name: ShowCGAction
+  m_Script: {fileID: 11500000, guid: 81812e28dda6b8240848d86fdeb918e3, type: 3}
+  m_Name: SetFlagFromContextAction
   m_EditorClassIdentifier: 
   description: 
   isBlocking: 0
-  cgSprite: {fileID: 21300000, guid: 56636a354c92e2842a293dfe55fc9d5d, type: 3}
-  fadeDuration: 0.5
+  outputKey: DeadEnemy
+  sourceType: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,17 +30,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   eventName: Test
-  triggerType: 0
-  conditions: []
+  triggerType: 5
+  conditionGroups:
+  - conditions:
+    - conditionType: 4
+      intValue: 1
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
+  - conditions:
+    - conditionType: 4
+      intValue: 4
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
   actions:
-  - {fileID: 11400000, guid: 92aac8cea9310084698593d4cd0c706a, type: 2}
-  - {fileID: 1347849705615816321}
-  - {fileID: -8191312269569628735}
-  - {fileID: 3446319552912417343}
-  - {fileID: -1618688029153848128}
-  - {fileID: -5326273969630666167}
-  - {fileID: 7749796613794832905}
---- !u!114 &1347849705615816321
+  - {fileID: -4597098782632564560}
+  - {fileID: 7063666903406419290}
+  - {fileID: 7141116203924532204}
+--- !u!114 &7063666903406419290
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,14 +59,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59a00fbb642437f459137b121f847f87, type: 3}
-  m_Name: GetUnitPositionAction
+  m_Script: {fileID: 11500000, guid: f6117cf85873e25468249a4fe834a3a4, type: 3}
+  m_Name: SetEventFlagAction
   m_EditorClassIdentifier: 
   description: 
   isBlocking: 0
-  targetUnitInstanceId: 1
-  outputKey: TargetPos
---- !u!114 &3446319552912417343
+  outputKey: KingSpeaker
+  valueType: 2
+  conditionMode: 3
+  checkKey: DeadEnemy
+  checkValueInt: 1
+  checkValueString: 
+  valueA_String: King Xiutu
+  valueA_Int: 0
+  valueA_Bool: 0
+  valueB_String: King Hunye
+  valueB_Int: 0
+  valueB_Bool: 0
+--- !u!114 &7141116203924532204
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,24 +85,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0530bef43222ba44a8fb140c2b2c8061, type: 3}
-  m_Name: ShowTutorialAction
-  m_EditorClassIdentifier: 
-  description: 
-  isBlocking: 1
-  tutorialDef: {fileID: 11400000, guid: abff5aff515fbc342b76652961d23f81, type: 2}
---- !u!114 &7749796613794832905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96e8dba84c1b8764db2ffcedf892af32, type: 3}
-  m_Name: HideCGAction
+  m_Script: {fileID: 11500000, guid: 1a9f4185281afaf46926db1a25a2822d, type: 3}
+  m_Name: DialogChainAction
   m_EditorClassIdentifier: 
   description: 
   isBlocking: 0
-  fadeDuration: 0.5
+  id: 0
+  dialogList:
+  - character: {fileID: 0}
+    overrideName: 
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 1
+    nameKey: KingSpeaker
+    dialogText: "\u4F60\u5988\u7684\uFF0C\u6562\u6740\u6211\u5144\u5F1F"

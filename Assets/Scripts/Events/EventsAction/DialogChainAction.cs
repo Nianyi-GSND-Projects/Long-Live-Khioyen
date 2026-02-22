@@ -15,6 +15,10 @@ namespace LongLiveKhioyen
         public string overrideName;
         [Tooltip("If null, use character's portrait")]
         public Sprite overridePortrait;
+        
+        [Header("Dynamic (Battle Only)")]
+        public bool useBlackboardName;
+        public string nameKey;
 
         [Header("Content")]
         [TextArea(3, 10)] public string dialogText;
@@ -24,6 +28,15 @@ namespace LongLiveKhioyen
         
         // 辅助属性：获取最终显示的头像
         public Sprite DisplayPortrait => overridePortrait != null ? overridePortrait : (character != null ? character.portrait : null);
+        
+        public string GetDisplayName(BattleEventDefinition evt)
+        {
+            if (useBlackboardName && evt != null && evt.HasData(nameKey))
+            {
+                return evt.GetData<string>(nameKey);
+            }
+            return !string.IsNullOrEmpty(overrideName) ? overrideName : (character != null ? character.characterName : "Unknown");
+        }
     }
 
     [CreateAssetMenu(menuName = "Long Live Khioyen/Events/Actions/Dialog Chain")]
@@ -32,6 +45,7 @@ namespace LongLiveKhioyen
         [Header("id")] public int id;
         [Header("Dialog Sequence")]
         public List<DialogData> dialogList = new List<DialogData>();
+        
 
         public override void Execute()
         {
@@ -54,5 +68,7 @@ namespace LongLiveKhioyen
                 }
             }
         }
+        
+       
     }
 }

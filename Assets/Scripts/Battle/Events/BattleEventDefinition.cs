@@ -1,17 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using System;
 
 namespace LongLiveKhioyen
 {
     public enum BattleEventTriggerType
     {
         OnBattleStart,
-        OnTurnStart,
-        OnTurnEnd,
+        OnPlayerTurnStart,
+        OnPlayerTurnEnd,
+        OnEnemyTurnStart,
+        OnEnemyTurnEnd,
         OnUnitDeath,
         OnPlayerActionEnd,
+        OnUnitActionEnd,
         Manual
+    }
+    
+    [Serializable]
+    public class ConditionGroup
+    {
+        [Tooltip("All conditions in this group must be TRUE (AND logic)")]
+        public List<BattleEventCondition> conditions = new List<BattleEventCondition>();
+
+        public bool Evaluate(BattleEventContext ctx)
+        {
+            if (conditions.Count == 0) return true; // 空组默认为真
+
+            foreach (var condition in conditions)
+            {
+                if (!condition.Evaluate(ctx)) return false;
+            }
+            return true;
+        }
     }
 
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Events/Battle Event Definition")]
@@ -21,8 +43,10 @@ namespace LongLiveKhioyen
         public string eventName;
         public BattleEventTriggerType triggerType;
         
-        [Header("Conditions")]
-        public List<BattleEventCondition> conditions = new List<BattleEventCondition>();
+        [Header("Trigger Logic")]
+        [Tooltip("Any group evaluating to TRUE will trigger the event (OR logic between groups)")]
+        public List<ConditionGroup> conditionGroups = new List<ConditionGroup>();
+
         //用于保存“整个BattleEventDefinition被触发”的前提条件
         [Header("Actions")]
         public List<GameEventAction> actions = new List<GameEventAction>();
@@ -31,31 +55,18 @@ namespace LongLiveKhioyen
         private Dictionary<string, object> _blackboard = new Dictionary<string, object>();
         //用来保存本BattleEventDefinition内的每个GameEventAction执行相关的条件信息
         
-        public bool CheckConditions()
+        public bool CheckConditions(BattleEventContext ctx)
         {
-            foreach (var condition in conditions)
-            {
-                if (!condition.Evaluate()) return false;
-            }
-            return true;
-        }
+            // 如果没有配置任何条件，默认为真 (无条件触发)
+            if (conditionGroups.Count == 0) return true;
 
-        public void Trigger()
-        {
-            if (BattleEventManager.Instance != null)
+            foreach (var group in conditionGroups)
             {
-                BattleEventManager.Instance.StartEventExecution(this);
-            }
-
-            foreach (var action in actions)
-            {
-                if (action != null) action.Execute();
+                // 只要有一个组满足 (OR)
+                if (group.Evaluate(ctx)) return true;
             }
             
-            if (BattleEventManager.Instance != null)
-            {
-                BattleEventManager.Instance.EndEventExecution();
-            }
+            return false; // 所有组都不满足
         }
         
         public IEnumerator TriggerCoroutine()

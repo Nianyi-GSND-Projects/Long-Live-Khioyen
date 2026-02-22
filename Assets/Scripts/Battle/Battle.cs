@@ -884,12 +884,20 @@ namespace LongLiveKhioyen
 			if(unit is Battalion battalion && battalion.currentSoliders <= 0)
 			{
 				RemoveUnitFromBattle(battalion);
+				
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitDeath, unit);
+
 				Debug.Log($"Battalion {battalion.InstanceId} die off!");
 				return;
 			}
 			else if (unit is Facility facility && facility.currentDurability<=0)
 			{
 				RemoveUnitFromBattle(facility);
+				
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitDeath, unit);
+
 				Debug.Log($"Facility {facility.InstanceId} destroyed!");
 				return;
 			}
@@ -1034,12 +1042,12 @@ namespace LongLiveKhioyen
 				
 				CurrentTurnState = TurnState.PlayerTurn;
 				if (BattleEventManager.Instance != null)
-					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnTurnStart);
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerTurnStart);
 				
 				yield return StartCoroutine(PlayerTurnCoroutine());
 				
 				if (BattleEventManager.Instance != null)
-					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnTurnEnd);
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerTurnEnd);
 				
 				CheckBattleEnd();
 				if (CurrentStage == Stage.Settlement) yield break;
@@ -1048,9 +1056,14 @@ namespace LongLiveKhioyen
 				yield return new WaitForSeconds(1);
 				if (CheckGameOver()) yield break;
 				
+				
 				CurrentTurnState = TurnState.EnemyTurn;
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnEnemyTurnStart);
 				yield return StartCoroutine(EnemyTurnCoroutine());
 				
+				if (BattleEventManager.Instance != null)
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnEnemyTurnEnd);
 				CheckBattleEnd();
 				if (CurrentStage == Stage.Settlement) yield break;
 				
@@ -1285,6 +1298,7 @@ namespace LongLiveKhioyen
 			}
 			
 			ExecuteActionLogic(SelectedUnit, mapPosition);
+			
 		}
 
 		private void ExecuteActionLogic(Unit source, Vector2Int targetPos)
@@ -1301,7 +1315,7 @@ namespace LongLiveKhioyen
 				ChangeActionStage(PlayerActionStage.None);
 				
 				if (BattleEventManager.Instance != null)
-					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerActionEnd);
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd,source);
 
 			}
 		}

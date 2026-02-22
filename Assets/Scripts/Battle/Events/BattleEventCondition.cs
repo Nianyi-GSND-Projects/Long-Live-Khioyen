@@ -7,9 +7,16 @@ namespace LongLiveKhioyen
     {
         TurnCountEquals,
         TurnCountGreaterThan,
-        UnitIsDead, 
+        GlobalFlagIsTrue,
+        
+        ContextUnitIsFaction,
+        ContextUnitIsID,
+        ContextUnitIsDefinition,
+        UnitIsAlive,
+        
         UnitAtPosition, 
         FactionUnitCountLessThan, 
+        
         Manual 
     }
 
@@ -25,40 +32,54 @@ namespace LongLiveKhioyen
         public UnitDefinition unitDefinition; 
         public Faction faction; 
 
-        public bool Evaluate()
+        public bool Evaluate(BattleEventContext ctx)
         {
             if (Battle.Instance == null) return false;
 
             switch (conditionType)
             {
+                // --- 回合 ---
                 case EventConditionType.TurnCountEquals:
                     return Battle.Instance.TurnCount == intValue;
                     
                 case EventConditionType.TurnCountGreaterThan:
                     return Battle.Instance.TurnCount > intValue;
 
-                case EventConditionType.UnitIsDead:
-                    // 目前 Battle.cs 没有直接通过 ID 查找死亡单位的接口
-                    // 我们可以暂时返回 false，或者后续在 Battle 中添加 DeadUnits 列表
-                    return false; 
-
-                case EventConditionType.FactionUnitCountLessThan:
-                    if (Battle.Instance.GetUnitsByFaction(faction) != null)
+                // --- 全局 Flag ---
+                case EventConditionType.GlobalFlagIsTrue:
+                    if (BattleEventManager.Instance != null)
                     {
-                        return Battle.Instance.GetUnitsByFaction(faction).Count < intValue;
+                        return BattleEventManager.Instance.GetGlobalData<bool>(stringValue);
                     }
                     return false;
+
+                // --- 上下文单位检查 ---
+                case EventConditionType.ContextUnitIsFaction:
+                    return ctx.TriggerUnit != null && ctx.TriggerUnit.faction == faction;
+
+                case EventConditionType.ContextUnitIsID:
+                    return ctx.TriggerUnit != null && ctx.TriggerUnit.InstanceId == intValue;
+
+                case EventConditionType.ContextUnitIsDefinition:
+                    return ctx.TriggerUnit != null && ctx.TriggerUnit.unitDefinition == unitDefinition;
+
+                // --- 场上状态 ---
+                case EventConditionType.FactionUnitCountLessThan:
+                    var units = Battle.Instance.GetUnitsByFaction(faction);
+                    return units != null && units.Count < intValue;
+                
+                case EventConditionType.UnitIsAlive:
+                    // 检查特定 ID 的单位是否在场且活着
+                    var unit = Battle.Instance.GetUnitByInstanceId(intValue);
+                    return unit != null && unit.gameObject.activeSelf && unit.currentHealth > 0;
+
                     
                 case EventConditionType.UnitAtPosition:
                     if (Battle.Instance.IsValidMapPosition(vectorValue))
                     {
                         var tile = Battle.Instance.mapData[vectorValue.x, vectorValue.y];
-                        // 检查部队
-                        if (tile.Battalion != null && tile.Battalion.Definition == unitDefinition)
-                            return true;
-                        // 检查设施
-                        if (tile.Facility != null && tile.Facility.Definition == unitDefinition)
-                            return true;
+                        if (tile.Battalion != null && tile.Battalion.Definition == unitDefinition) return true;
+                        if (tile.Facility != null && tile.Facility.Definition == unitDefinition) return true;
                     }
                     return false;
 
