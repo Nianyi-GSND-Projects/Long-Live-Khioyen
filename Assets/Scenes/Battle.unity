@@ -2791,6 +2791,8 @@ MonoBehaviour:
   Xscale: 1.73205
   Yscale: 2
   HextilePrefab: {fileID: 5875933169087041189, guid: 6872ce78ac512bd448ed71ab8c135201, type: 3}
+  retreatedUnits: []
+  deadUnits: []
   defaultReserveTeamDefinition: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
   defaultEnemyDefinition: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
 --- !u!156049354 &1069218213
@@ -2913,8 +2915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c6ed83557a0b444d8c488fa25312610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelEvents:
-  - {fileID: 11400000, guid: ddc408e4284ad674cab21796a6366232, type: 2}
+  levelEvents: []
 --- !u!1 &1135559251
 GameObject:
   m_ObjectHideFlags: 0

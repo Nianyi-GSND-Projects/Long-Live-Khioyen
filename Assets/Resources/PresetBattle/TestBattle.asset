@@ -26,6 +26,8 @@ MonoBehaviour:
   - {x: 2, y: 8}
   - {x: 1, y: 7}
   - {x: 1, y: 8}
+  levelEvents:
+  - {fileID: 11400000, guid: ddc408e4284ad674cab21796a6366232, type: 2}
   preplacedUnits:
   - unitName: 
     position: {x: 2, y: 0}

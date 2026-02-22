@@ -238,9 +238,25 @@ namespace LongLiveKhioyen
 			availableMovePositions = new HashSet<Vector2Int>();
 			availableArrangementPositions = new HashSet<Vector2Int>();
 			availableTargetPositions = new HashSet<Vector2Int>();
-			
-			if (useLevelPreset && levelPreset != null) 
+
+			if (useLevelPreset && levelPreset != null)
+			{
 				presetMapData = levelPreset.mapData;
+				if (BattleEventManager.Instance != null && levelPreset.levelEvents != null)
+				{
+					BattleEventManager.Instance.levelEvents.Clear(); 
+                  
+					foreach (var evt in levelPreset.levelEvents)
+					{
+						if (evt != null)
+						{
+							BattleEventManager.Instance.levelEvents.Add(evt);
+						}
+					}
+					Debug.Log($"Loaded {levelPreset.levelEvents.Count} events from preset.");
+				}
+			}
+				
 			
 			if (presetMapData != null)
 			{

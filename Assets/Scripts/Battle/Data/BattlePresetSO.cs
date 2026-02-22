@@ -35,9 +35,13 @@ namespace LongLiveKhioyen
         public string levelName = "New Battle";
         
         [Header("Spawn Points")]
-        public List<Vector2Int> playerDeployPoints = new List<Vector2Int>(); // 玩家出生点/布阵格
+        public List<Vector2Int> playerDeployPoints = new List<Vector2Int>(); // 玩家部署区
         public List<Vector2Int> extractionPoints = new List<Vector2Int>();   // 撤离点
+        
+        [Header("Events")]
+        public List<BattleEventDefinition> levelEvents = new List<BattleEventDefinition>(); // 预设事件
 
+        
         [Header("Units")]
         public List<PreplacedUnitData> preplacedUnits = new List<PreplacedUnitData>(); // 预设的敌人/中立设施
     }

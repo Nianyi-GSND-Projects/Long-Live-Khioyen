@@ -26,6 +26,8 @@ namespace LongLiveKhioyen
         private const float OFFSET_X = 15f; 
         private Vector2 scrollPos;
         private Rect mapRenderRect; 
+        
+        private bool showEvents = false;
 
         [MenuItem("Long Live Khioyen/Battle Level Editor")]
         public static void ShowWindow()
@@ -83,6 +85,37 @@ namespace LongLiveKhioyen
                 currentPreset.mapData = (MapDataSO)EditorGUILayout.ObjectField(currentPreset.mapData, typeof(MapDataSO), false);
                 if (EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(currentPreset);
                 GUILayout.EndHorizontal();
+            }
+            
+            showEvents = EditorGUILayout.Foldout(showEvents, "Level Events", true);
+            if (showEvents && currentPreset != null)
+            {
+                GUILayout.BeginVertical("helpbox");
+        
+                // 简单的列表编辑
+                int count = currentPreset.levelEvents.Count;
+                int newCount = EditorGUILayout.IntField("Size", count);
+        
+                if (newCount != count)
+                {
+                    // 调整列表大小
+                    while (currentPreset.levelEvents.Count < newCount) currentPreset.levelEvents.Add(null);
+                    while (currentPreset.levelEvents.Count > newCount) currentPreset.levelEvents.RemoveAt(currentPreset.levelEvents.Count - 1);
+                }
+
+                for (int i = 0; i < currentPreset.levelEvents.Count; i++)
+                {
+                    currentPreset.levelEvents[i] = (BattleEventDefinition)EditorGUILayout.ObjectField(
+                        $"Event {i}", 
+                        currentPreset.levelEvents[i], 
+                        typeof(BattleEventDefinition), 
+                        false
+                    );
+                }
+        
+                if (GUI.changed) EditorUtility.SetDirty(currentPreset);
+        
+                GUILayout.EndVertical();
             }
 
             GUILayout.Space(5);
