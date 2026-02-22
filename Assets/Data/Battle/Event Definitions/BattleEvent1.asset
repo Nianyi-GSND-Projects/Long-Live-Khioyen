@@ -16,6 +16,21 @@ MonoBehaviour:
   isBlocking: 0
   outputKey: DeadEnemy
   sourceType: 1
+--- !u!114 &-2784830845045044573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6339c84e44f7a747867bf5e035f8044, type: 3}
+  m_Name: StopMusicAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  fadeDuration: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39,6 +54,12 @@ MonoBehaviour:
       vectorValue: {x: 0, y: 0}
       unitDefinition: {fileID: 0}
       faction: 2
+    - conditionType: 6
+      intValue: 4
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
   - conditions:
     - conditionType: 4
       intValue: 4
@@ -46,10 +67,35 @@ MonoBehaviour:
       vectorValue: {x: 0, y: 0}
       unitDefinition: {fileID: 0}
       faction: 2
+    - conditionType: 6
+      intValue: 1
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
   actions:
   - {fileID: -4597098782632564560}
   - {fileID: 7063666903406419290}
+  - {fileID: 6281894791500682172}
   - {fileID: 7141116203924532204}
+  - {fileID: -2784830845045044573}
+--- !u!114 &6281894791500682172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ad7abfbd2d009d4292441b961ba5e04, type: 3}
+  m_Name: PlayMusicAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  musicClip: {fileID: 8300000, guid: 9ff99ab200d66b04a82b9e1ba242fd0f, type: 3}
+  fadeDuration: 1
+  loop: 1
 --- !u!114 &7063666903406419290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,7 +135,7 @@ MonoBehaviour:
   m_Name: DialogChainAction
   m_EditorClassIdentifier: 
   description: 
-  isBlocking: 0
+  isBlocking: 1
   id: 0
   dialogList:
   - character: {fileID: 0}
