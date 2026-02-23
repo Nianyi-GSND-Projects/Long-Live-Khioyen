@@ -26,8 +26,17 @@ namespace LongLiveKhioyen
 			set => Economy.onChanged = value;
 		}
 
+		List<ResourceDescriptor> monthlyResourceChanges;
 		/// <summary>给月度更迭 UI 提供信息源。</summary>
-		public List<ResourceDescriptor> MonthlyResourceChanges { get; private set; } = new();
+		public List<ResourceDescriptor> MonthlyResourceChanges
+		{
+			get
+			{
+				if(monthlyResourceChanges == null)
+					monthlyResourceChanges = new();
+				return monthlyResourceChanges;
+			}
+		}
 		/// <summary>度月时资源增长。</summary>
 		void UpdateResourcesMonthly()
 		{
@@ -42,7 +51,7 @@ namespace LongLiveKhioyen
 			NotifyPossiblePopulationChange();
 		}
 
-		IEnumerable<ResourceDescriptor> CalculateMonthlyResourceChanges()
+		public IEnumerable<ResourceDescriptor> CalculateMonthlyResourceChanges()
 		{
 			// #### 钱财 ####
 
@@ -80,6 +89,7 @@ namespace LongLiveKhioyen
 				dPopulation += Mathf.FloorToInt(Mathf.Lerp(10, 30, t));
 			}
 
+			// 人口上限
 			dPopulation = Mathf.Min(dPopulation, PopulationCap - Population);
 
 			yield return new() { type = ResourceType.Population, quantity = dPopulation, };

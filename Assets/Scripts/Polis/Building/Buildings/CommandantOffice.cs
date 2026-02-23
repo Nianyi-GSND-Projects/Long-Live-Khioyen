@@ -18,10 +18,5 @@ namespace LongLiveKhioyen
 				action = () => OpenBuildingUiByName(uiAssetName),
 			};
 		}
-
-		public override GameObject CreateInspectionUi()
-		{
-			return GetInspectionUiByName(uiAssetName);
-		}
 	}
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -24,6 +25,12 @@ namespace LongLiveKhioyen
 		void Refresh()
 		{
 			RefreshTime();
+			RefreshErp();
+		}
+
+		void OnTimeAdvanced(float dt)
+		{
+			RefreshTime();
 		}
 		#endregion
 
@@ -31,14 +38,18 @@ namespace LongLiveKhioyen
 		[Header("Time")]
 		[SerializeField] TMP_Text currentTime;
 
-		void OnTimeAdvanced(float dt)
-		{
-			RefreshTime();
-		}
-
 		void RefreshTime()
 		{
 			currentTime.text = GameInstance.Instance.Data.time.ToLocalizedString();
+		}
+		#endregion
+
+		#region 预计资源增长
+		[Header("ERP")]
+		[SerializeField] TMP_Text erpText;
+		void RefreshErp()
+		{
+			erpText.text = string.Join(", ", PolisData.Current.CalculateMonthlyResourceChanges().Select(d => d.ToString()));
 		}
 		#endregion
 	}
