@@ -28,7 +28,7 @@ namespace LongLiveKhioyen
 			PolisTask task = new(
 				PolisTaskType.buildingConstructed,
 				definition.constructionTime,
-				definition.requiredPopulation,
+				definition.constructionPopulation,
 				mapPosition.x.ToString(),
 				mapPosition.y.ToString()
 			);

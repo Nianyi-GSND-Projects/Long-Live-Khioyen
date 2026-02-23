@@ -9,6 +9,8 @@ namespace LongLiveKhioyen
 		public string id;
 		public string[] tags;
 		public Sprite figure;
+		/// <summary>建好后的人口占用。</summary>
+		public int persistentPopulation;
 
 		[Header("Geometry")]
 		[Range(0, 3)] public int defaultOrientation;
@@ -20,7 +22,8 @@ namespace LongLiveKhioyen
 
 		[Header("Construction")]
 		[Min(0)] public float constructionTime;
-		public int requiredPopulation;
+		/// <summary>修建时所需要的人口占用。</summary>
+		[UnityEngine.Serialization.FormerlySerializedAs("requiredPopulation")] public int constructionPopulation;
 		public Economy cost;
 
 		public LocalizedString GetLocalizedName()

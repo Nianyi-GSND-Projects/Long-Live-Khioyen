@@ -182,10 +182,10 @@ namespace LongLiveKhioyen
 		}
 		#endregion
 
-		#region Time
-		public void AdvanceTime_Scaled(float dt)
+		#region Time scale
+		public void AdvanceTime_Scaled(float dGt)
 		{
-			Data.time.AdvanceByInGameTime(dt * ActualTimeScale);
+			Data.time.AdvanceByInGameTime(dGt * ActualTimeScale);
 		}
 
 		float timeScale = 1.0f;
@@ -209,11 +209,6 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public System.Action<float> onGameTimeAdvanced
-		{
-			get => Data.time.onAdvancedByGameTime;
-			set => Data.time.onAdvancedByGameTime = value;
-		}
 		public System.Action onActualTimeScaleChanged;
 
 		void UpdateActualTimeScale()

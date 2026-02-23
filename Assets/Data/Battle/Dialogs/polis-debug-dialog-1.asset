@@ -19,8 +19,6 @@ MonoBehaviour:
   - character: {fileID: 11400000, guid: 78c4bb626fc20b241a6677beb9dc0ad4, type: 2}
     overrideName: 
     overridePortrait: {fileID: 0}
-    dialogText: Polis debug dialog 1
-  - character: {fileID: 11400000, guid: 78c4bb626fc20b241a6677beb9dc0ad4, type: 2}
-    overrideName: 
-    overridePortrait: {fileID: 0}
-    dialogText: yo yo check it out
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "\u6B22\u8FCE\u6765\u5230\u5C45\u5EF6\u3002"

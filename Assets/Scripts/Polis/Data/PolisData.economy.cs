@@ -85,15 +85,13 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public int RequiredPopulation
-		{
-			get
-			{
-				if(Tasks.Count == 0)
-					return 0;
-				return Tasks.Select(t => t.requiredPopulation).Aggregate((a, b) => a + b);
-			}
-		}
+		public int RequiredPopulation => TaskPopulation + PersistentPopulation;
+
+		public int TaskPopulation
+			=> Tasks.Select(t => t.requiredPopulation).Aggregate(0, (a, b) => a + b);
+
+		public int PersistentPopulation
+			=> buildings.Where(b => !b.underConstruction).Select(b => b.Definition.persistentPopulation).Aggregate(0, (a, b) => a + b);
 
 		public int FreePopulation => Population - RequiredPopulation;
 
@@ -108,12 +106,14 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		// TODO: 应该根据民居与水井的数量及分布计算，但牢宋还没给出具体算法，此处先用 民居数量*10 占位。
 		public int PopulationCap
 		{
 			get
 			{
-				return QueryBuildingsByTag("dwelling").Length * 10;
+				// 水井*5 + 住房*20
+				var dwellings = QueryBuildingsByTag("dwelling");
+				var waterWells = QueryBuildingsByTag("water-well");
+				return dwellings.Length * 20 + waterWells.Length * 5;
 			}
 		}
 		#endregion

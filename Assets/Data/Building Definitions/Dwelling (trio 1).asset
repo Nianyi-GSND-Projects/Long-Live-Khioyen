@@ -16,12 +16,16 @@ MonoBehaviour:
   tags:
   - dwelling
   figure: {fileID: 0}
+  persistentPopulation: 0
   defaultOrientation: 0
   pivot: {x: 0, y: 0}
   size: {x: 2, y: 2}
   center: {x: 1, y: 1}
-  constructionTime: 0
+  constructionTime: 0.33333334
+  constructionPopulation: 0
   cost:
     food: 0
     material: 0
     money: 0
+    items:
+      records: []

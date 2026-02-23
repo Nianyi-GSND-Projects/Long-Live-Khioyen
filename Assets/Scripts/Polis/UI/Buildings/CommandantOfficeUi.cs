@@ -8,7 +8,7 @@ namespace LongLiveKhioyen
 		#region 生命周期
 		protected void Start()
 		{
-			GameInstance.Instance.onGameTimeAdvanced += OnGameTimeAdvanced;
+			GameInstance.Instance.Data.time.onAdvancedByMonth += OnTimeAdvanced;
 
 			Refresh();
 		}
@@ -17,7 +17,7 @@ namespace LongLiveKhioyen
 		{
 			if(GameInstance.Instance)
 			{
-				GameInstance.Instance.onGameTimeAdvanced -= OnGameTimeAdvanced;
+				GameInstance.Instance.Data.time.onAdvancedByMonth -= OnTimeAdvanced;
 			}
 		}
 
@@ -31,7 +31,7 @@ namespace LongLiveKhioyen
 		[Header("Time")]
 		[SerializeField] TMP_Text currentTime;
 
-		void OnGameTimeAdvanced(float dt)
+		void OnTimeAdvanced(float dt)
 		{
 			RefreshTime();
 		}

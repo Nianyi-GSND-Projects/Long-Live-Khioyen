@@ -32,10 +32,6 @@ MonoBehaviour:
         position: {x: 24, y: 23}
         orientation: 0
         underConstruction: 0
-      - id: dwelling-trio-1
-        position: {x: 16, y: 26}
-        orientation: 0
-        underConstruction: 0
       - id: horse-station
         position: {x: 23, y: 16}
         orientation: 0
@@ -43,6 +39,22 @@ MonoBehaviour:
       - id: barracks
         position: {x: 20, y: 30}
         orientation: 2
+        underConstruction: 0
+      - id: dwelling-trio-1
+        position: {x: 16, y: 26}
+        orientation: 0
+        underConstruction: 0
+      - id: dwelling-trio-1
+        position: {x: 12, y: 26}
+        orientation: 0
+        underConstruction: 0
+      - id: dwelling-trio-1
+        position: {x: 8, y: 26}
+        orientation: 0
+        underConstruction: 0
+      - id: dwelling-trio-1
+        position: {x: 4, y: 26}
+        orientation: 0
         underConstruction: 0
       id: juyan
       type: 1
@@ -55,7 +67,7 @@ MonoBehaviour:
         money: 800
         items:
           records: []
-      population: 10
+      population: 80
       queuedProductions: []
       forSaleItems:
         records: []
