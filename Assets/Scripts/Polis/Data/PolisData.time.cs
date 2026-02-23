@@ -55,14 +55,5 @@ namespace LongLiveKhioyen
 			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(lastTime.Month, "zh-Hans")}。");
 		}
 		#endregion
-
-		#region 度月
-		void OnMonthPassed()
-		{
-			UpdateResourcesMonthly();
-
-			Debug.Log($"城池 {id} 度月。现开始 {GameTime.LocalizeMonth(lastTime.Month, "zh-Hans")}。");
-		}
-		#endregion
 	}
 }
