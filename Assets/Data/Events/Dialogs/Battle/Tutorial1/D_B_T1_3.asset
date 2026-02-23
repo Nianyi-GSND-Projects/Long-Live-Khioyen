@@ -10,17 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a9f4185281afaf46926db1a25a2822d, type: 3}
-  m_Name: Chain1
+  m_Name: D_B_T1_3
   m_EditorClassIdentifier: 
   description: 
   isBlocking: 1
-  id: 1
+  id: 0
   dialogList:
-  - character: {fileID: 11400000, guid: 78c4bb626fc20b241a6677beb9dc0ad4, type: 2}
+  - character: {fileID: 11400000, guid: faecfab9f034c7d4eaa8de2e8008da83, type: 2}
     overrideName: 
     overridePortrait: {fileID: 0}
-    dialogText: You are Right
-  - character: {fileID: 11400000, guid: 78c4bb626fc20b241a6677beb9dc0ad4, type: 2}
-    overrideName: 
-    overridePortrait: {fileID: 0}
-    dialogText: But <Khioyen> is a game that...
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: My tribes are ready. We shall show these arrogant Han the iron hooves
+      of our Desert Wolf Cavalry. None shall return alive!

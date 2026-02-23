@@ -442,8 +442,6 @@ namespace LongLiveKhioyen
 		private void GenerateTestArmyData()
 		{
 			//PlayerReserveTeam
-			armyStatus.armyCommander = CommanderRegistry.Instance.GetAllFreeCommanders()
-				.Find(c => c.commanderName == "王 念一");
 			
 			armyStatus.battalionStatuses.Clear();
 			

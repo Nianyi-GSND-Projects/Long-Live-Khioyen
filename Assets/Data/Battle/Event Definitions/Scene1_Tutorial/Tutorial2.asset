@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a60d95e45a38b14d83bed3a167080a7, type: 3}
+  m_Name: Tutorial2
+  m_EditorClassIdentifier: 
+  id: 2
+  eventName: Tutorial2
+  triggerType: 1
+  conditionGroups: []
+  actions:
+  - {fileID: 8996449385429584447}
+--- !u!114 &8996449385429584447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0530bef43222ba44a8fb140c2b2c8061, type: 3}
+  m_Name: ShowTutorialAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  tutorialDef: {fileID: 11400000, guid: cc9231621cf4811448d594a9e7934219, type: 2}

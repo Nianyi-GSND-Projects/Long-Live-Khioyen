@@ -1,0 +1,195 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2045683086705731115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a9f4185281afaf46926db1a25a2822d, type: 3}
+  m_Name: DialogChainAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  id: 0
+  dialogList:
+  - character: {fileID: 0}
+    overrideName: 
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 1
+    nameKey: AliveKingName
+    dialogText: This... this is impossible! How can the Han horses be this fast?!
+  - character: {fileID: 0}
+    overrideName: 
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 1
+    nameKey: AliveKingName
+    dialogText: That fool! He couldn't even hold them for the time it takes to burn
+      an incense stick? The Han forces are overwhelming... All units, tighten the
+      formation and protect the rear!
+  - character: {fileID: 11400000, guid: 78c4bb626fc20b241a6677beb9dc0ad4, type: 2}
+    overrideName: 
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: Fleeing? General Zhao, press the advantage! Leave none alive!
+--- !u!114 &-1047711601112492163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59a00fbb642437f459137b121f847f87, type: 3}
+  m_Name: GetUnitPositionAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  useBlackboardID: 1
+  inputIDKey: AliveKing
+  targetUnitInstanceId: 0
+  outputKey: TargetPos
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a60d95e45a38b14d83bed3a167080a7, type: 3}
+  m_Name: Tutorial3
+  m_EditorClassIdentifier: 
+  id: 0
+  eventName: 
+  triggerType: 5
+  conditionGroups:
+  - conditions:
+    - conditionType: 4
+      intValue: 4
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
+    - conditionType: 6
+      intValue: 1
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
+  - conditions:
+    - conditionType: 4
+      intValue: 1
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
+    - conditionType: 6
+      intValue: 4
+      stringValue: 
+      vectorValue: {x: 0, y: 0}
+      unitDefinition: {fileID: 0}
+      faction: 2
+  actions:
+  - {fileID: 3980298096885656726}
+  - {fileID: 7305023222052057160}
+  - {fileID: 6269710262518293100}
+  - {fileID: -1047711601112492163}
+  - {fileID: 8103027507049090594}
+  - {fileID: -2045683086705731115}
+--- !u!114 &3980298096885656726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81812e28dda6b8240848d86fdeb918e3, type: 3}
+  m_Name: SetFlagFromContextAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  outputKey: DeadKing
+  sourceType: 1
+--- !u!114 &6269710262518293100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6117cf85873e25468249a4fe834a3a4, type: 3}
+  m_Name: SetEventFlagAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  outputKey: AliveKingName
+  valueType: 2
+  conditionMode: 3
+  checkKey: AliveKing
+  checkValueInt: 4
+  checkValueString: 
+  valueA_String: King Xiutu
+  valueA_Int: 0
+  valueA_Bool: 0
+  valueA_Vector: {x: 0, y: 0}
+  valueB_String: King Hunye
+  valueB_Int: 0
+  valueB_Bool: 0
+  valueB_Vector: {x: 0, y: 0}
+--- !u!114 &7305023222052057160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6117cf85873e25468249a4fe834a3a4, type: 3}
+  m_Name: SetEventFlagAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  outputKey: AliveKing
+  valueType: 1
+  conditionMode: 3
+  checkKey: DeadKing
+  checkValueInt: 1
+  checkValueString: 
+  valueA_String: 
+  valueA_Int: 4
+  valueA_Bool: 0
+  valueA_Vector: {x: 0, y: 0}
+  valueB_String: 
+  valueB_Int: 1
+  valueB_Bool: 0
+  valueB_Vector: {x: 0, y: 0}
+--- !u!114 &8103027507049090594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
+  m_Name: FocusCameraAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  useBlackboard: 1
+  inputKey: TargetPos
+  targetCoordinates: {x: 0, y: 0}
+  duration: 1
