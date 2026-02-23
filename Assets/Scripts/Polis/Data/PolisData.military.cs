@@ -10,6 +10,9 @@ namespace LongLiveKhioyen
 		#region 驻扎
 		[SerializeField] List<BattalionStatus> garrisonedBattalions = new();
 
+		public int SoliderCount
+			=> garrisonedBattalions.Select(b => b.currentSolider).Aggregate(0, (a, b) => a + b);
+
 		public Action onGarrisonChanged;
 
 		public IReadOnlyList<GameCommander> GetGarrisonedCommanders()

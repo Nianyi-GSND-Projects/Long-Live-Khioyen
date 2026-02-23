@@ -26,13 +26,19 @@ namespace LongLiveKhioyen
 			set => Economy.onChanged = value;
 		}
 
+		/// <summary>给月度更迭 UI 提供信息源。</summary>
 		public List<ResourceDescriptor> MonthlyResourceChanges { get; private set; } = new();
 		/// <summary>度月时资源增长。</summary>
 		void UpdateResourcesMonthly()
 		{
+			// 应用变动
 			MonthlyResourceChanges.Clear();
 			MonthlyResourceChanges.AddRange(CalculateMonthlyResourceChanges());
 			economy.Add(MonthlyResourceChanges);
+
+			// 清空寄卖物品
+			forSaleItems.Clear();
+
 			NotifyPossiblePopulationChange();
 		}
 
@@ -42,24 +48,39 @@ namespace LongLiveKhioyen
 
 			float dMoney = 0;
 
-			// 将驿站寄卖的物品折现
+			// 驿站寄卖
 			foreach(var record in forSaleItems)
 				dMoney += record.Definition.sellPrice * record.quantity;
-			forSaleItems.Clear();
+
+			// 税收
+			dMoney += FreePopulation * 2 + RequiredPopulation * 5 - SoliderCount * 5;
 
 			yield return new() { type = ResourceType.Money, quantity = dMoney, };
 
 
 			// #### 粮食 ####
-			
-			yield return new() { type = ResourceType.Food, quantity = 100, };  // TODO: 粮食增长公式
+
+			// 每个粮仓提供 300 粮/月；每居民吃 1 粮/月。
+			float dFood = QueryBuildingsByTag("granary").Length * 300;
+			int foodConsumation = FreePopulation * 10 + RequiredPopulation * 20 + SoliderCount * 20;
+			dFood -= foodConsumation;
+			yield return new() { type = ResourceType.Food, quantity = dFood, };
 
 
 			// #### 人口 ####
 
-			int dPopulation = 2;  // TODO: “理应”的人口增长公式
-			if(Population + dPopulation > PopulationCap)
-				dPopulation = PopulationCap - Population;
+			int dPopulation = 0;
+
+			// 当前粮草与未来三月预计消耗相比的盈余
+			float overshoot = Economy.food - foodConsumation * 3;
+			if(overshoot > 0)
+			{
+				// 把 (0, +∞) 的盈余映射到 [10, 30] 上作为增长量
+				float t = 1 - 1 / (overshoot + 1);
+				dPopulation += Mathf.FloorToInt(Mathf.Lerp(10, 30, t));
+			}
+
+			dPopulation = Mathf.Min(dPopulation, PopulationCap - Population);
 
 			yield return new() { type = ResourceType.Population, quantity = dPopulation, };
 		}
