@@ -644,44 +644,67 @@ namespace LongLiveKhioyen
 				return;
 			}
 			
-			//若在移动
-			if (CurrentActionStage == PlayerActionStage.MovingBattalion && availableMovePositions.Contains(gridPos))
+			if (CurrentActionStage == PlayerActionStage.SelectingTarget)
 			{
-				MovingBattalion(gridPos);
-				return;
-			}
-			
-			if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(gridPos))
-			{
-				// 如果目标格有多个可攻击对象（比如部队+设施），也需要进入歧义选择
-				// 但为了简化，这里暂时保持之前的 ApplyAction 逻辑，或者你也在这里加入歧义判断
-				// 这里先演示基础的“点击选中”逻辑的歧义处理
-				ApplyAction(gridPos);
-				return;
-			}
-			
-			TileData tile = mapData[gridPos.x,gridPos.y];
-			List<Unit> candidates = new List<Unit>();
-			if (tile.Battalion != null) candidates.Add(tile.Battalion);
-			if (tile.Facility != null) candidates.Add(tile.Facility);
-			
-			if (candidates.Count == 0)
-			{
-				if (CurrentActionStage == PlayerActionStage.None)
+				if (availableTargetPositions.Contains(gridPos))
 				{
-					ClearAllSelection();
+					ApplyAction(gridPos);
+				}
+				else
+				{
+					// 点击了无效目标 -> 取消行动选择，回退到菜单
+					//CancelAction();
 				}
 				return;
 			}
 			
-			 if (candidates.Count == 1)
-			 {
-			 	SelectUnit(candidates[0]);
-			 }
-			 else
-			 {
-			 	EnterAmbiguousState(candidates);
-			 }
+			if (CurrentActionStage == PlayerActionStage.SelectingAction)
+			{
+				CancelMovement();
+				ChangeActionStage(PlayerActionStage.MovingBattalion);
+				return;
+			}
+			
+			if (CurrentActionStage == PlayerActionStage.MovingBattalion)
+			{
+				if (availableMovePositions.Contains(gridPos))
+				{
+					MovingBattalion(gridPos);
+				}
+				else
+				{
+					ClearAllSelection();
+					ChangeActionStage(PlayerActionStage.None);
+				}
+				return;
+			}
+
+			if (CurrentActionStage == PlayerActionStage.None)
+			{
+				TileData tile = mapData[gridPos.x, gridPos.y];
+				List<Unit> candidates = new List<Unit>();
+				if (tile.Battalion != null) candidates.Add(tile.Battalion);
+				if (tile.Facility != null) candidates.Add(tile.Facility);
+
+				if (candidates.Count == 0)
+				{
+					if (CurrentActionStage == PlayerActionStage.None)
+					{
+						ClearAllSelection();
+					}
+
+					return;
+				}
+
+				if (candidates.Count == 1)
+				{
+					SelectUnit(candidates[0]);
+				}
+				else
+				{
+					EnterAmbiguousState(candidates);
+				}
+			}
 		}
 		
 		private void EnterAmbiguousState(List<Unit> candidates)
