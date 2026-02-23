@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d55d11d26f44f045bf8659a015d755f, type: 3}
-  m_Name: TestTutorial
+  m_Name: Assault Command
   m_EditorClassIdentifier: 
   pages:
-  - title: Battle
-    topText: This is a Battle
-    image: {fileID: 21300000, guid: d18ef669efd206b45a57a45d4dd9876e, type: 3}
-    bottomText: Are you Fool?
-  - title: Again
-    topText: This is next page
-    image: {fileID: 21300000, guid: 0397b25d086162240b19348c3e5bb0b0, type: 3}
-    bottomText: End this and go on you fool!
+  - title: Assault Command
+    topText: Click on the deployed unit.
+    image: {fileID: 0}
+    bottomText: The green area represents the movement range this turn.
+  - title: Assault Command
+    topText: Click any location within the range to move and launch an attack on
+      the enemies.
+    image: {fileID: 0}
+    bottomText: 

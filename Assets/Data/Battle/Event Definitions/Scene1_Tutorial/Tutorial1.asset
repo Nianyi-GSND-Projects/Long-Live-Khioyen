@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8671582658025964571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
+  m_Name: FocusCameraAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  useBlackboard: 1
+  inputKey: OriginalPos
+  targetCoordinates: {x: 8, y: 2}
+  duration: 1
+--- !u!114 &-5972904693470542393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1a25ee723561e43b5b54d6c5bde03c, type: 3}
+  m_Name: ShowCGAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  cgSprite: {fileID: 21300000, guid: f695d6e4b7b4b684f9c6f14d802399b7, type: 3}
+  fadeDuration: 0.5
+--- !u!114 &-4149960555317271387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0530bef43222ba44a8fb140c2b2c8061, type: 3}
+  m_Name: ShowTutorialAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  tutorialDef: {fileID: 11400000, guid: abff5aff515fbc342b76652961d23f81, type: 2}
+--- !u!114 &-2070686927193181988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59a00fbb642437f459137b121f847f87, type: 3}
+  m_Name: GetUnitPositionAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  useBlackboardID: 0
+  inputIDKey: UnitID
+  targetUnitInstanceId: 4
+  outputKey: TargetPos
+--- !u!114 &-306587620414603653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
+  m_Name: FocusCameraAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  useBlackboard: 0
+  inputKey: 
+  targetCoordinates: {x: 8, y: 2}
+  duration: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a60d95e45a38b14d83bed3a167080a7, type: 3}
+  m_Name: Tutorial1
+  m_EditorClassIdentifier: 
+  id: 1
+  eventName: Tutorial1
+  triggerType: 0
+  triggerOnce: 1
+  conditionGroups: []
+  actions:
+  - {fileID: -306587620414603653}
+  - {fileID: 8766250536966009771}
+  - {fileID: -5972904693470542393}
+  - {fileID: 11400000, guid: 92aac8cea9310084698593d4cd0c706a, type: 2}
+  - {fileID: 5947353542431594400}
+  - {fileID: 11400000, guid: 710d2c61e6bc0404686e3af0920e84f5, type: 2}
+  - {fileID: -2070686927193181988}
+  - {fileID: 893983178414681015}
+  - {fileID: 11400000, guid: be5a7f74b5d2d264aa06d539a056bc3b, type: 2}
+  - {fileID: 2593350924076262757}
+  - {fileID: 6473874299598488153}
+  - {fileID: 11400000, guid: 15b25bd77800d484cbed93f444be9aa9, type: 2}
+  - {fileID: -8671582658025964571}
+  - {fileID: -4149960555317271387}
+--- !u!114 &893983178414681015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
+  m_Name: FocusCameraAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  useBlackboard: 1
+  inputKey: TargetPos
+  targetCoordinates: {x: 0, y: 0}
+  duration: 1
+--- !u!114 &2593350924076262757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59a00fbb642437f459137b121f847f87, type: 3}
+  m_Name: GetUnitPositionAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  useBlackboardID: 0
+  inputIDKey: UnitID
+  targetUnitInstanceId: 1
+  outputKey: TargetPos
+--- !u!114 &5947353542431594400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96e8dba84c1b8764db2ffcedf892af32, type: 3}
+  m_Name: HideCGAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  fadeDuration: 0.5
+--- !u!114 &6473874299598488153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e5df85b7c3519468e950cf448bb842, type: 3}
+  m_Name: FocusCameraAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  useBlackboard: 1
+  inputKey: TargetPos
+  targetCoordinates: {x: 0, y: 0}
+  duration: 1
+--- !u!114 &8766250536966009771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1258f94c1ea1535428263c38b996880e, type: 3}
+  m_Name: GetCameraPositionAction
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 0
+  outputKey: OriginalPos

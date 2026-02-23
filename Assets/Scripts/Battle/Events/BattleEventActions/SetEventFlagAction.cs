@@ -6,7 +6,8 @@ namespace LongLiveKhioyen
     {
         Bool,
         Int,
-        String
+        String,
+        Vector2Int
     }
 
     public enum FlagConditionMode
@@ -40,11 +41,13 @@ namespace LongLiveKhioyen
         public string valueA_String;
         public int valueA_Int;
         public bool valueA_Bool;
+        public Vector2Int valueA_Vector; // [新增]
 
         [Tooltip("Value if condition is FALSE")]
         public string valueB_String;
         public int valueB_Int;
         public bool valueB_Bool;
+        public Vector2Int valueB_Vector;
 
         public override void Execute()
         {
@@ -112,6 +115,7 @@ namespace LongLiveKhioyen
                 case FlagValueType.Bool: return isA ? valueA_Bool : valueB_Bool;
                 case FlagValueType.Int: return isA ? valueA_Int : valueB_Int;
                 case FlagValueType.String: return isA ? valueA_String : valueB_String;
+                case FlagValueType.Vector2Int: return isA ? valueA_Vector : valueB_Vector;
             }
             return null;
         }

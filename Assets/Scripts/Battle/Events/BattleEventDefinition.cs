@@ -42,6 +42,9 @@ namespace LongLiveKhioyen
         public string eventName;
         public BattleEventTriggerType triggerType;
         
+        [Header("Settings")]
+        public bool triggerOnce = true;
+        
         [Header("Trigger Logic")]
         [Tooltip("Any group evaluating to TRUE will trigger the event (OR logic between groups)")]
         public List<ConditionGroup> conditionGroups = new List<ConditionGroup>();

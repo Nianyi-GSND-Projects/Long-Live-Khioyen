@@ -25,6 +25,15 @@ namespace LongLiveKhioyen
 		public string itemId;
 
 		public float quantity;
+
+		public readonly override string ToString()
+		{
+			return type switch
+			{
+				ResourceType.Item => itemId,
+				_ => type.GetType().GetEnumName(type),
+			} + $"*{quantity}";
+		}
 	}
 
 	[Serializable]
@@ -240,6 +249,16 @@ namespace LongLiveKhioyen
 
 		public void Cost(params ResourceDescriptor[] costs)
 			=> Cost(costs as IEnumerable<ResourceDescriptor>);
+
+		public void Add(IEnumerable<ResourceDescriptor> costs)
+		{
+			foreach(var d in costs)
+				ChangeBy(d);
+
+			onChanged?.Invoke();
+		}
+
+		public void Add(params ResourceDescriptor[] costs) => Add(costs as IEnumerable<ResourceDescriptor>);
 
 		public bool TryCost(in Economy cost, bool actuallyCost = true)
 		{

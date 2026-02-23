@@ -172,22 +172,10 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Month pass
-		[Header("Month pass")]
-		public CanvasGroup monthPassPanel;
-
 		void OnMonthPassed()
 		{
 			if(GameManager.Settings.showMonthPassedPanel)
-			{
-				GameInstance.Instance.Paused = true;
-				monthPassPanel.gameObject.SetActive(true);
-			}
-		}
-
-		public void HideMonthPassPanel()
-		{
-			monthPassPanel.gameObject.SetActive(false);
-			GameInstance.Instance.Paused = false;
+				UiManager.Instance.OpenUiModalFromPrefabPath("Prefabs/Polis/UI/Month Pass Panel");
 		}
 		#endregion
 	}

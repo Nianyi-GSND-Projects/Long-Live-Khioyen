@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generatorConfig: {fileID: 11400000, guid: 11e53885ccfa1774f9cca31aa5b5d315, type: 2}
   presetCommanders:
-  - {fileID: 11400000, guid: 887cdba62a43fac4383e8d0f278a7b7d, type: 2}
+  - {fileID: 11400000, guid: 6ce6167af74d1a643a2101adcf0f7298, type: 2}
+  - {fileID: 11400000, guid: 0679e8b70d91e8143b3d61500cce35fc, type: 2}
+  - {fileID: 11400000, guid: 8c28d0ac7f8329e41967e5832835d883, type: 2}
+  - {fileID: 11400000, guid: 6f95d48f58b65964996600a1c35bf87c, type: 2}
+  - {fileID: 11400000, guid: c2273108b263edf42bff436dc31c1f53, type: 2}

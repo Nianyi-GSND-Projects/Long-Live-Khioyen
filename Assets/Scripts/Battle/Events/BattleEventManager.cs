@@ -15,7 +15,7 @@ namespace LongLiveKhioyen
         public BattleEventDefinition CurrentEvent { get; private set; }
         public BattleEventContext CurrentContext { get; private set; }
         private Dictionary<string, object> _globalBlackboard = new Dictionary<string, object>();
-
+        private HashSet<BattleEventDefinition> _triggeredEvents = new HashSet<BattleEventDefinition>();
         public void SetGlobalData(string key, object value)
         {
             if (_globalBlackboard.ContainsKey(key)) _globalBlackboard[key] = value;
@@ -60,12 +60,18 @@ namespace LongLiveKhioyen
             {
                 if (evt == null) continue;
         
-                // [修改] 传入 Context
+                if (evt.triggerOnce && _triggeredEvents.Contains(evt)) continue;
+
                 if (evt.triggerType == type && evt.CheckConditions(ctx))
                 {
+                    if (evt.triggerOnce) _triggeredEvents.Add(evt);
                     StartCoroutine(evt.TriggerCoroutine());
                 }
             }
+        }
+        public void ResetEvents()
+        {
+            _triggeredEvents.Clear();
         }
     }
 }
