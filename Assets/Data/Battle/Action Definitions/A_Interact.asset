@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: DefaultInteract
   actionId: 4
-  description: 
+  description: Interact with Facilities
   icon: {fileID: 0}
   actionPointCost: 0
   targetFactionType: 3

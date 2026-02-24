@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: "\u64A4\u79BB"
   actionId: 5
-  description: "\u4ECE\u6218\u6597\u4E2D\u64A4\u79BB"
+  description: 'Retreat From Battle
+
+    (Can only be used while in Retreat Zone)'
   icon: {fileID: 0}
   actionPointCost: 0
   targetFactionType: 0

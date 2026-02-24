@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37ebe457fc6c8784d8f70352ea9796d2, type: 3}
   m_Name: A_Charge
   m_EditorClassIdentifier: 
-  actionName: "\u51B2\u9635"
+  actionName: Charge
   actionId: 3
-  description: 
+  description: Charges and pushes enemies. Deals more damage if the enemy collides
+    with terrain or other units.
   icon: {fileID: 0}
   actionPointCost: 0
   targetFactionType: 2

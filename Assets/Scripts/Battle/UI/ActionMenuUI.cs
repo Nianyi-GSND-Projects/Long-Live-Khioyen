@@ -70,7 +70,7 @@ namespace LongLiveKhioyen
             foreach (Transform child in mainMenuContainer) Destroy(child.gameObject);
 
             // --- 按钮 1: 待命 (Wait) ---
-            CreateButton(mainMenuContainer, "待命", () =>
+            CreateButton(mainMenuContainer, "Wait","End this unit's turn", () =>
             {
                 Battle.Instance.ActionWait();
                 Hide();
@@ -85,14 +85,14 @@ namespace LongLiveKhioyen
                 // 进一步检查使用条件 (例如是否被缴械)
                 bool conditionMet = currentUnit.DefaultAttack.CheckUseConditions(currentUnit);
                 if(!currentUnit.DefaultAttack.HasValidTargetsInRange(currentUnit)) conditionMet = false;
-                CreateButton(mainMenuContainer, "普通攻击", () =>
+                CreateButton(mainMenuContainer, "Attack", currentUnit.DefaultAttack.description,() =>
                 {
                     Battle.Instance.PrepareAction(currentUnit.DefaultAttack);
                 }, interactable: conditionMet);
             }
             else
             {
-                CreateButton(mainMenuContainer, "普通攻击", null, interactable: false);
+                CreateButton(mainMenuContainer, "Attack", currentUnit.DefaultAttack.description,null, interactable: false);
             }
             
             // --- 按钮 3: 交互 (Interact) ---
@@ -104,7 +104,7 @@ namespace LongLiveKhioyen
                 {
                     canInteract = b1.DefaultInteract.HasValidTargetsInRange(currentUnit);
                 }
-                CreateButton(mainMenuContainer, "交互", () =>
+                CreateButton(mainMenuContainer, "Interact", currentUnit.DefaultInteract.description,() =>
                 {
                     // 交互通常是立即执行，或者是选择目标
                     // 假设是立即执行 (Self Target)
@@ -118,7 +118,7 @@ namespace LongLiveKhioyen
                 // 检查条件 (IsOnExtractionPoint && HasFullMove)
                 bool canRetreat = b2.DefaultRetreat.CheckUseConditions(currentUnit);
             
-                CreateButton(mainMenuContainer, "撤离", () =>
+                CreateButton(mainMenuContainer, "Retreat", currentUnit.DefaultRetreat.description,() =>
                 {
                     // 撤离是对自己的操作 (TargetCountType.Self)
                     // PrepareAction 会处理 Self 类型
@@ -127,7 +127,7 @@ namespace LongLiveKhioyen
             }
             // --- 按钮 5: 部队技能 (Unit Actions) ---
             bool hasUnitActions = currentUnit.runtimeUnitActions != null && currentUnit.runtimeUnitActions.Count > 0;
-            CreateButton(mainMenuContainer, "部队战法", () =>
+            CreateButton(mainMenuContainer, "Unit Skills", "Unit's unique skills",() =>
             {
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeUnitActions);
@@ -135,7 +135,7 @@ namespace LongLiveKhioyen
 
             // --- 按钮 6: 指挥官技能 (Commander Actions) ---
             bool hasCmdActions = currentUnit.runtimeCommanderActions != null && currentUnit.runtimeCommanderActions.Count > 0;
-            CreateButton(mainMenuContainer, "计略", () =>
+            CreateButton(mainMenuContainer, "Commander Skills", "Commander's unique skills", () =>
             {
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeCommanderActions);
@@ -171,7 +171,7 @@ namespace LongLiveKhioyen
                 {
                     isUsable = action.HasValidTargetsInRange(currentUnit);
                 }
-                CreateButton(subMenuContainer, action.actionName, () =>
+                CreateButton(subMenuContainer, action.actionName, action.description,() =>
                 {
                     Battle.Instance.PrepareAction(action);
                 }, interactable: isUsable);
@@ -179,23 +179,27 @@ namespace LongLiveKhioyen
         }
 
         // 辅助方法：创建按钮
-        private void CreateButton(Transform container, string text, System.Action onClick, bool interactable = true)
+        private void CreateButton(Transform container, string text, string description, System.Action onClick, bool interactable = true)
         {
             GameObject btnObj = Instantiate(actionButtonPrefab, container);
-            
+            ActionButtonUI btnUI = btnObj.GetComponent<ActionButtonUI>();
             // 设置文本
-            TMP_Text tmp = btnObj.GetComponentInChildren<TMP_Text>();
-            if (tmp != null) tmp.text = text;
-
-            // 设置按钮事件
-            Button btn = btnObj.GetComponent<Button>();
-            if (btn != null)
+            if (btnUI != null)
             {
-                btn.interactable = interactable;
-                btn.onClick.RemoveAllListeners();
-                if (onClick != null)
+                btnUI.Setup(text, description, onClick, interactable);
+            }
+            else
+            {
+                // Fallback: 如果 Prefab 没挂脚本，保持旧逻辑 (防止报错)
+                TMP_Text tmp = btnObj.GetComponentInChildren<TMP_Text>();
+                if (tmp != null) tmp.text = text;
+
+                Button btn = btnObj.GetComponent<Button>();
+                if (btn != null)
                 {
-                    btn.onClick.AddListener(() => onClick.Invoke());
+                    btn.interactable = interactable;
+                    btn.onClick.RemoveAllListeners();
+                    if (onClick != null) btn.onClick.AddListener(() => onClick.Invoke());
                 }
             }
         }

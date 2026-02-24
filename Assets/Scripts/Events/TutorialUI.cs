@@ -14,7 +14,7 @@ namespace LongLiveKhioyen
         public TMP_Text topContentText;
         public Image tutorialImage;
         public TMP_Text bottomContentText;
-        
+        public GameObject imageContainer;
         [Header("Buttons")]
         public Button prevButton;
         public Button nextButton;
@@ -48,18 +48,45 @@ namespace LongLiveKhioyen
         private void UpdatePage()
         {
             if (_currentTutorial == null) return;
-            
+    
             TutorialPage page = _currentTutorial.pages[_currentIndex];
 
-            // 1. 更新内容
+            // 1. 标题
             if (titleText != null) titleText.text = page.title;
-            if (topContentText != null) topContentText.text = page.topText;
-            if (bottomContentText != null) bottomContentText.text = page.bottomText;
-            
+
+            // 2. 上部文本
+            if (topContentText != null)
+            {
+                bool hasText = !string.IsNullOrEmpty(page.topText);
+                topContentText.text = page.topText;
+                topContentText.gameObject.SetActive(hasText); // [关键] 没字就隐藏
+            }
+
+            // 3. 图片
+            bool hasImage = page.image != null;
+        
             if (tutorialImage != null)
             {
                 tutorialImage.sprite = page.image;
-                tutorialImage.gameObject.SetActive(page.image != null);
+            }
+
+            // [关键] 隐藏容器
+            if (imageContainer != null)
+            {
+                imageContainer.SetActive(hasImage);
+            }
+            else if (tutorialImage != null)
+            {
+                // Fallback: 如果没绑容器，直接隐藏图片
+                tutorialImage.gameObject.SetActive(hasImage);
+            }
+
+            // 4. 下部文本
+            if (bottomContentText != null)
+            {
+                bool hasText = !string.IsNullOrEmpty(page.bottomText);
+                bottomContentText.text = page.bottomText;
+                bottomContentText.gameObject.SetActive(hasText); // [关键] 没字就隐藏
             }
 
             // 2. 更新按钮状态
@@ -77,6 +104,7 @@ namespace LongLiveKhioyen
                     nextButtonText.text = isLastPage ? "Close" : "Next";
                 }
             }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(panel.GetComponent<RectTransform>());
         }
 
         private void OnPrevClicked()
