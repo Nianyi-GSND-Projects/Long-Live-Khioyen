@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -9,11 +10,13 @@ namespace LongLiveKhioyen
 		#region Life cycle
 		protected void Start()
 		{
+			SetupBattalionArea();
+
 			PolisData.Current.onGarrisonChanged += RefreshCommanders;
 			PolisData.Current.onNextPromotableCommanderChanged += RefreshPromotion;
 
 			Refresh();
-			InspectCommander(null);
+			InspectCommander();
 		}
 
 		protected void OnDestroy()
@@ -59,28 +62,111 @@ namespace LongLiveKhioyen
 			{
 				FancyListItem item = FancyListItem.Instantiate(commandersLayoutGroup.transform);
 				item.ApplyCommander(commander);
-				item.onClick += () => InspectCommander(commander);
+				item.onClick += () => OnSelectCommander(commander);
 			}
+		}
+
+		BattalionStatus selectBattalion;
+		GameCommander SelectedCommander => selectBattalion?.battalionCommander;
+
+		void OnSelectCommander(GameCommander c)
+		{
+			if(selectBattalion != null)
+				selectBattalion.onChanged -= RefreshBattalionArea;
+			selectBattalion = PolisData.Current.GetGarrisonedBattalionByCommander(c);
+			if(selectBattalion != null)
+				selectBattalion.onChanged += RefreshBattalionArea;
+
+			InspectCommander();
 		}
 		#endregion
 
-		#region 右侧细节面板
-		[Header("右侧细节")]
+		#region 指挥官检视
+		[Header("指挥官细节")]
 		[SerializeField] Image commanderAvatarImage;
 		[SerializeField] TMP_Text commanderNameText;
 		[SerializeField] TMP_Text zhiText, xinText, renText, yongText, yanText;
 
-		void InspectCommander(GameCommander commander)
+		void InspectCommander()
 		{
-			commanderAvatarImage.gameObject.SetActive(commander?.portrait != null);
-			commanderAvatarImage.sprite = commander?.portrait;
-			commanderNameText.text = commander?.commanderName ?? string.Empty;
+			commanderAvatarImage.gameObject.SetActive(SelectedCommander?.portrait != null);
+			commanderAvatarImage.sprite = SelectedCommander?.portrait;
+			commanderNameText.text = SelectedCommander?.commanderName ?? string.Empty;
 
-			zhiText.text = commander?.Zhi.ToString();
-			xinText.text = commander?.Xin.ToString();
-			renText.text = commander?.Ren.ToString();
-			yongText.text = commander?.Yong.ToString();
-			yanText.text = commander?.Yan.ToString();
+			zhiText.text = SelectedCommander?.Zhi.ToString();
+			xinText.text = SelectedCommander?.Xin.ToString();
+			renText.text = SelectedCommander?.Ren.ToString();
+			yongText.text = SelectedCommander?.Yong.ToString();
+			yanText.text = SelectedCommander?.Yan.ToString();
+
+			RefreshBattalionArea();
+		}
+
+		[Header("军队编制")]
+		[SerializeField] CanvasGroup battalionsArea;
+
+		[SerializeField] TMP_Text weaponNameText;
+		[SerializeField] TMP_Text weaponCountText;
+		[SerializeField] TMP_Text populationText;
+
+		[SerializeField] TMP_Dropdown battalionTypeDropDown;
+		[SerializeField] Slider battalionSlider;
+		[SerializeField] TMP_Text currentCountText, availableCountText;
+
+		void SetupBattalionArea()
+		{
+			battalionTypeDropDown.ClearOptions();
+			battalionTypeDropDown.AddOptions(UnitDatabase.BattalionDefinitionSheet.unitDefinitions
+				.Where(d => (d as BattalionDefinition).isTrainable)
+				.Select(d => new TMP_Dropdown.OptionData()
+				{
+					text = d.name,
+				}).ToList());
+			battalionTypeDropDown.onValueChanged.AddListener(OnSelectBattalionType);
+		}
+
+		void OnSelectBattalionType(int i)
+		{
+			if(SelectedCommander == null)
+				return;
+		}
+
+		void RefreshBattalionArea()
+		{
+			battalionsArea.interactable = selectBattalion != null;
+			battalionsArea.alpha = selectBattalion == null ? 0 : 1;
+			if(selectBattalion == null)
+				return;
+
+			weaponNameText.text = "";  // TODO
+			weaponCountText.text = "";  // TODO
+
+			populationText.text = PolisData.Current.FreePopulation.ToString();
+			currentCountText.text = selectBattalion.currentSolider.ToString();
+
+			battalionSlider.onValueChanged.RemoveListener(OnSetSoldierCount);
+			int cap = CalculateSoliderCap();
+			battalionSlider.maxValue = cap;
+			battalionSlider.value = selectBattalion.currentSolider;
+			battalionSlider.onValueChanged.AddListener(OnSetSoldierCount);
+
+			availableCountText.text = cap.ToString();
+		}
+
+		int CalculateSoliderCap()
+		{
+			if(selectBattalion == null)
+				return default;
+
+			int res = PolisData.Current.FreePopulation + selectBattalion.currentSolider;
+			res = Mathf.Min(res, res);
+			return res;
+		}
+
+		void OnSetSoldierCount(float v)
+		{
+			int count = Mathf.RoundToInt(v);
+			PolisData.Current.SetBattalionSoldierCount(selectBattalion, count);
 		}
 		#endregion
 	}

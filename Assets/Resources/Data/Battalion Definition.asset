@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   databaseType: 0
   unitDefinitions:
+  - {fileID: 11400000, guid: 68a08bd622c12224baf72f41aca7000c, type: 2}
   - {fileID: 11400000, guid: 78df0e99e69fe98418e249f90e18cff7, type: 2}
   - {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
   - {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}

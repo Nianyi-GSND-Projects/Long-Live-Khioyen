@@ -16,9 +16,10 @@ namespace LongLiveKhioyen
 		public Action onGarrisonChanged;
 
 		public IReadOnlyList<GameCommander> GetGarrisonedCommanders()
-		{
-			return garrisonedBattalions.Select(b => b.battalionCommander).ToList();
-		}
+			=> garrisonedBattalions.Select(b => b.battalionCommander).ToList();
+
+		public BattalionStatus GetGarrisonedBattalionByCommander(GameCommander commander)
+			=> garrisonedBattalions.Find(b => b.battalionCommander == commander);
 
 		/// <summary>使军队出城。</summary>
 		/// <param name="headCommander">暂时不用。</param>
@@ -60,6 +61,18 @@ namespace LongLiveKhioyen
 			onGarrisonChanged?.Invoke();
 		}
 
+		public void SetBattalionSoldierCount(BattalionStatus battalion, int targetCount)
+		{
+			int dCount = targetCount - battalion.currentSolider;
+			if(dCount > FreePopulation)
+			{
+				Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：需要 {FreePopulation - dCount} 空闲人口，当前空闲人口 {FreePopulation}。");
+				return;
+			}
+			Population -= dCount;
+			battalion.currentSolider += dCount;
+			battalion.onChanged?.Invoke();
+		}
 		#endregion
 
 		#region 提拔
@@ -94,6 +107,8 @@ namespace LongLiveKhioyen
 			BattalionStatus battalion = new()
 			{
 				battalionCommander = promotedCommander,
+				currentSolider = 0,
+				battalionDefinition = UnitDatabase.BattalionDefinitionSheet.GetUnit(0) as BattalionDefinition,  // 龙鸣
 			};
 			garrisonedBattalions.Add(battalion);
 

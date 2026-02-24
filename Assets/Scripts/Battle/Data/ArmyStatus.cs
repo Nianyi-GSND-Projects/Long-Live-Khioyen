@@ -27,6 +27,8 @@ namespace LongLiveKhioyen
 		public int currentExp;
 		//部队当前数据
 
+		public Action onChanged;
+
 		public int MaxSolider
 		{
 			get
@@ -68,8 +70,6 @@ namespace LongLiveKhioyen
 				return param.defaultMaxExp;
 			}
 		}
-
-
 	}
 
 }

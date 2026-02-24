@@ -13,7 +13,17 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Database/Unit Database")]
     public class UnitDatabase : ScriptableObject
     {
-        [Header("Settings")] public UnitDatabaseType databaseType;
+		    static UnitDatabase battalionDefinitionSheet;
+				public static UnitDatabase BattalionDefinitionSheet {
+      get
+      {
+        if(battalionDefinitionSheet == null)
+          battalionDefinitionSheet = Resources.Load<UnitDatabase>("Data/Battalion Definition");
+        return battalionDefinitionSheet;
+			}
+    }
+
+				[Header("Settings")] public UnitDatabaseType databaseType;
 
         [Header("Data")] public List<UnitDefinition> unitDefinitions = new();
 
