@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a9f4185281afaf46926db1a25a2822d, type: 3}
+  m_Name: juyan-arrival-1
+  m_EditorClassIdentifier: 
+  description: 
+  isBlocking: 1
+  id: 1001
+  dialogList:
+  - character: {fileID: 0}
+    overrideName: ZhengJi
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "Juyan... Back when the General of the Light Cavalry swept through Hexi, this place was a bastion of magnificence. Now, nothing remains but broken bricks and shattered tiles."
+  - character: {fileID: 0}
+    overrideName: ChangHui
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "General Zheng, sentimentality is a luxury we cannot afford. The threat of the Xiongnu Zhuri King is already at our doorstep. Our mission is to establish a foothold here and restore peace to the Western Regions once more."
+  - character: {fileID: 0}
+    overrideName: ZhengJi
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "You are right. The Imperial Court has placed its trust in us. By leading these garrison troops to hold this ground, we are mending the severed Silk Road. Every step we take forward is the reclamation of Han territory."
+  - character: {fileID: 0}
+    overrideName: ChangHui
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "Then let us begin beneath our very feet. To secure our stay in the Western Regions, we must rebuild Juyan from the ground up."
+  - character: {fileID: 0}
+    overrideName: ChangHui
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "General Zheng, our garrison troops are not mere travelers; they are the pioneers of what is to come. To reclaim these lost lands, our first priority in Juyan is to 'erect shelters'."
+  - character: {fileID: 0}
+    overrideName: ZhengJi
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "I understand. A city as great as Juyan cannot stand without a foundation. Only with quarters can our men find a true sense of belonging. This will no longer be a foreign land, but our stronghold."
+  - character: {fileID: 0}
+    overrideName: ChangHui
+    overridePortrait: {fileID: 0}
+    useBlackboardName: 0
+    nameKey: 
+    dialogText: "Precisely. Houses are the cornerstone of all development. With a home to shield them from the wind and sand, these professional soldiers can focus on both farming and war. Only then will the displaced people realize that the Han has truly returned. General, give the order to begin construction—expand our [Population] capacity."

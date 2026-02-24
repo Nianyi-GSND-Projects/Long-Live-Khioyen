@@ -92,7 +92,7 @@ MonoBehaviour:
         remainingTime: 0
         requiredPopulation: 0
         parameters:
-        - 2
+        - 1001
         - 0
       lastTime:
         monthsElapsed: 0
