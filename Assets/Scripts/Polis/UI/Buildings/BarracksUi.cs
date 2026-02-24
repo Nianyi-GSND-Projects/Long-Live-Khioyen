@@ -21,6 +21,7 @@ namespace LongLiveKhioyen
 
 		protected void OnDestroy()
 		{
+			SelectedBattalion = null;  // 解绑事件
 			PolisData.Current.onGarrisonChanged -= RefreshCommanders;
 			PolisData.Current.onNextPromotableCommanderChanged -= RefreshPromotion;
 		}
@@ -66,17 +67,26 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		BattalionStatus selectBattalion;
-		GameCommander SelectedCommander => selectBattalion?.battalionCommander;
+		BattalionStatus selectedBattalion;
+		BattalionStatus SelectedBattalion
+		{
+			get => selectedBattalion;
+			set
+			{
+				if(selectedBattalion != null)
+					selectedBattalion.onChanged -= RefreshBattalionArea;
+
+				selectedBattalion = value;
+
+				if(selectedBattalion != null)
+					selectedBattalion.onChanged += RefreshBattalionArea;
+			}
+		}
+		GameCommander SelectedCommander => SelectedBattalion?.battalionCommander;
 
 		void OnSelectCommander(GameCommander c)
 		{
-			if(selectBattalion != null)
-				selectBattalion.onChanged -= RefreshBattalionArea;
-			selectBattalion = PolisData.Current.GetGarrisonedBattalionByCommander(c);
-			if(selectBattalion != null)
-				selectBattalion.onChanged += RefreshBattalionArea;
-
+			SelectedBattalion = PolisData.Current.GetGarrisonedBattalionByCommander(c);
 			InspectCommander();
 		}
 		#endregion
@@ -133,21 +143,21 @@ namespace LongLiveKhioyen
 
 		void RefreshBattalionArea()
 		{
-			battalionsArea.interactable = selectBattalion != null;
-			battalionsArea.alpha = selectBattalion == null ? 0 : 1;
-			if(selectBattalion == null)
+			battalionsArea.interactable = SelectedBattalion != null;
+			battalionsArea.alpha = SelectedBattalion == null ? 0 : 1;
+			if(SelectedBattalion == null)
 				return;
 
 			weaponNameText.text = "";  // TODO
 			weaponCountText.text = "";  // TODO
 
 			populationText.text = PolisData.Current.FreePopulation.ToString();
-			currentCountText.text = selectBattalion.currentSolider.ToString();
+			currentCountText.text = SelectedBattalion.currentSolider.ToString();
 
 			battalionSlider.onValueChanged.RemoveListener(OnSetSoldierCount);
 			int cap = CalculateSoliderCap();
-			battalionSlider.maxValue = cap;
-			battalionSlider.value = selectBattalion.currentSolider;
+			battalionSlider.maxValue = Mathf.Max(cap, 0);
+			battalionSlider.value = SelectedBattalion.currentSolider;
 			battalionSlider.onValueChanged.AddListener(OnSetSoldierCount);
 
 			availableCountText.text = cap.ToString();
@@ -155,18 +165,17 @@ namespace LongLiveKhioyen
 
 		int CalculateSoliderCap()
 		{
-			if(selectBattalion == null)
+			if(SelectedBattalion == null)
 				return default;
 
-			int res = PolisData.Current.FreePopulation + selectBattalion.currentSolider;
-			res = Mathf.Min(res, res);
+			int res = PolisData.Current.FreePopulation + SelectedBattalion.currentSolider;
 			return res;
 		}
 
 		void OnSetSoldierCount(float v)
 		{
 			int count = Mathf.RoundToInt(v);
-			PolisData.Current.SetBattalionSoldierCount(selectBattalion, count);
+			PolisData.Current.SetBattalionSoldierCount(SelectedBattalion, count);
 		}
 		#endregion
 	}

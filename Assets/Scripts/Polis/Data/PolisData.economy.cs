@@ -141,10 +141,10 @@ namespace LongLiveKhioyen
 		{
 			get
 			{
-				// 水井*5 + 住房*20
+				// 基础50 + 水井*5 + 住房*20
 				var dwellings = QueryBuildingsByTag("dwelling");
 				var waterWells = QueryBuildingsByTag("water-well");
-				return dwellings.Length * 20 + waterWells.Length * 5;
+				return 50 + dwellings.Length * 20 + waterWells.Length * 5;
 			}
 		}
 		#endregion
