@@ -51,11 +51,11 @@ MonoBehaviour:
       orientation: 22.5
       economy:
         food: 1000
-        material: 0
+        material: 2000
         money: 800
         items:
           records: []
-      population: 10
+      population: 100
       queuedProductions: []
       forSaleItems:
         records: []
@@ -82,74 +82,6 @@ MonoBehaviour:
         parameters:
         - 1001
         - 0
-      lastTime:
-        monthsElapsed: 0
-    - buildings: []
-      id: fanhe
-      type: 1
-      position: {x: -5000, y: 1000}
-      size: {x: 20, y: 20}
-      orientation: 15
-      economy:
-        food: 0
-        material: 0
-        money: 0
-        items:
-          records: []
-      population: 0
-      queuedProductions: []
-      forSaleItems:
-        records: []
-      nextPromotableCommander:
-        commanderId: 0
-        commanderName: 
-        portrait: {fileID: 0}
-        race: 0
-        level: 1
-        Zhi: 0
-        Xin: 0
-        Ren: 0
-        Yong: 0
-        Yan: 0
-        isAssigned: 0
-        personality: {fileID: 0}
-        traits: []
-        commanderActions: []
-      tasks: []
-      lastTime:
-        monthsElapsed: 0
-    - buildings: []
-      id: dunhuang
-      type: 1
-      position: {x: 5000, y: -3000}
-      size: {x: 50, y: 50}
-      orientation: 0
-      economy:
-        food: 0
-        material: 0
-        money: 0
-        items:
-          records: []
-      population: 0
-      queuedProductions: []
-      forSaleItems:
-        records: []
-      nextPromotableCommander:
-        commanderId: 0
-        commanderName: 
-        portrait: {fileID: 0}
-        race: 0
-        level: 1
-        Zhi: 0
-        Xin: 0
-        Ren: 0
-        Yong: 0
-        Yan: 0
-        isAssigned: 0
-        personality: {fileID: 0}
-        traits: []
-        commanderActions: []
-      tasks: []
       lastTime:
         monthsElapsed: 0
     - buildings: []
