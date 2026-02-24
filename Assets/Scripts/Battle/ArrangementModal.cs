@@ -66,7 +66,7 @@ namespace LongLiveKhioyen
 			foreach(var reserveTeam in Battle.playerReserveTeam)
 			{
 				var card = Instantiate(cardTemplate).GetComponent<BattalionArrangementUi>();
-				card.battalionDescriptor = reserveTeam;
+				card.Setup(reserveTeam); 
 				card.transform.SetParent(ArrangementLayoutGroup.transform, false);
   
 				card.onSelected += OnBattalionCardSelected;

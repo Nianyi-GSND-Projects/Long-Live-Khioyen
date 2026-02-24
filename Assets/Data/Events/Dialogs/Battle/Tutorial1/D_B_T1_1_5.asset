@@ -28,11 +28,11 @@ MonoBehaviour:
     overridePortrait: {fileID: 0}
     useBlackboardName: 0
     nameKey: 
-    dialogText: General! I, Ponu Zhao, am ready to lead the vanguard. I shall strike
-      directly at the Golden Statue of the Xiutu King!
+    dialogText: "General\uFF01 I, Ponu Zhao, am ready to lead the vanguard. I shall
+      strike directly at the Golden Statue of the Xiutu King!"
   - character: {fileID: 11400000, guid: 78c4bb626fc20b241a6677beb9dc0ad4, type: 2}
     overrideName: 
     overridePortrait: {fileID: 0}
     useBlackboardName: 0
     nameKey: 
-    dialogText: Excellent! The elite of the army are now under your command.
+    dialogText: "Excellent\uFF01The elite of the army are now under your command."

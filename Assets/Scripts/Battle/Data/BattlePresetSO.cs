@@ -26,6 +26,7 @@ namespace LongLiveKhioyen
         public CommanderTemplateSO commanderTemplate; // 指定名将
         public CommanderGenerationProfile randomCommanderProfile; // 随机生成配置
         public bool useRandomCommander = false; // 开关
+        
     }
 
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Level/Battle Preset")]
@@ -43,7 +44,11 @@ namespace LongLiveKhioyen
         
         [Header("Events")]
         public List<BattleEventDefinition> levelEvents = new List<BattleEventDefinition>(); // 预设事件
-
+        
+        
+        [Header("Player Army Settings")]
+        public bool usePresetPlayerArmy = false;
+        public List<PreplacedUnitData> playerReserveList = new List<PreplacedUnitData>();
         
         [Header("Units")]
         public List<PreplacedUnitData> preplacedUnits = new List<PreplacedUnitData>(); // 预设的敌人/中立设施

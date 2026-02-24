@@ -192,6 +192,47 @@ namespace LongLiveKhioyen
 		
 		private void ImportArmyData()
 		{
+			
+			if (useLevelPreset && levelPreset != null && levelPreset.usePresetPlayerArmy)
+			{
+				Debug.Log("Using Preset Player Army.");
+              
+				foreach (var data in levelPreset.playerReserveList)
+				{
+					// 构造 Descriptor
+					BattalionDescriptor desc = new BattalionDescriptor
+					{
+						Definition = data.battalionDef,
+						faction = Faction.Player,
+						armyId = -1, // 预设单位没有全局 ID
+						placed = false,
+                      
+						// 应用 Override
+						maxSolider = data.battalionDef.defaultMaxSolider,
+						currentSoliders = data.overrideSoldiers > 0 ? data.overrideSoldiers : data.battalionDef.defaultMaxSolider,
+                      
+						maxMorale = data.battalionDef.defaultMaxMorale,
+						currentMurale = data.overrideMorale > 0 ? data.overrideMorale : data.battalionDef.defaultMaxMorale,
+                      
+						maxTraining = 100,
+						currentTraining = 50
+					};
+
+					// 生成指挥官
+					if (data.commanderTemplate != null)
+					{
+						desc.battalionCommander = data.commanderTemplate.CreateInstance(CommanderRegistry.Instance.GenerateID());
+					}
+					else if (data.useRandomCommander)
+					{
+						desc.battalionCommander = CommanderRegistry.Instance.GenerateCommander(data.randomCommanderProfile);
+					}
+                  
+					playerReserveTeam.Add(desc);
+				}
+				return; // 跳过后续逻辑
+			}
+			
 			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
 				playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
 		}

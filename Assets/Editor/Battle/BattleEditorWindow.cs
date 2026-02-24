@@ -28,6 +28,7 @@ namespace LongLiveKhioyen
         private Rect mapRenderRect; 
         
         private bool showEvents = false;
+        private bool showReserve = false;
 
         [MenuItem("Long Live Khioyen/Battle Level Editor")]
         public static void ShowWindow()
@@ -112,7 +113,9 @@ namespace LongLiveKhioyen
                         false
                     );
                 }
-        
+                
+                
+                
                 if (GUI.changed) EditorUtility.SetDirty(currentPreset);
         
                 GUILayout.EndVertical();
@@ -141,7 +144,48 @@ namespace LongLiveKhioyen
             GUILayout.EndHorizontal();
 
             DrawToolSettings();
+            
+            showReserve = EditorGUILayout.Foldout(showReserve, "Player Reserve (Preset)", true);
+            if (showReserve && currentPreset != null)
+            {
+                GUILayout.BeginVertical("helpbox");
+        
+                currentPreset.usePresetPlayerArmy = EditorGUILayout.Toggle("Use Preset Army", currentPreset.usePresetPlayerArmy);
 
+                if (currentPreset.usePresetPlayerArmy)
+                {
+                    // 简单的列表管理
+                    int count = currentPreset.playerReserveList.Count;
+                    int newCount = EditorGUILayout.IntField("Size", count);
+            
+                    if (newCount != count)
+                    {
+                        while (currentPreset.playerReserveList.Count < newCount) currentPreset.playerReserveList.Add(new PreplacedUnitData());
+                        while (currentPreset.playerReserveList.Count > newCount) currentPreset.playerReserveList.RemoveAt(currentPreset.playerReserveList.Count - 1);
+                    }
+
+                    for (int i = 0; i < currentPreset.playerReserveList.Count; i++)
+                    {
+                        var data = currentPreset.playerReserveList[i];
+                
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label($"Unit {i}:");
+                        data.battalionDef = (BattalionDefinition)EditorGUILayout.ObjectField(data.battalionDef, typeof(BattalionDefinition), false);
+                
+                        // 这里可以展开更多配置 (Commander, Overrides)，或者点击后在下方 Inspector 显示
+                        // 为了简单，这里只显示 Def，如果需要详细配置，建议写个 CustomPropertyDrawer 或者复用 DrawUnitInspector
+                        if (GUILayout.Button("Edit"))
+                        {
+                            _selectedUnitData = data; // 复用底部面板！
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                }
+        
+                if (GUI.changed) EditorUtility.SetDirty(currentPreset);
+                GUILayout.EndVertical();
+            }
+            
             GUILayout.EndVertical();
         }
 

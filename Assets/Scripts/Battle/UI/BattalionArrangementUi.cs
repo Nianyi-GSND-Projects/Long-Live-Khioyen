@@ -15,12 +15,12 @@ namespace LongLiveKhioyen
         [NonSerialized] public BattalionDescriptor battalionDescriptor;
         
         LocalizedString localizedBattalionName;
-        public Text buttonText;
         
         CanvasGroup group;
         [SerializeField] Button button;
-        [SerializeField] TMP_Text text;
-        [SerializeField] Image image;
+        [SerializeField] private TMP_Text unitNameText;
+        [SerializeField] private TMP_Text commanderNameText;
+        [SerializeField] Image unitIcon;
         
         public Action<BattalionArrangementUi> onSelected, onHovered, onUnhovered;
         
@@ -46,10 +46,32 @@ namespace LongLiveKhioyen
         }
         public void OnPointerEnter(PointerEventData eventData) => onHovered?.Invoke(this);
         public void OnPointerExit(PointerEventData eventData) => onUnhovered?.Invoke(this);
-        public void Setup(BattalionDescriptor battalionDescriptor)
+
+        public void Setup(BattalionDescriptor descriptor)
         {
-            buttonText.text = battalionDescriptor.Definition.unitName;
-            Debug.Log("预备队已生成");
+            this.battalionDescriptor = descriptor;
+            
+            if (descriptor == null || descriptor.Definition == null) return;
+            
+            if (unitNameText != null)
+                unitNameText.text = descriptor.Definition.unitName;
+
+            // 2. 设置指挥官名
+            if (commanderNameText != null)
+            {
+                if (descriptor.battalionCommander != null)
+                {
+                    commanderNameText.text = descriptor.battalionCommander.commanderName;
+                }
+                else
+                {
+                    commanderNameText.text = "无指挥官"; // 或空字符串
+                }
+            }
+
+            // 3. 设置图标
+            if (unitIcon != null)
+                unitIcon.sprite = descriptor.Definition.figure;
         }
     }
 }
