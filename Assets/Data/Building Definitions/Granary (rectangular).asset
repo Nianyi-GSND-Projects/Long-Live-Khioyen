@@ -25,7 +25,7 @@ MonoBehaviour:
   constructionPopulation: 5
   cost:
     food: 0
-    material: 0
-    money: 0
+    material: 200
+    money: 100
     items:
       records: []

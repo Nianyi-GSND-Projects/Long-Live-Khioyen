@@ -23,8 +23,8 @@ MonoBehaviour:
   constructionTime: 0.6666667
   constructionPopulation: 30
   cost:
-    food: 200
-    material: 0
-    money: 100
+    food: 0
+    material: 600
+    money: 600
     items:
       records: []
