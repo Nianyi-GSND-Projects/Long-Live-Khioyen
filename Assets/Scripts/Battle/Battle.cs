@@ -902,31 +902,85 @@ namespace LongLiveKhioyen
 		
 		public void CheckDeath(Unit unit)
 		{
+			if (unit == null) return;
+			bool isDead = false;
 			if(unit is Battalion battalion && battalion.currentSoliders <= 0)
 			{
-				RemoveUnitFromBattle(battalion);
-				
-				if (BattleEventManager.Instance != null)
-					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitDeath, unit);
-
+				isDead = true;
 				Debug.Log($"Battalion {battalion.InstanceId} die off!");
-				return;
 			}
-			else if (unit is Facility facility && facility.currentDurability<=0)
+			else if (unit is Facility facility && facility.currentDurability <= 0)
 			{
-				RemoveUnitFromBattle(facility);
-				
-				if (BattleEventManager.Instance != null)
-					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitDeath, unit);
-
+				isDead = true;
 				Debug.Log($"Facility {facility.InstanceId} destroyed!");
-				return;
+			}
+			
+			if (isDead)
+			{
+				// 2. 处理掉落 (Loot)
+				// 规则：击杀者存在 + 击杀者是玩家 + 死者不是玩家 + 击杀者是部队
+				Debug.Log($"[CheckDeath] Unit {unit.name} is dead. Checking loot...");
+				Unit killer = unit.LastAttacker;
+				
+				if (killer == null) Debug.Log("[CheckDeath] No killer (LastAttacker is null).");
+				else Debug.Log($"[CheckDeath] Killer: {killer.name}, Faction: {killer.faction}, Type: {killer.GetType().Name}");
+
+				if (killer != null && 
+				    killer.faction == Faction.Player && 
+				    unit.faction != Faction.Player &&
+				    killer is Battalion killerBat)
+				{
+					Debug.Log("[CheckDeath] Loot conditions met. Processing...");
+					ProcessLoot(unit, killerBat);
+				}
+				else
+				{
+					Debug.Log("[CheckDeath] Loot conditions NOT met.");
+				}
+
+				// 3. 触发死亡事件 (Event System)
+				// 这允许剧情脚本响应特定单位的死亡
+				if (BattleEventManager.Instance != null)
+				{
+					BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitDeath, unit);
+				}
+
+				// 4. 移除单位 (Cleanup)
+				RemoveUnitFromBattle(unit);
 			}
 
 			return;
 		}
 		
-		
+		private void ProcessLoot(Unit victim, Battalion killerBat)
+		{
+			if (victim.unitDefinition == null || victim.unitDefinition.lootRules == null) return;
+
+			foreach (var rule in victim.unitDefinition.lootRules)
+			{
+				if (rule.lootTable == null) continue;
+
+				// 判定概率
+				if (UnityEngine.Random.Range(0, 100) < rule.dropChance)
+				{
+					// Roll 物品
+					var item = rule.lootTable.Roll();
+					if (item != null)
+					{
+						killerBat.inventory.Add(item);
+                
+						// [修改] 拼合字符串并显示
+						string msg = $"{killerBat.name} looted {item.amount}x {item.definition.itemName}";
+						Debug.Log($"[Loot] {msg}");
+                
+						if (LootNotificationManager.Instance != null)
+						{
+							LootNotificationManager.Instance.ShowMessage(msg);
+						}
+					}
+				}
+			}
+		}
 		
 		#endregion
 		

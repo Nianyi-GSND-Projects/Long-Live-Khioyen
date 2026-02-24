@@ -10,27 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
-  m_Name: "\u9B3C\u63A8\u78E8"
+  m_Name: "\u80E1\u738B\u91D1\u5370"
   m_EditorClassIdentifier: 
-  id: 5
-  itemId: debug-item-3
-  itemName: "\u9B3C\u63A8\u78E8"
-  tags:
-  - debug
-  description: "\u6D4B\u8BD5\u7528\u7269\u54C1 #3\u3002"
-  icon: {fileID: 0}
-  rarity: 0
-  value: 0
+  id: 3
+  itemId: 
+  itemName: Seal of the Xiongnu King
+  tags: []
+  description: 
+  icon: {fileID: 21300000, guid: 6991518f4c868874da87597b97017790, type: 3}
+  rarity: 4
+  value: 1000
   itemWeightFactor: 1
-  maxStackNumber: 100
-  productable: 1
-  costs:
-  - type: 6
-    itemId: 
-    quantity: 1000
-  - type: 8
-    itemId: 
-    quantity: -1
+  maxStackNumber: 1
+  productable: 0
+  costs: []
   canSell: 0
   sellPrice: 0
   canBuy: 0

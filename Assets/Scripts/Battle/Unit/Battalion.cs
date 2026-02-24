@@ -113,10 +113,10 @@ namespace LongLiveKhioyen
             }
         }
         
-        public override void TakeDamage(int rawDamage)
+        public override void TakeDamage(int rawDamage, Unit attacker = null)
         {
             int oldHealth = currentHealth;
-            base.TakeDamage(rawDamage);
+            base.TakeDamage(rawDamage,attacker);
         
             if (currentHealth < oldHealth)
             {

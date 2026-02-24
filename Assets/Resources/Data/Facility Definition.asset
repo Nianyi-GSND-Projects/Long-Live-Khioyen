@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Facility Definition
   m_EditorClassIdentifier: 
   databaseType: 1
-  unitDefinitions: []
+  unitDefinitions:
+  - {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}

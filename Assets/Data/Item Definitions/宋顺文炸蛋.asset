@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
   m_Name: "\u5B8B\u987A\u6587\u70B8\u86CB"
   m_EditorClassIdentifier: 
+  id: 2
   itemId: debug-item-2
   itemName: "\u5B8B\u987A\u6587\u70B8\u86CB"
   tags:

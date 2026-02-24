@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: 
   isBlocking: 1
-  id: 0
+  id: 5
   dialogList:
   - character: {fileID: 11400000, guid: 6045bbc091c15ba419867de19f70ee42, type: 2}
     overrideName: 

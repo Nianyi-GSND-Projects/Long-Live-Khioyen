@@ -116,7 +116,7 @@ namespace LongLiveKhioyen
             string prefix = isCounter ? "[反击]" : "[攻击]";
             Debug.Log($"{prefix} {from.name} -> {to.name} (伤害: {amount})");
             
-            to.TakeDamage(amount);
+            to.TakeDamage(amount,from);
             
             if (from is Battalion attackerBat)
             {

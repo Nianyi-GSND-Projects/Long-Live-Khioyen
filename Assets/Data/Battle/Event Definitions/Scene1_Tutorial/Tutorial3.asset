@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: 
   isBlocking: 1
-  id: 0
+  id: 3
   dialogList:
   - character: {fileID: 0}
     overrideName: 
@@ -66,9 +66,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a60d95e45a38b14d83bed3a167080a7, type: 3}
   m_Name: Tutorial3
   m_EditorClassIdentifier: 
-  id: 0
+  id: 3
   eventName: 
   triggerType: 5
+  triggerOnce: 1
   conditionGroups:
   - conditions:
     - conditionType: 4

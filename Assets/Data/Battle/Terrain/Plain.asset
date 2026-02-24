@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3171103be27d34fb12be85e987060f, type: 3}
   m_Name: Plain
   m_EditorClassIdentifier: 
+  id: 1
   terrainName: Plain
   material: {fileID: 2100000, guid: f27c84f54aac5af44aaa0a0b64f65eda, type: 2}
   movementCost: 1

@@ -31,6 +31,9 @@ MonoBehaviour:
   defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
   unitUniqueActions:
   - {fileID: 11400000, guid: 26c7e5a101031894ca187bdbefdf3df1, type: 2}
+  lootRules:
+  - lootTable: {fileID: 11400000, guid: 18177c4fd797bc447a2fa076a3fb6ce1, type: 2}
+    dropChance: 100
   tags: []
   isTrainable: 1
   defaultDiscipline: 100

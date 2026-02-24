@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
   m_Name: Longming
   m_EditorClassIdentifier: 
-  id: 0
+  id: 6
   unitName: Minbing
   unitType: 0
   figure: {fileID: 0}
@@ -30,6 +30,7 @@ MonoBehaviour:
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
   defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
   unitUniqueActions: []
+  lootRules: []
   tags: []
   isTrainable: 1
   defaultDiscipline: 30

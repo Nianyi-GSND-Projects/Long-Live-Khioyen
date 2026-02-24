@@ -27,6 +27,7 @@ namespace LongLiveKhioyen
         public bool actionDone;
         public bool hasMovedThisTurn = false;
         public Vector2Int position { get; set; }
+        public Unit LastAttacker { get; private set; }
         
         protected virtual void Start()
         {
@@ -109,9 +110,10 @@ namespace LongLiveKhioyen
 
         #region Effect
 
-        public virtual void TakeDamage(int rawDamage)
+        public virtual void TakeDamage(int rawDamage, Unit attacker = null)
         {
             if (entryStats == null) return;
+            if (attacker != null) LastAttacker = attacker;
             
             float threshold = Mathf.Max(1.0f, entryStats.defensePower);
             int healthLoss = Mathf.FloorToInt(rawDamage / threshold);

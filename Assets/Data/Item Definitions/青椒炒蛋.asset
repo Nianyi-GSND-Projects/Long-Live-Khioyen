@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
   m_Name: "\u9752\u6912\u7092\u86CB"
   m_EditorClassIdentifier: 
+  id: 4
   itemId: debug-item-1
   itemName: "\u9752\u6912\u7092\u86CB"
   tags:

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: 
+  id: 1
   itemId: 1
   itemName: "\u6728\u5934"
   tags: []

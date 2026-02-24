@@ -1,9 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace LongLiveKhioyen
 {
+    [Serializable]
+    public class LootDropRule
+    {
+        public LootTableSO lootTable;
+        [Range(0, 100)] public int dropChance = 100; // 触发该表的概率
+    }
     
     public enum BattalionAttackType
     {
@@ -60,6 +67,13 @@ namespace LongLiveKhioyen
         
         public List<ActionDefinition> unitUniqueActions = new List<ActionDefinition>();
         
+        #endregion
+
+        #region Loot
+
+        [Header("Loot")]
+        public List<LootDropRule> lootRules = new List<LootDropRule>();
+
         #endregion
     }
     
