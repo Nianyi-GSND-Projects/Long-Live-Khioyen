@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using UnityEngine.Serialization;
 
 namespace LongLiveKhioyen
 {
@@ -329,113 +330,7 @@ namespace LongLiveKhioyen
 		public event System.Action<List<Unit>> OnAmbiguousSelectionStarted;
 		public event System.Action OnAmbiguousSelectionEnded;
 		public event System.Action<BattalionDescriptor> OnReserveTeamSelectionChanged;
-		public ArrangementModal arrangementModal;
 		
-
-		public void InteractWithTile(Vector2Int gridPos)
-		{
-			if (!IsValidMapPosition(gridPos)) return;
-			if (IsUnitMoving) return;
-			if (CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget) 
-				return;
-			
-			if (CurrentStage == Stage.Battle && CurrentTurnState != TurnState.PlayerTurn)
-			{
-				Debug.Log("Not your turn!");
-				return;
-			}
-			
-			if (CurrentActionStage == PlayerActionStage.SelectingTarget)
-			{
-				if (availableTargetPositions.Contains(gridPos))
-				{
-					ApplyAction(gridPos);
-				}
-				else
-				{
-					// 点击了无效目标 -> 取消行动选择，回退到菜单
-					//CancelAction();
-				}
-				return;
-			}
-			
-			if (CurrentActionStage == PlayerActionStage.SelectingAction)
-			{
-				CancelMovement();
-				ChangeActionStage(PlayerActionStage.MovingBattalion);
-				return;
-			}
-			
-			if (CurrentActionStage == PlayerActionStage.MovingBattalion)
-			{
-				if (availableMovePositions.Contains(gridPos))
-				{
-					MovingBattalion(gridPos);
-				}
-				else
-				{
-					ClearAllSelection();
-					ChangeActionStage(PlayerActionStage.None);
-				}
-				return;
-			}
-
-			if (CurrentActionStage == PlayerActionStage.None)
-			{
-				TileData tile = mapData[gridPos.x, gridPos.y];
-				List<Unit> candidates = new List<Unit>();
-				if (tile.Battalion != null) candidates.Add(tile.Battalion);
-				if (tile.Facility != null) candidates.Add(tile.Facility);
-
-				if (candidates.Count == 0)
-				{
-					if (CurrentActionStage == PlayerActionStage.None)
-					{
-						ClearAllSelection();
-					}
-
-					return;
-				}
-
-				if (candidates.Count == 1)
-				{
-					SelectUnit(candidates[0]);
-				}
-				else
-				{
-					EnterAmbiguousState(candidates);
-				}
-			}
-		}
-		
-		public void MovingBattalion(Vector2Int mapPosition)
-		{
-			if (!IsUnitSelected)
-			{
-				Debug.Log("No battalion selected.");
-				return;
-			}
-			if (IsUnitMoving) return;
-			switch (CurrentStage)
-			{
-				case Stage.Arrangement:
-					RemoveUnitFromMap(SelectedUnit);
-					SelectedUnit.position = mapPosition;
-					SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
-					PlaceUnitOnMap(SelectedUnit, SelectedUnit.position);
-					break;
-				
-				case Stage.Battle:
-					if (CurrentActionStage != PlayerActionStage.MovingBattalion) break;
-					StartCoroutine(PerformPlayerMove(SelectedUnit, mapPosition));
-					break;
-				
-				default:
-					break;
-			}
-			
-		}
-
 		#endregion
 		
 		#region End Game

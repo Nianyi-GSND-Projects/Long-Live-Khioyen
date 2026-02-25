@@ -8,6 +8,7 @@ namespace LongLiveKhioyen
     {
         #region BattleStage
         public Stage CurrentStage{ get; set; }
+        public event System.Action OnStageChanged;
 		
         public bool IsInArrangementStage { get; set; } = false;
         public bool IsInBattleStage { get; set; }= false;
@@ -36,6 +37,7 @@ namespace LongLiveKhioyen
 			
             CurrentStage = stage;
             OnEnterStage(CurrentStage);
+            OnStageChanged?.Invoke();
         }
         
         void OnEnterStage(Stage stage)

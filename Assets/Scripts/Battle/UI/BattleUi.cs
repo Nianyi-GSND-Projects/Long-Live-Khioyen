@@ -26,6 +26,7 @@ namespace LongLiveKhioyen
             battle.OnReserveTeamSelectionChanged += HandleReserveSelectionChanged;
             battle.OnAmbiguousSelectionStarted += HandleAmbiguousSelectionStart;
             battle.OnAmbiguousSelectionEnded += HandleAmbiguousSelectionEnd;
+            battle.OnStageChanged += HandleStageChanged;
         }
         
         private void OnDestroy()
@@ -41,6 +42,7 @@ namespace LongLiveKhioyen
                 battle.OnReserveTeamSelectionChanged -= HandleReserveSelectionChanged;
                 battle.OnAmbiguousSelectionStarted -= HandleAmbiguousSelectionStart;
                 battle.OnAmbiguousSelectionEnded -= HandleAmbiguousSelectionEnd;
+                battle.OnStageChanged -= HandleStageChanged;
             }
         }
         #endregion
@@ -49,13 +51,11 @@ namespace LongLiveKhioyen
         private void HandlePlayerTurnStart()
         {
             Debug.Log("BattleUI 收到信号：玩家回合开始，显示UI。");
-            OpenPanel(playerTurnUI);
         }
 
         private void HandlePlayerTurnEnd()
         {
             Debug.Log("BattleUI 收到信号：玩家回合结束，关闭UI。");
-            ClosePanel(playerTurnUI);
         }
         
         private void HandleActionSelectionStart()
@@ -75,6 +75,21 @@ namespace LongLiveKhioyen
             if (actionMenu != null)
             {
                 actionMenu.Hide();
+            }
+        }
+        private void HandleStageChanged()
+        {
+            switch (battle.CurrentStage)
+            {
+                case Stage.Arrangement:
+                    PreparationToArrangement();
+                    break;
+            
+                case Stage.Battle:
+                    ArrangementToBattle();
+                    break;
+                
+                // ...
             }
         }
         
@@ -106,6 +121,29 @@ namespace LongLiveKhioyen
                 unitInfoPanel.UpdateUI(desc);
                 OpenPanel(unitInfoPanel.canvasGroup);
             }
+        }
+        
+        public void PreparationToArrangement()
+        {
+            // toArrangementButton.gameObject.SetActive(false); // [移除]
+            OpenPanel(ArrangementPanel);
+            // toBattleButton.gameObject.SetActive(true); // [移除]
+        
+            EnterArrangementMode();
+        
+            // [新增] 初始化子 UI
+            if (arrangementUI != null)
+            {
+                arrangementUI.InitializeUi();
+            }
+        }
+
+        public void ArrangementToBattle()
+        {
+            // toBattleButton.gameObject.SetActive(false); // [移除]
+            ClosePanel(ArrangementPanel);
+            ExitArrangementMode();
+            EnterBattleMode();
         }
         
         private void HandleAmbiguousSelectionStart(List<Unit> candidates)
@@ -226,7 +264,8 @@ namespace LongLiveKhioyen
         public CanvasGroup ambiguousSelectionPanel; // 挂载 CanvasGroup 的选择面板
         public Transform ambiguousListContainer;    // 放置按钮的 Grid/Vertical Layout Group
         public GameObject ambiguousButtonPrefab;    // 按钮预制体
-
+        
+        
         
         #region BottomPanel
         [Header("Bottom Panel")]
@@ -236,37 +275,14 @@ namespace LongLiveKhioyen
         public GameObject ArrangementButtonPrefab;
         public RectTransform contentContainer;
         
+        [Header("Sub Views")]
+        public ArrangementUI arrangementUI;
         #endregion
         
-        
-        public CanvasGroup playerTurnUI;
-        //public CanvasGroup actionSelectionPanel; 
         
         public ActionMenuUI actionMenu; 
         
         #region StageManagement
-        public Button toArrangementButton;
-        public Button toBattleButton;
-        public void PreparationToArrangement()
-        {
-            toArrangementButton.gameObject.SetActive(false);
-            OpenPanel(ArrangementPanel);
-            toBattleButton.gameObject.SetActive(true);
-            EnterArrangementMode();
-        }
-
-        public void ArrangementToBattle()
-        {
-            toBattleButton.gameObject.SetActive(false);
-            ClosePanel(ArrangementPanel);
-            ExitArrangementMode();
-            EnterBattleMode();
-        }
-        public void EnablePlayerUI(bool enable)
-        {
-            if(enable) OpenPanel(playerTurnUI);
-            else ClosePanel(playerTurnUI);
-        }
         
         public void ClosePanel(CanvasGroup canvasGroup)
         {
