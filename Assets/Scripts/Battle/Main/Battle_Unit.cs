@@ -1,0 +1,436 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace LongLiveKhioyen
+{
+    public partial class Battle
+    {
+        //管理单位相关信息与逻辑
+
+        #region Data
+        
+        #region Unit Container
+		
+        public List<BattalionDescriptor> playerReserveTeam;
+		
+        private Dictionary<Faction,HashSet<Unit>> factionActiveUnits;
+        public List<Unit> retreatedUnits = new List<Unit>();
+        public List<Unit> deadUnits = new List<Unit>();
+        private HashSet<Unit> dirtyUnits = new HashSet<Unit>();
+		
+        #endregion
+        
+        public Unit GetUnitByInstanceId(int id)
+        {
+            if (factionActiveUnits == null) return null;
+
+            foreach (var kvp in factionActiveUnits)
+            {
+                if (kvp.Value == null) continue;
+
+                foreach (var unit in kvp.Value)
+                {
+                    // [新增] 空检查
+                    if (unit == null) continue; 
+
+                    if (unit.InstanceId == id) return unit;
+                }
+            }
+          
+            if (retreatedUnits != null)
+            {
+                foreach (var unit in retreatedUnits)
+                {
+                    if (unit == null) continue;
+                    if (unit.InstanceId == id) return unit;
+                }
+            }
+
+            return null;
+        }
+        
+        public HashSet<Unit> GetUnitsByFaction(Faction faction)
+        {
+            if (factionActiveUnits.TryGetValue(faction, out var units))
+            {
+                return units;
+            }
+            return new HashSet<Unit>();
+        }
+
+        #endregion
+        
+        #region Spawn
+        public TUnit SpawnUnit<TUnit, TDef, TDesc>(TDesc descriptor, Vector2Int pos) 
+            where TUnit : Unit<TDef>
+            where TDef : UnitDefinition
+            where TDesc : UnitDescriptor
+        {
+            var go = new GameObject($"{typeof(TUnit).Name}_{descriptor.Definition.unitName}");
+
+            var unit = go.AddComponent<TUnit>();
+            
+            unit.Definition = (TDef)descriptor.Definition; 
+            unit.InstanceId = descriptor.instanceId;
+            unit.faction = descriptor.faction;
+            unit.position = pos;
+            
+            if (unit is Facility fac)
+            {
+                fac.currentDurability = fac.Definition.defaultMaxDurability; 
+            }
+            else if (unit is Battalion bat)
+            {
+                bat.currentSoliders = bat.Definition.defaultMaxSolider;
+                bat.currentMurale = bat.Definition.defaultMaxMorale;
+            }
+			
+            unit.CalculateEntryStats(descriptor);
+			
+            SetupUnitVisuals(unit);
+            
+            PlaceUnitOnMap(unit, pos);
+            
+            unit.transform.SetParent(transform, false);
+            unit.transform.localPosition = MapToLocal(pos);
+            
+            InitializeUnitActions(unit);
+
+            return unit;
+        }
+        
+        Battalion SpawnBattalion(BattalionDescriptor descriptor, Vector2Int position)
+        {
+            descriptor.instanceId = descriptor.armyId;
+            Battalion battalion = SpawnUnit<Battalion, BattalionDefinition,BattalionDescriptor>(
+                descriptor,
+                position
+            );
+
+            battalion.battalionCommander = descriptor.battalionCommander;
+            battalion.currentSoliders = descriptor.currentSoliders;
+            battalion.currentMurale = descriptor.currentMurale;
+            battalion.currentTraining = descriptor.currentTraining;
+            
+            factionActiveUnits[descriptor.faction].Add(battalion);
+            
+            descriptor.placed = true;
+            
+            InitializeUnitActions(battalion); 
+
+            return battalion;
+        }
+        
+        public void PlaceUnitOnMap(Unit unit, Vector2Int pos)
+        {
+            if (!IsValidMapPosition(pos)) return;
+            
+            TileData tile = mapData[pos.x, pos.y];
+
+            if (unit is Battalion bat)
+            {
+                if (tile.Battalion != null) Debug.LogError($"位置 {pos} 已有部队，覆盖逻辑需谨慎处理！");
+                tile.Battalion = bat;
+            }
+            else if (unit is Facility fac)
+            {
+                if (tile.Facility != null) Debug.LogError($"位置 {pos} 已有设施！");
+                tile.Facility = fac;
+            }
+            //unit.position = pos;
+        }
+        
+        public void PlacingPlayerBattalion(BattalionDescriptor battalionDescriptor, Vector2Int mapPosition)
+        {
+            if (!playerReserveTeam.Contains(battalionDescriptor))
+            {
+                Debug.Log("Battalion name: " + battalionDescriptor.Definition.unitName + "Don't exist in your reserve teams.");
+                return;
+            }
+
+            if (battalionDescriptor.placed)
+            {
+                Debug.Log("Battalion name: " + battalionDescriptor.Definition.unitName + "already placed.");
+                return;
+            }
+
+            factionActiveUnits[Faction.Player].Add(SpawnBattalion(battalionDescriptor,mapPosition));
+            ClearReserveTeamSelection();
+        }
+        #endregion
+        
+        #region Initialization
+        public void InitializeUnitActions(Unit unit)
+        {
+            
+            unit.DefaultAttack = unit.unitDefinition.defaultAttack;
+            unit.DefaultRetreat = unit.unitDefinition.defaultRetreat;
+            unit.DefaultInteract = unit.unitDefinition.defaultInteract;
+			
+            if (unit.unitDefinition.unitUniqueActions != null)
+            {
+                unit.runtimeUnitActions.Clear();
+                foreach (var action in unit.unitDefinition.unitUniqueActions)
+                {
+                    if (action != null && action.CheckDisplayConditions(unit))
+                    {
+                        unit.runtimeUnitActions.Add(action);
+                    }
+                }
+				
+            }
+            if (unit is Battalion bat)
+            {
+                if (bat.battalionCommander != null && bat.battalionCommander.commanderActions != null)
+                {
+                    unit.runtimeCommanderActions.Clear();
+                    foreach (var action in bat.battalionCommander.commanderActions)
+                    {
+                        if (action != null && action.CheckDisplayConditions(unit))
+                        {
+                            unit.runtimeCommanderActions.Add(action);
+                        }
+                    }
+                }
+            }
+        }
+        
+        #endregion
+        
+        #region Remove
+        
+        public void RemoveUnitFromBattle(Unit unit)
+        {
+            if(unit == null) return;
+			
+            RemoveUnitFromMap(unit);
+			
+            if (SelectedUnit == unit) 
+            {
+                ClearAllSelection();
+            }
+			
+            if (factionActiveUnits.ContainsKey(unit.faction))
+            {
+                if (factionActiveUnits[unit.faction].Contains(unit))
+                {
+                    factionActiveUnits[unit.faction].Remove(unit);
+                }
+            }
+            else
+            {
+                // 如果是特殊的阵营（比如 Neutral），且没有初始化进字典，这里会漏掉
+                // 建议确保 InitializeData 里所有 Faction 都初始化了
+            }
+            unit.gameObject.SetActive(false);
+            unit.transform.SetParent(null);
+			
+            if (!deadUnits.Contains(unit))
+            {
+                deadUnits.Add(unit);
+            }
+			
+        }
+        
+        public void RemoveUnitFromMap(Unit unit)
+        {
+            if (!IsValidMapPosition(unit.position)) return;
+
+            TileData tile = mapData[unit.position.x, unit.position.y];
+            
+            if (unit is Battalion && tile.Battalion == unit)
+            {
+                tile.Battalion = null;
+            }
+            else if (unit is Facility && tile.Facility == unit)
+            {
+                tile.Facility = null;
+            }
+        }
+        #endregion
+
+        #region Operation
+        
+        public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path)
+        {
+            if (unit == null || path == null || path.Count == 0) yield break;
+
+            // 1. 标记移动开始
+            unit.hasMovedThisTurn = true;
+			
+            // 2. 逐步移动 (简单的协程动画)
+            foreach (var pos in path)
+            {
+                // 移除旧位置占位
+                RemoveUnitFromMap(unit);
+				
+                // 更新数据坐标
+                unit.position = pos;
+				
+                // 放置新位置占位
+                PlaceUnitOnMap(unit, pos);
+				
+                // 更新视觉位置 (简单的插值动画)
+                Vector3 startPos = unit.transform.localPosition;
+                Vector3 endPos = MapToLocal(pos);
+                float t = 0;
+                while (t < 1f)
+                {
+                    t += Time.deltaTime * 5f; // 移动速度
+                    unit.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+                    yield return null;
+                }
+                unit.transform.localPosition = endPos;
+            }
+			
+            // 3. 移动结束处理
+            unit.OnUnitStateChanged();
+        }
+        
+        
+
+        public void ForceMoveUnit(Unit unit, Vector2Int newPos)
+        {
+            if (unit == null || !IsValidMapPosition(newPos)) return;
+
+            RemoveUnitFromMap(unit);
+            TileData newTile = mapData[newPos.x, newPos.y];
+            if (unit is Battalion bat) newTile.Battalion = bat;
+            else if (unit is Facility fac) newTile.Facility = fac;
+            unit.ReceiveForcedMove(newPos);
+            // PlaceUnitOnMap(unit, newPos);
+            //
+            // unit.transform.localPosition = MapToLocal(newPos);
+            //          
+            // unit.OnUnitStateChanged();
+            //          
+            // Debug.Log($"{unit.name} 被强制位移至 {newPos}");
+        }
+        
+        public void WithdrawUnit(Unit unit)
+        {
+            if (factionActiveUnits.ContainsKey(unit.faction))
+            {
+                factionActiveUnits[unit.faction].Remove(unit);
+            }
+            RemoveUnitFromMap(unit);
+            
+            ClearAllSelection();
+			
+            unit.gameObject.SetActive(false);
+          
+            if (!retreatedUnits.Contains(unit))
+            {
+                retreatedUnits.Add(unit);
+            }
+        }
+        
+        public void ResolveDirtyUnits()
+        {
+            if (dirtyUnits.Count == 0) return;
+
+            List<Unit> unitsToCheck = new List<Unit>(dirtyUnits);
+            
+            foreach (var unit in unitsToCheck)
+            {
+                CheckDeath(unit);
+                unit.OnUnitStateChanged();
+            }
+            dirtyUnits.Clear();
+        }
+        
+        public void MarkUnitDirty(Unit unit)
+        {
+            if (unit != null && !dirtyUnits.Contains(unit))
+            {
+                dirtyUnits.Add(unit);
+            }
+        }
+        
+        public void CheckDeath(Unit unit)
+        {
+            if (unit == null) return;
+            bool isDead = false;
+            if(unit is Battalion battalion && battalion.currentSoliders <= 0)
+            {
+                isDead = true;
+                Debug.Log($"Battalion {battalion.InstanceId} die off!");
+            }
+            else if (unit is Facility facility && facility.currentDurability <= 0)
+            {
+                isDead = true;
+                Debug.Log($"Facility {facility.InstanceId} destroyed!");
+            }
+			
+            if (isDead)
+            {
+                // 2. 处理掉落 (Loot)
+                // 规则：击杀者存在 + 击杀者是玩家 + 死者不是玩家 + 击杀者是部队
+                Debug.Log($"[CheckDeath] Unit {unit.name} is dead. Checking loot...");
+                Unit killer = unit.LastAttacker;
+				
+                if (killer == null) Debug.Log("[CheckDeath] No killer (LastAttacker is null).");
+                else Debug.Log($"[CheckDeath] Killer: {killer.name}, Faction: {killer.faction}, Type: {killer.GetType().Name}");
+
+                if (killer != null && 
+                    killer.faction == Faction.Player && 
+                    unit.faction != Faction.Player &&
+                    killer is Battalion killerBat)
+                {
+                    Debug.Log("[CheckDeath] Loot conditions met. Processing...");
+                    ProcessLoot(unit, killerBat);
+                }
+                else
+                {
+                    Debug.Log("[CheckDeath] Loot conditions NOT met.");
+                }
+
+                // 3. 触发死亡事件 (Event System)
+                // 这允许剧情脚本响应特定单位的死亡
+                if (BattleEventManager.Instance != null)
+                {
+                    BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitDeath, unit);
+                }
+
+                // 4. 移除单位 (Cleanup)
+                RemoveUnitFromBattle(unit);
+            }
+
+            return;
+        }
+        
+        private void ProcessLoot(Unit victim, Battalion killerBat)
+        {
+            if (victim.unitDefinition == null || victim.unitDefinition.lootRules == null) return;
+
+            foreach (var rule in victim.unitDefinition.lootRules)
+            {
+                if (rule.lootTable == null) continue;
+
+                // 判定概率
+                if (UnityEngine.Random.Range(0, 100) < rule.dropChance)
+                {
+                    // Roll 物品
+                    var item = rule.lootTable.Roll();
+                    if (item != null)
+                    {
+                        killerBat.inventory.Add(item);
+                
+                        // [修改] 拼合字符串并显示
+                        string msg = $"{killerBat.name} looted {item.amount}x {item.definition.itemName}";
+                        Debug.Log($"[Loot] {msg}");
+                
+                        if (LootNotificationManager.Instance != null)
+                        {
+                            LootNotificationManager.Instance.ShowMessage(msg);
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+        
+        
+    }
+}
