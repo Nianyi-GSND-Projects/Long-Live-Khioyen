@@ -52,8 +52,6 @@ namespace LongLiveKhioyen
             // 4. 显示面板
             panelRoot.gameObject.SetActive(true);
             
-            // 设置 Pivot 为左上角，这样菜单向右下延伸
-            panelRoot.pivot = new Vector2(0, 1);
         }
 
         private void PositionMenu(Vector2Int gridPos)
@@ -61,11 +59,56 @@ namespace LongLiveKhioyen
             Vector3 worldPos = Battle.Instance.MapToWorld(gridPos);
             Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
             
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            
+            Vector2 newPivot = new Vector2(0, 1);
+            
+            if (screenPos.x > screenWidth * 0.7f) 
+            {
+                newPivot.x = 1; // Pivot 设为右边 -> 向左生长
+            }
+            if (screenPos.y < screenHeight * 0.3f) 
+            {
+                newPivot.y = 0; // Pivot 设为下边 -> 向上生长
+            }
+            else
+            {
+                // 如果在中间或上面，保持向下生长 (Pivot.y = 1)
+                newPivot.y = 1; 
+            }
+            panelRoot.pivot = newPivot;
+            
             // 应用位置 (Z轴设为0以防万一)
             screenPos.z = 0;
             panelRoot.position = screenPos;
+            UpdateSubMenuPosition(newPivot);
         }
+        
+        private void UpdateSubMenuPosition(Vector2 parentPivot)
+        {
+            // 获取一级菜单的宽度 (假设固定或已计算)
+            // 更好的做法是直接操作 RectTransform 的 anchoredPosition
+            
+            // 假设 subMenuContainer 是 panelRoot 的子物体
+            // 且默认位置是在右侧
+            
+            if (parentPivot.x > 0.5f) // 如果一级菜单靠右 (向左生长)
+            {
+                
+                float mainWidth = mainMenuContainer.rect.width;
+                if(mainWidth == 0) mainWidth = 150f; 
 
+                subMenuContainer.anchoredPosition = new Vector2(-mainWidth - 5, subMenuContainer.anchoredPosition.y);
+            }
+            else
+            {
+                float mainWidth = mainMenuContainer.rect.width;
+                if(mainWidth == 0) mainWidth = 150f;
+                
+                subMenuContainer.anchoredPosition = new Vector2(mainWidth + 5, subMenuContainer.anchoredPosition.y);
+            }
+        }
         private void GenerateMainMenu()
         {
             // 清理旧按钮
