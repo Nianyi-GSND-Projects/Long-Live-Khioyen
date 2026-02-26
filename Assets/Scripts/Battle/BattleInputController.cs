@@ -36,23 +36,17 @@ namespace LongLiveKhioyen
 
         public void OnPrimaryClick(InputValue value)
         {
-            if (inputBlocked) return;
-            if (_isPointerOverUI)
-            {
-                _isValidClick = false;
-                return;
-            }
-            
-            if (_isPointerOverUI)
-            {
-                _isValidClick = false;
-                return;
-            }
-
             bool isPressed = value.isPressed;
+            
+            if (inputBlocked) return;
             
             if (isPressed)
             {
+                if (_isPointerOverUI)
+                {
+                    _isValidClick = false;
+                    return;
+                }
                 // 按下
                 _isPrimaryDown = true;
                 _primaryDownTime = Time.realtimeSinceStartup;

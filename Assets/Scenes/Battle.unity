@@ -2114,6 +2114,7 @@ MonoBehaviour:
   useLevelPreset: 1
   presetMapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
   levelPreset: {fileID: 11400000, guid: cc2965b2784b79646bd702ad40d6d9c9, type: 2}
+  inputController: {fileID: 575322486}
   hexgrid: {fileID: 1069218213}
   Xscale: 1.73205
   Yscale: 2

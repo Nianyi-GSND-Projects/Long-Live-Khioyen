@@ -5,6 +5,7 @@ namespace LongLiveKhioyen
 {
     public partial class Battle
     {
+        public BattleInputController inputController;
         // 统一入口：处理格子点击
         public void HandleGridInput(Vector2Int gridPos)
         {

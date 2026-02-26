@@ -135,10 +135,12 @@ namespace LongLiveKhioyen
         
         public void SetCameraLocked(bool locked)
         {
-            var input = GetComponent<BattleInputController>();
-            if (input != null)
+            if (inputController == null) inputController = GetComponent<BattleInputController>();
+            if (inputController == null) inputController = FindObjectOfType<BattleInputController>();
+
+            if (inputController != null)
             {
-                input.cameraLocked = locked;
+                inputController.cameraLocked = locked;
             }
         }
         
