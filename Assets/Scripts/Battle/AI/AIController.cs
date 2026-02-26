@@ -18,6 +18,13 @@ namespace LongLiveKhioyen
             Debug.Log($"[AI] Start Turn. Units count: {aiUnits.Count}");
             foreach (var unit in aiUnits)
             {
+                if (Battle.Instance.IsEventBlockingAI)
+                {
+                    Debug.Log("[AI] Paused by Event...");
+                    yield return Battle.Instance.WaitForEventBlocking();
+                    Debug.Log("[AI] Resumed.");
+                }
+                
                 if (unit == null || !unit.gameObject.activeSelf) continue;
                 if (unit is not Battalion aiBattalion) continue;
                 if (aiBattalion.actionDone) continue;
@@ -32,6 +39,11 @@ namespace LongLiveKhioyen
                 
                 // 再次刷新，确保状态同步
                 if (Battle.Instance != null) Battle.Instance.ResolveDirtyUnits();
+                
+                if (Battle.Instance.IsEventBlockingAI)
+                {
+                    yield return Battle.Instance.WaitForEventBlocking();
+                }
             }
             Debug.Log("[AI] End Turn.");
         }

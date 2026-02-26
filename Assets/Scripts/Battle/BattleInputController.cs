@@ -19,7 +19,9 @@ namespace LongLiveKhioyen
         private bool _isValidClick;
         
         private bool _isPointerOverUI;
-
+        
+        public bool inputBlocked = false;
+        public bool cameraLocked = false;
         // --- Input System Callbacks (通过 SendMessage 或 Unity Events 绑定) ---
         private void Update()
         {
@@ -34,7 +36,7 @@ namespace LongLiveKhioyen
 
         public void OnPrimaryClick(InputValue value)
         {
-            Debug.Log("OnPrimaryClick");
+            if (inputBlocked) return;
             if (_isPointerOverUI)
             {
                 _isValidClick = false;
@@ -81,6 +83,7 @@ namespace LongLiveKhioyen
 
         public void OnDrag(InputValue value)
         {
+            if (inputBlocked|| cameraLocked) return;
             if (_isPrimaryDown)
             {
                 Vector2 delta = value.Get<Vector2>();
@@ -90,6 +93,7 @@ namespace LongLiveKhioyen
 
         public void OnScroll(InputValue value)
         {
+            if (inputBlocked|| cameraLocked) return;
             if (_isPointerOverUI) return;
             if (cameraController) cameraController.ProcessZoom(value.Get<float>());
         }

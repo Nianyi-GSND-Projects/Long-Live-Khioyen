@@ -44,6 +44,7 @@ namespace LongLiveKhioyen
         
         [Header("Settings")]
         public bool triggerOnce = true;
+        public bool blockAI = true; // [新增]
         
         [Header("Trigger Logic")]
         [Tooltip("Any group evaluating to TRUE will trigger the event (OR logic between groups)")]
@@ -75,7 +76,7 @@ namespace LongLiveKhioyen
         {
             if (BattleEventManager.Instance != null)
                 BattleEventManager.Instance.StartEventExecution(this);
-
+            
             foreach (var action in actions)
             {
                 if (action == null) continue;

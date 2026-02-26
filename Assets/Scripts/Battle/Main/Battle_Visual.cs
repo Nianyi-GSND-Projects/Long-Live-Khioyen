@@ -133,6 +133,15 @@ namespace LongLiveKhioyen
             set => anchor.eulerAngles = value;
         }
         
+        public void SetCameraLocked(bool locked)
+        {
+            var input = GetComponent<BattleInputController>();
+            if (input != null)
+            {
+                input.cameraLocked = locked;
+            }
+        }
+        
         public float CameraDistance
         {
             get => -camera.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.z;

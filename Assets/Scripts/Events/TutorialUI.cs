@@ -19,7 +19,8 @@ namespace LongLiveKhioyen
         public Button prevButton;
         public Button nextButton;
         public TMP_Text nextButtonText; // 用于修改 "Next" -> "Close"
-
+        [Header("Blocking")]
+        public GameObject inputBlocker;
         public bool IsActive => panel != null && panel.activeSelf;
 
         private TutorialDefinitionSO _currentTutorial;
@@ -29,7 +30,7 @@ namespace LongLiveKhioyen
         {
             Instance = this;
             if (panel != null) panel.SetActive(false);
-            
+            if (inputBlocker != null) inputBlocker.SetActive(false);
             if (prevButton != null) prevButton.onClick.AddListener(OnPrevClicked);
             if (nextButton != null) nextButton.onClick.AddListener(OnNextClicked);
         }
@@ -42,6 +43,7 @@ namespace LongLiveKhioyen
             _currentIndex = 0;
             
             if (panel != null) panel.SetActive(true);
+            if (inputBlocker != null) inputBlocker.SetActive(true);
             UpdatePage();
         }
 
@@ -132,6 +134,7 @@ namespace LongLiveKhioyen
         public void Close()
         {
             if (panel != null) panel.SetActive(false);
+            if (inputBlocker != null) inputBlocker.SetActive(false);
             _currentTutorial = null;
         }
     }

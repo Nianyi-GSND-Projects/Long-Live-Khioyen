@@ -24,7 +24,14 @@ namespace LongLiveKhioyen
                 button.onClick.RemoveAllListeners();
                 if (onClick != null)
                 {
-                    button.onClick.AddListener(() => onClick.Invoke());
+                    button.onClick.AddListener(() =>
+                    {
+                        if (ActionTooltipUI.Instance != null)
+                        {
+                            ActionTooltipUI.Instance.Hide();
+                        }
+                        onClick.Invoke();
+                    });
                 }
             }
         }
@@ -39,6 +46,7 @@ namespace LongLiveKhioyen
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            Debug.Log("Hide tooltip");
             if (ActionTooltipUI.Instance != null)
             {
                 ActionTooltipUI.Instance.Hide();

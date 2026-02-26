@@ -31,14 +31,16 @@ namespace LongLiveKhioyen
         {
             panelRoot.gameObject.SetActive(false);
             subMenuContainer.gameObject.SetActive(false); // 默认隐藏二级
+            if (Battle.Instance != null) Battle.Instance.SetCameraLocked(false);
         }
 
         public void Show(Unit unit)
         {
             currentUnit = unit;
             if (currentUnit == null) return;
+            
+            if (Battle.Instance != null) Battle.Instance.SetCameraLocked(true);
 
-            // 1. 定位逻辑 (World -> Screen)
             PositionMenu(unit.position);
 
             // 2. 生成一级菜单
@@ -190,7 +192,6 @@ namespace LongLiveKhioyen
             }
             else
             {
-                // Fallback: 如果 Prefab 没挂脚本，保持旧逻辑 (防止报错)
                 TMP_Text tmp = btnObj.GetComponentInChildren<TMP_Text>();
                 if (tmp != null) tmp.text = text;
 

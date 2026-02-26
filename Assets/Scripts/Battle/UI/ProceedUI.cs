@@ -10,8 +10,6 @@ namespace LongLiveKhioyen
         public Button button;
         public TMP_Text buttonText;
         
-        // 引用其他 UI 组件以便调用它们的逻辑
-        // 也可以通过 BattleUi 单例访问，这里为了解耦建议直接引用或通过 BattleUi 访问
         private Battle Battle => Battle.Instance;
         private BattleUi BattleUi => BattleUi.Instance;
 
@@ -22,13 +20,11 @@ namespace LongLiveKhioyen
                 button.onClick.AddListener(OnClick);
             }
 
-            // 监听状态变化
-            // 假设 Battle 有 OnStageChanged 事件，如果没有，我们需要在 Update 中轮询或者添加事件
-            // 建议在 Battle.cs 中添加 OnStageChanged 事件
             if (Battle != null)
             {
                 Battle.OnStageChanged += RefreshState;
                 Battle.OnPlayerTurnStarted += RefreshState;
+                Battle.OnUnitPlaced += RefreshState;
             }
             
             RefreshState();
@@ -40,6 +36,7 @@ namespace LongLiveKhioyen
             {
                 Battle.OnStageChanged -= RefreshState;
                 Battle.OnPlayerTurnStarted -= RefreshState;
+                Battle.OnUnitPlaced -= RefreshState;
             }
         }
 
@@ -55,7 +52,8 @@ namespace LongLiveKhioyen
                     break;
 
                 case Stage.Arrangement:
-                    SetButton("Battle", true);
+                    bool hasUnits = Battle.GetUnitsByFaction(Faction.Player).Count > 0;
+                    SetButton("Battle", hasUnits);
                     gameObject.SetActive(true);
                     break;
 

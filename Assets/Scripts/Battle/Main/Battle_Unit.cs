@@ -156,6 +156,7 @@ namespace LongLiveKhioyen
             }
 
             factionActiveUnits[Faction.Player].Add(SpawnBattalion(battalionDescriptor,mapPosition));
+            OnUnitPlaced?.Invoke();
             ClearReserveTeamSelection();
         }
         #endregion
@@ -395,6 +396,7 @@ namespace LongLiveKhioyen
 
                 // 4. 移除单位 (Cleanup)
                 RemoveUnitFromBattle(unit);
+                CheckBattleEnd();
             }
 
             return;

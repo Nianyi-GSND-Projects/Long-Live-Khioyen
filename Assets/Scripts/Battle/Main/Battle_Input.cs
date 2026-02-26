@@ -28,6 +28,20 @@ namespace LongLiveKhioyen
                     break;
             }
         }
+        
+        public void SetInputBlocked(bool blocked)
+        {
+            var input = GetComponent<BattleInputController>();
+            if (input != null)
+            {
+                input.inputBlocked = blocked;
+            }
+        
+            if (BattleUi.Instance != null)
+            {
+                // BattleUi.Instance.SetProceedUIInteractable(!blocked); // 需要在 BattleUi 加这个方法
+            }
+        }
 
         // 统一入口：处理取消/右键
         public void HandleCancelInput()

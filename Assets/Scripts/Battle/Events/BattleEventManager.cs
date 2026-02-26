@@ -36,10 +36,19 @@ namespace LongLiveKhioyen
         public void StartEventExecution(BattleEventDefinition evt)
         {
             CurrentEvent = evt;
+            if (evt.blockAI && Battle.Instance != null)
+            {
+                Battle.Instance.IsEventBlockingAI = true;
+            }
         }
 
         public void EndEventExecution()
         {
+            if (CurrentEvent != null && CurrentEvent.blockAI && Battle.Instance != null)
+            {
+                Battle.Instance.IsEventBlockingAI = false;
+            }
+
             CurrentEvent = null;
         }
         

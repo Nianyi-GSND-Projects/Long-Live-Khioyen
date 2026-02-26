@@ -24,6 +24,15 @@ namespace LongLiveKhioyen
 		#endregion
 		
 		public bool IsUnitMoving { get; private set; } = false;
+		public bool IsEventBlockingAI { get; set; }
+		
+		public IEnumerator WaitForEventBlocking()
+		{
+			while (IsEventBlockingAI)
+			{
+				yield return null;
+			}
+		}
 		
 		#region Battle data
 
@@ -330,6 +339,8 @@ namespace LongLiveKhioyen
 		public event System.Action<List<Unit>> OnAmbiguousSelectionStarted;
 		public event System.Action OnAmbiguousSelectionEnded;
 		public event System.Action<BattalionDescriptor> OnReserveTeamSelectionChanged;
+		
+		public event System.Action OnUnitPlaced;
 		
 		#endregion
 		

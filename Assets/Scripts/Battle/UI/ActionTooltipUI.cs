@@ -27,6 +27,7 @@ namespace LongLiveKhioyen
 
         public void Hide()
         {
+            
             if (panel != null) panel.SetActive(false);
             if (canvasGroup != null) canvasGroup.alpha = 0;
         }
