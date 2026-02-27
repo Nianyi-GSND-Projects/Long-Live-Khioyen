@@ -67,31 +67,34 @@ namespace LongLiveKhioyen
 			yield return new() { type = ResourceType.Money, quantity = dMoney, };
 
 
-			// #### 粮食 ####
-
-			// 每个粮仓提供 300 粮/月；每居民吃 1 粮/月。
-			float dFood = QueryBuildingsByTag("granary").Length * 300;
-			int foodConsumation = FreePopulation * 10 + RequiredPopulation * 20 + SoliderCount * 20;
-			dFood -= foodConsumation;
-			yield return new() { type = ResourceType.Food, quantity = dFood, };
-
-
-			// #### 人口 ####
-
+			// #### 粮食与人口 ####
+			float dFood = 0;
 			int dPopulation = 0;
 
-			// 当前粮草与未来三月预计消耗相比的盈余
-			float overshoot = Economy.food - foodConsumation * 3;
-			if(overshoot > 0)
+			// 每个粮仓提供 300 粮/月；每居民吃 1 粮/月。
+			dFood += QueryBuildingsByTag("granary").Length * 300;
+			dFood -= FreePopulation * 10 + RequiredPopulation * 20 + SoliderCount * 20;
+
+			if(dFood > -Economy.food)  // 粮食足抵消耗
 			{
-				// 把 (0, +∞) 的盈余映射到 [10, 30] 上作为增长量
-				float t = 1 - 1 / (overshoot + 1);
-				dPopulation += Mathf.FloorToInt(Mathf.Lerp(10, 30, t));
+				float overshoot = Economy.food + dFood * 3;  // 当前粮草与未来三月预计消耗相比的盈余
+				if(overshoot > 0)  // 粮食充足，人口可增长
+				{
+					// 把 (0, +∞) 的盈余映射到 [10, 30] 上作为增长量
+					float t = 1 - 1 / (overshoot + 1);
+					dPopulation += Mathf.FloorToInt(Mathf.Lerp(10, 30, t));
+					dPopulation = Mathf.Min(dPopulation, PopulationCap - Population);  // 人口上限
+				}
+			}
+			else  // 粮食不抵消耗
+			{
+				float overshoot = -(Economy.food + dFood);  // 欠这么多粮食
+				dFood = -Economy.food;
+				dPopulation -= Mathf.CeilToInt(overshoot / 10);  // TODO: 临时的人口衰减公式，每欠 10 粮减一人
+				dPopulation = Mathf.Max(-FreePopulation, dPopulation);  // 不能减成负的
 			}
 
-			// 人口上限
-			dPopulation = Mathf.Min(dPopulation, PopulationCap - Population);
-
+			yield return new() { type = ResourceType.Food, quantity = dFood, };
 			yield return new() { type = ResourceType.Population, quantity = dPopulation, };
 		}
 		#endregion
