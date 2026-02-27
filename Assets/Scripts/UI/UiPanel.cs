@@ -18,16 +18,20 @@ namespace LongLiveKhioyen
 
 		protected void Start()
 		{
-			isPausedWhenOpened = GameInstance.Instance.Paused;
-			GameInstance.Instance.Paused = PauseOnOpen;
+			if(GameInstance.Instance)
+			{
+				isPausedWhenOpened = GameInstance.Instance.Paused;
+				GameInstance.Instance.Paused = PauseOnOpen;
+			}
 		}
 
 		protected void OnDestroy()
 		{
-			if(UiManager.Instance && UiManager.Instance.IsAnyModalOpen)
+			if(UiManager.Instance?.IsAnyModalOpen ?? true)
 				return;
 
-			GameInstance.Instance.Paused = isPausedWhenOpened;
+			if(GameInstance.Instance)
+				GameInstance.Instance.Paused = isPausedWhenOpened;
 		}
 	}
 }
