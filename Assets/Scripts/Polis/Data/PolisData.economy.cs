@@ -53,6 +53,8 @@ namespace LongLiveKhioyen
 
 		public IEnumerable<ResourceDescriptor> CalculateMonthlyResourceChanges()
 		{
+			var settings = GameManager.InternalSettings;
+
 			// #### 钱财 ####
 
 			float dMoney = 0;
@@ -62,7 +64,10 @@ namespace LongLiveKhioyen
 				dMoney += record.Definition.sellPrice * record.quantity;
 
 			// 税收
-			dMoney += FreePopulation * 2 + RequiredPopulation * 5 - SoliderCount * 5;
+			dMoney +=
+				FreePopulation * settings.freePopulationTaxRate
+				+ RequiredPopulation * settings.busyPopulationTaxRate
+				- SoliderCount * settings.soldierCostRate;
 
 			yield return new() { type = ResourceType.Money, quantity = dMoney, };
 
@@ -72,17 +77,20 @@ namespace LongLiveKhioyen
 			int dPopulation = 0;
 
 			// 每个粮仓提供 300 粮/月；每居民吃 1 粮/月。
-			dFood += QueryBuildingsByTag("granary").Length * 300;
-			dFood -= FreePopulation * 10 + RequiredPopulation * 20 + SoliderCount * 20;
+			dFood += QueryBuildingsByTag("granary").Length * settings.foodPerGranary;
+			dFood -=
+				FreePopulation * settings.freePopulationFoodCost
+				+ RequiredPopulation * settings.busyPopulationFoodCost
+				+ SoliderCount * settings.soldierFoodCost;
 
 			if(dFood > -Economy.food)  // 粮食足抵消耗
 			{
-				float overshoot = Economy.food + dFood * 3;  // 当前粮草与未来三月预计消耗相比的盈余
+				float overshoot = Economy.food + dFood * settings.minMonthFoodForPopulationGrowth;  // 当前粮草与未来三月预计消耗相比的盈余
 				if(overshoot > 0)  // 粮食充足，人口可增长
 				{
 					// 把 (0, +∞) 的盈余映射到 [10, 30] 上作为增长量
 					float t = 1 - 1 / (overshoot + 1);
-					dPopulation += Mathf.FloorToInt(Mathf.Lerp(10, 30, t));
+					dPopulation += Mathf.FloorToInt(Mathf.Lerp(settings.populationGrowthRange.x, settings.populationGrowthRange.y, t));
 					dPopulation = Mathf.Min(dPopulation, PopulationCap - Population);  // 人口上限
 				}
 			}
@@ -90,7 +98,7 @@ namespace LongLiveKhioyen
 			{
 				float overshoot = -(Economy.food + dFood);  // 欠这么多粮食
 				dFood = -Economy.food;
-				dPopulation -= Mathf.CeilToInt(overshoot / 10);  // TODO: 临时的人口衰减公式，每欠 10 粮减一人
+				dPopulation -= Mathf.CeilToInt(overshoot / settings.populationDecreasePerFood);  // TODO: 临时的人口衰减公式，每欠 10 粮减一人
 				dPopulation = Mathf.Max(-FreePopulation, dPopulation);  // 不能减成负的
 			}
 
@@ -151,10 +159,14 @@ namespace LongLiveKhioyen
 		{
 			get
 			{
+				var settings = GameManager.InternalSettings;
+
 				// 基础50 + 水井*5 + 住房*20
 				var dwellings = QueryBuildingsByTag("dwelling");
 				var waterWells = QueryBuildingsByTag("water-well");
-				return 50 + dwellings.Length * 20 + waterWells.Length * 5;
+				return settings.polisBasicPopulationCapacity
+					+ dwellings.Length * settings.dwellingPopulationCapacity
+					+ waterWells.Length * settings.waterWellPopulationCapacity;
 			}
 		}
 		#endregion

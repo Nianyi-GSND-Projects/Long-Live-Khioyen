@@ -13,3 +13,16 @@ MonoBehaviour:
   m_Name: Internal Game Settings
   m_EditorClassIdentifier: 
   monthLength: 60
+  freePopulationTaxRate: 5
+  busyPopulationTaxRate: 10
+  soldierCostRate: 5
+  polisBasicPopulationCapacity: 50
+  dwellingPopulationCapacity: 20
+  waterWellPopulationCapacity: 5
+  foodPerGranary: 300
+  freePopulationFoodCost: 10
+  busyPopulationFoodCost: 20
+  soldierFoodCost: 20
+  minMonthFoodForPopulationGrowth: 3
+  populationGrowthRange: {x: 10, y: 30}
+  populationDecreasePerFood: 10
