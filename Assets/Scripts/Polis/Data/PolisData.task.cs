@@ -26,6 +26,7 @@ namespace LongLiveKhioyen
 		public void RemoveTask(PolisTask task)
 		{
 			tasks.Remove(task);
+			NotifyPossiblePopulationChange();
 		}
 
 		/// <remarks>此方法内及下游不需删除 task；删除的逻辑在 PassTime_Simple 中。</remarks>

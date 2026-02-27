@@ -86,14 +86,7 @@ MonoBehaviour:
         personality: {fileID: 0}
         traits: []
         commanderActions: []
-      tasks:
-      - type: schedule-dialog
-        totalTime: 0
-        remainingTime: 0
-        requiredPopulation: 0
-        parameters:
-        - 1001
-        - 0
+      tasks: []
       lastTime:
         monthsElapsed: 0
     - buildings: []

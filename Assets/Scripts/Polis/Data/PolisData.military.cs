@@ -64,7 +64,6 @@ namespace LongLiveKhioyen
 		public void SetBattalionSoldierCount(BattalionStatus battalion, int targetCount)
 		{
 			int dCount = targetCount - battalion.currentSolider;
-			Debug.Log($"尝试将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：当前拥军数 {battalion.currentSolider}，需要 {FreePopulation - dCount} 空闲人口，当前空闲人口 {FreePopulation}。");
 			if(dCount > FreePopulation)
 			{
 				Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：需要 {FreePopulation - dCount} 空闲人口，当前空闲人口 {FreePopulation}。");

@@ -109,6 +109,7 @@ namespace LongLiveKhioyen
 			onPopulationDataChanged?.Invoke();
 		}
 
+		/// <summary>总人口（不算转换为士兵的）。</summary>
 		public int Population
 		{
 			get => population;
@@ -119,16 +120,21 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		/// <summary>当前人口占用。</summary>
 		public int RequiredPopulation => TaskPopulation + PersistentPopulation;
 
+		/// <summary>执行中的任务的人口占用。</summary>
 		public int TaskPopulation
 			=> Tasks.Select(t => t.requiredPopulation).Aggregate(0, (a, b) => a + b);
 
+		/// <summary>建筑物固有的人口占用。</summary>
 		public int PersistentPopulation
 			=> buildings.Where(b => !b.underConstruction).Select(b => b.Definition.persistentPopulation).Aggregate(0, (a, b) => a + b);
 
+		/// <summary>当前可用人口。</summary>
 		public int FreePopulation => Population - RequiredPopulation;
 
+		/// <summary>当前工作效率。</summary>
 		public float Efficiency
 		{
 			get
@@ -140,6 +146,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		/// <summary>当前人口上限。</summary>
 		public int PopulationCap
 		{
 			get

@@ -37,8 +37,7 @@ namespace LongLiveKhioyen
 
 		protected void OnDestroy()
 		{
-			if(Polis)
-				Polis.Data.onEconomyChanged -= OnEconomyDataChanged;
+			Polis.Data.onEconomyChanged -= OnEconomyDataChanged;
 		}
 
 		void OnEconomyDataChanged()

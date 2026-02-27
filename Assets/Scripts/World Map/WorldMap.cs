@@ -21,6 +21,8 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
+			GameInstance.Instance.TimeScale = 1;
+
 			// Positions the player army to the front door of last polis.
 			var lastPolis = polisMiniatures.Find(pm => pm.data.id == GameInstance.Instance.LastPolis.id);
 			playerArmy.Controller.Teleport(lastPolis.transform.position + lastPolis.transform.forward * departureDistance);
