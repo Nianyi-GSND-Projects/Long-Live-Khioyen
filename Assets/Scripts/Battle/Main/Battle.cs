@@ -409,8 +409,8 @@ namespace LongLiveKhioyen
 
 			return (false, false);
 		}
-		
-		
+
+		BattleResult result;
 		private void EndBattle(bool isWin)
 		{
 			Debug.Log($"战斗结束！结果: {(isWin ? "胜利" : "失败")}");
@@ -418,7 +418,7 @@ namespace LongLiveKhioyen
 			// 1. 切换阶段
 			ChangeStage(Stage.Settlement);
 			
-			BattleResult result = YieldResult();
+			result = YieldResult();
 			result.Victory = isWin;
 
 			// 2. 显示结算 UI (这里假设有一个 BattleResultUI 单例)
@@ -481,7 +481,10 @@ namespace LongLiveKhioyen
 		
 		public BattleResult YieldResult()
 		{
-			BattleResult result = new BattleResult();
+			BattleResult result = new()
+			{
+				polisId = GameInstance.Instance.LastPolis.id,
+			};
 			ApplyArmyChangesToArmyStatus();
 			CollectLoot(result);
 			CollectResult(result);
@@ -551,7 +554,7 @@ namespace LongLiveKhioyen
 		
 		public void ExitBattle()
 		{
-			GameInstance.Instance.ExitBattle();
+			GameInstance.Instance.ExitBattle(result);
 		}
 		
 		#endregion
@@ -560,6 +563,7 @@ namespace LongLiveKhioyen
 	
 	public class BattleResult
 	{
+		public string polisId;
 		//BattleResult即各个部队的缴获情况
 		public bool Victory = false;
 		public List<inBattleItem> Loot;

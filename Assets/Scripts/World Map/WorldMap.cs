@@ -47,7 +47,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		static GameObject controlledPolisMiniatureTemplate, hostilePolisMiniatureTemplate;
+		static GameObject controlledPolisMiniatureTemplate, hostilePolisMiniatureTemplate, friendlyPolisMiniatureTemplate;
 
 		PolisMiniature SpawnPolisMiniature(PolisData polisData)
 		{
@@ -63,6 +63,11 @@ namespace LongLiveKhioyen
 					if(!hostilePolisMiniatureTemplate)
 						hostilePolisMiniatureTemplate = Resources.Load<GameObject>("Prefabs/World Map/Polis_miniature-hostile");
 					go = Instantiate(hostilePolisMiniatureTemplate);
+					break;
+				case PolisType.Friendly:
+					if(!friendlyPolisMiniatureTemplate)
+						friendlyPolisMiniatureTemplate = Resources.Load<GameObject>("Prefabs/World Map/Polis_miniature-friendly");
+					go = Instantiate(friendlyPolisMiniatureTemplate);
 					break;
 				default:
 					throw new System.NotSupportedException();

@@ -1,13 +1,14 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using NaughtyAttributes;
 
 namespace LongLiveKhioyen
 {
 	public partial class PolisData
 	{
-		public List<BuildingPlacement> buildings;
+		[ShowIf("type", PolisType.Controlled)] public List<BuildingPlacement> buildings;
 
 		#region 事件
 		public Action onBuildingsChanged;

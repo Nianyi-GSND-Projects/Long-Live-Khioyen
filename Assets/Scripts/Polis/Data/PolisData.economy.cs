@@ -2,13 +2,14 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 
 namespace LongLiveKhioyen
 {
 	public partial class PolisData
 	{
 		#region 资源
-		[SerializeField] public Economy economy;
+		[SerializeField] Economy economy;
 		public ItemRecords StockedItems => economy.items;
 		public Economy Economy
 		{
@@ -172,7 +173,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 制造
-		public List<string> queuedProductions;
+		[ShowIf("type", PolisType.Controlled)] public List<string> queuedProductions;
 
 		public PolisTask ProductionTask => Tasks.FirstOrDefault(t => t.type == PolisTaskType.itemProduced);
 		public bool IsProducingItem => ProductionTask != null;
@@ -241,7 +242,7 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 交易
-		public ItemRecords forSaleItems;
+		[ShowIf("type", PolisType.Controlled)] public ItemRecords forSaleItems;
 
 		public void SetItemForSale(string itemId, int quantity)
 		{

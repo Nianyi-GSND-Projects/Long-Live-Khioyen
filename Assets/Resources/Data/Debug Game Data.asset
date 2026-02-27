@@ -91,7 +91,7 @@ MonoBehaviour:
         monthsElapsed: 0
     - buildings: []
       id: fanhe
-      type: 1
+      type: 3
       position: {x: -5000, y: 1000}
       size: {x: 20, y: 20}
       orientation: 15
@@ -125,7 +125,7 @@ MonoBehaviour:
         monthsElapsed: 0
     - buildings: []
       id: dunhuang
-      type: 1
+      type: 3
       position: {x: 5000, y: -3000}
       size: {x: 50, y: 50}
       orientation: 0

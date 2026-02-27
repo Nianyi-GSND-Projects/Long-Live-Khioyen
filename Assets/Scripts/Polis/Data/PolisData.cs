@@ -30,6 +30,6 @@ namespace LongLiveKhioyen
 	public enum PolisType
 	{
 		Undefined,
-		Controlled, Hostile,
+		Controlled, Hostile, Friendly,
 	}
 }

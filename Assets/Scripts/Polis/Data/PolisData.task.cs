@@ -1,12 +1,13 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using NaughtyAttributes;
 
 namespace LongLiveKhioyen
 {
 	public partial class PolisData
 	{
-		[SerializeField] List<PolisTask> tasks;
+		[SerializeField, ShowIf("type", PolisType.Controlled)] List<PolisTask> tasks;
 		public IReadOnlyList<PolisTask> Tasks => tasks;
 
 		public void AddTask(PolisTask task)

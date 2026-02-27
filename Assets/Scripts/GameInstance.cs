@@ -102,7 +102,7 @@ namespace LongLiveKhioyen
 			var polis = Data.poleis.Find(p => p.id == polisId);
 			if(polis == null)
 			{
-				Debug.LogWarning($"Cannot enter polis \"{polisId}\", failed to find.");
+				Debug.LogWarning($"找不到城池 \"{polisId}\"，无法进入。");
 				return;
 			}
 
@@ -115,7 +115,7 @@ namespace LongLiveKhioyen
 					polis.GarrisonArmy(ActiveArmy);
 					ActiveArmy = null;
 
-					Debug.Log($"Entering polis \"{LastPolis.id}\".");
+					Debug.Log($"进入已控制城池 \"{LastPolis.id}\"。");
 					CurrentMode = Mode.Polis;
 					break;
 
@@ -123,8 +123,12 @@ namespace LongLiveKhioyen
 					LastPolis = polis;
 					battleMetaData = PrepareBattleMetadata();
 
-					Debug.Log($"Attacking polis \"{LastPolis.id}\".");
+					Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。");
 					CurrentMode = Mode.Battle;
+					break;
+
+				case PolisType.Friendly:
+					Debug.LogWarning($"无法进入友好城池 \"{polisId}\"。");
 					break;
 
 				default:
@@ -167,17 +171,35 @@ namespace LongLiveKhioyen
 		}
 
 		/// <summary>停止进攻敌方城池，回到大地图。</summary>
-		public void ExitBattle()
+		public void ExitBattle(BattleResult battleResult)
 		{
 			Debug.Log($"Exiting battle against polis \"{LastPolis.id}\".");
 			battleMetaData = null;
-			ApplyBattleResult(Battle.Instance.YieldResult());
+			ApplyBattleResult(battleResult);
 			CurrentMode = Mode.WorldMap;
 		}
 
-		/// <summary>应用战役结算成果。</summary>
+		/// <summary>应用战役结果。</summary>
 		void ApplyBattleResult(BattleResult result)
 		{
+			var polis = Data.poleis.Find(p => p.id == result.polisId);
+			if(polis == null)
+			{
+				Debug.LogWarning($"找不到城池 \"{result.polisId}\"，无法应用战役结果。");
+				return;
+			}
+
+			// 若战斗成功，使城池变为友好
+			if(result.Victory)
+			{
+				polis.type = PolisType.Friendly;
+				Debug.Log($"成功攻克城池 \"{result.polisId}\"。");
+			}
+			else
+			{
+				Debug.Log($"未能攻克城池 \"{result.polisId}\"。");
+			}
+
 			// TODO
 		}
 		#endregion
