@@ -9,21 +9,6 @@ namespace LongLiveKhioyen
     {
         public static EventDialogUI Instance { get; private set; }
 
-        public static EventDialogUI GetOrCreateInstance()
-        {
-            if(Instance == null)
-            {
-                var prefab = Resources.Load<GameObject>("Prefabs/UI/Events/DialogPanel");
-                if(prefab == null)
-                {
-                    Debug.LogError("无法加载 DialogPanel 的 prefab，实例化失败。");
-                    return null;
-                }
-                Instance = Instantiate(prefab).GetComponent<EventDialogUI>();
-            }
-            return Instance;
-        }
-
 				[Header("UI References")]
         [SerializeField] private GameObject dialogPanel;
         [SerializeField] private TMP_Text nameText;
