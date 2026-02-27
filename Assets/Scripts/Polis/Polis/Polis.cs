@@ -30,6 +30,7 @@ namespace LongLiveKhioyen
 
 			InitializeConstruction();
 			InitializeBuilding();
+			InitializeDialog();
 			InitializeTime();
 		}
 
@@ -37,6 +38,7 @@ namespace LongLiveKhioyen
 		{
 			FinalizeConstruction();
 			FinalizeBuilding();
+			FinalizeDialog();
 			FinalizeTime();
 		}
 
