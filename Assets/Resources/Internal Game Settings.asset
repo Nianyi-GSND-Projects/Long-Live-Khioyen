@@ -26,3 +26,10 @@ MonoBehaviour:
   minMonthFoodForPopulationGrowth: 3
   populationGrowthRange: {x: 10, y: 30}
   populationDecreasePerFood: 10
+  promotionCost:
+    food: 0
+    material: 0
+    money: 100
+    population: 1
+    items:
+      records: []

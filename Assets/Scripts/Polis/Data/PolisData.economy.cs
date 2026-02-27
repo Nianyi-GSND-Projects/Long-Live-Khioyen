@@ -109,9 +109,11 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 人口
-		[SerializeField] int population;
-
-		public Action onPopulationDataChanged;
+		public Action onPopulationDataChanged
+		{
+			get => onEconomyChanged;
+			set => onEconomyChanged = value;
+		}
 
 		void NotifyPossiblePopulationChange()
 		{
@@ -121,10 +123,15 @@ namespace LongLiveKhioyen
 		/// <summary>总人口（不算转换为士兵的）。</summary>
 		public int Population
 		{
-			get => population;
+			get => Economy.population;
 			set
 			{
-				population = Mathf.Min(value, PopulationCap);
+				int delta = Mathf.Min(value, PopulationCap) - value;
+				Economy.Add(new ResourceDescriptor()
+				{
+					type = ResourceType.Population,
+					quantity = delta,
+				});
 				NotifyPossiblePopulationChange();
 			}
 		}

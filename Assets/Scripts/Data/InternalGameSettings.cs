@@ -28,5 +28,8 @@ namespace LongLiveKhioyen
 		[Label("人口增长范围"), Min(0)] public Vector2Int populationGrowthRange = new(0, 1);
 		[Tooltip("余粮耗尽后，每欠多少粮食减一人口。")]
 		[Label("人口衰减粮比"), Min(0)] public int populationDecreasePerFood = 1;
+
+		[Header("军备")]
+		[Label("武将招募成本")] public Economy promotionCost;
 	}
 }

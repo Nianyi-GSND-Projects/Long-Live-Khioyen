@@ -76,6 +76,9 @@ namespace LongLiveKhioyen
 
 			foreach(var cost in costs)
 			{
+				if(cost.quantity == 0)
+					continue;
+
 				var field = EconomyField.Instantiate();
 				field.transform.SetParent(infoLayoutGroup.transform, false);
 

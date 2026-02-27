@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace LongLiveKhioyen
 {
@@ -44,6 +45,7 @@ namespace LongLiveKhioyen
 		public float food;
 		public float material;
 		public float money;
+		public int population;
 
 		// 物品
 		public ItemRecords items = new();
@@ -57,6 +59,7 @@ namespace LongLiveKhioyen
 			yield return new ResourceDescriptor() { type = ResourceType.Food, quantity = food, };
 			yield return new ResourceDescriptor() { type = ResourceType.Material, quantity = material, };
 			yield return new ResourceDescriptor() { type = ResourceType.Money, quantity = money, };
+			yield return new ResourceDescriptor() { type = ResourceType.Population, quantity = population, };
 			foreach(var record in items)
 			{
 				yield return new ResourceDescriptor()
@@ -99,13 +102,11 @@ namespace LongLiveKhioyen
 				case ResourceType.Money:
 					money = descriptor.quantity;
 					break;
+				case ResourceType.Population:
+					population = (int)descriptor.quantity;
+					break;
 				case ResourceType.Item:
 					items.SetItemQuantity(descriptor.itemId, (int)descriptor.quantity);
-					break;
-				case ResourceType.Population:
-					if(PolisData.Current == null)
-						throw new InvalidOperationException("无法在不在城池中时设置人口数量。");
-					PolisData.Current.Population = (int)descriptor.quantity;
 					break;
 				default:
 					throw new NotSupportedException($"不支持设置类型为 {descriptor.type} 的资源数量。");
@@ -119,8 +120,8 @@ namespace LongLiveKhioyen
 				ResourceType.Food => food,
 				ResourceType.Material => material,
 				ResourceType.Money => money,
+				ResourceType.Population => population,
 				ResourceType.Item => items.GetItemQuantity(descriptor.itemId),
-				ResourceType.Population => PolisData.Current?.Population ?? 0,
 				_ => throw new NotSupportedException($"不支持读取类型为 {descriptor.type} 的资源数量。"),
 			};
 		}
@@ -138,13 +139,11 @@ namespace LongLiveKhioyen
 				case ResourceType.Money:
 					money += descriptor.quantity;
 					break;
+				case ResourceType.Population:
+					population += Mathf.RoundToInt(descriptor.quantity);
+					break;
 				case ResourceType.Item:
 					items.ChangeItemQuantity(descriptor.itemId, (int)descriptor.quantity);
-					break;
-				case ResourceType.Population:
-					if(PolisData.Current == null)
-						throw new InvalidOperationException("无法在不在城池中时更改人口数量。");
-					PolisData.Current.Population += (int)descriptor.quantity;
 					break;
 				default:
 					throw new NotSupportedException($"不支持更改类型为 {descriptor.type} 的资源数量。");

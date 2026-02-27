@@ -1,7 +1,7 @@
-using UnityEngine;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace LongLiveKhioyen
 {
@@ -76,47 +76,70 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region 提拔
+		[Serializable]
+		public class PromotionData
+		{
+			public GameCommander commander;
+			public Economy cost;
+		}
+
 		// 此值应序列化，否则按照现有的随机生成设计，不能保证每次打开存档都能稳定复现。
-		[SerializeField] GameCommander nextPromotableCommander;
+		[SerializeField] PromotionData nextPromotion;
 
 		public Action onNextPromotableCommanderChanged;
 
 		/// <remarks>
 		/// 在没被外部条件触发导致变化时是幂等的。
 		/// </remarks>
-		public GameCommander GetPromotableCommander()
+		public PromotionData GetNextPromotion()
 		{
-			// nextPromotableCommander 可能会被 Unity 的序列化设置为非 null 但全空的值
-			if(nextPromotableCommander == null || string.IsNullOrEmpty(nextPromotableCommander.commanderName))
-				nextPromotableCommander = CommanderRegistry.Instance.GenerateCommander(CommanderGenerationProfile.Default);
+			// 可能会被 Unity 的序列化设置为非 null 但全空的值
+			if(string.IsNullOrEmpty(nextPromotion?.commander?.commanderName))
+				nextPromotion = GeneratePromotion();
 
-			return nextPromotableCommander;
+			return nextPromotion;
+		}
+
+		PromotionData GeneratePromotion()
+		{
+			Economy cost = new(GameManager.InternalSettings.promotionCost);
+			PromotionData res = new()
+			{
+				commander = CommanderRegistry.Instance.GenerateCommander(CommanderGenerationProfile.Default),
+				cost = cost,
+			};
+			return res;
 		}
 
 		public void PromoteCommander()
 		{
-			GameCommander promotedCommander = GetPromotableCommander();
+			var promotion = GetNextPromotion();
 
-			if(promotedCommander == null)
+			if(promotion.commander == null)
 			{
 				Debug.LogWarning("提拔失败：没有可提拔的指挥官。");
+				return;
+			}
+			if(!Economy.TryCost(promotion.cost, true))
+			{
+				Debug.LogWarning("提拔失败：资源不足。");
 				return;
 			}
 
 			// 把当前的加到驻军列表里去
 			BattalionStatus battalion = new()
 			{
-				battalionCommander = promotedCommander,
+				battalionCommander = promotion.commander,
 				currentSolider = 0,
 				battalionDefinition = UnitDatabase.BattalionDefinitionSheet.GetUnit(0) as BattalionDefinition,  // 龙鸣
 			};
 			garrisonedBattalions.Add(battalion);
 
-			Debug.Log($"提拔了武将“{promotedCommander.commanderName}”");
+			Debug.Log($"提拔了武将“{promotion.commander.commanderName}”");
 			onGarrisonChanged?.Invoke();
 
 			// 刷新下一个
-			nextPromotableCommander = null;
+			nextPromotion = null;
 			onNextPromotableCommanderChanged?.Invoke();
 		}
 		#endregion

@@ -40,10 +40,13 @@ namespace LongLiveKhioyen
 
 		void RefreshPromotion()
 		{
-			GameCommander commander = PolisData.Current.GetPromotableCommander();
-			promotionItem.ApplyCommander(commander);
+			var promotion = PolisData.Current.GetNextPromotion();
+
+			promotionItem.ApplyCommander(promotion.commander);
+			promotionItem.SetCosts(promotion.cost);
 			promotionItem.Interactable = false;
-			promotionButton.interactable = commander != null;
+
+			promotionButton.interactable = promotion.commander != null && PolisData.Current.Economy.TryCost(promotion.cost);
 		}
 
 		public void Promote()
