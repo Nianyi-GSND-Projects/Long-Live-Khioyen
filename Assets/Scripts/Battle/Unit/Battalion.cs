@@ -14,7 +14,7 @@ namespace LongLiveKhioyen
             get => currentHealth;
             set => currentHealth = value;
         }
-        
+        public int ArmyId;
         public int currentMurale;
         public int currentTraining;
         public int currentMovement;
@@ -24,7 +24,7 @@ namespace LongLiveKhioyen
 
         public Battalion()
         {
-            InstanceId = 0;
+            InstanceId = -1;
             inventory = new List<inBattleItem>();
         }
 

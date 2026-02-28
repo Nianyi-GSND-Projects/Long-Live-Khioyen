@@ -1,12 +1,15 @@
 namespace LongLiveKhioyen
 {
     // 通用描述符基类
-    public class UnitDescriptor
+    public abstract class UnitDescriptor
     {
         public UnitDefinition Definition;
         public Faction faction;
         public int instanceId = -1;
         
+        public bool placed;
+        public int maxHealth;
+        public int currentHealth;
         // ... 其他通用战前信息
     }
 
@@ -14,10 +17,12 @@ namespace LongLiveKhioyen
     {
         public int armyId;
         public GameCommander battalionCommander;
-        public int maxSolider;
+        
+        public int maxSolider { get => maxHealth; set => maxHealth = value; }
+        public int currentSoliders { get => currentHealth; set => currentHealth = value; }
+        
         public int maxMorale;
         public int maxTraining;
-        public int currentSoliders;
         public int currentMurale;
         public int currentTraining;
 
@@ -26,14 +31,12 @@ namespace LongLiveKhioyen
         public int flexibility;
         public int discipline;
         public int strategy;
-        
-        public bool placed;
     }
 
     public class FacilityDescriptor : UnitDescriptor
     {
-        public int currentDurability;
-        public int maxDurability;
+        public int maxDurability { get => maxHealth; set => maxHealth = value; }
+        public int currentDurability { get => currentHealth; set => currentHealth = value; }
         // ... 其他设施特有信息
         
         public int cost; 
