@@ -38,6 +38,9 @@ namespace LongLiveKhioyen
 
 		void Update()
 		{
+			if(Army == null)
+				return;
+
 			float dt = Time.deltaTime;
 			GameInstance.Instance.AdvanceTime_Scaled(dt * Settings.worldMapTimeScale);
 

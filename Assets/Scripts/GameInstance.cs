@@ -182,12 +182,17 @@ namespace LongLiveKhioyen
 		/// <summary>应用战役结果。</summary>
 		void ApplyBattleResult(BattleResult result)
 		{
+			// 度过时间
+			Data.time.AdvanceByMonth(result.passedTime);
+
 			var polis = Data.poleis.Find(p => p.id == result.polisId);
 			if(polis == null)
 			{
 				Debug.LogWarning($"找不到城池 \"{result.polisId}\"，无法应用战役结果。");
 				return;
 			}
+
+			// TODO: 战利品入库
 
 			// 若战斗成功，使城池变为友好
 			if(result.Victory)
@@ -199,8 +204,6 @@ namespace LongLiveKhioyen
 			{
 				Debug.Log($"未能攻克城池 \"{result.polisId}\"。");
 			}
-
-			// TODO
 		}
 		#endregion
 

@@ -481,6 +481,7 @@ namespace LongLiveKhioyen
 			BattleResult result = new()
 			{
 				polisId = GameInstance.Instance.LastPolis.id,
+				passedTime = GameManager.InternalSettings.timeCostPerBattle,  // TODO: 牢宋需给具体公式
 			};
 			ApplyArmyChangesToArmyStatus();
 			CollectLoot(result);
@@ -563,6 +564,8 @@ namespace LongLiveKhioyen
 		public string polisId;
 		//BattleResult即各个部队的缴获情况
 		public bool Victory = false;
+		/// <summary>战斗用时，按月计。</summary>
+		public float passedTime;
 		public List<inBattleItem> Loot;
 	}
 }
