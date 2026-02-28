@@ -33,3 +33,7 @@ MonoBehaviour:
     population: 1
     items:
       records: []
+  worldMapFoodCostRate: 0.0015
+  worldMapTimeScale: 0.5
+  foodCostPerBattle: 50
+  timeCostPerBattle: 1

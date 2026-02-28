@@ -42,5 +42,24 @@ namespace LongLiveKhioyen
 			var polis = focusedMiniature.data;
 			GameInstance.Instance.EnterPolis(polis.id);
 		}
+
+		Vector3 lastPos;
+		public System.Action<float> onMove;
+
+		protected void Start()
+		{
+			lastPos = transform.position;
+		}
+
+		protected void Update()
+		{
+			Vector3 pos = transform.position, dPos = pos - lastPos;
+			lastPos = pos;
+			if(dPos != Vector3.zero)
+			{
+				float realDistance = dPos.magnitude / GameInstance.Instance.Data.world.data3D.scale;
+				onMove?.Invoke(realDistance);
+			}
+		}
 	}
 }

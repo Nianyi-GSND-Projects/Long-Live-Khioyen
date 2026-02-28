@@ -9,7 +9,12 @@ namespace LongLiveKhioyen
 	{
 		public GameCommander armyCommander;
 		public List<BattalionStatus> battalionStatuses = new();
+
+		/// <summary>出城时携带的军粮量。</summary>
+		public float initialFood;
 		public float carriedFood;
+
+		public float CarriedWeight => 10;  // TODO: 携带重量
 	}
 
 	public class BattalionStatus

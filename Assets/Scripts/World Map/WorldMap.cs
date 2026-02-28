@@ -1,10 +1,15 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 
 namespace LongLiveKhioyen
 {
 	public class WorldMap : MonoBehaviour
 	{
+		InternalGameSettings Settings => GameManager.InternalSettings;
+		ArmyStatus Army => GameInstance.Instance.ActiveArmy;
+
 		#region Fields
 		readonly List<PolisMiniature> polisMiniatures = new();
 		public WorldMapPlayerArmy playerArmy;
@@ -27,12 +32,16 @@ namespace LongLiveKhioyen
 			var lastPolis = polisMiniatures.Find(pm => pm.data.id == GameInstance.Instance.LastPolis.id);
 			playerArmy.Controller.Teleport(lastPolis.transform.position + lastPolis.transform.forward * departureDistance);
 			playerArmy.Controller.FaceTowards(lastPolis.transform.forward);
+
+			playerArmy.onMove += OnPlayerMove;
 		}
 
 		void Update()
 		{
 			float dt = Time.deltaTime;
-			GameInstance.Instance.AdvanceTime_Scaled(dt);
+			GameInstance.Instance.AdvanceTime_Scaled(dt * Settings.worldMapTimeScale);
+
+			RefreshFoodSlider();
 		}
 		#endregion
 
@@ -80,6 +89,39 @@ namespace LongLiveKhioyen
 			var pm = go.GetComponent<PolisMiniature>();
 			pm.data = polisData;
 			return pm;
+		}
+		#endregion
+
+		#region Food
+		[SerializeField] Slider foodSlider;
+		[SerializeField] TMP_Text foodText;
+
+		void RefreshFoodSlider()
+		{
+			float foodValue = 0;
+			if(Army.initialFood != 0)
+				foodValue = Army.carriedFood / Army.initialFood;
+			foodSlider.value = foodValue;
+			foodText.text = $"{Mathf.FloorToInt(Army.carriedFood)}";
+		}
+
+		public System.Action onStarved;
+
+		void OnPlayerMove(float distance)
+		{
+			float foodCost = distance * Army.CarriedWeight * Settings.worldMapFoodCostRate;
+			bool willStarve = foodCost > Army.carriedFood;
+			Army.carriedFood = Mathf.Max(0, Army.carriedFood - foodCost);
+			if(willStarve)
+				Starve();
+		}
+
+		void Starve()
+		{
+			Debug.LogWarning("卧槽，你马饿死了。");
+			playerArmy.Controller.enabled = false;
+			// TODO: 饿死了的逻辑
+			onStarved?.Invoke();
 		}
 		#endregion
 	}

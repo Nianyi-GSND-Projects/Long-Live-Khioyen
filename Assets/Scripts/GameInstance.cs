@@ -71,7 +71,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public ArmyStatus ActiveArmy { get; private set; }
+		public ArmyStatus ActiveArmy { get; set; }
 
 		public enum Mode { Polis, WorldMap, Battle }
 		Mode currentMode = Mode.Polis;

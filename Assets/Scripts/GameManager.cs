@@ -9,11 +9,6 @@ namespace LongLiveKhioyen
 	public static class GameManager
 	{
 		#region Life cycle
-#if DEBUG && UNITY_EDITOR
-		/// <summary>是否处于刚从非正常路径启动的 debug session 中。</summary>
-		static bool abruptDebug = false;
-#endif
-
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
 		static void OnGameStart()
 		{
@@ -35,10 +30,7 @@ namespace LongLiveKhioyen
 #if DEBUG && UNITY_EDITOR
 			// Use initial game data if not starting from the menu scene.
 			if(SceneManager.GetActiveScene().buildIndex != 0)
-			{
-				abruptDebug = true;
 				StartDebugGame();
-			}
 #endif
 		}
 		#endregion
@@ -234,9 +226,20 @@ namespace LongLiveKhioyen
 #if UNITY_EDITOR
 		static void StartDebugGame()
 		{
-			Debug.LogWarning("启动 debug 存档。");
+			Debug.Log("启动 debug 存档。");
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Debug Game Data").gameData);
 			StartGameInstanceWithData(data);
+
+			if(SceneManager.GetActiveScene().buildIndex != 1)  // 城外启动，须填充 ActiveArmy
+			{
+				GameInstance.Instance.ActiveArmy = new()
+				{
+					armyCommander = null,
+					battalionStatuses = new(),
+					initialFood = 1000,
+					carriedFood = 900,
+				};
+			}
 		}
 #endif
 
@@ -277,14 +280,6 @@ namespace LongLiveKhioyen
 			GameObject go = new("Game Instance");
 			go.AddComponent<GameInstance>();
 			GameInstance.Instance.Data = data;
-#if DEBUG && UNITY_EDITOR
-			if(abruptDebug)
-				abruptDebug = false;
-			else
-				SwitchScene("Polis");
-#else
-			SwitchScene("Polis");
-#endif
 		}
 
 		public static void StopCurrentGame()

@@ -41,6 +41,7 @@ namespace LongLiveKhioyen
 			{
 				armyCommander = null,
 				battalionStatuses = battalions,
+				initialFood = foodAmount,
 				carriedFood = foodAmount,
 			};
 			return army;

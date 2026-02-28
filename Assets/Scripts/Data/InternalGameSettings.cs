@@ -31,5 +31,13 @@ namespace LongLiveKhioyen
 
 		[Header("军备")]
 		[Label("武将招募成本")] public Economy promotionCost;
+
+		[Header("行军")]
+		[Label("行军耗粮速率（每距离每重量）"), Min(0)] public float worldMapFoodCostRate;
+		[Label("行军时间流速"), Min(0)] public float worldMapTimeScale;
+
+		[Header("战斗")]
+		[Label("单次战斗耗粮（测试）"), Min(0)] public float foodCostPerBattle;  // 测试用
+		[Label("单次战斗耗时（测试）"), Min(0)] public float timeCostPerBattle;  // 测试用
 	}
 }
