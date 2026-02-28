@@ -45,21 +45,20 @@ namespace LongLiveKhioyen
 		/// </summary>
 		public static Vector2[,] CalculateWearnessVectors(
 			PolisData data,
-			int fixedSamples = 192,
+			int fixedSamples,
 			float trafficDiscountPerPass = 0.12f,
 			float nearBuildingPenalty = 0.8f,
 			float minStepCost = 0.15f,
-			float decayPerPath = 0.95f
+			float decayPerRound = 0.95f
 		)
 		{
-			decayPerPath = Mathf.Clamp01(decayPerPath);
-
 			int width = data.size.x;
 			int height = data.size.y;
 
 			var blocked = new bool[width, height];
 			var nearBuilding = new bool[width, height];
 			var flow = new Vector2[width, height];
+			var heat = new float[width, height];
 			var passCount = new int[width, height];
 
 			// 1) 建筑默认挡路：把所有建筑占据格标记为不可通行。
@@ -309,9 +308,14 @@ namespace LongLiveKhioyen
 					var a = path[i];
 					var b = path[i + 1];
 					Vector2 dir = ((Vector2)(b - a)).normalized * weight;
+					// 把方向统一到同一半球，避免 A->B 与 B->A 相互抵消。
+					if(dir.y < 0f || (Mathf.Abs(dir.y) <= 1e-6f && dir.x < 0f))
+						dir = -dir;
 
 					flow[a.x, a.y] += dir;
 					flow[b.x, b.y] += dir * 0.5f;
+					heat[a.x, a.y] += weight;
+					heat[b.x, b.y] += weight * 0.5f;
 				}
 			}
 
@@ -320,7 +324,10 @@ namespace LongLiveKhioyen
 				for(int x = 0; x < width; ++x)
 				{
 					for(int y = 0; y < height; ++y)
+					{
 						flow[x, y] *= decay;
+						heat[x, y] *= decay;
+					}
 				}
 			}
 
@@ -344,21 +351,41 @@ namespace LongLiveKhioyen
 			if(IsWalkable(center))
 				anchors.Add(center);
 
-			if(anchors.Count >= 2)
+			for(int i = 0; i < fixedSamples; ++i)
 			{
-				for(int i = 0; i < fixedSamples; ++i)
+				for(int si = 0; si < anchors.Count; ++si)
 				{
-					int si = Random.Range(0, anchors.Count);
-					int ti = Random.Range(0, anchors.Count);
-					if(ti == si)
-						ti = (ti + 1) % anchors.Count;
+					for(int ti = si + 1; ti < anchors.Count; ++ti)
+					{
+						var start = anchors[si];
+						var target = anchors[ti];
+						var path = FindPath(start, target);
+						AccumulatePath(path, 1f);
+					}
+				}
+				DecayFlow(decayPerRound);
+			}
 
-					var start = anchors[si];
-					var target = anchors[ti];
-					var path = FindPath(start, target);
-					AccumulatePath(path, 1f);
-					// 每次寻路结束后都进行一次全图衰减，让弱连接逐步消退。
-					DecayFlow(decayPerPath);
+			float maxHeat = 0.0001f;
+			for(int x = 0; x < width; ++x)
+			{
+				for(int y = 0; y < height; ++y)
+				{
+					if(heat[x, y] > maxHeat)
+						maxHeat = heat[x, y];
+				}
+			}
+
+			for(int x = 0; x < width; ++x)
+			{
+				for(int y = 0; y < height; ++y)
+				{
+					float strength = Mathf.Clamp01(heat[x, y] / maxHeat);
+					Vector2 dir = flow[x, y];
+					if(dir.sqrMagnitude > 1e-8f)
+						flow[x, y] = dir.normalized * strength;
+					else
+						flow[x, y] = Vector2.zero;
 				}
 			}
 

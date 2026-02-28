@@ -1810,7 +1810,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 528471307}
   navMeshSurface: {fileID: 528471308}
-  wearnessPathSamples: 192
+  wearnessPathSamples: 10
   wearnessTrafficDiscountPerPass: 0.5
   wearnessNearBuildingPenalty: 10
   wearnessMinStepCost: 0.0001
@@ -3192,7 +3192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panSpeed: 2
   zoomSpeed: 0.25
-  zoomRange: {x: 2, y: 100}
+  zoomRange: {x: 2, y: 200}
   rotateSpeed: 0.2
   minAzimuth: 15
 --- !u!1 &976895809

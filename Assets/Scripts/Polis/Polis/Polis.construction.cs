@@ -52,11 +52,11 @@ namespace LongLiveKhioyen
 		Texture2D wearnessMap;
 
 		[Header("Wearness")]
-		[Min(1)] public int wearnessPathSamples = 192;
+		[Min(1)] public int wearnessPathSamples = 10;
 		[Min(0f)] public float wearnessTrafficDiscountPerPass = 0.12f;
 		[Min(0f)] public float wearnessNearBuildingPenalty = 0.8f;
 		[Min(0.0001f)] public float wearnessMinStepCost = 0.15f;
-		[Range(0f, 1f)] public float wearnessDecayPerPath = 0.95f;
+		[Range(0f, 1f)] public float wearnessDecayPerRound = 0.75f;
 
 		void ConstructGround()
 		{
@@ -93,6 +93,7 @@ namespace LongLiveKhioyen
 			Destroy(wearnessMap);
 		}
 
+		[ContextMenu("Recalculate Wearness Map")]
 		void RecalculateWearnessMap()
 		{
 			var flow = Utilities.CalculateWearnessVectors(
@@ -101,7 +102,7 @@ namespace LongLiveKhioyen
 				wearnessTrafficDiscountPerPass,
 				wearnessNearBuildingPenalty,
 				wearnessMinStepCost,
-				wearnessDecayPerPath
+				wearnessDecayPerRound
 			);
 			for(int x = 0; x < Data.size.x; ++x)
 			{

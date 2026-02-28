@@ -136,6 +136,10 @@ Shader "Long Live Khioyen/Polis Ground"
 				alpha = saturate(magnitude);
 				heightDelta = abs(stripe) * alpha;
 				albedo = lerp(_WearColorA.rgb, _WearColorB.rgb, signedStripe);
+				
+				// DEBUG
+				// albedo = float3(wearness, 0);
+				// alpha = 1;
 			}
 
 			float SmoothedBorderWeight(float2 polisPosition)
