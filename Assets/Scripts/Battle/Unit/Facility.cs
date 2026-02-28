@@ -6,6 +6,7 @@ namespace LongLiveKhioyen
 {
     public class Facility : Unit<FacilityDefinition>
     {
+        public bool isConstructed = true;
         public int currentDurability
         {
             get => currentHealth;
@@ -24,6 +25,30 @@ namespace LongLiveKhioyen
             if (entryStats == null) return 0;
             float ratio = 1.0f;
             return entryStats.defensePower* ratio;
+        }
+        
+        protected override void OnHealthChanged()
+        {
+            base.OnHealthChanged();
+        
+            if (!isConstructed)
+            {
+                int max = Definition.defaultMaxDurability;
+            
+                if (currentDurability >= max)
+                {
+                    isConstructed = true;
+                    currentDurability = max;
+                    Debug.Log($"Facility {name} construction complete!");
+                    // TODO: 播放完成特效
+                }
+            }
+        }
+        
+        public override void OnTurnStart()
+        {
+            if (!isConstructed) return; // 未建成不回体/不重置行动
+            base.OnTurnStart();
         }
         
         public int CurrentCost

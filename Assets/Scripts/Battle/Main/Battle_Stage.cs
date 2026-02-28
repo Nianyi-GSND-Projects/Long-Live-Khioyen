@@ -140,6 +140,7 @@ namespace LongLiveKhioyen
         private Vector2Int initialUnitPosition;
         private int initialUnitMovement;
         public PlayerActionStage CurrentActionStage{ get; set; }
+        private PlayerActionStage _previousActionStage;
         private IEnumerator PlayerTurnCoroutine()
         {
             IsPlayerTurnOver = false;
@@ -211,8 +212,37 @@ namespace LongLiveKhioyen
             IsPreparingAction = false;
             ClearAllHexHighlights();
         }
+        
+        public FacilityDefinition PendingFacility { get; set; }
+        
+        public Unit BuildPendingFacility(Vector2Int pos, Faction faction)
+        {
+            if (PendingFacility == null)
+            {
+                Debug.LogWarning("No PendingFacility to build!");
+                return null;
+            }
+
+            FacilityDescriptor desc = new FacilityDescriptor
+            {
+                Definition = PendingFacility,
+                faction = faction,
+                instanceId = -1,
+                maxDurability = PendingFacility.defaultMaxDurability,
+                currentDurability = 1,
+                isConstructed = false// 初始 1 血
+            };
+
+            return RegisterUnitToBattle(desc, pos);
+        }
+        public event System.Action<PlayerActionStage> OnActionStageChanged;
         public void ChangeActionStage(PlayerActionStage stage)
         {
+            if (stage == PlayerActionStage.SelectingTarget)
+            {
+                _previousActionStage = CurrentActionStage;
+            }
+            
             if (CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget)
             {
                 OnAmbiguousSelectionEnded?.Invoke();
@@ -243,7 +273,14 @@ namespace LongLiveKhioyen
                     Debug.Log("Change action stage to SelectingAction");
                     ClearAllHexHighlights();
                     OnActionSelectionStarted?.Invoke();
-                    //TODO:单位处悬浮菜单，锁定滚动
+                    break;
+                
+                case PlayerActionStage.SelectingSubAction:
+                    // UI 监听此状态 -> 显示二级菜单
+                    break;
+        
+                case PlayerActionStage.SelectingBuildItem:
+                    // UI 监听此状态 -> 显示建造面板
                     break;
 				
                 case PlayerActionStage.SelectingTarget:
@@ -267,6 +304,7 @@ namespace LongLiveKhioyen
                     OnAmbiguousSelectionStarted?.Invoke(currentAmbiguousCandidates);
                     break;
             }
+            OnActionStageChanged?.Invoke(stage);
         }
         #endregion
 

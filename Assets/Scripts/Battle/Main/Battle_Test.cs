@@ -31,8 +31,6 @@ namespace LongLiveKhioyen
         
         private void GenerateTestArmyData()
         {
-            //PlayerReserveTeam
-			
             armyStatus.battalionStatuses.Clear();
 			
             for (int i = 0; i < testPlayerReserveTeamCount; i++)

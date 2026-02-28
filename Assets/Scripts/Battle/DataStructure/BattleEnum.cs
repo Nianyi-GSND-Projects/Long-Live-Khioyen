@@ -41,10 +41,12 @@ namespace LongLiveKhioyen
         /// </summary>
         public enum PlayerActionStage
         {
-            None,
-            MovingBattalion,
-            SelectingAction,
-            SelectingTarget,
+            None,//闲置
+            MovingBattalion,//选择移动位置
+            SelectingAction,//选择一级行动
+            SelectingSubAction,//选择次级行动
+            SelectingBuildItem,//选择建造页面
+            SelectingTarget,//选择目标
             SelectingAmbiguousTarget // 多重目标选择
         }
 

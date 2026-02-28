@@ -54,28 +54,42 @@ namespace LongLiveKhioyen
             else if (CurrentStage == Stage.Battle)
             {
                 // 尝试让 UI 处理回退 (比如关闭子菜单)
-                if (BattleUi.Instance != null && BattleUi.Instance.TryHandleBackInput()) return;
+                //if (BattleUi.Instance != null && BattleUi.Instance.TryHandleBackInput()) return;
 
                 // 否则执行游戏逻辑回退
-                if (CurrentActionStage == PlayerActionStage.SelectingTarget)
+                switch (CurrentActionStage)
                 {
-                    CancelAction();
-                    ChangeActionStage(PlayerActionStage.SelectingAction);
+                    case PlayerActionStage.SelectingTarget:
+                        CancelAction();
+                        ChangeActionStage(_previousActionStage);
+                        break;
+                    
+                    case PlayerActionStage.SelectingSubAction:
+                        // 回退到一级菜单
+                        ChangeActionStage(PlayerActionStage.SelectingAction);
+                        break;
+            
+                    case PlayerActionStage.SelectingBuildItem:
+                        // 回退到一级菜单
+                        ChangeActionStage(PlayerActionStage.SelectingAction);
+                        break;
+                    
+                    case PlayerActionStage.SelectingAction:
+                        CancelMovement();
+                        ChangeActionStage(PlayerActionStage.MovingBattalion);
+                        break;
+
+                    case PlayerActionStage.MovingBattalion:
+                        ClearAllSelection();
+                        ChangeActionStage(PlayerActionStage.None);
+                        break;
+
+                    default:
+                        ClearAllSelection();
+                        break;
+
                 }
-                else if (CurrentActionStage == PlayerActionStage.SelectingAction)
-                {
-                    CancelMovement();
-                    ChangeActionStage(PlayerActionStage.MovingBattalion);
-                }
-                else if (CurrentActionStage == PlayerActionStage.MovingBattalion)
-                {
-                    ClearAllSelection();
-                    ChangeActionStage(PlayerActionStage.None);
-                }
-                else
-                {
-                    ClearAllSelection();
-                }
+                
             }
         }
 

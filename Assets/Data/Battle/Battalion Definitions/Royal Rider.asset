@@ -29,6 +29,8 @@ MonoBehaviour:
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
   defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
+  defaultConstructAction: {fileID: 11400000, guid: 6da2ad846ce3c1e408a2d54b3758f944, type: 2}
+  defaultRepairAction: {fileID: 11400000, guid: 19614b0fc57d3fe4db10b6129784c156, type: 2}
   unitUniqueActions:
   - {fileID: 11400000, guid: 26c7e5a101031894ca187bdbefdf3df1, type: 2}
   lootRules: []

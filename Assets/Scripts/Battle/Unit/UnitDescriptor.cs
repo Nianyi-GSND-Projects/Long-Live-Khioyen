@@ -35,6 +35,7 @@ namespace LongLiveKhioyen
 
     public class FacilityDescriptor : UnitDescriptor
     {
+        public bool isConstructed = true;
         public int maxDurability { get => maxHealth; set => maxHealth = value; }
         public int currentDurability { get => currentHealth; set => currentHealth = value; }
         // ... 其他设施特有信息

@@ -26,6 +26,58 @@ namespace LongLiveKhioyen
         {
             Hide();
         }
+        private void Start()
+        {
+            if (Battle.Instance != null)
+            {
+                Battle.Instance.OnActionStageChanged += HandleStageChanged;
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            if (Battle.Instance != null)
+            {
+                Battle.Instance.OnActionStageChanged -= HandleStageChanged;
+            }
+        }
+        
+        private void HandleStageChanged(PlayerActionStage stage)
+        {
+            if (currentUnit == null) return; // 还没 Show 过
+
+            switch (stage)
+            {
+                case PlayerActionStage.SelectingAction:
+                    // 显示一级，隐藏二级
+                    panelRoot.gameObject.SetActive(true);
+                    mainMenuContainer.gameObject.SetActive(true);
+                    subMenuContainer.gameObject.SetActive(false);
+                    break;
+
+                case PlayerActionStage.SelectingSubAction:
+                    // 显示一级和二级 (或者只显示二级？通常是并列显示)
+                    panelRoot.gameObject.SetActive(true);
+                    mainMenuContainer.gameObject.SetActive(true);
+                    subMenuContainer.gameObject.SetActive(true);
+                    break;
+        
+                case PlayerActionStage.SelectingBuildItem:
+                    // 隐藏行动菜单 (因为建造面板是独立的)
+                    Hide(); 
+                    break;
+        
+                case PlayerActionStage.SelectingTarget:
+                    // 隐藏菜单
+                    Hide();
+                    break;
+        
+                case PlayerActionStage.None:
+                case PlayerActionStage.MovingBattalion:
+                    Hide();
+                    break;
+            }
+        }
 
         public void Hide()
         {
@@ -185,6 +237,33 @@ namespace LongLiveKhioyen
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeCommanderActions);
             }, interactable: hasCmdActions);
+            
+            // --- 按钮: 建造 (Build) ---
+            if (currentUnit is Battalion bat && bat.Definition.defaultConstructAction != null)
+            {
+                bool canBuild = Battle.Instance.buildableFacilities.Count > 0;
+    
+                CreateButton(mainMenuContainer, "Build", "Construct a facility", () =>
+                {
+                    Battle.Instance.ChangeActionStage(PlayerActionStage.SelectingBuildItem);
+                }, interactable: canBuild);
+            }
+            
+            // --- 按钮: 修补 ---
+            if (currentUnit is Battalion bat2 && bat2.Definition.defaultRepairAction != null)
+            {
+                // 检查条件
+                bool canRepair = bat2.Definition.defaultRepairAction.CheckUseConditions(currentUnit);
+                if (canRepair)
+                {
+                    canRepair = bat2.Definition.defaultRepairAction.HasValidTargetsInRange(currentUnit);
+                }
+    
+                CreateButton(mainMenuContainer, "Repair", bat2.Definition.defaultRepairAction.description, () =>
+                {
+                    Battle.Instance.PrepareAction(bat2.Definition.defaultRepairAction);
+                }, interactable: canRepair);
+            }
         }
         public bool TryCloseSubMenu()
         {
@@ -221,6 +300,7 @@ namespace LongLiveKhioyen
                     Battle.Instance.PrepareAction(action);
                 }, interactable: isUsable);
             }
+            Battle.Instance.ChangeActionStage(PlayerActionStage.SelectingSubAction);
         }
 
         // 辅助方法：创建按钮

@@ -190,6 +190,13 @@ namespace LongLiveKhioyen
 			audioSource = GetComponent<AudioSource>();
 		}
 		
+		private void InitializeBuildableFacilities()
+		{
+			// TODO: 从 GameInstance 或 TechTree 读取
+			// 暂时留空，或者在 Inspector 中配置默认值
+			if (buildableFacilities == null) buildableFacilities = new List<FacilityDefinition>();
+		}
+		
 		private void InitializeData()
 		{
 			#if BATTLE_TEST
@@ -197,6 +204,8 @@ namespace LongLiveKhioyen
 			#else
 			armyStatus = GameInstance.Instance.ActiveArmy;
 			#endif
+
+			InitializeBuildableFacilities();
 			
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
@@ -245,11 +254,6 @@ namespace LongLiveKhioyen
 			{
 				factionActiveUnits.Add(f, new HashSet<Unit>());
 			}
-			
-			#if BATTLE_TEST
-			testPlayerReserveTeamCount = 3;
-			
-			#endif
 		}
 		
 		private void InitializeGameStatus()

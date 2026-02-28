@@ -8,6 +8,8 @@ namespace LongLiveKhioyen
     {
 
         #region Data
+        [Header("Construction")]
+        public List<FacilityDefinition> buildableFacilities = new List<FacilityDefinition>();
         
         #region Unit Container
 		
@@ -93,6 +95,9 @@ namespace LongLiveKhioyen
             else if (descriptor is FacilityDescriptor facDesc)
             {
                 unit = SpawnUnit<Facility, FacilityDefinition, FacilityDescriptor>(facDesc, pos);
+                Facility fac = unit as Facility;
+                fac.isConstructed = facDesc.isConstructed;
+                fac.currentDurability = facDesc.currentDurability;
             }
 
             if (unit != null)
@@ -142,6 +147,9 @@ namespace LongLiveKhioyen
             unit.transform.localPosition = MapToLocal(pos);
             
             InitializeUnitActions(unit);
+            
+            unit.actionDone = true;
+            unit.UpdateVisualState();
 
             return unit;
         }

@@ -109,6 +109,24 @@ namespace LongLiveKhioyen
         #endregion
 
         #region Effect
+        
+        public virtual void Heal(int amount)
+        {
+            if (entryStats == null) return; // 或者 Facility 用 Definition
+    
+            // 获取最大血量逻辑需要统一
+            int max = 0;
+            if (this is Battalion bat) max = bat.entryStats.maxHealth;
+            else if (this is Facility fac) max = fac.Definition.defaultMaxDurability;
+
+            int old = currentHealth;
+            currentHealth = Mathf.Min(max, currentHealth + amount);
+    
+            if (currentHealth != old)
+            {
+                OnHealthChanged(); // [关键]
+            }
+        }
 
         public virtual void TakeDamage(int rawDamage, Unit attacker = null)
         {

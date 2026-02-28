@@ -64,6 +64,8 @@ namespace LongLiveKhioyen
         public ActionDefinition defaultAttack;
         public ActionDefinition defaultRetreat;
         public ActionDefinition defaultInteract;
+        public ActionDefinition defaultConstructAction;
+        public ActionDefinition defaultRepairAction;
         
         public List<ActionDefinition> unitUniqueActions = new List<ActionDefinition>();
         

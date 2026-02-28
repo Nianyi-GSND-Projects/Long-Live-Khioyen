@@ -233,17 +233,6 @@ namespace LongLiveKhioyen
             ClosePanel(ambiguousSelectionPanel);
         }
         
-        public bool TryHandleBackInput()
-        {
-            // 检查动态行动菜单是否有次级菜单打开
-            if (actionMenu != null && actionMenu.TryCloseSubMenu())
-            {
-                return true; // UI 拦截了这次回退操作
-            }
-
-            return false; // UI 没什么可回退的，交回给游戏逻辑
-        }
-        
         #endregion
         
         #region General
@@ -279,6 +268,7 @@ namespace LongLiveKhioyen
         public ArrangementUI arrangementUI;
         #endregion
         
+        public ConstructionUI constructionUI;
         
         public ActionMenuUI actionMenu; 
         

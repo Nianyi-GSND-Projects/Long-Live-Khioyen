@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/General/Interact With Facility")]
+    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Interact With Facility")]
     public class InteractEffect : EffectDefinition
     {
         public override void Execute(ActionContext ctx)
