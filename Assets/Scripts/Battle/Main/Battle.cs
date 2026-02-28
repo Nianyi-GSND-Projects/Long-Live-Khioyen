@@ -280,12 +280,7 @@ namespace LongLiveKhioyen
 							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
 						};
 						
-						Facility facility = SpawnUnit<Facility, FacilityDefinition,FacilityDescriptor>(
-							facDesc,
-							spawnData.position
-						);
-			
-						factionActiveUnits[Faction.Player].Add(facility);
+						RegisterUnitToBattle(facDesc, spawnData.position);
 					}
 					else
 					{
@@ -295,7 +290,6 @@ namespace LongLiveKhioyen
 							Definition = spawnData.battalionDef,
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
-							armyId = spawnData.instanceId,
 							placed = false,
 							maxSolider = spawnData.battalionDef.defaultMaxSolider,
 							currentSoliders = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.battalionDef.defaultMaxSolider,
@@ -320,8 +314,7 @@ namespace LongLiveKhioyen
 						{
 							desc.battalionCommander = null;
 						}
-						
-						SpawnBattalion(desc, spawnData.position);
+						RegisterUnitToBattle(desc, spawnData.position);
 					}
 				}
 				return; // [关键] 既然读了预设，就跳过后面的随机生成
@@ -442,14 +435,14 @@ namespace LongLiveKhioyen
 			{
 				foreach (var unit in factionActiveUnits[Faction.Player])
 				{
-					if (unit is Battalion bat) survivors[bat.InstanceId] = bat;
+					if (unit is Battalion bat) survivors[bat.ArmyId] = bat;
 				}
 			}
 			
 			foreach (var unit in retreatedUnits)
 			{
 				if (unit is Battalion bat && unit.faction == Faction.Player) 
-					survivors[bat.InstanceId] = bat;
+					survivors[bat.ArmyId] = bat;
 			}
 
 			for (int i = armyStatus.battalionStatuses.Count - 1; i >= 0; i--)

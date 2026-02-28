@@ -6,7 +6,6 @@ namespace LongLiveKhioyen
 {
     public partial class Battle
     {
-        //管理单位相关信息与逻辑
 
         #region Data
         
@@ -19,34 +18,21 @@ namespace LongLiveKhioyen
         public List<Unit> deadUnits = new List<Unit>();
         private HashSet<Unit> dirtyUnits = new HashSet<Unit>();
 		
+        private Dictionary<int, Unit> _instanceIdMap = new Dictionary<int, Unit>();
+        private int _nextInstanceId = 1000;
         #endregion
         
         public Unit GetUnitByInstanceId(int id)
         {
-            if (factionActiveUnits == null) return null;
-
-            foreach (var kvp in factionActiveUnits)
+            if (_instanceIdMap.TryGetValue(id, out Unit unit))
             {
-                if (kvp.Value == null) continue;
-
-                foreach (var unit in kvp.Value)
-                {
-                    // [新增] 空检查
-                    if (unit == null) continue; 
-
-                    if (unit.InstanceId == id) return unit;
-                }
+                return unit;
             }
-          
-            if (retreatedUnits != null)
+            
+            foreach (var u in retreatedUnits)
             {
-                foreach (var unit in retreatedUnits)
-                {
-                    if (unit == null) continue;
-                    if (unit.InstanceId == id) return unit;
-                }
+                if (u.InstanceId == id) return u;
             }
-
             return null;
         }
         
@@ -58,10 +44,78 @@ namespace LongLiveKhioyen
             }
             return new HashSet<Unit>();
         }
+        
+        private int GenerateUniqueId()
+        {
+            while (_instanceIdMap.ContainsKey(_nextInstanceId))
+            {
+                _nextInstanceId++;
+            }
+            return _nextInstanceId++;
+        }
 
         #endregion
         
         #region Spawn
+        public Unit RegisterUnitToBattle(UnitDescriptor descriptor, Vector2Int pos)
+        {
+            if (descriptor == null) return null;
+            if (!IsValidMapPosition(pos))
+            {
+                Debug.LogError($"尝试在无效位置 {pos} 注册单位！");
+                return null;
+            }
+            
+            if (descriptor.instanceId == -1)
+            {
+                descriptor.instanceId = GenerateUniqueId();
+            }
+            else if (_instanceIdMap.ContainsKey(descriptor.instanceId))
+            {
+                Debug.LogWarning($"Instance ID {descriptor.instanceId} conflict! Generating new ID.");
+                descriptor.instanceId = GenerateUniqueId();
+            }
+
+            Unit unit = null;
+
+            if (descriptor is BattalionDescriptor batDesc)
+            {
+                unit = SpawnUnit<Battalion, BattalionDefinition, BattalionDescriptor>(batDesc, pos);
+            
+                Battalion bat = unit as Battalion;
+                bat.battalionCommander = batDesc.battalionCommander;
+                bat.currentSoliders = batDesc.currentSoliders;
+                bat.currentMurale = batDesc.currentMurale;
+                bat.currentTraining = batDesc.currentTraining;
+                bat.ArmyId = batDesc.armyId;
+                InitializeUnitActions(bat);
+            }
+            else if (descriptor is FacilityDescriptor facDesc)
+            {
+                unit = SpawnUnit<Facility, FacilityDefinition, FacilityDescriptor>(facDesc, pos);
+            }
+
+            if (unit != null)
+            {
+                if (!factionActiveUnits.ContainsKey(unit.faction))
+                {
+                    factionActiveUnits[unit.faction] = new HashSet<Unit>();
+                }
+                factionActiveUnits[unit.faction].Add(unit);
+                _instanceIdMap[unit.InstanceId] = unit;
+                descriptor.placed = true;
+
+                OnUnitPlaced?.Invoke();
+            
+                Debug.Log($"Unit {unit.name} (ID:{unit.InstanceId}) registered to battle at {pos}.");
+            }
+
+            return unit;
+        }
+        
+        
+
+        
         public TUnit SpawnUnit<TUnit, TDef, TDesc>(TDesc descriptor, Vector2Int pos) 
             where TUnit : Unit<TDef>
             where TDef : UnitDefinition
@@ -76,15 +130,7 @@ namespace LongLiveKhioyen
             unit.faction = descriptor.faction;
             unit.position = pos;
             
-            if (unit is Facility fac)
-            {
-                fac.currentDurability = fac.Definition.defaultMaxDurability; 
-            }
-            else if (unit is Battalion bat)
-            {
-                bat.currentSoliders = bat.Definition.defaultMaxSolider;
-                bat.currentMurale = bat.Definition.defaultMaxMorale;
-            }
+            unit.currentHealth = descriptor.currentHealth;
 			
             unit.CalculateEntryStats(descriptor);
 			
@@ -98,28 +144,6 @@ namespace LongLiveKhioyen
             InitializeUnitActions(unit);
 
             return unit;
-        }
-        
-        Battalion SpawnBattalion(BattalionDescriptor descriptor, Vector2Int position)
-        {
-            descriptor.instanceId = descriptor.armyId;
-            Battalion battalion = SpawnUnit<Battalion, BattalionDefinition,BattalionDescriptor>(
-                descriptor,
-                position
-            );
-
-            battalion.battalionCommander = descriptor.battalionCommander;
-            battalion.currentSoliders = descriptor.currentSoliders;
-            battalion.currentMurale = descriptor.currentMurale;
-            battalion.currentTraining = descriptor.currentTraining;
-            
-            factionActiveUnits[descriptor.faction].Add(battalion);
-            
-            descriptor.placed = true;
-            
-            InitializeUnitActions(battalion); 
-
-            return battalion;
         }
         
         public void PlaceUnitOnMap(Unit unit, Vector2Int pos)
@@ -155,8 +179,8 @@ namespace LongLiveKhioyen
                 return;
             }
 
-            factionActiveUnits[Faction.Player].Add(SpawnBattalion(battalionDescriptor,mapPosition));
-            OnUnitPlaced?.Invoke();
+            RegisterUnitToBattle(battalionDescriptor, mapPosition);
+            
             ClearReserveTeamSelection();
         }
         #endregion
@@ -223,6 +247,11 @@ namespace LongLiveKhioyen
             {
                 // 如果是特殊的阵营（比如 Neutral），且没有初始化进字典，这里会漏掉
                 // 建议确保 InitializeData 里所有 Faction 都初始化了
+            }
+            
+            if (_instanceIdMap.ContainsKey(unit.InstanceId))
+            {
+                _instanceIdMap.Remove(unit.InstanceId);
             }
             unit.gameObject.SetActive(false);
             unit.transform.SetParent(null);
