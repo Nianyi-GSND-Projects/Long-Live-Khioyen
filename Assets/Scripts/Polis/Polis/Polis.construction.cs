@@ -15,6 +15,8 @@ namespace LongLiveKhioyen
 		{
 			transform.rotation = Quaternion.Euler(0, Data.orientation, 0);
 			gameObject.isStatic = true;
+			// 建筑数据变化后，重算地面磨损贴图。
+			Data.onBuildingsChanged += RecalculateWearnessMap;
 
 			ConstructGround();
 			ConstructWalls();
@@ -40,6 +42,7 @@ namespace LongLiveKhioyen
 
 		void FinalizeConstruction()
 		{
+			Data.onBuildingsChanged -= RecalculateWearnessMap;
 			DestructGround();
 		}
 		#endregion
@@ -52,11 +55,12 @@ namespace LongLiveKhioyen
 		{
 			GameObject template = Resources.Load<GameObject>("Prefabs/Polis/Construction/Ground_tile");
 
-			groundMat = new(Shader.Find("Long Live Khioyen/Polis Ground"));
+			groundMat = new(Resources.Load<Material>("Materials/Polis/Polis_ground-base"));
 			// Initialize material
 			groundMat.SetVector("_Size", new(Data.size.x, Data.size.y, 0, 0));
 			groundMat.SetFloat("_Orientation", Data.orientation);
-			wearnessMap = new(Data.size.x, Data.size.y, TextureFormat.RGBA32, false, true);
+			// 需要存储带符号方向向量，使用 Half 浮点纹理避免负值被截断。
+			wearnessMap = new(Data.size.x, Data.size.y, TextureFormat.RGBAHalf, false, true);
 			RecalculateWearnessMap();
 			groundMat.SetTexture("_Wearness_Map", wearnessMap);
 
@@ -84,46 +88,16 @@ namespace LongLiveKhioyen
 
 		void RecalculateWearnessMap()
 		{
-			// Fill in debug wearness data.
+			var flow = Utilities.CalculateWearnessVectors(Data);
 			for(int x = 0; x < Data.size.x; ++x)
 			{
 				for(int y = 0; y < Data.size.y; ++y)
 				{
-					Vector2 direction = CalculateDebugWearness(x, y);
-					wearnessMap.SetPixel(x, y, new(direction.x, direction.y, 0));
+					Vector2 direction = flow[x, y];
+					wearnessMap.SetPixel(x, y, new Color(direction.x, direction.y, 0f, 1f));
 				}
 			}
 			wearnessMap.Apply();
-		}
-
-		Vector2 CalculateDebugWearness(int x, int y)
-		{
-			float x01 = (x + 0.5f) / Data.size.x;
-			float y01 = (y + 0.5f) / Data.size.y;
-
-			// 1) 一条“蛇形道路”中心线：y = y0 + A * sin(kx + phase)
-			float y0 = 0.55f;         // 道路大致位置（0~1）
-			float A = 0.08f;          // 蛇形幅度（越大越弯）
-			float k = 2f * Mathf.PI * 1.2f;   // 频率（1.2 表示横向约 1.2 个波）
-			float phase = 1.3f;
-
-			float yCenter = y0 + A * Mathf.Sin(k * x01 + phase);
-
-			// 2) 距离中心线的“近似距离”（对这种缓弯足够用了）
-			float d = Mathf.Abs(y01 - yCenter);
-
-			// 3) 道路宽度 + 距离衰减（向量长度就是“磨损强度”）
-			float halfWidth = 0.1f;      // 半宽；0.06 = 全宽约 12% 地图高度
-			float t = Mathf.Clamp01(1f - d / halfWidth);
-			float strength = t * t;       // 平滑一点：中心更强，边缘更柔
-
-			// 4) 切线方向：f'(x) = A*k*cos(kx+phase)，切线 ~ (1, f'(x))
-			float dydx = A * k * Mathf.Cos(k * x01 + phase);
-			Vector2 tangent = new Vector2(1f, dydx).normalized;
-
-			// 5) RG 用来存“方向+强度”的向量（长度=强度）
-			Vector2 dir = tangent * strength;
-			return dir;
 		}
 
 		public bool RayToGround(Ray ray, out Vector3 ground)

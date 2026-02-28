@@ -17,7 +17,7 @@ namespace LongLiveKhioyen
 
 		class Pass : ScriptableRenderPass
 		{
-			readonly ProfilingSampler profilingSampler = new("Polis Selection Highlight");
+			new readonly ProfilingSampler profilingSampler = new("Polis Selection Highlight");
 			readonly List<Renderer> rendererCache = new();
 			readonly List<Material> materialCache = new();
 

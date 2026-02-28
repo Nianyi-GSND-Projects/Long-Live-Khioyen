@@ -44,31 +44,18 @@ MonoBehaviour:
         position: {x: 16, y: 26}
         orientation: 0
         underConstruction: 0
-      - id: dwelling-trio-1
-        position: {x: 12, y: 26}
-        orientation: 0
-        underConstruction: 0
-      - id: dwelling-trio-1
-        position: {x: 8, y: 26}
-        orientation: 0
-        underConstruction: 0
-      - id: dwelling-trio-1
-        position: {x: 4, y: 26}
-        orientation: 0
-        underConstruction: 0
       id: juyan
       type: 1
       position: {x: 0, y: 0}
       size: {x: 40, y: 40}
       orientation: 22.5
       economy:
-        food: 1000
-        material: 0
-        money: 800
-        population: 80
+        food: 100000
+        material: 50000
+        money: 800000
+        population: 200
         items:
           records: []
-      population: 80
       queuedProductions: []
       forSaleItems:
         records: []
@@ -111,7 +98,6 @@ MonoBehaviour:
         population: 0
         items:
           records: []
-      population: 0
       queuedProductions: []
       forSaleItems:
         records: []
@@ -154,7 +140,6 @@ MonoBehaviour:
         population: 0
         items:
           records: []
-      population: 0
       queuedProductions: []
       forSaleItems:
         records: []
@@ -197,7 +182,6 @@ MonoBehaviour:
         population: 0
         items:
           records: []
-      population: 0
       queuedProductions: []
       forSaleItems:
         records: []
