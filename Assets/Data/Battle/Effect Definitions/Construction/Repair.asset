@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Repair
   m_EditorClassIdentifier: 
   effectType: 0
-  healAmount: 100
+  healAmount: 500
   canHealBattalion: 0
   canHealFacility: 1
   vfxPrefab: {fileID: 0}

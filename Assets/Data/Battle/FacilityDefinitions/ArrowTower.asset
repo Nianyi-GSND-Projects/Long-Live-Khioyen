@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9aa5011acce0304ea1cbd088445c612, type: 3}
+  m_Name: ArrowTower
+  m_EditorClassIdentifier: 
+  id: 0
+  unitName: ArrowTower
+  unitType: 1
+  figure: {fileID: 0}
+  unitModelTemplate: {fileID: 0}
+  unitSelectedSoundEffect: {fileID: 0}
+  defaultPower: 200
+  defaultDefense: 10
+  passability: 0
+  movable: 0
+  actionable: 1
+  beAttacked: 1
+  beInteracted: 0
+  beMoved: 0
+  defaultAttack: {fileID: 11400000, guid: db7335d492f9dd94ca31d7a10df6e0c7, type: 2}
+  defaultRetreat: {fileID: 0}
+  defaultInteract: {fileID: 0}
+  defaultConstructAction: {fileID: 0}
+  defaultRepairAction: {fileID: 0}
+  unitUniqueActions: []
+  lootRules: []
+  tags: []
+  description: A tough defence facility
+  icon: {fileID: 21300000, guid: bba06ffcbd7eef84e82fc3d857fa66ee, type: 3}
+  defaultMaxDurability: 500
+  defaultCost: 100
+  special: 0
+  block: 0
+  isInteractable: 0

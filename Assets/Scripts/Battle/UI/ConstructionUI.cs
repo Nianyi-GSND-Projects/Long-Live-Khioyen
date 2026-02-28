@@ -71,7 +71,6 @@ namespace LongLiveKhioyen
                 }
                 else
                 {
-                    // Fallback (旧逻辑)
                     var text = go.GetComponentInChildren<TMP_Text>();
                     if (text != null) text.text = fac.unitName;
                     

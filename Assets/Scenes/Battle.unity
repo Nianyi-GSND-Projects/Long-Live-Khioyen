@@ -2292,7 +2292,7 @@ MonoBehaviour:
   defaultEnemyDefinition: {fileID: 11400000, guid: d3c8692bf6c7ac44e83df03b868c6ce7, type: 2}
   testPlayerReserveTeamCount: 0
   buildableFacilities:
-  - {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+  - {fileID: 11400000, guid: 055e993412008f04ebc289439124bf4b, type: 2}
   retreatedUnits: []
   deadUnits: []
   globalFlagPrefab: {fileID: 639286118778293679, guid: a806c58e4bed260489cd6fa866ee1554, type: 3}
