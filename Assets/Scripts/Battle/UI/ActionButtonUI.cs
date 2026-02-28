@@ -12,11 +12,13 @@ namespace LongLiveKhioyen
         public TMP_Text buttonText;
 
         private string _description;
-
-        public void Setup(string text, string description, System.Action onClick, bool interactable)
+        private Sprite _icon;
+        
+        public void Setup(string text, string description,Sprite icon, System.Action onClick, bool interactable)
         {
             if (buttonText != null) buttonText.text = text;
             _description = description;
+            _icon = icon;
 
             if (button != null)
             {
@@ -26,9 +28,9 @@ namespace LongLiveKhioyen
                 {
                     button.onClick.AddListener(() =>
                     {
-                        if (ActionTooltipUI.Instance != null)
+                        if (GeneralTooltipUI.Instance != null)
                         {
-                            ActionTooltipUI.Instance.Hide();
+                            GeneralTooltipUI.Instance.Hide();
                         }
                         onClick.Invoke();
                     });
@@ -38,18 +40,18 @@ namespace LongLiveKhioyen
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (!string.IsNullOrEmpty(_description) && ActionTooltipUI.Instance != null)
+            if (!string.IsNullOrEmpty(_description) && GeneralTooltipUI.Instance != null)
             {
-                ActionTooltipUI.Instance.Show(_description);
+                GeneralTooltipUI.Instance.Show(_description,_icon);
             }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             Debug.Log("Hide tooltip");
-            if (ActionTooltipUI.Instance != null)
+            if (GeneralTooltipUI.Instance != null)
             {
-                ActionTooltipUI.Instance.Hide();
+                GeneralTooltipUI.Instance.Hide();
             }
         }
     }

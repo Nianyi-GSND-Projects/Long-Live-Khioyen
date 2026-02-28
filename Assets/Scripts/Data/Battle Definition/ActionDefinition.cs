@@ -81,7 +81,6 @@ namespace LongLiveKhioyen
         public int actionId;
         
         [TextArea] public string description;
-        
         public Sprite icon;
         
         [Header("Cost")]

@@ -18,6 +18,8 @@ MonoBehaviour:
   figure: {fileID: 0}
   unitModelTemplate: {fileID: 919132149155446097, guid: 1bacad875c4c2df48bb4f2a6ce8c0e62, type: 3}
   unitSelectedSoundEffect: {fileID: 0}
+  defaultPower: 0
+  defaultDefense: 0
   passability: 0
   movable: 0
   actionable: 0
@@ -27,11 +29,15 @@ MonoBehaviour:
   defaultAttack: {fileID: 0}
   defaultRetreat: {fileID: 0}
   defaultInteract: {fileID: 0}
+  defaultConstructAction: {fileID: 0}
+  defaultRepairAction: {fileID: 0}
   unitUniqueActions: []
+  lootRules: []
   tags: []
+  description: 
+  icon: {fileID: 21300000, guid: 6e21438ff5f12104faac4189c14abb66, type: 3}
   defaultMaxDurability: 1000
   defaultCost: 0
-  defaultPower: 0
   special: 0
   block: 0
   isInteractable: 1

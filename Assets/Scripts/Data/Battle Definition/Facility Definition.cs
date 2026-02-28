@@ -15,6 +15,9 @@ namespace LongLiveKhioyen
     {
         public string[] tags;
         
+        public string description;
+        public Sprite icon;
+        
         public int defaultMaxDurability;
         
         public int defaultCost;

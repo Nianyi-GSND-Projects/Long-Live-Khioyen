@@ -167,7 +167,7 @@ namespace LongLiveKhioyen
             foreach (Transform child in mainMenuContainer) Destroy(child.gameObject);
 
             // --- 按钮 1: 待命 (Wait) ---
-            CreateButton(mainMenuContainer, "Wait","End this unit's turn", () =>
+            CreateButton(mainMenuContainer, "Wait","End this unit's turn", null,() =>
             {
                 Battle.Instance.ActionWait();
                 Hide();
@@ -179,17 +179,16 @@ namespace LongLiveKhioyen
             
             if (canAttack)
             {
-                // 进一步检查使用条件 (例如是否被缴械)
                 bool conditionMet = currentUnit.DefaultAttack.CheckUseConditions(currentUnit);
                 if(!currentUnit.DefaultAttack.HasValidTargetsInRange(currentUnit)) conditionMet = false;
-                CreateButton(mainMenuContainer, "Attack", currentUnit.DefaultAttack.description,() =>
+                CreateButton(mainMenuContainer, "Attack", currentUnit.DefaultAttack.description,currentUnit.DefaultAttack.icon,() =>
                 {
                     Battle.Instance.PrepareAction(currentUnit.DefaultAttack);
                 }, interactable: conditionMet);
             }
             else
             {
-                CreateButton(mainMenuContainer, "Attack", currentUnit.DefaultAttack.description,null, interactable: false);
+                CreateButton(mainMenuContainer, "Attack", currentUnit.DefaultAttack.description,currentUnit.DefaultAttack.icon,null, interactable: false);
             }
             
             // --- 按钮 3: 交互 (Interact) ---
@@ -201,7 +200,7 @@ namespace LongLiveKhioyen
                 {
                     canInteract = b1.DefaultInteract.HasValidTargetsInRange(currentUnit);
                 }
-                CreateButton(mainMenuContainer, "Interact", currentUnit.DefaultInteract.description,() =>
+                CreateButton(mainMenuContainer, "Interact", currentUnit.DefaultInteract.description,currentUnit.DefaultInteract.icon,() =>
                 {
                     // 交互通常是立即执行，或者是选择目标
                     // 假设是立即执行 (Self Target)
@@ -215,7 +214,7 @@ namespace LongLiveKhioyen
                 // 检查条件 (IsOnExtractionPoint && HasFullMove)
                 bool canRetreat = b2.DefaultRetreat.CheckUseConditions(currentUnit);
             
-                CreateButton(mainMenuContainer, "Retreat", currentUnit.DefaultRetreat.description,() =>
+                CreateButton(mainMenuContainer, "Retreat", currentUnit.DefaultRetreat.description,currentUnit.DefaultRetreat.icon,() =>
                 {
                     // 撤离是对自己的操作 (TargetCountType.Self)
                     // PrepareAction 会处理 Self 类型
@@ -224,7 +223,7 @@ namespace LongLiveKhioyen
             }
             // --- 按钮 5: 部队技能 (Unit Actions) ---
             bool hasUnitActions = currentUnit.runtimeUnitActions != null && currentUnit.runtimeUnitActions.Count > 0;
-            CreateButton(mainMenuContainer, "Unit Skills", "Unit's unique skills",() =>
+            CreateButton(mainMenuContainer, "Unit Skills", "Unit's unique skills",null,() =>
             {
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeUnitActions);
@@ -232,7 +231,7 @@ namespace LongLiveKhioyen
 
             // --- 按钮 6: 指挥官技能 (Commander Actions) ---
             bool hasCmdActions = currentUnit.runtimeCommanderActions != null && currentUnit.runtimeCommanderActions.Count > 0;
-            CreateButton(mainMenuContainer, "Commander Skills", "Commander's unique skills", () =>
+            CreateButton(mainMenuContainer, "Commander Skills", "Commander's unique skills",null, () =>
             {
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeCommanderActions);
@@ -243,7 +242,7 @@ namespace LongLiveKhioyen
             {
                 bool canBuild = Battle.Instance.buildableFacilities.Count > 0;
     
-                CreateButton(mainMenuContainer, "Build", "Construct a facility", () =>
+                CreateButton(mainMenuContainer, "Build", "Construct a facility",currentUnit.unitDefinition.defaultConstructAction.icon,() =>
                 {
                     Battle.Instance.ChangeActionStage(PlayerActionStage.SelectingBuildItem);
                 }, interactable: canBuild);
@@ -259,7 +258,7 @@ namespace LongLiveKhioyen
                     canRepair = bat2.Definition.defaultRepairAction.HasValidTargetsInRange(currentUnit);
                 }
     
-                CreateButton(mainMenuContainer, "Repair", bat2.Definition.defaultRepairAction.description, () =>
+                CreateButton(mainMenuContainer, "Repair", bat2.Definition.defaultRepairAction.description,bat2.Definition.defaultRepairAction.icon, () =>
                 {
                     Battle.Instance.PrepareAction(bat2.Definition.defaultRepairAction);
                 }, interactable: canRepair);
@@ -295,7 +294,7 @@ namespace LongLiveKhioyen
                 {
                     isUsable = action.HasValidTargetsInRange(currentUnit);
                 }
-                CreateButton(subMenuContainer, action.actionName, action.description,() =>
+                CreateButton(subMenuContainer, action.actionName, action.description,action.icon,() =>
                 {
                     Battle.Instance.PrepareAction(action);
                 }, interactable: isUsable);
@@ -304,14 +303,14 @@ namespace LongLiveKhioyen
         }
 
         // 辅助方法：创建按钮
-        private void CreateButton(Transform container, string text, string description, System.Action onClick, bool interactable = true)
+        private void CreateButton(Transform container, string text, string description, Sprite icon, System.Action onClick, bool interactable = true)
         {
             GameObject btnObj = Instantiate(actionButtonPrefab, container);
             ActionButtonUI btnUI = btnObj.GetComponent<ActionButtonUI>();
             // 设置文本
             if (btnUI != null)
             {
-                btnUI.Setup(text, description, onClick, interactable);
+                btnUI.Setup(text, description, icon, onClick, interactable);
             }
             else
             {

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcaaced6fc179014fb1e650ac3310a94, type: 3}
-  m_Name: TestBattle
+  m_Name: Tutorial
   m_EditorClassIdentifier: 
   mapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
   levelName: New Battle
@@ -23,7 +23,10 @@ MonoBehaviour:
   - {x: 7, y: 0}
   - {x: 7, y: 1}
   extractionPoints: []
-  levelEvents: []
+  levelEvents:
+  - {fileID: 11400000, guid: ddc408e4284ad674cab21796a6366232, type: 2}
+  - {fileID: 11400000, guid: de84ae858ed049441a877aed446d7281, type: 2}
+  - {fileID: 11400000, guid: 30a4f3bf7c0816e42944da12f5b4adb4, type: 2}
   usePresetPlayerArmy: 1
   playerReserveList:
   - instanceId: 0

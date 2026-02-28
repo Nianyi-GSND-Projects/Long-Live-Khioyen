@@ -63,20 +63,24 @@ namespace LongLiveKhioyen
             {
                 var go = Instantiate(itemPrefab, listContainer);
                 
-                // Setup UI
-                var text = go.GetComponentInChildren<TMP_Text>();
-                if (text != null) text.text = fac.unitName;
-                
-                var img = go.GetComponentInChildren<Image>(); // 假设有 Icon
-                // if (img != null) img.sprite = fac.icon;
-
-                var btn = go.GetComponent<Button>();
-                if (btn != null)
+                // [修改] 使用 ConstructionItemUI
+                var itemUI = go.GetComponent<ConstructionItemUI>();
+                if (itemUI != null)
                 {
-                    btn.onClick.AddListener(() => OnSelectFacility(fac));
+                    itemUI.Setup(fac, () => OnSelectFacility(fac));
+                }
+                else
+                {
+                    // Fallback (旧逻辑)
+                    var text = go.GetComponentInChildren<TMP_Text>();
+                    if (text != null) text.text = fac.unitName;
+                    
+                    var btn = go.GetComponent<Button>();
+                    if (btn != null) btn.onClick.AddListener(() => OnSelectFacility(fac));
                 }
             }
         }
+
 
         private void OnSelectFacility(FacilityDefinition fac)
         {

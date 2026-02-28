@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'Regular Attack
 
 '
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: db863fa59d809cb4b80bc3d95bdd2b6e, type: 3}
   actionPointCost: 0
   targetFactionType: 2
   targetCountType: 1
