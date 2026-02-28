@@ -51,6 +51,13 @@ namespace LongLiveKhioyen
 		Material groundMat;
 		Texture2D wearnessMap;
 
+		[Header("Wearness")]
+		[Min(1)] public int wearnessPathSamples = 192;
+		[Min(0f)] public float wearnessTrafficDiscountPerPass = 0.12f;
+		[Min(0f)] public float wearnessNearBuildingPenalty = 0.8f;
+		[Min(0.0001f)] public float wearnessMinStepCost = 0.15f;
+		[Range(0f, 1f)] public float wearnessDecayPerPath = 0.95f;
+
 		void ConstructGround()
 		{
 			GameObject template = Resources.Load<GameObject>("Prefabs/Polis/Construction/Ground_tile");
@@ -88,7 +95,14 @@ namespace LongLiveKhioyen
 
 		void RecalculateWearnessMap()
 		{
-			var flow = Utilities.CalculateWearnessVectors(Data);
+			var flow = Utilities.CalculateWearnessVectors(
+				Data,
+				wearnessPathSamples,
+				wearnessTrafficDiscountPerPass,
+				wearnessNearBuildingPenalty,
+				wearnessMinStepCost,
+				wearnessDecayPerPath
+			);
 			for(int x = 0; x < Data.size.x; ++x)
 			{
 				for(int y = 0; y < Data.size.y; ++y)

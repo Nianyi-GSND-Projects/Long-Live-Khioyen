@@ -43,13 +43,24 @@ namespace LongLiveKhioyen
 		/// 仅根据 PolisData 中的建筑布局，计算磨损方向图。
 		/// 返回值每个格点是“方向*强度”向量，范围约在 [-1, 1]。
 		/// </summary>
-		public static Vector2[,] CalculateWearnessVectors(PolisData data, int fixedSamples = 192)
+		public static Vector2[,] CalculateWearnessVectors(
+			PolisData data,
+			int fixedSamples = 192,
+			float trafficDiscountPerPass = 0.12f,
+			float nearBuildingPenalty = 0.8f,
+			float minStepCost = 0.15f,
+			float decayPerPath = 0.95f
+		)
 		{
+			decayPerPath = Mathf.Clamp01(decayPerPath);
+
 			int width = data.size.x;
 			int height = data.size.y;
 
 			var blocked = new bool[width, height];
+			var nearBuilding = new bool[width, height];
 			var flow = new Vector2[width, height];
+			var passCount = new int[width, height];
 
 			// 1) 建筑默认挡路：把所有建筑占据格标记为不可通行。
 			foreach(var placement in data.buildings)
@@ -92,6 +103,26 @@ namespace LongLiveKhioyen
 				new(-1, 1),
 				new(-1, -1),
 			};
+
+			// 2) 预计算“建筑周围一圈”的惩罚区。
+			for(int x = 0; x < width; ++x)
+			{
+				for(int y = 0; y < height; ++y)
+				{
+					if(!blocked[x, y])
+						continue;
+
+					var c = new Vector2Int(x, y);
+					foreach(var d in dirs8)
+					{
+						var n = c + d;
+						if(n.x < 0 || n.x >= width || n.y < 0 || n.y >= height)
+							continue;
+						if(!blocked[n.x, n.y])
+							nearBuilding[n.x, n.y] = true;
+					}
+				}
+			}
 
 			Vector2Int FindNearestWalkable(Vector2Int seed)
 			{
@@ -159,38 +190,94 @@ namespace LongLiveKhioyen
 					return true;
 				}
 
-				var visited = new bool[width, height];
+				float StepCost(Vector2Int from, Vector2Int to)
+				{
+					int dx = Mathf.Abs(to.x - from.x);
+					int dy = Mathf.Abs(to.y - from.y);
+					float baseCost = (dx != 0 && dy != 0) ? 1.41421356f : 1f;
+					float penalty = nearBuilding[to.x, to.y] ? nearBuildingPenalty : 0f;
+					float discount = passCount[to.x, to.y] * trafficDiscountPerPass;
+
+					// 确保每步代价始终大于 0，避免异常路径偏好。
+					return Mathf.Max(minStepCost, baseCost + penalty - discount);
+				}
+
+				float Heuristic(Vector2Int a, Vector2Int b)
+				{
+					// Octile 距离，适配八邻域。
+					int dx = Mathf.Abs(a.x - b.x);
+					int dy = Mathf.Abs(a.y - b.y);
+					int min = Mathf.Min(dx, dy);
+					int max = Mathf.Max(dx, dy);
+					return (max - min) + 1.41421356f * min;
+				}
+
+				var closed = new bool[width, height];
+				var inOpen = new bool[width, height];
 				var cameFrom = new Vector2Int[width, height];
+				var gScore = new float[width, height];
+				var fScore = new float[width, height];
 				for(int x = 0; x < width; ++x)
 					for(int y = 0; y < height; ++y)
+					{
 						cameFrom[x, y] = new Vector2Int(-1, -1);
+						gScore[x, y] = float.PositiveInfinity;
+						fScore[x, y] = float.PositiveInfinity;
+					}
 
-				var queue = new Queue<Vector2Int>();
+				var open = new List<Vector2Int>();
+				open.Add(start);
+				inOpen[start.x, start.y] = true;
+				gScore[start.x, start.y] = 0f;
+				fScore[start.x, start.y] = Heuristic(start, goal);
 
-				queue.Enqueue(start);
-				visited[start.x, start.y] = true;
-
-				while(queue.Count > 0)
+				while(open.Count > 0)
 				{
-					var current = queue.Dequeue();
+					int bestIndex = 0;
+					float bestF = fScore[open[0].x, open[0].y];
+					for(int i = 1; i < open.Count; ++i)
+					{
+						var p = open[i];
+						float f = fScore[p.x, p.y];
+						if(f < bestF)
+						{
+							bestF = f;
+							bestIndex = i;
+						}
+					}
+
+					var current = open[bestIndex];
+					open.RemoveAt(bestIndex);
+					inOpen[current.x, current.y] = false;
 					if(current == goal)
 						break;
+					closed[current.x, current.y] = true;
 
 					foreach(var d in dirs8)
 					{
 						var next = current + d;
 						if(!CanStep(current, next))
 							continue;
-						if(visited[next.x, next.y])
+						if(closed[next.x, next.y])
 							continue;
 
-						visited[next.x, next.y] = true;
+						float tentativeG = gScore[current.x, current.y] + StepCost(current, next);
+						if(tentativeG >= gScore[next.x, next.y])
+							continue;
+
 						cameFrom[next.x, next.y] = current;
-						queue.Enqueue(next);
+						gScore[next.x, next.y] = tentativeG;
+						fScore[next.x, next.y] = tentativeG + Heuristic(next, goal);
+
+						if(!inOpen[next.x, next.y])
+						{
+							open.Add(next);
+							inOpen[next.x, next.y] = true;
+						}
 					}
 				}
 
-				if(!visited[goal.x, goal.y])
+				if(cameFrom[goal.x, goal.y].x < 0)
 					return null;
 
 				var path = new List<Vector2Int>();
@@ -210,6 +297,13 @@ namespace LongLiveKhioyen
 				if(path == null || path.Count < 2)
 					return;
 
+				// 先记录“通行次数”，让后续采样更倾向复用已有路径。
+				for(int i = 0; i < path.Count; ++i)
+				{
+					var p = path[i];
+					passCount[p.x, p.y] += 1;
+				}
+
 				for(int i = 0; i < path.Count - 1; ++i)
 				{
 					var a = path[i];
@@ -218,6 +312,15 @@ namespace LongLiveKhioyen
 
 					flow[a.x, a.y] += dir;
 					flow[b.x, b.y] += dir * 0.5f;
+				}
+			}
+
+			void DecayFlow(float decay)
+			{
+				for(int x = 0; x < width; ++x)
+				{
+					for(int y = 0; y < height; ++y)
+						flow[x, y] *= decay;
 				}
 			}
 
@@ -257,6 +360,8 @@ namespace LongLiveKhioyen
 					var target = anchors[ti];
 					var path = FindPath(start, target);
 					AccumulatePath(path, 1f);
+					// 每次寻路结束后都进行一次全图衰减，让弱连接逐步消退。
+					DecayFlow(decayPerPath);
 				}
 			}
 
