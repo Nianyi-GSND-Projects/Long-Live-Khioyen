@@ -78,6 +78,11 @@ namespace LongLiveKhioyen
             }
         }
         
+        public override int GetMaxHealth()
+        {
+            return Definition.defaultMaxDurability;
+        }
+        
         public override void CalculateEntryStats(UnitDescriptor desc)
         {
             base.CalculateEntryStats(desc);

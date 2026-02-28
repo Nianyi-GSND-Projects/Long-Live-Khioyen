@@ -14,6 +14,11 @@ namespace LongLiveKhioyen
         public TMP_Text unitInfoText;
         public Image iconImage; 
         
+        [Header("Bars")]
+        public Slider healthSlider;
+        public Slider moraleSlider;
+        public GameObject moraleBarRoot;
+        
         [Header("Settings")]
         public Vector3 offset = new Vector3(0, 2.5f, 0); 
 
@@ -25,7 +30,7 @@ namespace LongLiveKhioyen
         public void Initialize(Unit unit)
         {
             _targetUnitTransform = unit.transform;
-            
+            _targetUnit = unit;
             if (Camera.main != null) 
                 _mainCamTransform = Camera.main.transform;
             
@@ -53,20 +58,35 @@ namespace LongLiveKhioyen
             {
                 transform.rotation = _mainCamTransform.rotation;
             }
+            
+            if (_targetUnit != null)
+            {
+                UpdateInfo(_targetUnit);
+            }
         }
         
         public void UpdateInfo(Unit unit)
         {
             if (unit is Battalion bat)
             {
-                string cmdName = bat.battalionCommander != null ? bat.battalionCommander.commanderName : "";
-                commanderNameText.text = cmdName;
-                unitInfoText.text = $"{bat.Definition.unitName} | {bat.currentSoliders}";
+                commanderNameText.text = bat.battalionCommander != null ? bat.battalionCommander.commanderName : "";
+                if (moraleBarRoot != null)
+                {
+                    moraleBarRoot.SetActive(true);
+                    if (moraleSlider != null)
+                    {
+                        float mpPercent = (float)bat.currentMurale / Mathf.Max(1, bat.GetMaxMorale());
+                        moraleSlider.value = mpPercent;
+                    }
+                }
+                    
+                else
+                    moraleBarRoot.SetActive(false);
             }
             else if (unit is Facility fac)
             {
-                commanderNameText.text = "";
-                unitInfoText.text = $"{fac.Definition.unitName} | HP:{fac.currentDurability}";
+                commanderNameText.text = fac.unitDefinition.unitName;
+                moraleBarRoot.SetActive(false);
             }
             
             
@@ -74,6 +94,23 @@ namespace LongLiveKhioyen
             {
                 iconImage.sprite = unit.unitDefinition.figure;
             }
+            
+            if (healthSlider != null)
+            {
+                float hpPercent = (float)unit.currentHealth / Mathf.Max(1, unit.GetMaxHealth());
+                healthSlider.value = hpPercent;
+            }
+            
+            if (unitInfoText != null)
+            {
+                unitInfoText.text = $"{unit.currentHealth}/{unit.GetMaxHealth()}";
+            }
+            
+            if (iconImage != null && Battle.Instance != null)
+            {
+                iconImage.color = Battle.Instance.GetFactionUIColor(unit.faction);
+            }
+            
         }
     }
 }

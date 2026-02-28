@@ -21,6 +21,11 @@ namespace LongLiveKhioyen
         public Color movementHighlightColor = Color.green; 
         public Color arrangementHighlightColor = Color.blue;
         public Color attackHighlightColor = Color.red;
+        
+        [Header("UI Colors")]
+        public Color playerUIColor = new Color(0.6f, 0.8f, 1f); // 淡蓝
+        public Color enemyUIColor = new Color(1f, 0.6f, 0.6f); // 淡红
+        public Color neutralUIColor = Color.white;
         #endregion
 
         #region Tiles
@@ -52,15 +57,7 @@ namespace LongLiveKhioyen
 
         #region Units
 
-        public Material GetFactionMaterial(Faction faction)
-        {
-            switch (faction)
-            {
-                case Faction.Player: return playerFactionMaterial;
-                case Faction.Enemy: return enemyFactionMaterial;
-                default: return null;
-            }
-        }
+        
         public void SetupUnitVisuals(Unit unit)
         {
             GameObject go = unit.gameObject;
@@ -117,6 +114,29 @@ namespace LongLiveKhioyen
 
 
 
+        #endregion
+
+        #region Faction
+        
+        public Color GetFactionUIColor(Faction faction)
+        {
+            switch (faction)
+            {
+                case Faction.Player: return playerUIColor;
+                case Faction.Enemy: return enemyUIColor;
+                default: return neutralUIColor;
+            }
+        }
+        
+        public Material GetFactionFlagMaterial(Faction faction)
+        {
+            switch (faction)
+            {
+                case Faction.Player: return playerFactionMaterial;
+                case Faction.Enemy: return enemyFactionMaterial;
+                default: return null;
+            }
+        }
         #endregion
         #region Camera
         public Transform anchor;		

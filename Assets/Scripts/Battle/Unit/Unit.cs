@@ -44,6 +44,18 @@ namespace LongLiveKhioyen
             entryStats = new UnitEntryStats();
         }
         
+        public virtual int GetMaxHealth()
+        {
+            if (entryStats != null) return entryStats.maxHealth;
+            return 0;
+        }
+    
+        public virtual int GetMaxMorale()
+        {
+            if (entryStats != null) return entryStats.maxMorale;
+            return 0;
+        }
+        
         public void OnUnitStateChanged()
         {
             if (visualController != null)

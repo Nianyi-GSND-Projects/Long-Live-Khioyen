@@ -66,7 +66,7 @@ namespace LongLiveKhioyen
                 _activeFlag.transform.localRotation = Quaternion.identity;
             }
             
-            Material factionMat = Battle.Instance.GetFactionMaterial(_ownerUnit.faction);
+            Material factionMat = Battle.Instance.GetFactionFlagMaterial(_ownerUnit.faction);
             var colorHandlers = _activeFlag.GetComponentsInChildren<IFactionColored>();
             foreach (var handler in colorHandlers)
             {
