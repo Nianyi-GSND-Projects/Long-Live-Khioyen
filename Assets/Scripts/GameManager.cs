@@ -45,8 +45,6 @@ namespace LongLiveKhioyen
 			definition = BuildingDefinitions.Find(d => d.id == id);
 			return definition != null;
 		}
-
-
 		#endregion
 
 		#region Local data
@@ -228,7 +226,7 @@ namespace LongLiveKhioyen
 		{
 			Debug.Log("启动 debug 存档。");
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Debug Game Data").gameData);
-			StartGameInstanceWithData(data);
+			StartGameInstanceWithData(data, false);
 
 			if(SceneManager.GetActiveScene().buildIndex != 1)  // 城外启动，须填充 ActiveArmy
 			{
@@ -269,7 +267,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		static void StartGameInstanceWithData(GameData data)
+		static void StartGameInstanceWithData(GameData data, bool dontSwitchScene = false)
 		{
 			if(IsGameRunning)
 			{
@@ -280,6 +278,8 @@ namespace LongLiveKhioyen
 			GameObject go = new("Game Instance");
 			go.AddComponent<GameInstance>();
 			GameInstance.Instance.Data = data;
+			if(!dontSwitchScene)
+				GameInstance.Instance.EnterPolis(data.lastPolis);
 		}
 
 		public static void StopCurrentGame()
