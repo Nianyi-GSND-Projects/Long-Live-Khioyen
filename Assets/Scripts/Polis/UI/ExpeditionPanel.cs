@@ -115,10 +115,13 @@ namespace LongLiveKhioyen
 
 		#region 出城
 		[SerializeField] Button departButton;
+		[SerializeField] TMP_Text cantDepartText;
 
 		void RefreshDepartButton()
 		{
-			departButton.interactable = selectedCommanders.Count > 0;
+			bool canDepart = selectedCommanders.Count > 0;
+			departButton.interactable = canDepart;
+			cantDepartText.gameObject.SetActive(!canDepart);
 		}
 
 		public void Depart()
