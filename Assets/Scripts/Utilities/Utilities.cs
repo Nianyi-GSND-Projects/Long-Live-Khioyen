@@ -346,15 +346,12 @@ namespace LongLiveKhioyen
 
 			if(anchors.Count >= 2)
 			{
-				int seed = (width * 73856093) ^ (height * 19349663) ^ (data.buildings.Count * 83492791);
-				var rng = new System.Random(seed);
-
 				for(int i = 0; i < fixedSamples; ++i)
 				{
-					int si = rng.Next(anchors.Count);
-					int ti = rng.Next(anchors.Count - 1);
-					if(ti >= si)
-						ti += 1;
+					int si = Random.Range(0, anchors.Count);
+					int ti = Random.Range(0, anchors.Count);
+					if(ti == si)
+						ti = (ti + 1) % anchors.Count;
 
 					var start = anchors[si];
 					var target = anchors[ti];
@@ -362,29 +359,6 @@ namespace LongLiveKhioyen
 					AccumulatePath(path, 1f);
 					// 每次寻路结束后都进行一次全图衰减，让弱连接逐步消退。
 					DecayFlow(decayPerPath);
-				}
-			}
-
-			// 3) 归一化并做轻度增强，得到可直接给 Shader 的方向场。
-			float maxMagnitude = 0.0001f;
-			for(int x = 0; x < width; ++x)
-			{
-				for(int y = 0; y < height; ++y)
-				{
-					float m = flow[x, y].magnitude;
-					if(m > maxMagnitude)
-						maxMagnitude = m;
-				}
-			}
-
-			for(int x = 0; x < width; ++x)
-			{
-				for(int y = 0; y < height; ++y)
-				{
-					Vector2 normalized = flow[x, y] / maxMagnitude;
-					float m = normalized.magnitude;
-					float boosted = Mathf.Clamp01(Mathf.Pow(m, 0.75f) * 1.8f);
-					flow[x, y] = m > 0.0001f ? normalized.normalized * boosted : Vector2.zero;
 				}
 			}
 

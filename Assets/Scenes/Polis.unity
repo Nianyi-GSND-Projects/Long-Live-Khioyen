@@ -1814,7 +1814,7 @@ MonoBehaviour:
   wearnessTrafficDiscountPerPass: 0.5
   wearnessNearBuildingPenalty: 10
   wearnessMinStepCost: 0.0001
-  wearnessDecayPerPath: 0.5
+  wearnessDecayPerPath: 0.95
   ui: {fileID: 1329727386}
   anchor: {fileID: 1064727833}
   constructModal: {fileID: 210610424}
