@@ -54,7 +54,8 @@ MonoBehaviour:
   - {fileID: 783812363706284125}
   - {fileID: -872484634039410149}
   - {fileID: 6173848302867355150}
-  m_RendererFeatureMap: 5db8452531a9e00a1b221814d94fe4f30e968e2d52eaad55
+  - {fileID: 9152128116533186146}
+  m_RendererFeatureMap: 5db8452531a9e00a1b221814d94fe4f30e968e2d52eaad55624ed32c08e4027f
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   shaders:
@@ -129,3 +130,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   m_Shader: {fileID: 4800000, guid: 0f854b35a0cf61a429bd5dcfea30eddd, type: 3}
+--- !u!114 &9152128116533186146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e24e581fe040ab94daf97efd509d6e28, type: 3}
+  m_Name: PolisSelectionHighlightRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    overrideMaterial: {fileID: 2100000, guid: dc581f9487219fd43aca27e2f1837437, type: 2}
+    overrideMaterialPassIndex: 0
+    renderPassEvent: 500
