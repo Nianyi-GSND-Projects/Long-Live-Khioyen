@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Qubing Huo
   m_EditorClassIdentifier: 
   characterName: Qubing Huo
-  portrait: {fileID: 21300000, guid: 379d5304544323b47952c84c7df17667, type: 3}
+  portrait: {fileID: 21300000, guid: a785d308ff4b1b641a9d7d5b6a017ecb, type: 3}
   description: 
