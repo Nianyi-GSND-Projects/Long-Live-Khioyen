@@ -110,7 +110,7 @@ namespace LongLiveKhioyen
                         if (unit.unitDefinition.movable)
                         {
                             int moveRange = initialUnitMovement;
-                            availableMovePositions = GetAccessableTilesInRange(SelectedUnit, moveRange);
+                            availableMovePositions = GetAccessableTilesInRange(SelectedUnit, moveRange,true);
                             ChangeActionStage(PlayerActionStage.MovingBattalion);
                         }
                         else if (unit.unitDefinition.actionable)

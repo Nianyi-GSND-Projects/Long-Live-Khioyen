@@ -14,5 +14,6 @@ namespace LongLiveKhioyen
         
         public bool isExtractionPoint = false;
         public GameObject TileVFX; 
+        
     }
 }

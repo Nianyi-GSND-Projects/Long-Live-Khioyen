@@ -8,7 +8,7 @@ namespace LongLiveKhioyen
     {
         #region PathFind
 
-        public List<Vector2Int> FindPath(Vector2Int start, Vector2Int end, Unit unit)
+        public List<Vector2Int> FindPath(Vector2Int start, Vector2Int end, Unit unit,bool CheckVisibility = true)
         {
             List<Vector2Int> path = new List<Vector2Int>();
             if (start == end) return path;
@@ -37,11 +37,11 @@ namespace LongLiveKhioyen
                     bool isEnd = (next == end);
                     if (isEnd)
                     {
-                        if (!CanUnitStopOnTile(unit, next)) continue;
+                        if (!CanUnitStopOnTile(unit, next, CheckVisibility)) continue;
                     }
                     else
                     {
-                        if (!CanUnitPassThroughTile(unit, next)) continue;
+                        if (!CanUnitPassThroughTile(unit, next, CheckVisibility)) continue;
                     }
 
                     frontier.Enqueue(next);
@@ -62,7 +62,7 @@ namespace LongLiveKhioyen
             return path;
         }
         
-        public HashSet<Vector2Int> GetAccessableTilesInRange(Unit movingUnit, int range)
+        public HashSet<Vector2Int> GetAccessableTilesInRange(Unit movingUnit, int range,bool checkVisibility)
         {
 			
             HashSet<Vector2Int> validDestinations = new HashSet<Vector2Int>();
@@ -94,10 +94,10 @@ namespace LongLiveKhioyen
 
                 if (currentPos != startPos)
                 {
-                    if(CanUnitStopOnTile(movingUnit,currentPos))
+                    if(CanUnitStopOnTile(movingUnit,currentPos,checkVisibility))
                         validDestinations.Add(currentPos);
                 }
-                if(CanUnitPassThroughTile(movingUnit, currentPos)) reachableTiles.Add(currentPos);
+                if(CanUnitPassThroughTile(movingUnit, currentPos,checkVisibility)) reachableTiles.Add(currentPos);
 				
                 if (CostSofar[currentPos] >= range) continue;
 				
@@ -106,12 +106,13 @@ namespace LongLiveKhioyen
                 {
                     Vector2Int neighborPos = currentPos + offset;
 					
-                    if (!CanUnitPassThroughTile(movingUnit, neighborPos)) continue;
+                    if (!CanUnitPassThroughTile(movingUnit, neighborPos,checkVisibility)) continue;
  
-                    // int moveCost = TerrainDatabase.Instance.GetTerrain(mapTerrainData[neighborPos.x, neighborPos.y]).movementCost;
                     int moveCost = 1; 
+                    
+                    moveCost += CalculateExtraMoveCost(movingUnit, neighborPos);
+                    
                     int newCost = CostSofar[currentPos] + moveCost;
-
                     if (newCost <= range && !CostSofar.ContainsKey(neighborPos))
                     {
                         CostSofar[neighborPos] = newCost;

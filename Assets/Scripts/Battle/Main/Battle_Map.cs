@@ -182,17 +182,29 @@ namespace LongLiveKhioyen
 
 
         
-        public bool CanUnitStopOnTile(Unit unit, Vector2Int pos)
+        public bool CanUnitStopOnTile(Unit unit, Vector2Int pos,bool checkVisibility)
         {
             if (!IsValidMapPosition(pos)) return false;
             TileData tile = mapData[pos.x, pos.y];
-            //假如目标地点上有单位，则不可停驻
+            if (tile.Battalion && tile.Battalion != unit)
+            {
+                if (checkVisibility && !tile.Battalion.IsVisible)
+                {
+                }
+                else
+                {
+                    return false;
+                }
+            }
             if (tile.Battalion&& tile.Battalion != unit) return false;
 			
             //假如目标地点有设施，则设施的可通行性覆盖地形本身的可通行性
             //否则，考虑地形本身的可通行性
             UnitPassability p;
-            if (tile.Facility) p = tile.Facility.Definition.passability;
+            if (tile.Facility&&(!checkVisibility||tile.Facility.IsVisible||tile.Facility.faction==unit.faction))
+            { 
+                p = tile.Facility.Definition.passability;
+            }
             else p = hexTiles[pos].TerrainDefinition.unitPassability;
 
             return p switch
@@ -206,7 +218,7 @@ namespace LongLiveKhioyen
             };
         }
 		
-        public bool CanUnitPassThroughTile(Unit unit, Vector2Int pos)
+        public bool CanUnitPassThroughTile(Unit unit, Vector2Int pos,bool checkVisibility = false)
         {
             if (!IsValidMapPosition(pos)) return false;
             TileData tile = mapData[pos.x, pos.y];
@@ -217,10 +229,21 @@ namespace LongLiveKhioyen
                     if (tile.Battalion.Definition.passability == UnitPassability.Impassable) return false;
                     return true;
                 }
-                else return false;
+                else 
+                {
+                    if (checkVisibility && !tile.Battalion.IsVisible)
+                    {
+                        return true;
+                    }
+                    return false; // 实际移动时，或看得见时，不可穿过
+                }
             }
+            
             UnitPassability p;
-            if (tile.Facility) p = tile.Facility.Definition.passability;
+            if (tile.Facility&&(!checkVisibility||tile.Facility.IsVisible||tile.Facility.faction==unit.faction))
+            { 
+                p = tile.Facility.Definition.passability;
+            }
             else p = hexTiles[pos].TerrainDefinition.unitPassability;
 
             return p switch
@@ -231,6 +254,7 @@ namespace LongLiveKhioyen
                 UnitPassability.AlliesPassable or UnitPassability.AlliesStoppable => tile.Facility.faction == unit.faction,
                 _ => true,
             };
+            
         }
 
         #endregion
@@ -396,6 +420,59 @@ namespace LongLiveKhioyen
             }
         }
 
+
+        #endregion
+
+        #region Trigger
+
+        public bool CheckTileEffectOnEnter(Unit unit, Vector2Int pos)
+        {
+            if (!IsValidMapPosition(pos)) return false;
+
+            bool PreventMovement = false;
+            TileData tile = mapData[pos.x, pos.y];
+
+            if (tile.Facility != null && tile.Facility.Definition is TrapFacilityDefinition trapDef)
+            {
+                trapDef.Trigger(unit, tile.Facility);
+                if (unit.currentHealth <= 0 || trapDef.PreventMovement)
+                    PreventMovement = true;
+            }
+
+            if (tile.Effects.Count > 0)
+            {
+                var effectsToCheck = new List<TileEffect>(tile.Effects);
+                foreach (var effect in effectsToCheck)
+                {
+                    if (effect.definition != null)
+                    {
+                        effect.definition.OnEnter(unit);
+                    }
+                }
+                
+                if (unit.currentHealth <= 0)
+                {
+                    PreventMovement = true;
+                }
+            }
+
+            return PreventMovement;
+        }
+        
+        public int CalculateExtraMoveCost(Unit unit, Vector2Int pos)
+        {
+            if (!IsValidMapPosition(pos)) return 999; // 无法进入
+
+            int extraCost = 0;
+            
+            // 1. 检查 ZOC (之后实现)
+            // extraCost += GetZOCCost(unit, pos);
+            
+            // 2. 检查地形消耗
+            // extraCost += GetTerrainCost(pos);
+
+            return extraCost;
+        }
 
         #endregion
     }

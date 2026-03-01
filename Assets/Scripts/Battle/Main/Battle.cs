@@ -141,11 +141,9 @@ namespace LongLiveKhioyen
 		public BattalionDescriptor GenerateBattalionDescriptorFromBattalionStatus(BattalionStatus battalionStatus)
 		{
 			BattalionDescriptor battalionDescriptor = new BattalionDescriptor();
-			//根据battalionStatus烘焙单位属性快照
 			battalionDescriptor.Definition = battalionStatus.battalionDefinition;
 			
 			battalionDescriptor.armyId = battalionStatus.battalionId;
-			//该预备队在整个Army中的id
 
 			battalionDescriptor.faction = Faction.Player;
 			battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
@@ -193,7 +191,6 @@ namespace LongLiveKhioyen
 		private void InitializeBuildableFacilities()
 		{
 			// TODO: 从 GameInstance 或 TechTree 读取
-			// 暂时留空，或者在 Inspector 中配置默认值
 			if (buildableFacilities == null) buildableFacilities = new List<FacilityDefinition>();
 		}
 		
@@ -250,9 +247,11 @@ namespace LongLiveKhioyen
 			playerReserveTeam = new List<BattalionDescriptor>();
 			
 			factionActiveUnits = new Dictionary<Faction, HashSet<Unit>>();
+			factionVisibleUnits = new Dictionary<Faction, HashSet<Unit>>();
 			foreach (Faction f in System.Enum.GetValues(typeof(Faction)))
 			{
 				factionActiveUnits.Add(f, new HashSet<Unit>());
+				factionVisibleUnits.Add(f, new HashSet<Unit>());
 			}
 		}
 		
@@ -278,7 +277,7 @@ namespace LongLiveKhioyen
 							Definition = spawnData.facilityDef,
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
-                          
+							isVisible = spawnData.isVisible,
 							// 应用 Override (如果有)
 							maxDurability = spawnData.facilityDef.defaultMaxDurability,
 							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
@@ -294,6 +293,7 @@ namespace LongLiveKhioyen
 							Definition = spawnData.battalionDef,
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
+							isVisible = spawnData.isVisible,
 							placed = false,
 							maxSolider = spawnData.battalionDef.defaultMaxSolider,
 							currentSoliders = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.battalionDef.defaultMaxSolider,
@@ -318,7 +318,7 @@ namespace LongLiveKhioyen
 						{
 							desc.battalionCommander = null;
 						}
-						RegisterUnitToBattle(desc, spawnData.position);
+						RegisterUnitToBattle(desc, spawnData.position,spawnData.isVisible);
 					}
 				}
 				return; // [关键] 既然读了预设，就跳过后面的随机生成

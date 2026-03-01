@@ -38,7 +38,7 @@ namespace LongLiveKhioyen
 
 
                 if (Battle.Instance.IsValidMapPosition(nextTargetPos) && 
-                    Battle.Instance.CanUnitStopOnTile(target, nextTargetPos))
+                    Battle.Instance.CanUnitStopOnTile(target, nextTargetPos,false))
                 {
 
                     Battle.Instance.ForceMoveUnit(target, nextTargetPos);
@@ -47,7 +47,7 @@ namespace LongLiveKhioyen
                     
                     currentTargetPos = nextTargetPos;
                     
-                    if (Battle.Instance.CanUnitStopOnTile(user, emptySlotPos))
+                    if (Battle.Instance.CanUnitStopOnTile(user, emptySlotPos,false))
                     {
                         Battle.Instance.ForceMoveUnit(user, emptySlotPos);
                         currentUserPos = emptySlotPos; 

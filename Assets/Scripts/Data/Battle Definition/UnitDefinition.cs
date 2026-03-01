@@ -27,6 +27,8 @@ namespace LongLiveKhioyen
         public int id;
         public string unitName;
         public UnitType unitType;
+
+        public bool defaultVisibility = true;
         
         //有设施和部队两个子类
         #region Asset

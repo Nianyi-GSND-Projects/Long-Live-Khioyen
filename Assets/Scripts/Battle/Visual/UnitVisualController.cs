@@ -35,12 +35,7 @@ namespace LongLiveKhioyen
         
         public void SetVisualState(bool selected, bool actionDone)
         {
-            // 这里实现具体的高亮逻辑
-            // 方案 A: 替换材质颜色
-            // 方案 B: 开启/关闭某个高亮光圈物体
-            // 方案 C: 使用 Shader 变色
             
-            // 示例：简单粗暴地改颜色
             Color targetColor = Color.white;
             if (selected) targetColor = Color.green;
             else if (actionDone) targetColor = Color.gray;
@@ -48,7 +43,6 @@ namespace LongLiveKhioyen
             var renderers = GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
             {
-                // 注意：不要覆盖了阵营颜色，建议用 Emission 或专门的高亮材质
                 r.material.color = targetColor; 
             }
         }
@@ -57,7 +51,18 @@ namespace LongLiveKhioyen
 
         protected void CreateOrUpdateFlag()
         {
+            
             if (Battle.Instance == null || Battle.Instance.globalFlagPrefab == null) return;
+            
+            if (_ownerUnit.faction != Faction.Player && _ownerUnit.faction != Faction.Enemy)
+            {
+                if (_activeFlag != null)
+                {
+                    Destroy(_activeFlag);
+                    _activeFlag = null;
+                }
+                return;
+            }
             
             if (_activeFlag == null)
             {

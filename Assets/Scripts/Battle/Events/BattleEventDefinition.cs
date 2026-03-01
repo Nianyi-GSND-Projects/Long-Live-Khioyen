@@ -14,6 +14,7 @@ namespace LongLiveKhioyen
         OnEnemyTurnEnd,
         OnUnitDeath,
         OnUnitActionEnd,
+        OnTileEnter,
         Manual
     }
     

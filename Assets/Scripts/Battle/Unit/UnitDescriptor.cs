@@ -10,6 +10,7 @@ namespace LongLiveKhioyen
         public bool placed;
         public int maxHealth;
         public int currentHealth;
+        public bool isVisible = true;
         // ... 其他通用战前信息
     }
 

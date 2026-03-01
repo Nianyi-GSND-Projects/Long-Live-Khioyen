@@ -202,7 +202,7 @@ namespace LongLiveKhioyen
             if(SelectedUnit is Battalion bat) bat.currentMovement = initialUnitMovement;
             SelectedUnit.transform.localPosition = MapToLocal(initialUnitPosition);
             SelectedUnit.hasMovedThisTurn = false;
-            availableMovePositions = GetAccessableTilesInRange(SelectedUnit, initialUnitMovement);
+            availableMovePositions = GetAccessableTilesInRange(SelectedUnit, initialUnitMovement,true);
         }
         
         public void CancelAction()
@@ -227,6 +227,7 @@ namespace LongLiveKhioyen
             {
                 Definition = PendingFacility,
                 faction = faction,
+                isVisible = PendingFacility.defaultVisibility,
                 instanceId = -1,
                 maxDurability = PendingFacility.defaultMaxDurability,
                 currentDurability = 1,
@@ -407,22 +408,18 @@ namespace LongLiveKhioyen
 			
             if (targetPos == unit.position)
             {
-                // 直接进入行动选择阶段
                 ChangeActionStage(PlayerActionStage.SelectingAction);
                 IsUnitMoving = false;
                 yield break;
             }
-            // 1. 计算路径
-            // 注意：FindPath 需要在 Battle.cs 中实现 (之前为 AI 加的那个)
-            List<Vector2Int> path = FindPath(unit.position, targetPos, unit);
+            
+            List<Vector2Int> path = FindPath(unit.position, targetPos, unit, false);
 	
             if (path != null && path.Count > 0)
             {
-                // 2. 执行移动动画
                 yield return StartCoroutine(MoveUnit(unit, path));
 		
-                // 3. 移动后逻辑
-                if (targetPos != initialUnitPosition) // 检查是否真的动了
+                if (targetPos != initialUnitPosition)
                 {
                     unit.hasMovedThisTurn = true;
                 }

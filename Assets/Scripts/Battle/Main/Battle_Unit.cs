@@ -16,6 +16,7 @@ namespace LongLiveKhioyen
         public List<BattalionDescriptor> playerReserveTeam;
 		
         private Dictionary<Faction,HashSet<Unit>> factionActiveUnits;
+        private Dictionary<Faction,HashSet<Unit>> factionVisibleUnits;
         public List<Unit> retreatedUnits = new List<Unit>();
         public List<Unit> deadUnits = new List<Unit>();
         private HashSet<Unit> dirtyUnits = new HashSet<Unit>();
@@ -47,6 +48,15 @@ namespace LongLiveKhioyen
             return new HashSet<Unit>();
         }
         
+        public HashSet<Unit> GetVisibleUnitsByFaction(Faction faction)
+        {
+            if (factionVisibleUnits.TryGetValue(faction, out var units))
+            {
+                return units;
+            }
+            return new HashSet<Unit>();
+        }
+        
         private int GenerateUniqueId()
         {
             while (_instanceIdMap.ContainsKey(_nextInstanceId))
@@ -60,6 +70,10 @@ namespace LongLiveKhioyen
         
         #region Spawn
         public Unit RegisterUnitToBattle(UnitDescriptor descriptor, Vector2Int pos)
+        {
+            return RegisterUnitToBattle(descriptor, pos, descriptor.isVisible);
+        }
+        public Unit RegisterUnitToBattle(UnitDescriptor descriptor, Vector2Int pos, bool isVisible)
         {
             if (descriptor == null) return null;
             if (!IsValidMapPosition(pos))
@@ -102,11 +116,20 @@ namespace LongLiveKhioyen
 
             if (unit != null)
             {
+                unit.IsVisible = isVisible;
                 if (!factionActiveUnits.ContainsKey(unit.faction))
                 {
                     factionActiveUnits[unit.faction] = new HashSet<Unit>();
                 }
+                if (!factionVisibleUnits.ContainsKey(unit.faction))
+                {
+                    factionVisibleUnits[unit.faction] = new HashSet<Unit>();
+                }
                 factionActiveUnits[unit.faction].Add(unit);
+                if (isVisible)
+                {
+                    factionVisibleUnits[unit.faction].Add(unit);
+                }
                 _instanceIdMap[unit.InstanceId] = unit;
                 descriptor.placed = true;
 
@@ -187,7 +210,7 @@ namespace LongLiveKhioyen
                 return;
             }
 
-            RegisterUnitToBattle(battalionDescriptor, mapPosition);
+            RegisterUnitToBattle(battalionDescriptor, mapPosition,battalionDescriptor.isVisible);
             
             ClearReserveTeamSelection();
         }
@@ -251,10 +274,9 @@ namespace LongLiveKhioyen
                     factionActiveUnits[unit.faction].Remove(unit);
                 }
             }
-            else
+            if (factionVisibleUnits.ContainsKey(unit.faction))
             {
-                // 如果是特殊的阵营（比如 Neutral），且没有初始化进字典，这里会漏掉
-                // 建议确保 InitializeData 里所有 Faction 都初始化了
+                factionVisibleUnits[unit.faction].Remove(unit);
             }
             
             if (_instanceIdMap.ContainsKey(unit.InstanceId))
@@ -286,6 +308,7 @@ namespace LongLiveKhioyen
                 tile.Facility = null;
             }
         }
+        
         #endregion
 
         #region Operation
@@ -297,19 +320,15 @@ namespace LongLiveKhioyen
             // 1. 标记移动开始
             unit.hasMovedThisTurn = true;
 			
-            // 2. 逐步移动 (简单的协程动画)
+            // 2. 逐步移动
             foreach (var pos in path)
             {
-                // 移除旧位置占位
                 RemoveUnitFromMap(unit);
 				
-                // 更新数据坐标
                 unit.position = pos;
 				
-                // 放置新位置占位
                 PlaceUnitOnMap(unit, pos);
 				
-                // 更新视觉位置 (简单的插值动画)
                 Vector3 startPos = unit.transform.localPosition;
                 Vector3 endPos = MapToLocal(pos);
                 float t = 0;
@@ -320,9 +339,18 @@ namespace LongLiveKhioyen
                     yield return null;
                 }
                 unit.transform.localPosition = endPos;
+
+                bool interrupted = CheckTileEffectOnEnter(unit, pos);
+                
+                if (interrupted)
+                {
+                    Debug.Log($"{unit.name} 的移动被陷阱打断！");
+                    yield break; // 提前结束协程
+                }
+                
             }
-			
-            // 3. 移动结束处理
+            
+            CheckDeath(unit);
             unit.OnUnitStateChanged();
         }
         

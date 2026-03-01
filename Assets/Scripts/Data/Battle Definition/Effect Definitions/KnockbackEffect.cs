@@ -38,7 +38,7 @@ namespace LongLiveKhioyen
                 Vector2Int nextPos = Battle.Instance.GetTileInDirection(currentPos, pushDir, 1);
                 
                 if (Battle.Instance.IsValidMapPosition(nextPos) &&
-                    Battle.Instance.CanUnitStopOnTile(target, nextPos))
+                    Battle.Instance.CanUnitStopOnTile(target, nextPos,false))
                 {
                     // 移动一步
                     Battle.Instance.ForceMoveUnit(target, nextPos);

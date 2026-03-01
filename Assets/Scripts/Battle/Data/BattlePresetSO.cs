@@ -14,6 +14,7 @@ namespace LongLiveKhioyen
         public Vector2Int position;
         public Faction faction;
         public bool isFacility;
+        public bool isVisible = true;
         
         public BattalionDefinition battalionDef;
         public FacilityDefinition facilityDef;

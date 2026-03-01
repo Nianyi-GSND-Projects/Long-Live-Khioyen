@@ -17,14 +17,13 @@ namespace LongLiveKhioyen
         public Material playerFactionMaterial;
         public Material enemyFactionMaterial;
         
-        
         public Color movementHighlightColor = Color.green; 
         public Color arrangementHighlightColor = Color.blue;
         public Color attackHighlightColor = Color.red;
         
         [Header("UI Colors")]
-        public Color playerUIColor = new Color(0.6f, 0.8f, 1f); // 淡蓝
-        public Color enemyUIColor = new Color(1f, 0.6f, 0.6f); // 淡红
+        public Color playerUIColor = new Color(0.6f, 0.8f, 1f);
+        public Color enemyUIColor = new Color(1f, 0.6f, 0.6f);
         public Color neutralUIColor = Color.white;
         #endregion
 
@@ -56,6 +55,32 @@ namespace LongLiveKhioyen
         #endregion
 
         #region Units
+        public void ChangeUnitVisibility(Unit unit, bool isVisible)
+        {
+            if (unit == null) return;
+
+            if (unit.IsVisible == isVisible) return;
+
+            unit.IsVisible = isVisible;
+
+            if (isVisible)
+            {
+                if (!factionVisibleUnits[unit.faction].Contains(unit))
+                {
+                    factionVisibleUnits[unit.faction].Add(unit);
+                }
+                Debug.Log($"{unit.name} is now VISIBLE.");
+            }
+            else
+            {
+                if (factionVisibleUnits[unit.faction].Contains(unit))
+                {
+                    factionVisibleUnits[unit.faction].Remove(unit);
+                }
+                Debug.Log($"{unit.name} is now HIDDEN.");
+            }
+            unit.OnUnitStateChanged();
+        }
 
         
         public void SetupUnitVisuals(Unit unit)

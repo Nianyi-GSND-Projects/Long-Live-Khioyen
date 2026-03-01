@@ -47,6 +47,37 @@ namespace LongLiveKhioyen
             }
             Debug.Log("[AI] End Turn.");
         }
+        private Unit FindBestTarget(Battalion source, HashSet<Unit> visibleTargets)
+        {
+            Unit nearestTarget = null;
+            int minDistance = int.MaxValue;
+
+            if (visibleTargets == null || visibleTargets.Count == 0)
+            {
+                Debug.Log($"[{source.name}] No visible targets.");
+                return null;
+            }
+
+            foreach (var target in visibleTargets)
+            {
+                if (target == null || target.currentHealth <= 0) continue;
+
+                int distance = Battle.Instance.GetHexDistance(source.position, target.position);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestTarget = target;
+                }
+            }
+    
+            if (nearestTarget != null)
+            {
+                Debug.Log($"[{source.name}] Nearest Target: {nearestTarget.name} at distance {minDistance}");
+            }
+    
+            return nearestTarget;
+        }
 
         private IEnumerator ExecuteUnitAction(Battalion unit)
         {
@@ -60,7 +91,8 @@ namespace LongLiveKhioyen
             }
 
             // 2. 寻找最近的玩家单位
-            Unit target = Battle.Instance.FindNearestUnit(unit, Faction.Player);
+            var visibleEnemies = Battle.Instance.GetVisibleUnitsByFaction(Faction.Player);
+            Unit target = FindBestTarget(unit, visibleEnemies);
             
             if (target == null)
             {
@@ -91,7 +123,7 @@ namespace LongLiveKhioyen
                 if (bestPos != unit.position)
                 {
                     // 生成路径
-                    List<Vector2Int> path = Battle.Instance.FindPath(unit.position, bestPos, unit);
+                    List<Vector2Int> path = Battle.Instance.FindPath(unit.position, bestPos, unit,true);
                     
                     if (path != null && path.Count > 0)
                     {
@@ -129,7 +161,7 @@ namespace LongLiveKhioyen
         private Vector2Int FindBestPosition(Battalion unit, Unit target, ActionDefinition action)
         {
             // 获取所有可移动位置 (基于当前移动力)
-            HashSet<Vector2Int> moveableTiles = Battle.Instance.GetAccessableTilesInRange(unit, unit.currentMovement);
+            HashSet<Vector2Int> moveableTiles = Battle.Instance.GetAccessableTilesInRange(unit, unit.currentMovement,true);
             
             Debug.Log($"[AI] Moveable tiles count: {moveableTiles.Count}. Movement: {unit.currentMovement}");
 
@@ -145,7 +177,7 @@ namespace LongLiveKhioyen
             foreach (var pos in moveableTiles)
             {
                 // 排除不可停留的位置 (除了自己当前位置)
-                if (pos != unit.position && !Battle.Instance.CanUnitStopOnTile(unit, pos)) continue;
+                if (pos != unit.position && !Battle.Instance.CanUnitStopOnTile(unit, pos,true)) continue;
 
                 int distToTarget = Battle.Instance.GetHexDistance(pos, target.position);
                 bool canAttack = distToTarget <= action.range && distToTarget >= action.minRange;

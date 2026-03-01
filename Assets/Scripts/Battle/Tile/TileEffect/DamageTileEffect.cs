@@ -5,9 +5,10 @@ using UnityEngine;
 namespace LongLiveKhioyen
 {
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/TileEffects/Fire")]
-    public class FireTileEffect : TileEffectDefinition
+    public class DamageTileEffect : TileEffectDefinition
     {
         public int damagePerTurn = 100;
+        public bool ignoreDefense = false;
 
         protected override void ApplyEffectToUnit(Unit unit)
         {

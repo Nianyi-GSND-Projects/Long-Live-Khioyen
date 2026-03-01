@@ -28,7 +28,7 @@ namespace LongLiveKhioyen
         public bool hasMovedThisTurn = false;
         public Vector2Int position { get; set; }
         public Unit LastAttacker { get; private set; }
-        
+        public bool IsVisible { get; set; } = true;
         protected virtual void Start()
         {
             visualController = GetComponent<UnitVisualController>();

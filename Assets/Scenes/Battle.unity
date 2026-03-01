@@ -2293,6 +2293,7 @@ MonoBehaviour:
   testPlayerReserveTeamCount: 0
   buildableFacilities:
   - {fileID: 11400000, guid: 055e993412008f04ebc289439124bf4b, type: 2}
+  - {fileID: 11400000, guid: 2449fa00258c09e408e214c43e52e0d2, type: 2}
   retreatedUnits: []
   deadUnits: []
   globalFlagPrefab: {fileID: 639286118778293679, guid: a806c58e4bed260489cd6fa866ee1554, type: 3}
@@ -2303,6 +2304,9 @@ MonoBehaviour:
   movementHighlightColor: {r: 0, g: 1, b: 0, a: 1}
   arrangementHighlightColor: {r: 0, g: 0, b: 1, a: 1}
   attackHighlightColor: {r: 1, g: 0, b: 0, a: 1}
+  playerUIColor: {r: 0.6, g: 0.8, b: 1, a: 1}
+  enemyUIColor: {r: 1, g: 0.6, b: 0.6, a: 1}
+  neutralUIColor: {r: 1, g: 1, b: 1, a: 1}
   anchor: {fileID: 413733173}
   camera: {fileID: 983281796}
 --- !u!156049354 &1069218213

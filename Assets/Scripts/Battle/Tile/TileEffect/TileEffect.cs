@@ -7,9 +7,8 @@ namespace LongLiveKhioyen
     {
         public TileEffectDefinition definition;
         public int currentDuration;
-        public Unit sourceUnit; // 施法者（用于计算伤害来源）
-        public GameObject vfxInstance; // 场景中的特效物体引用
-
+        public Unit sourceUnit;
+        public GameObject vfxInstance;
         public TileEffect(TileEffectDefinition def, int duration, Unit source)
         {
             definition = def;

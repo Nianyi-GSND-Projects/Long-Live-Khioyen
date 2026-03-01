@@ -16,7 +16,6 @@ namespace LongLiveKhioyen
         public string commanderName;
         public Sprite portrait;
         
-        
         [Header("Identity")]
         public Race race;
         public int level = 1;
