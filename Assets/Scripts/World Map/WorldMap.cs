@@ -121,8 +121,8 @@ namespace LongLiveKhioyen
 
 		void Starve()
 		{
-			Debug.LogWarning("卧槽，你马饿死了。");
-			playerArmy.Controller.enabled = false;
+			Debug.Log("行军粮草耗尽。");
+			// playerArmy.Controller.enabled = false;  // 牢宋说不用饿死了。
 			// TODO: 饿死了的逻辑
 			onStarved?.Invoke();
 		}
