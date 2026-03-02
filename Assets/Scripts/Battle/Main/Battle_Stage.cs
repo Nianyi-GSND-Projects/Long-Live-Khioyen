@@ -46,9 +46,11 @@ namespace LongLiveKhioyen
             {
                 case Stage.Arrangement:
                     Debug.Log("OnEnter: 布置阶段");
-                    HighlightTiles(availableArrangementPositions,arrangementHighlightColor);
+                    ClearAllSelection();
+                    HighlightTiles(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Battle:
+                    RefreshAllZOC();
                     battleLoopCoroutine = StartCoroutine(BattleTurnLoop());
                     Debug.Log("OnEnter: 战斗阶段");
                     break;
@@ -196,9 +198,13 @@ namespace LongLiveKhioyen
         
         public void CancelMovement()
         {
+            UpdateZOC(SelectedUnit, false);
             RemoveUnitFromMap(SelectedUnit);
             SelectedUnit.position = initialUnitPosition;
             PlaceUnitOnMap( SelectedUnit,initialUnitPosition);
+            
+            UpdateZOC(SelectedUnit, true);
+            
             if(SelectedUnit is Battalion bat) bat.currentMovement = initialUnitMovement;
             SelectedUnit.transform.localPosition = MapToLocal(initialUnitPosition);
             SelectedUnit.hasMovedThisTurn = false;
@@ -228,6 +234,7 @@ namespace LongLiveKhioyen
                 Definition = PendingFacility,
                 faction = faction,
                 isVisible = PendingFacility.defaultVisibility,
+                ZOCPower = PendingFacility.defaultZOCPower,
                 instanceId = -1,
                 maxDurability = PendingFacility.defaultMaxDurability,
                 currentDurability = 1,
@@ -239,6 +246,7 @@ namespace LongLiveKhioyen
         public event System.Action<PlayerActionStage> OnActionStageChanged;
         public void ChangeActionStage(PlayerActionStage stage)
         {
+            
             if (stage == PlayerActionStage.SelectingTarget)
             {
                 _previousActionStage = CurrentActionStage;
@@ -254,7 +262,8 @@ namespace LongLiveKhioyen
             {
                 OnActionSelectionEnded?.Invoke();
             }
-			
+            
+            ClearAllHexHighlights();
             CurrentActionStage = stage;
             switch (stage)
             {
@@ -267,7 +276,7 @@ namespace LongLiveKhioyen
                 case PlayerActionStage.MovingBattalion:
                     Debug.Log("Change action stage to MovingBattalion");
                     ClearAllHexHighlights();
-                    HighlightTiles(availableMovePositions,movementHighlightColor);
+                    HighlightTiles(availableMovePositions, moveRingColor);
                     break;
 				
                 case PlayerActionStage.SelectingAction:
@@ -288,8 +297,15 @@ namespace LongLiveKhioyen
                     if (CurrentAction != null)
                     {
                         availableTargetPositions = GetValidActionTargetTiles(SelectedUnit, CurrentAction);
-                        HighlightTiles(availableTargetPositions, attackHighlightColor); // 建议改个名，比如 targetHighlightColor
-                        Debug.Log($"进入目标选择阶段: {CurrentAction.actionName}, 可选目标数: {availableTargetPositions.Count}");
+                
+                        Color targetColor = targetNeutralColor;
+                        
+                        if (CurrentAction.targetFactionType==TargetFactionType.Enemy)
+                            targetColor = targetEnemyColor;
+                        else if (CurrentAction.targetFactionType==TargetFactionType.Friend||CurrentAction.targetCountType==TargetCountType.Self)
+                            targetColor = targetFriendColor;
+                
+                        HighlightTargets(availableTargetPositions, targetColor);
                     }
                     else
                     {

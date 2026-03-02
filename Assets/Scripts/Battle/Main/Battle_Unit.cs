@@ -132,7 +132,9 @@ namespace LongLiveKhioyen
                 }
                 _instanceIdMap[unit.InstanceId] = unit;
                 descriptor.placed = true;
-
+                
+                if (CurrentStage == Stage.Battle) UpdateZOC(unit, true);
+                
                 OnUnitPlaced?.Invoke();
             
                 Debug.Log($"Unit {unit.name} (ID:{unit.InstanceId}) registered to battle at {pos}.");
@@ -171,9 +173,16 @@ namespace LongLiveKhioyen
             
             InitializeUnitActions(unit);
             
-            unit.actionDone = true;
+            if (CurrentStage == Stage.Battle)
+            {
+                unit.actionDone = true;
+            }
+            else
+            {
+                unit.actionDone = false;
+            }
             unit.UpdateVisualState();
-
+            Debug.Log($"SpawnUnit: {unit.name}, Stage: {CurrentStage}, ActionDone: {unit.actionDone}");
             return unit;
         }
         
@@ -283,6 +292,9 @@ namespace LongLiveKhioyen
             {
                 _instanceIdMap.Remove(unit.InstanceId);
             }
+            
+            if (CurrentStage == Stage.Battle) UpdateZOC(unit, false);
+            
             unit.gameObject.SetActive(false);
             unit.transform.SetParent(null);
 			
@@ -316,8 +328,8 @@ namespace LongLiveKhioyen
         public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path)
         {
             if (unit == null || path == null || path.Count == 0) yield break;
-
-            // 1. 标记移动开始
+            
+            UpdateZOC(unit, false);
             unit.hasMovedThisTurn = true;
 			
             // 2. 逐步移动
@@ -345,11 +357,11 @@ namespace LongLiveKhioyen
                 if (interrupted)
                 {
                     Debug.Log($"{unit.name} 的移动被陷阱打断！");
-                    yield break; // 提前结束协程
+                    break;
                 }
                 
             }
-            
+            UpdateZOC(unit, true);
             CheckDeath(unit);
             unit.OnUnitStateChanged();
         }

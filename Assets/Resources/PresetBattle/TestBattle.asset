@@ -22,7 +22,12 @@ MonoBehaviour:
   - {x: 8, y: 0}
   - {x: 7, y: 0}
   - {x: 7, y: 1}
-  extractionPoints: []
+  extractionPoints:
+  - {x: 3, y: 8}
+  - {x: 2, y: 8}
+  - {x: 1, y: 8}
+  - {x: 1, y: 7}
+  - {x: 2, y: 6}
   levelEvents: []
   usePresetPlayerArmy: 1
   playerReserveList:
@@ -31,6 +36,7 @@ MonoBehaviour:
     position: {x: 0, y: 0}
     faction: 0
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -47,6 +53,7 @@ MonoBehaviour:
     position: {x: 0, y: 0}
     faction: 0
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -63,6 +70,7 @@ MonoBehaviour:
     position: {x: 0, y: 0}
     faction: 0
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -80,6 +88,7 @@ MonoBehaviour:
     position: {x: 8, y: 7}
     faction: 2
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: b52700dd94e398042819db397e5c3e7d, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -96,6 +105,7 @@ MonoBehaviour:
     position: {x: 8, y: 5}
     faction: 2
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -112,6 +122,7 @@ MonoBehaviour:
     position: {x: 7, y: 5}
     faction: 2
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -128,6 +139,7 @@ MonoBehaviour:
     position: {x: 1, y: 1}
     faction: 2
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: b52700dd94e398042819db397e5c3e7d, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -144,6 +156,7 @@ MonoBehaviour:
     position: {x: 4, y: 2}
     faction: 2
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -160,6 +173,7 @@ MonoBehaviour:
     position: {x: 3, y: 0}
     faction: 2
     isFacility: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1

@@ -4,6 +4,13 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
+    public enum ZOCState
+    {
+        Neutral,
+        PlayerControlled,
+        EnemyControlled
+    }
+    
     [System.Serializable]
     public class TileData
     {
@@ -13,7 +20,21 @@ namespace LongLiveKhioyen
         public bool IsEmpty => Battalion == null && Facility == null;
         
         public bool isExtractionPoint = false;
-        public GameObject TileVFX; 
+        public GameObject TileVFX;
+
+        #region ZOC
         
+        public int PlayerZOC = 0;
+        public int EnemyZOC = 0;
+    
+        public ZOCState GetZOCState()
+        {
+            if (PlayerZOC > EnemyZOC) return ZOCState.PlayerControlled;
+            if (EnemyZOC > PlayerZOC) return ZOCState.EnemyControlled;
+            return ZOCState.Neutral;
+        }
+        
+
+        #endregion
     }
 }

@@ -28,7 +28,7 @@ namespace LongLiveKhioyen
         public string unitName;
         public UnitType unitType;
 
-        public bool defaultVisibility = true;
+        
         
         //有设施和部队两个子类
         #region Asset
@@ -43,6 +43,8 @@ namespace LongLiveKhioyen
         
         public int defaultPower;
         public int defaultDefense;
+        public int defaultZOCPower = 1;
+        public bool defaultVisibility = true;
         
         #endregion
         

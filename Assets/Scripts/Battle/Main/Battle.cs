@@ -36,7 +36,6 @@ namespace LongLiveKhioyen
 		
 		#region Battle data
 
-		//TODO:加载战斗数据
 		public BattleMetaData data;
 		public ArmyStatus armyStatus;
 		public Vector2Int Size => data.battleSize;
@@ -57,7 +56,6 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
-			//加载MetaData
 			#if BATTLE_TEST
 				GenerateTestData();
 			#else
@@ -65,9 +63,13 @@ namespace LongLiveKhioyen
 			#endif
 			
 			InitializeData();
+			
 			InitializeScene();
+			
 			InitializeComponent();
+			
 			InitializeGameStatus();
+			
 			#if BATTLE_TEST
 
 			GenerateTestArmyData();
@@ -84,6 +86,7 @@ namespace LongLiveKhioyen
 			{
 				BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnBattleStart);
 			}
+			
 		}
 		
 		#endregion
@@ -93,7 +96,7 @@ namespace LongLiveKhioyen
 		
 		private void ImportArmyData()
 		{
-			
+			Debug.Log("正在读取军队数据");
 			if (useLevelPreset && levelPreset != null && levelPreset.usePresetPlayerArmy)
 			{
 				Debug.Log("Using Preset Player Army.");
@@ -105,9 +108,10 @@ namespace LongLiveKhioyen
 					{
 						Definition = data.battalionDef,
 						faction = Faction.Player,
-						armyId = -1, // 预设单位没有全局 ID
+						armyId = -1,
 						placed = false,
-                      
+						isVisible = data.isVisible,
+						ZOCPower = data.battalionDef.defaultZOCPower,
 						// 应用 Override
 						maxSolider = data.battalionDef.defaultMaxSolider,
 						currentSoliders = data.overrideSoldiers > 0 ? data.overrideSoldiers : data.battalionDef.defaultMaxSolider,
@@ -147,8 +151,8 @@ namespace LongLiveKhioyen
 
 			battalionDescriptor.faction = Faction.Player;
 			battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
+			battalionDescriptor.ZOCPower = battalionStatus.battalionDefinition.defaultZOCPower;
 			
-			//TODO 科技树与全局增益影响
 			battalionDescriptor.maxSolider = battalionStatus.MaxSolider;
 			battalionDescriptor.maxMorale = battalionStatus.MaxMorale;
 			battalionDescriptor.maxTraining = battalionStatus.MaxExp;
@@ -163,6 +167,7 @@ namespace LongLiveKhioyen
 
 		private void InitializeScene()
 		{
+			Debug.Log("正在初始化场景");
 			transform.rotation = Quaternion.Euler(0, 0, 0);
 			gameObject.isStatic = true;
 			GenerateHexGrid();
@@ -185,17 +190,20 @@ namespace LongLiveKhioyen
 		
 		private void InitializeComponent()
 		{
+			Debug.Log("正在初始化战场组件");
 			audioSource = GetComponent<AudioSource>();
 		}
 		
 		private void InitializeBuildableFacilities()
 		{
+			Debug.Log("正在初始化建设列表");
 			// TODO: 从 GameInstance 或 TechTree 读取
 			if (buildableFacilities == null) buildableFacilities = new List<FacilityDefinition>();
 		}
 		
 		private void InitializeData()
 		{
+			Debug.Log("正在初始化数据");
 			#if BATTLE_TEST
 			armyStatus = new ArmyStatus();
 			#else
@@ -238,16 +246,15 @@ namespace LongLiveKhioyen
 			}
 			
 			mapData = new TileData[Size.x, Size.y];
+			
 			for(int x=0; x<Size.x; x++)
 				for(int y=0; y<Size.y; y++)
 					mapData[x,y] = new TileData();
 			
-			
-			
 			playerReserveTeam = new List<BattalionDescriptor>();
-			
 			factionActiveUnits = new Dictionary<Faction, HashSet<Unit>>();
 			factionVisibleUnits = new Dictionary<Faction, HashSet<Unit>>();
+			
 			foreach (Faction f in System.Enum.GetValues(typeof(Faction)))
 			{
 				factionActiveUnits.Add(f, new HashSet<Unit>());
@@ -257,8 +264,12 @@ namespace LongLiveKhioyen
 		
 		private void InitializeGameStatus()
 		{
+			Debug.Log("正在初始化游戏状态");
 			TurnCount = 0;
-			CurrentTurnState = TurnState.PlayerTurn;
+			CurrentTurnState = TurnState.Processing;
+			
+			CurrentActionStage = PlayerActionStage.None;
+			_previousActionStage = PlayerActionStage.None;
 			ChangeStage(Stage.Preparation);
 		}
 
@@ -278,7 +289,7 @@ namespace LongLiveKhioyen
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
 							isVisible = spawnData.isVisible,
-							// 应用 Override (如果有)
+							ZOCPower = spawnData.facilityDef.defaultZOCPower,
 							maxDurability = spawnData.facilityDef.defaultMaxDurability,
 							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
 						};
@@ -287,13 +298,13 @@ namespace LongLiveKhioyen
 					}
 					else
 					{
-						// 构造临时的 Descriptor
 						BattalionDescriptor desc = new BattalionDescriptor
 						{
 							Definition = spawnData.battalionDef,
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
 							isVisible = spawnData.isVisible,
+							ZOCPower = spawnData.battalionDef.defaultZOCPower,
 							placed = false,
 							maxSolider = spawnData.battalionDef.defaultMaxSolider,
 							currentSoliders = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.battalionDef.defaultMaxSolider,
@@ -321,7 +332,7 @@ namespace LongLiveKhioyen
 						RegisterUnitToBattle(desc, spawnData.position,spawnData.isVisible);
 					}
 				}
-				return; // [关键] 既然读了预设，就跳过后面的随机生成
+				return;
 			}
 
 			//GenerateEnemyData();

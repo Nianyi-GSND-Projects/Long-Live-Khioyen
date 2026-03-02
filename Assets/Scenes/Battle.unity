@@ -2281,7 +2281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionDataBase: {fileID: 11400000, guid: f14839d6bac28cb41a750e238bd1fc53, type: 2}
   useLevelPreset: 1
-  presetMapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
+  presetMapData: {fileID: 0}
   levelPreset: {fileID: 11400000, guid: cc2965b2784b79646bd702ad40d6d9c9, type: 2}
   inputController: {fileID: 575322486}
   hexgrid: {fileID: 1069218213}
@@ -2298,15 +2298,20 @@ MonoBehaviour:
   deadUnits: []
   globalFlagPrefab: {fileID: 639286118778293679, guid: a806c58e4bed260489cd6fa866ee1554, type: 3}
   HextilePrefab: {fileID: 5875933169087041189, guid: 6872ce78ac512bd448ed71ab8c135201, type: 3}
-  extractionPointPrefab: {fileID: 6287820582879260375, guid: 0e547dc9077fead43a986ce455d6147a, type: 3}
   playerFactionMaterial: {fileID: 2100000, guid: 4bbf67c496672644a95c4a5fdfac2999, type: 2}
   enemyFactionMaterial: {fileID: 2100000, guid: d7f9f499b2286ee41879d3172011bdea, type: 2}
-  movementHighlightColor: {r: 0, g: 1, b: 0, a: 1}
-  arrangementHighlightColor: {r: 0, g: 0, b: 1, a: 1}
-  attackHighlightColor: {r: 1, g: 0, b: 0, a: 1}
-  playerUIColor: {r: 0.6, g: 0.8, b: 1, a: 1}
-  enemyUIColor: {r: 1, g: 0.6, b: 0.6, a: 1}
-  neutralUIColor: {r: 1, g: 1, b: 1, a: 1}
+  playerUIColor: {r: 0.6961997, g: 0.84338284, b: 0.990566, a: 1}
+  enemyUIColor: {r: 0.9056604, g: 0.6707013, b: 0.6707013, a: 1}
+  neutralUIColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
+  deployRingColor: {r: 0, g: 0, b: 0.8, a: 1}
+  extractRingColor: {r: 0.4, g: 0.6, b: 1, a: 1}
+  moveRingColor: {r: 0, g: 0.8, b: 0, a: 1}
+  targetEnemyColor: {r: 0.5, g: 0.0070754588, b: 0.0070754588, a: 1}
+  targetFriendColor: {r: 0.4, g: 0.6, b: 1, a: 0.6}
+  targetNeutralColor: {r: 0.27416337, g: 0.9528302, b: 0.27416337, a: 1}
+  zocPlayerColor: {r: 0, g: 0, b: 1, a: 1}
+  zocEnemyColor: {r: 1, g: 0, b: 0, a: 1}
+  zocMaxAlpha: 0.6
   anchor: {fileID: 413733173}
   camera: {fileID: 983281796}
 --- !u!156049354 &1069218213

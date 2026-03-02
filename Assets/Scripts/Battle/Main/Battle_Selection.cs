@@ -18,8 +18,11 @@ namespace LongLiveKhioyen
             {
                 if (value == CurrentBattalionDescriptor)
                     return;
-				
-                if (value != null) ClearUnitSelection();
+
+                if (value != null) 
+                {
+                    ClearUnitSelection();
+                }
 				
                 CurrentBattalionDescriptor = value;
                 IsReserveTeamSelected = (value != null);
@@ -61,14 +64,11 @@ namespace LongLiveKhioyen
                 Debug.Log("Not your turn!");
                 return;
             }
-
+            
+            
             SelectedUnit = unit;
             IsUnitSelected = true;
-			
-            if (IsReserveTeamSelected) 
-                ClearReserveTeamSelection();
-			
-			
+            
             if (!factionActiveUnits[Faction.Player].Contains(unit))
             {
                 Debug.Log("Battalion " + unit.InstanceId + " is not your battalion.");
@@ -79,6 +79,7 @@ namespace LongLiveKhioyen
             switch (CurrentStage)
             {
                 case Stage.Arrangement:
+                    ClearReserveTeamSelection();
                     break;
 				
                 case Stage.Battle:
@@ -104,11 +105,11 @@ namespace LongLiveKhioyen
                     initialUnitPosition = SelectedUnit.position;
                     if(unit is Battalion battalion)
                         initialUnitMovement = battalion.currentMovement;
-                    //TODO 可移动的设施？
                     if (CurrentActionStage == PlayerActionStage.None)
                     {
                         if (unit.unitDefinition.movable)
                         {
+                            
                             int moveRange = initialUnitMovement;
                             availableMovePositions = GetAccessableTilesInRange(SelectedUnit, moveRange,true);
                             ChangeActionStage(PlayerActionStage.MovingBattalion);

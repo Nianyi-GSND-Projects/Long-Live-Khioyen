@@ -13,16 +13,20 @@ namespace LongLiveKhioyen
         public TerrainDefinition TerrainDefinition => terrainDefinition;
         
         private Renderer tileRenderer;
-        private Color originalColor;
-        //private Color HighlightColor = Color.green;
-
+        
+        [Header("Visual Components")]
+        public SpriteRenderer overlayRenderer; // 实心 (ZOC, Target)
+        public SpriteRenderer ringRenderer;
+        
+        private bool _isExtractionPoint;
+        private Color _highlightColor = Color.clear;
+        private Color _extractionColor = Color.clear;
+        
+        
         private void Awake()
         {
             tileRenderer = GetComponent<Renderer>();
-            if (tileRenderer != null)
-            {
-                originalColor = tileRenderer.material.color;
-            }
+            
         }
 
         public void SetTerrain(TerrainDefinition terrainDefinition)
@@ -32,19 +36,56 @@ namespace LongLiveKhioyen
             
         }
         
-        public void Highlight(Color HighlightColor)
+        public void Highlight(Color color)
         {
-            if (tileRenderer != null)
-            {
-                tileRenderer.material.color = HighlightColor;
-            }
+            SetRingColor(color);
         }
         
         public void UnHighlight()
         {
-            if (tileRenderer != null)
+            SetRingColor(Color.clear);
+        }
+        
+        public void SetOverlayColor(Color color)
+        {
+            if (overlayRenderer != null)
             {
-                tileRenderer.sharedMaterial = terrainDefinition.material;
+                overlayRenderer.color = color;
+                overlayRenderer.gameObject.SetActive(color.a > 0);
+            }
+        }
+        
+        public void SetExtractionPoint(bool isEp, Color color)
+        {
+            _isExtractionPoint = isEp;
+            _extractionColor = color;
+            UpdateRingVisual();
+        }
+
+        public void SetRingColor(Color color) // 用于临时高亮 (Move, Deploy)
+        {
+            _highlightColor = color;
+            UpdateRingVisual();
+        }
+        
+        private void UpdateRingVisual()
+        {
+            if (ringRenderer == null) return;
+
+            // 优先级：高亮 > 撤离点
+            if (_highlightColor.a > 0)
+            {
+                ringRenderer.color = _highlightColor;
+                ringRenderer.gameObject.SetActive(true);
+            }
+            else if (_isExtractionPoint)
+            {
+                ringRenderer.color = _extractionColor;
+                ringRenderer.gameObject.SetActive(true);
+            }
+            else
+            {
+                ringRenderer.gameObject.SetActive(false);
             }
         }
     }

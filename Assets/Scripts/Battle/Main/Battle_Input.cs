@@ -99,22 +99,29 @@ namespace LongLiveKhioyen
             if (IsReserveTeamSelected)
             {
                 // 放置预备队
-                if (SelectedBattalionDescriptor.placed) return;
+                if (SelectedBattalionDescriptor.placed)
+                {
+                    ClearReserveTeamSelection();
+                    return;
+                }
                 if (!ValidateArrangementPlacement(gridPos)) return;
                 
                 PlacingPlayerBattalion(SelectedBattalionDescriptor, gridPos);
             }
             else if (IsUnitSelected)
             {
-                // 移动已部署单位
                 if (SelectedUnit is not Battalion) return;
-                if (!ValidateArrangementPlacement(gridPos)) return;
-                
-                MovingBattalion(gridPos); // Arrangement 模式下是瞬移
+                if (gridPos == SelectedUnit.position || ValidateArrangementPlacement(gridPos))
+                {
+                    if (gridPos != SelectedUnit.position)
+                    {
+                        MovingBattalion(gridPos);
+                    }
+                    ClearAllSelection();
+                }
             }
             else
             {
-                // 选中单位
                 TrySelectUnitAt(gridPos);
             }
         }
@@ -235,6 +242,7 @@ namespace LongLiveKhioyen
                     SelectedUnit.position = mapPosition;
                     SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
                     PlaceUnitOnMap(SelectedUnit, SelectedUnit.position);
+                    SelectedUnit.OnUnitStateChanged();
                     break;
 				
                 case Stage.Battle:

@@ -20,6 +20,8 @@ MonoBehaviour:
   unitSelectedSoundEffect: {fileID: 8300000, guid: 177ed77be30b12c4180ce6493d7f9183, type: 3}
   defaultPower: 100
   defaultDefense: 1
+  defaultZOCPower: 1
+  defaultVisibility: 1
   passability: 0
   movable: 1
   actionable: 1
@@ -29,8 +31,11 @@ MonoBehaviour:
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
   defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
+  defaultConstructAction: {fileID: 0}
+  defaultRepairAction: {fileID: 0}
   unitUniqueActions:
   - {fileID: 11400000, guid: 75b920ce36862ca41885e650af5e19e8, type: 2}
+  lootRules: []
   tags: []
   isTrainable: 0
   defaultDiscipline: 100

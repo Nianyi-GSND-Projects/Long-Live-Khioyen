@@ -22,6 +22,9 @@ namespace LongLiveKhioyen
         
         public bool inputBlocked = false;
         public bool cameraLocked = false;
+        
+        private float _lastClickTime;
+        private const float CLICK_COOLDOWN = 0.2f;
         // --- Input System Callbacks (通过 SendMessage 或 Unity Events 绑定) ---
         private void Update()
         {
@@ -104,6 +107,8 @@ namespace LongLiveKhioyen
         // --- 逻辑分发 ---
         private void HandleClick(Vector2 screenPos)
         {
+            if (Time.time - _lastClickTime < CLICK_COOLDOWN) return;
+            _lastClickTime = Time.time;
             if (Battle.ScreenToGround(screenPos, out Vector3 groundPos))
             {
                 Vector2Int gridPos = Battle.WorldToMapInt(groundPos);

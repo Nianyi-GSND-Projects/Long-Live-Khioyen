@@ -29,6 +29,8 @@ namespace LongLiveKhioyen
         public Vector2Int position { get; set; }
         public Unit LastAttacker { get; private set; }
         public bool IsVisible { get; set; } = true;
+        
+        public virtual int ZOCPower => GetZOCPower();
         protected virtual void Start()
         {
             visualController = GetComponent<UnitVisualController>();
@@ -41,12 +43,22 @@ namespace LongLiveKhioyen
         
         public virtual void CalculateEntryStats(UnitDescriptor desc)
         {
-            entryStats = new UnitEntryStats();
+            entryStats = new UnitEntryStats
+            {
+                maxHealth = desc.maxHealth,
+                ZOCPower = desc.ZOCPower
+            };
         }
         
         public virtual int GetMaxHealth()
         {
             if (entryStats != null) return entryStats.maxHealth;
+            return 0;
+        }
+        
+        public virtual int GetZOCPower()
+        {
+            if (entryStats != null) return entryStats.ZOCPower;
             return 0;
         }
     

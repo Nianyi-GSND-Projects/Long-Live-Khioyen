@@ -150,18 +150,11 @@ namespace LongLiveKhioyen
             
             TileData tile = mapData[pos.x, pos.y];
             tile.isExtractionPoint = true;
-
-            // 生成永久视觉标记 (不同于那些临时的高亮格子)
-            // 假设你有一个 extractionPointPrefab
-            if (extractionPointPrefab != null) // 记得在 Battle 中加这个变量并拖拽 Prefab
+            
+            if (hexTiles.TryGetValue(pos, out HexTile hexTile))
             {
-                Vector3 worldPos = MapToLocal(pos);
-                // 稍微抬高一点防止穿模
-                GameObject vfx = Instantiate(extractionPointPrefab, transform);
-                vfx.transform.localPosition = worldPos;
-                
-                // 记录下来，方便以后可能的移除
-                tile.TileVFX = vfx; 
+                // extractRingColor 在 Battle_Visual.cs 中定义
+                hexTile.SetExtractionPoint(true, extractRingColor);
             }
         }
         
@@ -326,7 +319,6 @@ namespace LongLiveKhioyen
     
             return reachableTiles;
         }
-        #endregion
         
         private Vector2Int GetRandomValidPosition(UnitPassability passability)
         {
@@ -359,6 +351,10 @@ namespace LongLiveKhioyen
 			
             return new Vector2Int(x,y);
         }
+        
+        #endregion
+        
+
 
         #region Tile Effect
 
@@ -461,18 +457,91 @@ namespace LongLiveKhioyen
         
         public int CalculateExtraMoveCost(Unit unit, Vector2Int pos)
         {
-            if (!IsValidMapPosition(pos)) return 999; // 无法进入
+            if (!IsValidMapPosition(pos)) return 999;
 
             int extraCost = 0;
-            
-            // 1. 检查 ZOC (之后实现)
-            // extraCost += GetZOCCost(unit, pos);
-            
-            // 2. 检查地形消耗
+            TileData tile = mapData[pos.x, pos.y];
+            ZOCState state = tile.GetZOCState();
+        
+            bool isPlayerSide = unit.faction == Faction.Player || unit.faction == Faction.Friend;
+
+            if (isPlayerSide && state == ZOCState.EnemyControlled)
+            {
+                extraCost += 1;
+            }
+            else if (!isPlayerSide && state == ZOCState.PlayerControlled)
+            {
+                extraCost += 1;
+            }
+
             // extraCost += GetTerrainCost(pos);
 
             return extraCost;
         }
+
+        #endregion
+
+        #region ZOC
+        
+        public void UpdateZOC(Unit unit, bool isAdding)
+        {
+            if (unit == null) return;
+        
+            if (!unit.IsVisible) return;
+
+            int change = isAdding ? unit.ZOCPower : -unit.ZOCPower;
+            bool isPlayerSide = unit.faction == Faction.Player || unit.faction == Faction.Friend;
+            if (IsValidMapPosition(unit.position))
+            {
+                UpdateTileZOC(unit.position, change, isPlayerSide);
+            }
+            int parity = unit.position.y & 1;
+            foreach (var offset in neighborOffsets[parity])
+            {
+                Vector2Int neighborPos = unit.position + offset;
+                if (IsValidMapPosition(neighborPos))
+                {
+                    UpdateTileZOC(neighborPos, change, isPlayerSide);
+                }
+            }
+        }
+        
+        private void UpdateTileZOC(Vector2Int pos, int change, bool isPlayerSide)
+        {
+            TileData tile = mapData[pos.x, pos.y];
+    
+            if (isPlayerSide)
+                tile.PlayerZOC += change;
+            else
+                tile.EnemyZOC += change;
+    
+            UpdateTileZOCVisual(pos);
+        }
+        public void RefreshAllZOC()
+        {
+            for (int x = 0; x < Size.x; x++)
+            {
+                for (int y = 0; y < Size.y; y++)
+                {
+                    mapData[x, y].PlayerZOC = 0;
+                    mapData[x, y].EnemyZOC = 0;
+                }
+            }
+
+            foreach (var kvp in factionActiveUnits)
+            {
+                foreach (var unit in kvp.Value)
+                {
+                    UpdateZOC(unit, true);
+                }
+            }
+        
+            for (int x = 0; x < Size.x; x++)
+            for (int y = 0; y < Size.y; y++)
+                UpdateTileZOCVisual(new Vector2Int(x, y));
+        }
+        
+        
 
         #endregion
     }

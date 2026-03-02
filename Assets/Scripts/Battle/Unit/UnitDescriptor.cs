@@ -11,7 +11,8 @@ namespace LongLiveKhioyen
         public int maxHealth;
         public int currentHealth;
         public bool isVisible = true;
-        // ... 其他通用战前信息
+        
+        public int ZOCPower;
     }
 
     public class BattalionDescriptor : UnitDescriptor

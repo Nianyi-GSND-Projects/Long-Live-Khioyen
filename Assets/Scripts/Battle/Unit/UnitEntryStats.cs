@@ -13,5 +13,6 @@ namespace LongLiveKhioyen
         public float discipline;
         public float strategy;
         public int cost;
+        public int ZOCPower;
     }
 }

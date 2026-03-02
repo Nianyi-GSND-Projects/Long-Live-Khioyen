@@ -13,41 +13,90 @@ namespace LongLiveKhioyen
         [Header("Global Visual Config")]
         public GameObject globalFlagPrefab;
         public GameObject HextilePrefab;
-        public GameObject extractionPointPrefab;
         public Material playerFactionMaterial;
         public Material enemyFactionMaterial;
-        
-        public Color movementHighlightColor = Color.green; 
-        public Color arrangementHighlightColor = Color.blue;
-        public Color attackHighlightColor = Color.red;
         
         [Header("UI Colors")]
         public Color playerUIColor = new Color(0.6f, 0.8f, 1f);
         public Color enemyUIColor = new Color(1f, 0.6f, 0.6f);
         public Color neutralUIColor = Color.white;
+        
+        [Header("Tile Visual Colors - Ring")]
+        public Color deployRingColor = new Color(0, 0, 0.8f, 1f); // 深蓝环
+        public Color extractRingColor = new Color(0.4f, 0.6f, 1f, 1f); // 淡蓝环
+        public Color moveRingColor = new Color(0, 0.8f, 0, 1f); // 深绿环
+    
+        [Header("Tile Visual Colors - Overlay")]
+        public Color targetEnemyColor = new Color(0.8f, 0, 0, 0.6f); // 深红实心 (攻击目标)
+        public Color targetFriendColor = new Color(0.4f, 0.6f, 1f, 0.6f); // 淡蓝实心 (增益目标)
+        public Color targetNeutralColor = new Color(0.4f, 1f, 0.4f, 0.6f); // 淡绿实心 (建造/空地)
+    
+        [Header("Tile Visual Colors - ZOC")]
+        public Color zocPlayerColor = new Color(0, 0, 1f, 1f);
+        public Color zocEnemyColor = new Color(1f, 0, 0, 1f);
+        public float zocMaxAlpha = 0.6f;
         #endregion
 
         #region Tiles
 
-        public void HighlightTiles(HashSet<Vector2Int> positionsToHighlight, Color highloghtColor)
+        public void HighlightTiles(HashSet<Vector2Int> positions, Color color)
         {
-            if (positionsToHighlight == null) return;
-
-            foreach (Vector2Int position in positionsToHighlight)
+            if (positions == null) return;
+            foreach (Vector2Int pos in positions)
             {
-                if (hexTiles.TryGetValue(position, out HexTile tile))
+                if (hexTiles.TryGetValue(pos, out HexTile tile))
                 {
-                    tile.Highlight(highloghtColor);
+                    tile.SetRingColor(color);
+                }
+            }
+        }
+        
+        public void HighlightTargets(HashSet<Vector2Int> positions, Color color)
+        {
+            if (positions == null) return;
+            foreach (Vector2Int pos in positions)
+            {
+                if (hexTiles.TryGetValue(pos, out HexTile tile))
+                {
+                    tile.SetOverlayColor(color);
                 }
             }
         }
         
         public void ClearAllHexHighlights()
         {
-            foreach (HexTile tile in hexTiles.Values)
+            foreach (var kvp in hexTiles)
             {
-                tile.UnHighlight();
+                HexTile tile = kvp.Value;
+                tile.SetRingColor(Color.clear);
+            
+                UpdateTileZOCVisual(kvp.Key); 
             }
+        }
+        
+        public void UpdateTileZOCVisual(Vector2Int pos)
+        {
+            if (!hexTiles.TryGetValue(pos, out HexTile tileScript)) return;
+        
+            // 如果当前处于 Target 选择阶段，不要覆盖 Target 高亮
+            // 这需要检查 CurrentActionStage
+            if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(pos))
+            {
+                return; // 保持 Target 高亮
+            }
+
+            TileData data = mapData[pos.x, pos.y];
+            int balance = data.PlayerZOC - data.EnemyZOC;
+        
+            Color c = Color.clear;
+            float intensity = Mathf.Min(Mathf.Abs(balance) * 0.2f, zocMaxAlpha);
+
+            if (balance > 0) c = zocPlayerColor;
+            else if (balance < 0) c = zocEnemyColor;
+        
+            c.a = intensity;
+            tileScript.SetOverlayColor(c);
+        
         }
 
 
@@ -60,9 +109,13 @@ namespace LongLiveKhioyen
             if (unit == null) return;
 
             if (unit.IsVisible == isVisible) return;
+            
+            bool wasVisible = unit.IsVisible;
+            if (wasVisible) UpdateZOC(unit, false);
 
             unit.IsVisible = isVisible;
-
+            
+            if (isVisible) UpdateZOC(unit, true);
             if (isVisible)
             {
                 if (!factionVisibleUnits[unit.faction].Contains(unit))

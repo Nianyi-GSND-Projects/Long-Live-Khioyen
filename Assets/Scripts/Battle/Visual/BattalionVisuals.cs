@@ -12,19 +12,15 @@ namespace LongLiveKhioyen
             Battalion bat = _ownerUnit as Battalion;
             if (bat == null || bat.Definition == null) return;
 
-            // 清理旧兵模 (注意：不要清理 _activeFlag)
             foreach (var s in activeSoldiers) Destroy(s);
             activeSoldiers.Clear();
 
-            // 如果没有配置兵模，就只显示基类的旗帜，直接返回
             if (bat.Definition.soldierModelPrefab == null) return;
 
-            // 计算士兵数量
             int perModel = Mathf.Max(1, bat.Definition.soldiersPerModel); 
             int modelCount = Mathf.CeilToInt((float)bat.currentSoliders / perModel);
             modelCount = Mathf.Min(modelCount, 20); // 上限限制
 
-            // 生成方阵
             GenerateFormation(modelCount, bat.Definition);
         }
 
@@ -64,7 +60,6 @@ namespace LongLiveKhioyen
                 {
                     sr.flipX = Random.value > 0.5f;
                     
-                    // 如果你要应用阵营颜色 (简单的 Color 覆盖)
                     // sr.color = Battle.Instance.GetFactionColor(_ownerUnit.faction); // 需在 Battle 中实现 GetFactionColor 返回 Color
                 }
                 

@@ -25,6 +25,7 @@ namespace LongLiveKhioyen
                 Battle.OnStageChanged += RefreshState;
                 Battle.OnPlayerTurnStarted += RefreshState;
                 Battle.OnUnitPlaced += RefreshState;
+                Battle.OnActionStageChanged += HandleActionStageChanged;
             }
             
             RefreshState();
@@ -37,7 +38,13 @@ namespace LongLiveKhioyen
                 Battle.OnStageChanged -= RefreshState;
                 Battle.OnPlayerTurnStarted -= RefreshState;
                 Battle.OnUnitPlaced -= RefreshState;
+                Battle.OnActionStageChanged -= HandleActionStageChanged;
             }
+        }
+        
+        private void HandleActionStageChanged(PlayerActionStage stage)
+        {
+            RefreshState();
         }
 
         private void RefreshState()
@@ -60,7 +67,8 @@ namespace LongLiveKhioyen
                 case Stage.Battle:
                     if (Battle.CurrentTurnState == TurnState.PlayerTurn)
                     {
-                        SetButton("End Turn", true);
+                        bool canEndTurn = Battle.CurrentActionStage == PlayerActionStage.None;
+                        SetButton("End Turn", canEndTurn);
                         gameObject.SetActive(true);
                     }
                     else
