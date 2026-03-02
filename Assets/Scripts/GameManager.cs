@@ -219,6 +219,7 @@ namespace LongLiveKhioyen
 
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Initial Game Data").gameData);
 			StartGameInstanceWithData(data);
+			GameInstance.Instance.EnterPolis(data.lastPolis);
 		}
 
 #if UNITY_EDITOR
@@ -226,7 +227,7 @@ namespace LongLiveKhioyen
 		{
 			Debug.Log("启动 debug 存档。");
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Debug Game Data").gameData);
-			StartGameInstanceWithData(data, false);
+			StartGameInstanceWithData(data);
 
 			if(SceneManager.GetActiveScene().buildIndex != 1)  // 城外启动，须填充 ActiveArmy
 			{
@@ -267,7 +268,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		static void StartGameInstanceWithData(GameData data, bool dontSwitchScene = false)
+		static void StartGameInstanceWithData(GameData data)
 		{
 			if(IsGameRunning)
 			{
@@ -278,8 +279,6 @@ namespace LongLiveKhioyen
 			GameObject go = new("Game Instance");
 			go.AddComponent<GameInstance>();
 			GameInstance.Instance.Data = data;
-			if(!dontSwitchScene)
-				GameInstance.Instance.EnterPolis(data.lastPolis);
 		}
 
 		public static void StopCurrentGame()

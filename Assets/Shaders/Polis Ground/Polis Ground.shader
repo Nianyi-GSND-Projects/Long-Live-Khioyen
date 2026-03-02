@@ -7,16 +7,19 @@ Shader "Long Live Khioyen/Polis Ground"
 
 		[Header(Base Layer)]
 		[NoScaleOffset] _BaseTex("Base Texture", 2D) = "white" {}
+		// 高频层的采样频率
 		_BaseNearTiling("Base Near Tiling", Float) = 20
+		// 低频层的采样频率
 		_BaseFarTiling("Base Far Tiling", Float) = 80
 		_BaseBlendStrength("Base Blend Strength", Float) = 1.2
 
 		[Header(Wearness Overlay)]
 		[NoScaleOffset] _Wearness_Map("Wearness Map", 2D) = "black" {}
-		_Wearness_Scale("Wearness Scale", Float) = 1
-		_WearStripeFrequency("Wear Stripe Frequency", Float) = 20
-		_WearColorA("Wear Color A", Color) = (0.25, 0.20, 0.15, 1)
-		_WearColorB("Wear Color B", Color) = (0.55, 0.48, 0.40, 1)
+		_Wearness_Tex("Wearness Tex", 2D) = "black" {}
+		_Junction_Tex("Junction Tex", 2D) = "black" {}
+		_Wearness_Strength("Wearness Strength", Float) = 1
+		_Wearness_Clamp("Wearness Clamp", Range(0, 1)) = 0.1
+		_Wearness_Power("Wearness Power", Range(0, 2)) = 1
 
 		[Header(Border)]
 		_BorderThickness("Border Thickness", Range(0, 0.5)) = 0.08
@@ -56,17 +59,24 @@ Shader "Long Live Khioyen/Polis Ground"
 			SAMPLER(sampler_BaseTex);
 			TEXTURE2D(_Wearness_Map);
 			SAMPLER(sampler_Wearness_Map);
+			TEXTURE2D(_Wearness_Tex);
+			SAMPLER(sampler_Wearness_Tex);
+			TEXTURE2D(_Junction_Tex);
+			SAMPLER(sampler_Junction_Tex);
 
 			CBUFFER_START(UnityPerMaterial)
 				float4 _Size;
 				float _Orientation;
-				float _Wearness_Scale;
+
+				float4 _Wearness_Tex_ST;
+				float4 _Junction_Tex_ST;
+				float _Wearness_Strength;
 				float _BaseNearTiling;
 				float _BaseFarTiling;
 				float _BaseBlendStrength;
-				float _WearStripeFrequency;
-				float4 _WearColorA;
-				float4 _WearColorB;
+				float _Wearness_Clamp;
+				float _Wearness_Power;
+
 				float _BorderThickness;
 				float4 _BorderColor;
 			CBUFFER_END
@@ -100,13 +110,13 @@ Shader "Long Live Khioyen/Polis Ground"
 				return Rotate2D(planar, angleRad);
 			}
 
-			float2 QueryWearness(float2 polisPosition)
+			void QueryWearness(float2 polisPosition, out float2 direction, out float strength)
 			{
-				// 与数据层一致：按格点采样磨损贴图。
-				float2 safeSize = max(_Size.xy, 1e-4.xx);
-				float2 uv = polisPosition / safeSize;
+				float2 uv = polisPosition / _Size.xy;
 				float4 sampleValue = SAMPLE_TEXTURE2D(_Wearness_Map, sampler_Wearness_Map, uv);
-				return sampleValue.rg;
+
+				direction = sampleValue.rg;
+				strength = sampleValue.a;
 			}
 
 			void CalculateBase(float2 polisPosition, out float3 albedo, out float height)
@@ -122,24 +132,30 @@ Shader "Long Live Khioyen/Polis Ground"
 				height = albedo.r;
 			}
 
-			void CalculateWearnessOverlay(float2 wearness, float2 polisPosition, out float3 albedo, out float heightDelta, out float alpha)
+			float Power01(float x, float p)
 			{
-				// 方向来自 wearness 向量，强度来自其长度。
-				float magnitude = length(wearness);
-				float2 direction = magnitude > 1e-5 ? normalize(wearness) : float2(1.0, 0.0);
+				x = saturate(x);
+				if(x < 0.5)
+					return pow(x * 2, p) * 0.5;
+				else
+					return 1 - pow((1 - x) * 2, p) * 0.5;
+			}
 
-				float2 gridPos = frac(polisPosition);
-				float2 tangent = float2(gridPos.y, -gridPos.x);
-				float stripe = cos(dot(tangent, direction) * _WearStripeFrequency);
-				float signedStripe = 0.5 + 0.5 * stripe;
+			void CalculateWearnessOverlay(float2 direction, float strength, float2 polisPosition, out float3 albedo, out float heightDelta, out float alpha)
+			{
+				float A = length(direction);
+				direction = normalize(direction + 1e-3);
+				float junctioness = Power01(pow(1 - A, 0.5), 1);
 
-				alpha = saturate(magnitude);
-				heightDelta = abs(stripe) * alpha;
-				albedo = lerp(_WearColorA.rgb, _WearColorB.rgb, signedStripe);
-				
-				// DEBUG
-				// albedo = float3(wearness, 0);
-				// alpha = 1;
+				float z = dot(direction, polisPosition);
+				float x = dot(float2(polisPosition.y, -polisPosition.x), direction);
+
+				float2 wearUv = float2(x, z) * _Wearness_Tex_ST.xy + _Wearness_Tex_ST.zw;
+				float3 roadColor = SAMPLE_TEXTURE2D(_Wearness_Tex, sampler_Wearness_Tex, wearUv).rgb;
+				float3 junctionColor = SAMPLE_TEXTURE2D(_Junction_Tex, sampler_Junction_Tex, polisPosition * _Junction_Tex_ST.xy + _Junction_Tex_ST.zw).rgb;
+				albedo = lerp(roadColor, junctionColor, junctioness);
+				alpha = _Wearness_Strength * Power01(smoothstep(_Wearness_Clamp, 1, strength), _Wearness_Power);
+				heightDelta = 0;
 			}
 
 			float SmoothedBorderWeight(float2 polisPosition)
@@ -171,14 +187,15 @@ Shader "Long Live Khioyen/Polis Ground"
 				float baseHeight;
 				CalculateBase(polisPosition, baseAlbedo, baseHeight);
 
-				float2 wearness = QueryWearness(polisPosition) * _Wearness_Scale;
+				float2 wearnessDirection;
+				float wearnessStrength;
+				QueryWearness(polisPosition, wearnessDirection, wearnessStrength);
 				float3 overlayAlbedo;
 				float overlayHeight;
 				float overlayAlpha;
-				CalculateWearnessOverlay(wearness, polisPosition, overlayAlbedo, overlayHeight, overlayAlpha);
+				CalculateWearnessOverlay(wearnessDirection, wearnessStrength, polisPosition, overlayAlbedo, overlayHeight, overlayAlpha);
 
-				float wearBlend = saturate(overlayAlpha);
-				float3 albedo = lerp(baseAlbedo, overlayAlbedo, wearBlend);
+				float3 albedo = lerp(baseAlbedo, overlayAlbedo, saturate(overlayAlpha));
 
 				float borderMask = SmoothedBorderWeight(polisPosition);
 				float borderBlend = saturate(borderMask * _BorderColor.a);
@@ -200,7 +217,7 @@ Shader "Long Live Khioyen/Polis Ground"
 				surfaceData.albedo = albedo;
 				surfaceData.specular = half3(0.04, 0.04, 0.04);
 				surfaceData.metallic = 0;
-				surfaceData.smoothness = 0.5;
+				surfaceData.smoothness = 0;
 				surfaceData.normalTS = half3(0, 0, 1);
 				surfaceData.occlusion = 1;
 				surfaceData.emission = half3(0, 0, 0);

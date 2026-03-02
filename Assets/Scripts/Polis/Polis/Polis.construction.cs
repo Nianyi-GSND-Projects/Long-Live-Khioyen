@@ -52,11 +52,9 @@ namespace LongLiveKhioyen
 		Texture2D wearnessMap;
 
 		[Header("Wearness")]
-		[Min(1)] public int wearnessPathSamples = 10;
-		[Min(0f)] public float wearnessTrafficDiscountPerPass = 0.12f;
-		[Min(0f)] public float wearnessNearBuildingPenalty = 0.8f;
-		[Min(0.0001f)] public float wearnessMinStepCost = 0.15f;
-		[Range(0f, 1f)] public float wearnessDecayPerRound = 0.75f;
+		[Min(1)] public int wearnessSampleCount = 10;
+		[Range(0f, 1f)] public float wearnessDecayPerRound = 0.6f;
+		[Range(0f, 20f)] public float wearnessPenaltyScale = 5f;
 
 		void ConstructGround()
 		{
@@ -66,8 +64,9 @@ namespace LongLiveKhioyen
 			// Initialize material
 			groundMat.SetVector("_Size", new(Data.size.x, Data.size.y, 0, 0));
 			groundMat.SetFloat("_Orientation", Data.orientation);
-			// 需要存储带符号方向向量，使用 Half 浮点纹理避免负值被截断。
 			wearnessMap = new(Data.size.x, Data.size.y, TextureFormat.RGBAHalf, false, true);
+			wearnessMap.filterMode = FilterMode.Bilinear;
+			wearnessMap.wrapMode = TextureWrapMode.Clamp;
 			RecalculateWearnessMap();
 			groundMat.SetTexture("_Wearness_Map", wearnessMap);
 
@@ -96,21 +95,15 @@ namespace LongLiveKhioyen
 		[ContextMenu("Recalculate Wearness Map")]
 		void RecalculateWearnessMap()
 		{
-			var flow = Utilities.CalculateWearnessVectors(
-				Data,
-				wearnessPathSamples,
-				wearnessTrafficDiscountPerPass,
-				wearnessNearBuildingPenalty,
-				wearnessMinStepCost,
-				wearnessDecayPerRound
-			);
+			Utilities.wearnessSampleCount = wearnessSampleCount;
+			Utilities.wearnessDecayPerRound = wearnessDecayPerRound;
+			Utilities.wearnessPenaltyScale = wearnessPenaltyScale;
+
+			var map = Utilities.CalculateWearnessMap(Data);
 			for(int x = 0; x < Data.size.x; ++x)
 			{
 				for(int y = 0; y < Data.size.y; ++y)
-				{
-					Vector2 direction = flow[x, y];
-					wearnessMap.SetPixel(x, y, new Color(direction.x, direction.y, 0f, 1f));
-				}
+					wearnessMap.SetPixel(x, y, map[x, y]);
 			}
 			wearnessMap.Apply();
 		}

@@ -3,6 +3,8 @@ using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Nianyi.UnityPack;
 using System.Collections.Generic;
+using System.Linq;
+using WearnessTensor = UnityEngine.Vector3;
 
 namespace LongLiveKhioyen
 {
@@ -39,39 +41,380 @@ namespace LongLiveKhioyen
 				c.gameObject.Destroy();
 		}
 
-		/// <summary>
-		/// 仅根据 PolisData 中的建筑布局，计算磨损方向图。
-		/// 返回值每个格点是“方向*强度”向量，范围约在 [-1, 1]。
-		/// </summary>
-		public static Vector2[,] CalculateWearnessVectors(
-			PolisData data,
-			int fixedSamples,
-			float trafficDiscountPerPass = 0.12f,
-			float nearBuildingPenalty = 0.8f,
-			float minStepCost = 0.15f,
-			float decayPerRound = 0.95f
-		)
+		#region 城池地表磨损贴图计算
+		/* 配置 */
+		public static int wearnessSampleCount = 10;
+		public static float wearnessDecayPerRound = 0.6f;
+		public static float wearnessPenaltyScale = 5f;
+
+		public static Color[,] CalculateWearnessMap(PolisData data)
 		{
-			int width = data.size.x;
-			int height = data.size.y;
+			/* 定义必要的变量 */
 
-			var blocked = new bool[width, height];
-			var nearBuilding = new bool[width, height];
-			var flow = new Vector2[width, height];
-			var heat = new float[width, height];
-			var passCount = new int[width, height];
+			int width = data.size.x, height = data.size.y;
+			int[,] distances = new int[width, height];  // 建筑距离的 half SDF；在建筑内部是 0，在建筑外部是到建筑的曼哈顿距离。
+			InitializeBuildingDistanceField(width, height, distances, data);
+			List<Vector2Int> anchors = new(GetBuildingAnchors(data));  // 建筑寻路锚点列表。
+			WearnessTensor[,] tensors = new WearnessTensor[width, height];  // 磨损张量，定义为 (cos(2*theta), sin(2*theta))，可加和。
 
-			// 1) 建筑默认挡路：把所有建筑占据格标记为不可通行。
-			foreach(var placement in data.buildings)
+			/* 算法步骤 */
+
+			#region 寻路算法
+			// AI gen
+
+			// 复用寻路缓存，避免每次 FindPath 都分配 width*height 级别数组。
+			var dirs8 = new Vector2Int[] {
+				new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
+				new(1, 1), new(1, -1), new(-1, 1), new(-1, -1),
+			};
+			var closedStamp = new int[width, height];
+			var cameFrom = new Vector2Int[width, height];
+			var gScore = new float[width, height];
+			var gScoreStamp = new int[width, height];
+			var openHeap = new List<(Vector2Int pos, float f)>();
+			int pathStamp = 0;
+
+			IEnumerable<Vector2Int> FindPath(Vector2Int pa, Vector2Int pb)
 			{
-				foreach(var p in data.YieldBuildingOccupancy(placement))
+				if(pa == pb)
+					return new Vector2Int[] { pa };
+				if(!data.IsValidMapPosition(pa) || !data.IsValidMapPosition(pb))
+					return System.Array.Empty<Vector2Int>();
+				if(pathStamp == int.MaxValue)
 				{
-					if(p.x >= 0 && p.x < width && p.y >= 0 && p.y < height)
-						blocked[p.x, p.y] = true;
+					// 极端情况下重置 stamp，避免溢出。
+					for(int x = 0; x < width; ++x)
+					{
+						for(int y = 0; y < height; ++y)
+						{
+							closedStamp[x, y] = 0;
+							gScoreStamp[x, y] = 0;
+						}
+					}
+					pathStamp = 0;
+				}
+				++pathStamp;
+
+				void HeapPush((Vector2Int pos, float f) node)
+				{
+					openHeap.Add(node);
+					int i = openHeap.Count - 1;
+					while(i > 0)
+					{
+						int parent = (i - 1) / 2;
+						if(openHeap[parent].f <= openHeap[i].f)
+							break;
+						(openHeap[parent], openHeap[i]) = (openHeap[i], openHeap[parent]);
+						i = parent;
+					}
+				}
+
+				(Vector2Int pos, float f) HeapPopMin()
+				{
+					var min = openHeap[0];
+					int last = openHeap.Count - 1;
+					openHeap[0] = openHeap[last];
+					openHeap.RemoveAt(last);
+
+					int i = 0;
+					while(true)
+					{
+						int left = i * 2 + 1;
+						if(left >= openHeap.Count)
+							break;
+
+						int right = left + 1;
+						int smallest = (right < openHeap.Count && openHeap[right].f < openHeap[left].f) ? right : left;
+						if(openHeap[i].f <= openHeap[smallest].f)
+							break;
+
+						(openHeap[i], openHeap[smallest]) = (openHeap[smallest], openHeap[i]);
+						i = smallest;
+					}
+
+					return min;
+				}
+
+				static float Heuristic(Vector2Int a, Vector2Int b)
+				{
+					int dx = Mathf.Abs(a.x - b.x);
+					int dy = Mathf.Abs(a.y - b.y);
+
+					int min = Mathf.Min(dx, dy);
+					int max = Mathf.Max(dx, dy);
+
+					return (max - min) + Mathf.Sqrt(2) * min;
+				}
+
+				openHeap.Clear();
+				cameFrom[pa.x, pa.y] = new Vector2Int(-1, -1);
+				gScore[pa.x, pa.y] = 0f;
+				gScoreStamp[pa.x, pa.y] = pathStamp;
+				HeapPush((pa, Heuristic(pa, pb)));
+
+				while(openHeap.Count > 0)
+				{
+					var currentNode = HeapPopMin();
+					var current = currentNode.pos;
+
+					// 惰性删除：堆里可能有旧条目，按最新 g+h 判定是否过期。
+					if(gScoreStamp[current.x, current.y] != pathStamp)
+						continue;
+					float expectedF = gScore[current.x, current.y] + Heuristic(current, pb);
+					if(currentNode.f > expectedF + 1e-5f)
+						continue;
+					if(closedStamp[current.x, current.y] == pathStamp)
+						continue;
+
+					if(current == pb)
+						break;
+
+					closedStamp[current.x, current.y] = pathStamp;
+					foreach(var delta in dirs8)
+					{
+						var next = current + delta;
+						if(!data.IsValidMapPosition(next))
+							continue;
+						if(closedStamp[next.x, next.y] == pathStamp)
+							continue;
+
+						float tentativeG = gScore[current.x, current.y] + CalculateStepCost(current, next);
+						float nextG = gScoreStamp[next.x, next.y] == pathStamp ? gScore[next.x, next.y] : float.PositiveInfinity;
+						if(tentativeG >= nextG)
+							continue;
+
+						cameFrom[next.x, next.y] = current;
+						gScore[next.x, next.y] = tentativeG;
+						gScoreStamp[next.x, next.y] = pathStamp;
+						HeapPush((next, tentativeG + Heuristic(next, pb)));
+					}
+				}
+
+				if(gScoreStamp[pb.x, pb.y] != pathStamp)
+					return System.Array.Empty<Vector2Int>();
+
+				var path = new List<Vector2Int>();
+				var step = pb;
+				while(step != pa)
+				{
+					path.Add(step);
+					step = cameFrom[step.x, step.y];
+				}
+				path.Add(pa);
+				path.Reverse();
+				return path;
+			}
+			#endregion
+
+			#region 锚点连边（K=3，确定性去重）
+			const int nearestAnchorCount = 3;
+			var anchorPairs = new List<(int a, int b)>();
+			var pairSet = new HashSet<ulong>();
+			for(int ai = 0; ai < anchors.Count; ++ai)
+			{
+				var nearest = new List<(int index, int sqrDistance)>();
+				Vector2Int anchor = anchors[ai];
+
+				for(int bi = 0; bi < anchors.Count; ++bi)
+				{
+					if(ai == bi)
+						continue;
+
+					int sqrDistance = (anchors[bi] - anchor).sqrMagnitude;
+					nearest.Add((bi, sqrDistance));
+				}
+
+				nearest.Sort((lhs, rhs) =>
+				{
+					int distanceCompare = lhs.sqrDistance.CompareTo(rhs.sqrDistance);
+					return distanceCompare != 0 ? distanceCompare : lhs.index.CompareTo(rhs.index);
+				});
+
+				int count = Mathf.Min(nearestAnchorCount, nearest.Count);
+				for(int ni = 0; ni < count; ++ni)
+				{
+					int a = ai;
+					int b = nearest[ni].index;
+					if(a > b)
+						(a, b) = (b, a);
+
+					ulong pairKey = ((ulong)(uint)a << 32) | (uint)b;
+					if(!pairSet.Add(pairKey))
+						continue;
+
+					anchorPairs.Add((a, b));
+				}
+			}
+			#endregion
+
+			#region 磨损迭代
+
+			for(int i = 0; i < wearnessSampleCount; ++i)
+			{
+				for(int pi = 0; pi < anchorPairs.Count; ++pi)
+				{
+					var pair = anchorPairs[pi];
+					Vector2Int pa = anchors[pair.a], pb = anchors[pair.b];
+					AccumulatePath(FindPath(pa, pb).ToArray());
+				}
+				for(int y = 0; y < height; ++y)
+				{
+					for(int x = 0; x < width; ++x)
+						tensors[x, y] *= wearnessDecayPerRound;
+				}
+			}
+			#endregion
+			// Optional: 扩散磨损张量数组，先不做
+
+			/* 编码、输出结果 */
+
+			Color[,] result = new Color[width, height];
+			for(int y = 0; y < height; ++y)
+			{
+				for(int x = 0; x < width; ++x)
+					result[x, y] = EncodeWearnessMapColor(tensors[x, y]);
+			}
+			return result;
+
+			/* 辅助函数 */
+
+			float CalculateStepCost(Vector2Int pa, Vector2Int pb)
+			{
+				// 允许 8 邻域：直走 1，对角 sqrt(2)
+				float baseStep = Vector2Int.Distance(pa, pb);
+
+				// ----------------------------
+				// 1) 建筑距离软惩罚：有上限，不发散
+				// ----------------------------
+				// d=0 表示建筑占地（或紧贴建筑）。这里让它最多乘到 (1 + kBuilding)。
+				// 建议 kBuilding 在 0.5~3 之间调，别太大，否则还是会压过一切。
+				const float kBuilding = 1.5f;   // 建筑贴近惩罚强度（上限）
+				const float falloff = 1.0f;     // 衰减尺度：越大，惩罚扩散得越远
+				const float eps = 1e-4f;
+
+				float da = distances[pa.x, pa.y];
+				float db = distances[pb.x, pb.y];
+
+				// 0..1：越靠近建筑越接近 1，距离越大越接近 0
+				float wa = 1f / (1f + da / (falloff + eps));
+				float wb = 1f / (1f + db / (falloff + eps));
+
+				// 取平均（更平滑、不会因为一步踩到边缘就爆炸）
+				float wBuilding = 0.5f * (wa + wb);
+
+				// 乘子：1..(1+kBuilding)
+				float buildingFactor = 1f + kBuilding * wBuilding;
+
+				// ----------------------------
+				// 2) 旧路奖励：用强度平均，不用乘积；显式力度
+				// ----------------------------
+				// strength 是 trace = xx + yy（你 CPU 那边已修正）。
+				// 这里用均值更容易触发“黏路”，否则乘积会让奖励几乎消失。
+				float sa = GetStrength(tensors[pa.x, pa.y]);
+				float sb = GetStrength(tensors[pb.x, pb.y]);
+				float s = 0.5f * (sa + sb);
+
+				// 把 s 压到 0..1 的感觉（避免大 s 直接把路奖励饱和）
+				// sScale 越大，越容易“形成路”；建议 0.2~2 之间试。
+				const float sScale = 0.6f;
+				float s01 = s / (s + sScale);
+
+				// 路奖励力度：越大越黏路。建议 0.5~4 之间试。
+				const float kRoad = 2.0f;
+
+				// 乘子：从 1/(1+kRoad) 到 1 之间（有路更便宜，但不会无限便宜）
+				float roadFactor = 1f / (1f + kRoad * s01);
+
+				// ----------------------------
+				// 3) 合成 + 全局尺度 + 最小步进代价
+				// ----------------------------
+				float cost = baseStep * buildingFactor * roadFactor * wearnessPenaltyScale;
+
+				// 保底：确保 heuristic 下界依然是 1（配合你 A* 的启发式）
+				cost = Mathf.Max(1f, cost);
+				return cost;
+			}
+
+			void AccumulatePath(IList<Vector2Int> path)
+			{
+				if(path.Count <= 1)
+					return;
+
+				for(int i = 0; i < path.Count; ++i)
+				{
+					Vector2Int p = path[i];
+					Vector2 movement = i == 0 ? path[i + 1] - p : p - path[i - 1];
+					tensors[p.x, p.y] += CalculateWearnessTensor(movement);
+				}
+			}
+		}
+
+		/* 静态辅助函数 */
+
+		static void InitializeBuildingDistanceField(int width, int height, int[,] distances, PolisData data)
+		{
+			var occupied = new bool[width, height];
+			var queue = new Queue<Vector2Int>();
+
+			for(int x = 0; x < width; ++x)
+			{
+				for(int y = 0; y < height; ++y)
+					distances[x, y] = int.MaxValue;
+			}
+
+			// 多源 BFS：建筑占地为 0，向外按四邻域扩张得到曼哈顿距离。
+			foreach(var building in data.buildings)
+			{
+				foreach(var p in data.YieldBuildingOccupancy(building))
+				{
+					if(!data.IsValidMapPosition(p) || occupied[p.x, p.y])
+						continue;
+					occupied[p.x, p.y] = true;
+					distances[p.x, p.y] = 0;
+					queue.Enqueue(p);
 				}
 			}
 
-			// 与 PolisData 里的朝向旋转规则保持一致。
+			if(queue.Count == 0)
+			{
+				int fallback = Mathf.Max(width, height);
+				for(int x = 0; x < width; ++x)
+				{
+					for(int y = 0; y < height; ++y)
+						distances[x, y] = fallback;
+				}
+				return;
+			}
+
+			var dirs4 = new Vector2Int[] {
+				new(1, 0),
+				new(-1, 0),
+				new(0, 1),
+				new(0, -1),
+			};
+
+			while(queue.Count > 0)
+			{
+				var current = queue.Dequeue();
+				int nextDistance = distances[current.x, current.y] + 1;
+
+				foreach(var delta in dirs4)
+				{
+					var next = current + delta;
+					if(!data.IsValidMapPosition(next))
+						continue;
+					if(nextDistance >= distances[next.x, next.y])
+						continue;
+
+					distances[next.x, next.y] = nextDistance;
+					queue.Enqueue(next);
+				}
+			}
+		}
+
+		static IEnumerable<Vector2Int> GetBuildingAnchors(PolisData data)
+		{
+			// 与 PolisData 的占地旋转规则一致。
 			static Vector2Int Rot90(Vector2Int v, int quarterTurns)
 			{
 				quarterTurns = ((quarterTurns % 4) + 4) % 4;
@@ -85,311 +428,45 @@ namespace LongLiveKhioyen
 				};
 			}
 
-			bool IsWalkable(Vector2Int p)
-			{
-				return p.x >= 0 && p.x < width
-					&& p.y >= 0 && p.y < height
-					&& !blocked[p.x, p.y];
-			}
-
-			var dirs8 = new Vector2Int[] {
-				new(1, 0),
-				new(-1, 0),
-				new(0, 1),
-				new(0, -1),
-				new(1, 1),
-				new(1, -1),
-				new(-1, 1),
-				new(-1, -1),
-			};
-
-			// 2) 预计算“建筑周围一圈”的惩罚区。
-			for(int x = 0; x < width; ++x)
-			{
-				for(int y = 0; y < height; ++y)
-				{
-					if(!blocked[x, y])
-						continue;
-
-					var c = new Vector2Int(x, y);
-					foreach(var d in dirs8)
-					{
-						var n = c + d;
-						if(n.x < 0 || n.x >= width || n.y < 0 || n.y >= height)
-							continue;
-						if(!blocked[n.x, n.y])
-							nearBuilding[n.x, n.y] = true;
-					}
-				}
-			}
-
-			Vector2Int FindNearestWalkable(Vector2Int seed)
-			{
-				if(IsWalkable(seed))
-					return seed;
-
-				var visited = new bool[width, height];
-				var queue = new Queue<Vector2Int>();
-				if(seed.x >= 0 && seed.x < width && seed.y >= 0 && seed.y < height)
-				{
-					queue.Enqueue(seed);
-					visited[seed.x, seed.y] = true;
-				}
-				else
-				{
-					seed = new Vector2Int(Mathf.Clamp(seed.x, 0, width - 1), Mathf.Clamp(seed.y, 0, height - 1));
-					queue.Enqueue(seed);
-					visited[seed.x, seed.y] = true;
-				}
-
-				while(queue.Count > 0)
-				{
-					var current = queue.Dequeue();
-					if(IsWalkable(current))
-						return current;
-
-					foreach(var d in dirs8)
-					{
-						var next = current + d;
-						if(next.x < 0 || next.x >= width || next.y < 0 || next.y >= height)
-							continue;
-						if(visited[next.x, next.y])
-							continue;
-						visited[next.x, next.y] = true;
-						queue.Enqueue(next);
-					}
-				}
-
-				return new Vector2Int(-1, -1);
-			}
-
-			List<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
-			{
-				if(!IsWalkable(start) || !IsWalkable(goal))
-					return null;
-				if(start == goal)
-					return new List<Vector2Int> { start };
-
-				bool CanStep(Vector2Int from, Vector2Int to)
-				{
-					if(!IsWalkable(to))
-						return false;
-
-					int dx = to.x - from.x;
-					int dy = to.y - from.y;
-					// 对角移动时避免“穿角”。
-					if(dx != 0 && dy != 0)
-					{
-						var sideA = new Vector2Int(from.x + dx, from.y);
-						var sideB = new Vector2Int(from.x, from.y + dy);
-						if(!IsWalkable(sideA) || !IsWalkable(sideB))
-							return false;
-					}
-
-					return true;
-				}
-
-				float StepCost(Vector2Int from, Vector2Int to)
-				{
-					int dx = Mathf.Abs(to.x - from.x);
-					int dy = Mathf.Abs(to.y - from.y);
-					float baseCost = (dx != 0 && dy != 0) ? 1.41421356f : 1f;
-					float penalty = nearBuilding[to.x, to.y] ? nearBuildingPenalty : 0f;
-					float discount = passCount[to.x, to.y] * trafficDiscountPerPass;
-
-					// 确保每步代价始终大于 0，避免异常路径偏好。
-					return Mathf.Max(minStepCost, baseCost + penalty - discount);
-				}
-
-				float Heuristic(Vector2Int a, Vector2Int b)
-				{
-					// Octile 距离，适配八邻域。
-					int dx = Mathf.Abs(a.x - b.x);
-					int dy = Mathf.Abs(a.y - b.y);
-					int min = Mathf.Min(dx, dy);
-					int max = Mathf.Max(dx, dy);
-					return (max - min) + 1.41421356f * min;
-				}
-
-				var closed = new bool[width, height];
-				var inOpen = new bool[width, height];
-				var cameFrom = new Vector2Int[width, height];
-				var gScore = new float[width, height];
-				var fScore = new float[width, height];
-				for(int x = 0; x < width; ++x)
-					for(int y = 0; y < height; ++y)
-					{
-						cameFrom[x, y] = new Vector2Int(-1, -1);
-						gScore[x, y] = float.PositiveInfinity;
-						fScore[x, y] = float.PositiveInfinity;
-					}
-
-				var open = new List<Vector2Int>();
-				open.Add(start);
-				inOpen[start.x, start.y] = true;
-				gScore[start.x, start.y] = 0f;
-				fScore[start.x, start.y] = Heuristic(start, goal);
-
-				while(open.Count > 0)
-				{
-					int bestIndex = 0;
-					float bestF = fScore[open[0].x, open[0].y];
-					for(int i = 1; i < open.Count; ++i)
-					{
-						var p = open[i];
-						float f = fScore[p.x, p.y];
-						if(f < bestF)
-						{
-							bestF = f;
-							bestIndex = i;
-						}
-					}
-
-					var current = open[bestIndex];
-					open.RemoveAt(bestIndex);
-					inOpen[current.x, current.y] = false;
-					if(current == goal)
-						break;
-					closed[current.x, current.y] = true;
-
-					foreach(var d in dirs8)
-					{
-						var next = current + d;
-						if(!CanStep(current, next))
-							continue;
-						if(closed[next.x, next.y])
-							continue;
-
-						float tentativeG = gScore[current.x, current.y] + StepCost(current, next);
-						if(tentativeG >= gScore[next.x, next.y])
-							continue;
-
-						cameFrom[next.x, next.y] = current;
-						gScore[next.x, next.y] = tentativeG;
-						fScore[next.x, next.y] = tentativeG + Heuristic(next, goal);
-
-						if(!inOpen[next.x, next.y])
-						{
-							open.Add(next);
-							inOpen[next.x, next.y] = true;
-						}
-					}
-				}
-
-				if(cameFrom[goal.x, goal.y].x < 0)
-					return null;
-
-				var path = new List<Vector2Int>();
-				var step = goal;
-				while(step != start)
-				{
-					path.Add(step);
-					step = cameFrom[step.x, step.y];
-				}
-				path.Add(start);
-				path.Reverse();
-				return path;
-			}
-
-			void AccumulatePath(List<Vector2Int> path, float weight)
-			{
-				if(path == null || path.Count < 2)
-					return;
-
-				// 先记录“通行次数”，让后续采样更倾向复用已有路径。
-				for(int i = 0; i < path.Count; ++i)
-				{
-					var p = path[i];
-					passCount[p.x, p.y] += 1;
-				}
-
-				for(int i = 0; i < path.Count - 1; ++i)
-				{
-					var a = path[i];
-					var b = path[i + 1];
-					Vector2 dir = ((Vector2)(b - a)).normalized * weight;
-					// 把方向统一到同一半球，避免 A->B 与 B->A 相互抵消。
-					if(dir.y < 0f || (Mathf.Abs(dir.y) <= 1e-6f && dir.x < 0f))
-						dir = -dir;
-
-					flow[a.x, a.y] += dir;
-					flow[b.x, b.y] += dir * 0.5f;
-					heat[a.x, a.y] += weight;
-					heat[b.x, b.y] += weight * 0.5f;
-				}
-			}
-
-			void DecayFlow(float decay)
-			{
-				for(int x = 0; x < width; ++x)
-				{
-					for(int y = 0; y < height; ++y)
-					{
-						flow[x, y] *= decay;
-						heat[x, y] *= decay;
-					}
-				}
-			}
-
-			// 2) 生成采样锚点：建筑门口（默认定义）+ 市中心。
 			var anchors = new List<Vector2Int>();
+			var anchorSet = new HashSet<Vector2Int>();
 			foreach(var placement in data.buildings)
 			{
-				var def = placement.Definition;
-				if(def == null)
+				var definition = placement.Definition;
+				if(definition == null)
 					continue;
 
-				int centerX = (def.size.x - 1) / 2;
-				var doorLocal = new Vector2Int(centerX - def.pivot.x, def.size.y - def.pivot.y);
+				int centerX = (definition.size.x - 1) / 2;
+				var doorLocal = new Vector2Int(centerX - definition.pivot.x, definition.size.y - definition.pivot.y);
 				var doorWorld = placement.position + Rot90(doorLocal, placement.orientation);
-				var walkableDoor = FindNearestWalkable(doorWorld);
-				if(IsWalkable(walkableDoor))
-					anchors.Add(walkableDoor);
+				if(!data.IsValidMapPosition(doorWorld) || anchorSet.Contains(doorWorld))
+					continue;
+
+				anchorSet.Add(doorWorld);
+				anchors.Add(doorWorld);
 			}
 
-			var center = FindNearestWalkable(new Vector2Int(width / 2, height / 2));
-			if(IsWalkable(center))
-				anchors.Add(center);
-
-			for(int i = 0; i < fixedSamples; ++i)
-			{
-				for(int si = 0; si < anchors.Count; ++si)
-				{
-					for(int ti = si + 1; ti < anchors.Count; ++ti)
-					{
-						var start = anchors[si];
-						var target = anchors[ti];
-						var path = FindPath(start, target);
-						AccumulatePath(path, 1f);
-					}
-				}
-				DecayFlow(decayPerRound);
-			}
-
-			float maxHeat = 0.0001f;
-			for(int x = 0; x < width; ++x)
-			{
-				for(int y = 0; y < height; ++y)
-				{
-					if(heat[x, y] > maxHeat)
-						maxHeat = heat[x, y];
-				}
-			}
-
-			for(int x = 0; x < width; ++x)
-			{
-				for(int y = 0; y < height; ++y)
-				{
-					float strength = Mathf.Clamp01(heat[x, y] / maxHeat);
-					Vector2 dir = flow[x, y];
-					if(dir.sqrMagnitude > 1e-8f)
-						flow[x, y] = dir.normalized * strength;
-					else
-						flow[x, y] = Vector2.zero;
-				}
-			}
-
-			return flow;
+			return anchors;
 		}
+
+		static WearnessTensor CalculateWearnessTensor(Vector2 movement)
+		{
+			float theta = Mathf.Atan2(movement.y, movement.x) ;
+			float cos = Mathf.Cos(theta), sin = Mathf.Sin(theta);
+			return new(cos * cos, cos * sin, sin * sin);
+		}
+
+		static float GetStrength(in WearnessTensor tensor) => tensor.x + tensor.z;
+		static float GetTheta(in WearnessTensor tensor) => 0.5f * Mathf.Atan2(2 * tensor.y, tensor.x - tensor.z);
+
+		static Color EncodeWearnessMapColor(in WearnessTensor tensor)
+		{
+			float theta = GetTheta(tensor);
+			float strength = GetStrength(tensor);
+			float A = new Vector2(tensor.x - tensor.z, 2 * tensor.y).magnitude / (strength + 0.01f);
+			Vector2 direction = new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * A;
+			return new(direction.x, direction.y, 0, strength);
+		}
+		#endregion
 	}
 }

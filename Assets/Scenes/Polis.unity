@@ -1810,11 +1810,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 528471307}
   navMeshSurface: {fileID: 528471308}
-  wearnessPathSamples: 10
-  wearnessTrafficDiscountPerPass: 0.5
-  wearnessNearBuildingPenalty: 10
-  wearnessMinStepCost: 0.0001
-  wearnessDecayPerPath: 0.95
+  wearnessSampleCount: 10
+  wearnessDecayPerRound: 0.75
+  wearnessPenaltyScale: 10
   ui: {fileID: 1329727386}
   anchor: {fileID: 1064727833}
   constructModal: {fileID: 210610424}
