@@ -31,6 +31,7 @@ namespace LongLiveKhioyen
         #endregion
         
         public List<ItemDefinition> items = new List<ItemDefinition>();
+        public List<EquipmentDefinition> equipments = new List<EquipmentDefinition>();
         
         // 原有的基于 String ID 的查找表
         private Dictionary<string, ItemDefinition> _lookup;
@@ -52,13 +53,13 @@ namespace LongLiveKhioyen
                 if (item == null) continue;
 
                 // String ID 索引
-                if (!_lookup.ContainsKey(item.itemId))
+                if (!string.IsNullOrEmpty(item.itemId) && !_lookup.ContainsKey(item.itemId))
                 {
                     _lookup.Add(item.itemId, item);
                 }
 
                 // Name 索引
-                if (!_nameLookup.ContainsKey(item.itemName))
+                if (!string.IsNullOrEmpty(item.itemName) && !_nameLookup.ContainsKey(item.itemName))
                 {
                     _nameLookup.Add(item.itemName, item);
                 }
@@ -108,6 +109,12 @@ namespace LongLiveKhioyen
             Debug.LogWarning($"ItemDatabase: Item Int ID {id} not found.");
             return null;
         }
+        
+        // Helper to get Equipment specifically if needed, though GetItem(int) works for both
+        public EquipmentDefinition GetEquipment(int id)
+        {
+            var item = GetItem(id);
+            return item as EquipmentDefinition;
+        }
     }
-    
 }

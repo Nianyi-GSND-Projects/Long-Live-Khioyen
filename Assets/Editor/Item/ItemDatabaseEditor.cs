@@ -16,10 +16,19 @@ public class ItemDatabaseEditor : Editor
     {
         string[] guids = AssetDatabase.FindAssets("t:ItemDefinition");
         List<ItemDefinition> all = new List<ItemDefinition>();
+        List<EquipmentDefinition> equipments = new List<EquipmentDefinition>();
+
         foreach (string guid in guids)
         {
             var asset = AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid));
-            if (asset != null) all.Add(asset);
+            if (asset != null)
+            {
+                all.Add(asset);
+                if (asset is EquipmentDefinition eq)
+                {
+                    equipments.Add(eq);
+                }
+            }
         }
 
         // 假设你已经添加了 id 字段 (注意：不是 itemId 字符串)
@@ -28,12 +37,14 @@ public class ItemDatabaseEditor : Editor
         db.items = all;
         db.items.Sort((a, b) => a.id.CompareTo(b.id));
         
+        db.equipments = equipments;
+        db.equipments.Sort((a, b) => a.id.CompareTo(b.id));
+        
         EditorUtility.SetDirty(db);
         AssetDatabase.SaveAssets();
-        Debug.Log($"Collected {all.Count} items.");
+        Debug.Log($"Collected {all.Count} items (including {equipments.Count} equipments).");
     }
     
-    // ... Copy AssignIds helper ...
     private void AssignIds<T>(List<T> items, System.Func<T, int> getId, System.Action<T, int> setId) where T : Object
     {
         HashSet<int> used = new HashSet<int>();
