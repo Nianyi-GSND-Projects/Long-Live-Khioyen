@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -182,6 +183,13 @@ namespace LongLiveKhioyen
             return bonus;
         }
         
+        public List<ActionDefinition> GetAllActions()
+        {
+            HashSet<ActionDefinition> allActions = new HashSet<ActionDefinition>(commanderActions);
+            //TODO
+
+            return allActions.ToList();
+        }
         
         #endregion
    }

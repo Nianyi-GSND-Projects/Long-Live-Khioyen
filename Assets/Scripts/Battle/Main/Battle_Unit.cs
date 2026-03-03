@@ -86,6 +86,7 @@ namespace LongLiveKhioyen
             {
                 descriptor.instanceId = GenerateUniqueId();
             }
+            
             else if (_instanceIdMap.ContainsKey(descriptor.instanceId))
             {
                 Debug.LogWarning($"Instance ID {descriptor.instanceId} conflict! Generating new ID.");
@@ -104,7 +105,6 @@ namespace LongLiveKhioyen
                 bat.currentMurale = batDesc.currentMurale;
                 bat.currentTraining = batDesc.currentTraining;
                 bat.ArmyId = batDesc.armyId;
-                InitializeUnitActions(bat);
             }
             else if (descriptor is FacilityDescriptor facDesc)
             {
@@ -113,10 +113,13 @@ namespace LongLiveKhioyen
                 fac.isConstructed = facDesc.isConstructed;
                 fac.currentDurability = facDesc.currentDurability;
             }
-
+            
             if (unit != null)
             {
                 unit.IsVisible = isVisible;
+                
+                InitializeUnitActions(unit);
+                
                 if (!factionActiveUnits.ContainsKey(unit.faction))
                 {
                     factionActiveUnits[unit.faction] = new HashSet<Unit>();
@@ -170,8 +173,6 @@ namespace LongLiveKhioyen
             
             unit.transform.SetParent(transform, false);
             unit.transform.localPosition = MapToLocal(pos);
-            
-            InitializeUnitActions(unit);
             
             if (CurrentStage == Stage.Battle)
             {
@@ -247,10 +248,11 @@ namespace LongLiveKhioyen
             }
             if (unit is Battalion bat)
             {
-                if (bat.battalionCommander != null && bat.battalionCommander.commanderActions != null)
+                if (bat.battalionCommander != null)
                 {
                     unit.runtimeCommanderActions.Clear();
-                    foreach (var action in bat.battalionCommander.commanderActions)
+                    var allCommanderActions = bat.battalionCommander.GetAllActions();
+                    foreach (var action in allCommanderActions)
                     {
                         if (action != null && action.CheckDisplayConditions(unit))
                         {
