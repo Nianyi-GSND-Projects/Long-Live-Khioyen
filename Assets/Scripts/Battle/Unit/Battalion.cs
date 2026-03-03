@@ -158,6 +158,7 @@ namespace LongLiveKhioyen
         
         public override void CalculateEntryStats(UnitDescriptor desc)
         {
+            
             base.CalculateEntryStats(desc);
         
             if (desc is not BattalionDescriptor batDesc) return;
@@ -183,13 +184,12 @@ namespace LongLiveKhioyen
                 var param = BattleParam.Instance;
                 commanderAttackBonus = CalculateBonus(param.attackScaling);
                 commanderDefBonus = CalculateBonus(param.defenseScaling);
-                commanderFlexBonus = CalculateBonus(param.mobilityScaling); // 对应 Flexibility
+                commanderFlexBonus = CalculateBonus(param.mobilityScaling);
                 commanderDiscBonus = CalculateBonus(param.disciplineScaling);
                 commanderStratBonus = CalculateBonus(param.strategyScaling);
             }
-
-            //3. 科技修正
-            //4.指挥官技能修正
+            
+            //3.指挥官技能修正
             entryStats.maxHealth = batDesc.maxSolider;
             entryStats.maxMorale = batDesc.maxMorale;
             
@@ -211,11 +211,11 @@ namespace LongLiveKhioyen
         float CalculateBonus(CommanderStatScaling scaling)
         {
             if (scaling == null) return 0;
-            return battalionCommander.Zhi * scaling.zhiFactor +
-                   battalionCommander.Xin * scaling.xinFactor +
-                   battalionCommander.Ren * scaling.renFactor +
-                   battalionCommander.Yong * scaling.yongFactor +
-                   battalionCommander.Yan * scaling.yanFactor;
+            return battalionCommander.GetTotalZhi() * scaling.zhiFactor +
+                   battalionCommander.GetTotalXin() * scaling.xinFactor +
+                   battalionCommander.GetTotalRen() * scaling.renFactor +
+                   battalionCommander.GetTotalYong() * scaling.yongFactor +
+                   battalionCommander.GetTotalYan() * scaling.yanFactor;
         }
     }
     

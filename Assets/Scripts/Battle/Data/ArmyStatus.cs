@@ -38,14 +38,17 @@ namespace LongLiveKhioyen
 		{
 			get
 			{
-				BattleParam param = BattleParam.Instance;
 				if(battalionDefinition == null)
 					return 0;
 
-				if(battalionCommander == null)
-					return battalionDefinition.defaultMaxSolider;
+				int baseValue = battalionDefinition.defaultMaxSolider;
 
-				return (int)(battalionDefinition.defaultMaxSolider);
+				if(battalionCommander != null)
+				{
+					baseValue += battalionCommander.GetMaxSoldiersBonus();
+				}
+
+				return baseValue;
 			}
 		}
 
@@ -53,14 +56,16 @@ namespace LongLiveKhioyen
 		{
 			get
 			{
-				BattleParam param = BattleParam.Instance;
 				if(battalionDefinition == null)
 					return 0;
+				int baseValue = battalionDefinition.defaultMaxMorale;
 
-				if(battalionCommander == null)
-					return battalionDefinition.defaultMaxMorale;
+				if(battalionCommander != null)
+				{
+					baseValue += battalionCommander.GetMaxMoraleBonus();
+				}
 
-				return (int)(battalionDefinition.defaultMaxMorale);
+				return baseValue;
 			}
 		}
 

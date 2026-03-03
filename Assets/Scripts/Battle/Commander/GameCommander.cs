@@ -16,19 +16,22 @@ namespace LongLiveKhioyen
         public string commanderName;
         public Sprite portrait;
         
+        
         [Header("Identity")]
         public Race race;
         public int level = 1;
         
-        [Header("Stats")]
+        [Header("StatsBase")]
+        //自身面板数值,不考虑任何装备与加成,仅自身基础值与升级数值
         public int Zhi;
         public int Xin;
         public int Ren;
         public int Yong;
         public int Yan;
-
+        
         public bool isAssigned;
-
+        
+        
         [Header("Traits & Skills")]
         public CommanderPersonalitySO personality;
         public List<CommanderTraitSO> traits = new List<CommanderTraitSO>();
@@ -97,6 +100,89 @@ namespace LongLiveKhioyen
         }
         
 
+        #endregion
+        
+        #region Stat Getters (Calculated)
+        
+        public int GetTotalZhi()
+        {
+            int val = Zhi;
+            val += GetEquipmentBonus(e => e is StatBonusEffect s ? s.zhiBonus : 0);
+            return Mathf.Max(0, val);
+        }
+
+        public int GetTotalXin()
+        {
+            int val = Xin;
+            val += GetEquipmentBonus(e => e is StatBonusEffect s ? s.xinBonus : 0);
+            return Mathf.Max(0, val);
+        }
+
+        public int GetTotalRen()
+        {
+            int val = Ren;
+            val += GetEquipmentBonus(e => e is StatBonusEffect s ? s.renBonus : 0);
+            return Mathf.Max(0, val);
+        }
+
+        public int GetTotalYong()
+        {
+            int val = Yong;
+            val += GetEquipmentBonus(e => e is StatBonusEffect s ? s.yongBonus : 0);
+            return Mathf.Max(0, val);
+        }
+
+        public int GetTotalYan()
+        {
+            int val = Yan;
+            val += GetEquipmentBonus(e => e is StatBonusEffect s ? s.yanBonus : 0);
+            return Mathf.Max(0, val);
+        }
+        
+        public int GetMaxSoldiersBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.maxSoldiersBonus : 0);
+        }
+
+        public int GetMaxMoraleBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.maxMoraleBonus : 0);
+        }
+
+        public int GetFlexibilityBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.flexibilityBonus : 0);
+        }
+
+        public int GetDisciplineBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.disciplineBonus : 0);
+        }
+
+        public int GetStrategyBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.strategyBonus : 0);
+        }
+        
+        public int GetPowerBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.attackBonus : 0);
+        }
+
+        public int GetDefenceBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.defenceBonus : 0);
+        }
+        
+        private int GetEquipmentBonus(System.Func<EquipmentEffect, int> selector)
+        {
+            int bonus = 0;
+            //TODO
+            
+            return bonus;
+        }
+        
+        
         #endregion
    }
 }

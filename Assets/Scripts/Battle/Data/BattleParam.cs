@@ -51,7 +51,11 @@ namespace LongLiveKhioyen
         #endregion
 
         [Header("Default Parameter")]
-        public int defaultMaxExp;
+        public int defaultMaxExp = 100;
+
+        public int defaultMaxMorale = 100;
+
+        public int defaultMaxSolider = 1000;
 
         public float defaultStrategySuccessRate = 0.5f;
         [Tooltip("每拥有多少士兵，部队总体的攻击力会增加等于其面板攻击的数值？")]
