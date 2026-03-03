@@ -24,15 +24,9 @@ namespace LongLiveKhioyen
         public int currentSoliders { get => currentHealth; set => currentHealth = value; }
         
         public int maxMorale;
-        public int maxTraining;
-        public int currentMurale;
-        public int currentTraining;
-
-        public int attackpower;
-        public int defencepower;
-        public int flexibility;
-        public int discipline;
-        public int strategy;
+        public int currentMorale;
+        
+        public int currentExp;
     }
 
     public class FacilityDescriptor : UnitDescriptor
@@ -40,7 +34,6 @@ namespace LongLiveKhioyen
         public bool isConstructed = true;
         public int maxDurability { get => maxHealth; set => maxHealth = value; }
         public int currentDurability { get => currentHealth; set => currentHealth = value; }
-        // ... 其他设施特有信息
         
         public int cost; 
     }

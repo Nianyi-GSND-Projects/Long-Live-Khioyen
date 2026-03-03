@@ -67,7 +67,7 @@ namespace LongLiveKhioyen
                 case ValueSourceType.Unit_CurrentSoldier:
                     return contextUser is Battalion b1 ? b1.currentSoliders : 0;
                 case ValueSourceType.Unit_CurrentMorale:
-                    return contextUser is Battalion b2 ? b2.currentMurale : 0;
+                    return contextUser is Battalion b2 ? b2.currentMorale : 0;
                 case ValueSourceType.Unit_Movement:
                     return contextUser is Battalion b3 ? b3.currentMovement : 0;
 

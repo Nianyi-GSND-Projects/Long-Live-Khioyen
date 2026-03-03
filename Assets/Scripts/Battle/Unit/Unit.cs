@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
         public Unit LastAttacker { get; private set; }
         public bool IsVisible { get; set; } = true;
         
-        public virtual int ZOCPower => GetZOCPower();
+        public virtual int ZocPower => GetZocPower();
         protected virtual void Start()
         {
             visualController = GetComponent<UnitVisualController>();
@@ -47,7 +47,7 @@ namespace LongLiveKhioyen
             {
                 maxHealth = desc.maxHealth,
                 ZOCPower = desc.ZOCPower,
-                repairPower = unitDefinition != null ? unitDefinition.defaultRepairPower : 0
+                repairPower = unitDefinition.defaultRepairPower
             };
         }
         
@@ -57,7 +57,7 @@ namespace LongLiveKhioyen
             return 0;
         }
         
-        public virtual int GetZOCPower()
+        public virtual int GetZocPower()
         {
             if (entryStats != null) return entryStats.ZOCPower;
             return 0;

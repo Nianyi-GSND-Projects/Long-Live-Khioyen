@@ -504,7 +504,7 @@ namespace LongLiveKhioyen
         
             if (!unit.IsVisible) return;
 
-            int change = isAdding ? unit.ZOCPower : -unit.ZOCPower;
+            int change = isAdding ? unit.ZocPower : -unit.ZocPower;
             bool isPlayerSide = unit.faction == Faction.Player || unit.faction == Faction.Friend;
             if (IsValidMapPosition(unit.position))
             {

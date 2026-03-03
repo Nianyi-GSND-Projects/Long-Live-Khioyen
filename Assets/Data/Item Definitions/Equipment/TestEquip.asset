@@ -60,10 +60,7 @@ MonoBehaviour:
   sellPrice: 0
   canBuy: 1
   buyPrice: 0
-  effects:
-  - {fileID: 5304813268255671838}
-  - {fileID: -5920973927518951727}
-  - {fileID: -366996738618299948}
+  effects: []
 --- !u!114 &5304813268255671838
 MonoBehaviour:
   m_ObjectHideFlags: 0

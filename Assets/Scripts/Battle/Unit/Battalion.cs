@@ -15,10 +15,11 @@ namespace LongLiveKhioyen
             set => currentHealth = value;
         }
         public int ArmyId;
-        public int currentMurale;
-        public int currentTraining;
+        public int currentMorale;
+        public int currentExp;
         public int currentMovement;
-        
+        public bool doubleAction = false;
+        public int ExtraMovement = 0;
         public int exp = 0;
         
 
@@ -80,7 +81,7 @@ namespace LongLiveKhioyen
             }
         }
         
-        public int MaxMovement => Mathf.FloorToInt(CurrentFlexibility/BattleParam.Instance.mobilityPerMovement);
+        public int MaxMovement => Mathf.FloorToInt(CurrentFlexibility/BattleParam.Instance.mobilityPerMovement) + ExtraMovement;
         
         public float CurrentDiscipline
         {
@@ -158,52 +159,72 @@ namespace LongLiveKhioyen
         
         public override void CalculateEntryStats(UnitDescriptor desc)
         {
-            
             base.CalculateEntryStats(desc);
-        
             if (desc is not BattalionDescriptor batDesc) return;
 
+            var definition = Definition;
+            var commander = battalionCommander;
+            var param = BattleParam.Instance;
+            
             // 1. 基础值
-            float baseAttack = Definition.defaultPower;
-            float baseDef = Definition.defaultDefense;
-            float baseRepair = Definition.defaultRepairPower;
+            float baseAttack = definition.defaultPower;
+            float baseDef = definition.defaultDefense;
+            float baseRepair = definition.defaultRepairPower;
             
-            float baseFlex = batDesc.flexibility > 0 ? batDesc.flexibility : Definition.defaultFlexibility;
-            float baseDisc = batDesc.discipline > 0 ? batDesc.discipline : Definition.defaultDiscipline; 
-            float baseStrat = batDesc.strategy > 0 ? batDesc.strategy : Definition.defaultStrategy; 
+            float baseFlex = definition.defaultFlexibility;
+            float baseDisc = definition.defaultDiscipline; 
+            float baseStrat = definition.defaultStrategy; 
+
             
-            // 2. 指挥官属性修正
             float commanderAttackBonus = 0;
             float commanderDefBonus = 0;
             float commanderFlexBonus = 0;
             float commanderDiscBonus = 0;
             float commanderStratBonus = 0;
+            int commanderZocBonus = 0;
+            int commanderMovementBonus = 0;
             
-            if (battalionCommander != null)
+            if (commander != null)
             {
-                var param = BattleParam.Instance;
+                // 2. 指挥官五维属性加成
                 commanderAttackBonus = CalculateBonus(param.attackScaling);
                 commanderDefBonus = CalculateBonus(param.defenseScaling);
                 commanderFlexBonus = CalculateBonus(param.mobilityScaling);
                 commanderDiscBonus = CalculateBonus(param.disciplineScaling);
                 commanderStratBonus = CalculateBonus(param.strategyScaling);
+                
+                //3.指挥官技能与特性带来的直接数值加成
+                commanderAttackBonus *= commander.GetPowerBonus();
+                commanderDefBonus *= commander.GetDefenceBonus();
+                commanderFlexBonus *= commander.GetFlexibilityBonus();
+                commanderDiscBonus *= commander.GetDisciplineBonus();
+                commanderStratBonus *= commander.GetStrategyBonus();
+                commanderMovementBonus += commander.GetMovementBonus();
+                commanderZocBonus += commander.GetZocBonus();
             }
             
-            //3.指挥官技能修正
+            
+            
+            //5.状态参数应用描述符数据
             entryStats.maxHealth = batDesc.maxSolider;
             entryStats.maxMorale = batDesc.maxMorale;
+            currentHealth = batDesc.currentSoliders; 
+            currentMorale = batDesc.currentMorale;
+            currentExp = batDesc.currentExp;
             
+            //5.应用数值修改
             entryStats.attackPower = baseAttack + commanderAttackBonus;
             entryStats.defensePower = baseDef + commanderDefBonus;
             entryStats.repairPower = baseRepair;
             entryStats.flexibility = baseFlex + commanderFlexBonus;
             entryStats.discipline = baseDisc + commanderDiscBonus;
             entryStats.strategy = baseStrat + commanderStratBonus;
-            //设置初始状态
-            currentHealth = batDesc.currentSoliders; // 从 Descriptor 读取初始兵力
-            currentMurale = batDesc.currentMurale;
-            currentTraining = batDesc.currentTraining;
             
+            //6.应用特殊效果修改
+            entryStats.ZOCPower = definition.defaultZOCPower + commanderZocBonus;
+            ExtraMovement = commanderMovementBonus;
+            
+            //7.初始化移动力
             currentMovement = MaxMovement;
             Debug.Log($"[Stats] Battalion {name} Entry Stats Calculated.");
         }

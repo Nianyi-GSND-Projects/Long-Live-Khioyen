@@ -69,6 +69,28 @@ namespace LongLiveKhioyen
         #endregion
         
         #region Spawn
+        
+        public BattalionDescriptor GenerateBattalionDescriptorFromBattalionStatus(BattalionStatus battalionStatus)
+        {
+            BattalionDescriptor battalionDescriptor = new BattalionDescriptor();
+            battalionDescriptor.Definition = battalionStatus.battalionDefinition;
+			
+            battalionDescriptor.armyId = battalionStatus.battalionId;
+
+            battalionDescriptor.faction = Faction.Player;
+            battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
+            battalionDescriptor.ZOCPower = battalionStatus.battalionDefinition.defaultZOCPower;
+			
+            battalionDescriptor.maxSolider = battalionStatus.MaxSolider;
+            battalionDescriptor.maxMorale = battalionStatus.MaxMorale;
+            battalionDescriptor.currentSoliders = battalionStatus.currentSolider;
+            battalionDescriptor.currentMorale = battalionStatus.currentMorale;
+            battalionDescriptor.currentExp = battalionStatus.currentExp;
+            battalionDescriptor.placed = false;
+			
+            return battalionDescriptor;
+        }
+        
         public Unit RegisterUnitToBattle(UnitDescriptor descriptor, Vector2Int pos)
         {
             return RegisterUnitToBattle(descriptor, pos, descriptor.isVisible);
@@ -102,8 +124,8 @@ namespace LongLiveKhioyen
                 Battalion bat = unit as Battalion;
                 bat.battalionCommander = batDesc.battalionCommander;
                 bat.currentSoliders = batDesc.currentSoliders;
-                bat.currentMurale = batDesc.currentMurale;
-                bat.currentTraining = batDesc.currentTraining;
+                bat.currentMorale = batDesc.currentMorale;
+                bat.currentExp = batDesc.currentExp;
                 bat.ArmyId = batDesc.armyId;
             }
             else if (descriptor is FacilityDescriptor facDesc)
@@ -263,6 +285,7 @@ namespace LongLiveKhioyen
             }
         }
         
+
         #endregion
         
         #region Remove

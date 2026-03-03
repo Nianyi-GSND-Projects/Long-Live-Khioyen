@@ -103,7 +103,6 @@ namespace LongLiveKhioyen
               
 				foreach (var data in levelPreset.playerReserveList)
 				{
-					// 构造 Descriptor
 					BattalionDescriptor desc = new BattalionDescriptor
 					{
 						Definition = data.battalionDef,
@@ -111,19 +110,10 @@ namespace LongLiveKhioyen
 						armyId = -1,
 						placed = false,
 						isVisible = data.isVisible,
-						ZOCPower = data.battalionDef.defaultZOCPower,
-						// 应用 Override
 						maxSolider = data.battalionDef.defaultMaxSolider,
-						currentSoliders = data.overrideSoldiers > 0 ? data.overrideSoldiers : data.battalionDef.defaultMaxSolider,
-                      
-						maxMorale = data.battalionDef.defaultMaxMorale,
-						currentMurale = data.overrideMorale > 0 ? data.overrideMorale : data.battalionDef.defaultMaxMorale,
-                      
-						maxTraining = 100,
-						currentTraining = 50
+						maxMorale = data.battalionDef.defaultMaxMorale
 					};
 
-					// 生成指挥官
 					if (data.commanderTemplate != null)
 					{
 						desc.battalionCommander = data.commanderTemplate.CreateInstance(CommanderRegistry.Instance.GenerateID());
@@ -132,38 +122,29 @@ namespace LongLiveKhioyen
 					{
 						desc.battalionCommander = CommanderRegistry.Instance.GenerateCommander(data.randomCommanderProfile);
 					}
-                  
+
+					desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
+					desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
+					
+					desc.currentSoliders = data.overrideSoldiers > 0
+						? data.overrideSoldiers
+						: desc.maxSolider;
+					
+					desc.currentMorale = data.overrideMorale > 0
+						? data.overrideMorale
+						: desc.maxMorale;
+					
+					desc.currentExp = 50;
+					
 					playerReserveTeam.Add(desc);
 				}
-				return; // 跳过后续逻辑
+				return;
 			}
 			
 			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
 				playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
 		}
 
-		public BattalionDescriptor GenerateBattalionDescriptorFromBattalionStatus(BattalionStatus battalionStatus)
-		{
-			BattalionDescriptor battalionDescriptor = new BattalionDescriptor();
-			battalionDescriptor.Definition = battalionStatus.battalionDefinition;
-			
-			battalionDescriptor.armyId = battalionStatus.battalionId;
-
-			battalionDescriptor.faction = Faction.Player;
-			battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
-			battalionDescriptor.ZOCPower = battalionStatus.battalionDefinition.defaultZOCPower;
-			
-			battalionDescriptor.maxSolider = battalionStatus.MaxSolider;
-			battalionDescriptor.maxMorale = battalionStatus.MaxMorale;
-			battalionDescriptor.maxTraining = battalionStatus.MaxExp;
-			battalionDescriptor.currentSoliders = battalionStatus.currentSolider;
-			battalionDescriptor.currentMurale = battalionStatus.currentMorale;
-			battalionDescriptor.currentTraining = battalionStatus.currentExp;
-			battalionDescriptor.placed = false;
-			
-			return battalionDescriptor;
-			
-		}
 
 		private void InitializeScene()
 		{
@@ -293,7 +274,6 @@ namespace LongLiveKhioyen
 							maxDurability = spawnData.facilityDef.defaultMaxDurability,
 							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
 						};
-						
 						RegisterUnitToBattle(facDesc, spawnData.position);
 					}
 					else
@@ -306,14 +286,6 @@ namespace LongLiveKhioyen
 							isVisible = spawnData.isVisible,
 							ZOCPower = spawnData.battalionDef.defaultZOCPower,
 							placed = false,
-							maxSolider = spawnData.battalionDef.defaultMaxSolider,
-							currentSoliders = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.battalionDef.defaultMaxSolider,
-                  
-							maxMorale = spawnData.battalionDef.defaultMaxMorale,
-							currentMurale = spawnData.overrideMorale > 0 ? spawnData.overrideMorale : spawnData.battalionDef.defaultMaxMorale,
-                  
-							maxTraining = 100,
-							currentTraining = 50
 						};
 						if (spawnData.commanderTemplate != null)
 						{
@@ -329,6 +301,26 @@ namespace LongLiveKhioyen
 						{
 							desc.battalionCommander = null;
 						}
+
+						desc.maxSolider = spawnData.battalionDef.defaultMaxSolider;
+						desc.maxMorale = spawnData.battalionDef.defaultMaxMorale;
+						
+						if (desc.battalionCommander != null)
+						{
+							desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
+
+							desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
+						}
+						
+						desc.currentSoliders = spawnData.overrideSoldiers > 0
+							? spawnData.overrideSoldiers
+							: desc.maxSolider;
+						
+						desc.currentMorale =
+							spawnData.overrideMorale > 0 ? spawnData.overrideMorale : desc.maxMorale;
+						
+						desc.currentExp = 50;
+						
 						RegisterUnitToBattle(desc, spawnData.position,spawnData.isVisible);
 					}
 				}
@@ -468,7 +460,7 @@ namespace LongLiveKhioyen
 				{
 					// 存活 (在场或撤退)
 					status.currentSolider = bat.currentSoliders;
-					status.currentMorale = bat.currentMurale;
+					status.currentMorale = bat.currentMorale;
 					status.currentExp += bat.exp;//TODO：经验值转化
                   
 					Debug.Log($"[Sync] Battalion {status.battalionName} survived. HP: {status.currentSolider}, EXP: +{bat.exp}");

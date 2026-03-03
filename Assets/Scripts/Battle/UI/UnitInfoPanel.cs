@@ -35,8 +35,8 @@ namespace LongLiveKhioyen
                 DisplayInfo(
                     bat.Definition.unitName,
                     bat.currentSoliders, bat.Definition.defaultMaxSolider,
-                    bat.currentMurale,
-                    bat.currentTraining,
+                    bat.currentMorale,
+                    bat.currentExp,
                     bat.currentMovement,
                     bat.battalionCommander
                 );
@@ -51,13 +51,12 @@ namespace LongLiveKhioyen
         public void UpdateUI(BattalionDescriptor desc)
         {
 
-            int baseMove = desc.flexibility / 10;
             DisplayInfo(
                 desc.Definition.unitName,
                 desc.currentSoliders, desc.maxSolider,
-                desc.currentMurale,
-                desc.currentTraining,
-                baseMove, 
+                desc.currentMorale,
+                desc.currentExp,
+                0, 
                 desc.battalionCommander
             );
         }
@@ -68,8 +67,6 @@ namespace LongLiveKhioyen
             moraleText.text = $"{curMorale}";
             expText.text = $"{curExp}";
             movementText.text = $"{movement}";
-            
-            
             
             if (cmd != null)
             {
@@ -88,7 +85,6 @@ namespace LongLiveKhioyen
             }
         }
         
-
         private void ClearStats()
         {
             statZhi.text = "-";

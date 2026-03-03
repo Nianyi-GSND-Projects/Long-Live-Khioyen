@@ -75,7 +75,7 @@ namespace LongLiveKhioyen
                     moraleBarRoot.SetActive(true);
                     if (moraleSlider != null)
                     {
-                        float mpPercent = (float)bat.currentMurale / Mathf.Max(1, bat.GetMaxMorale());
+                        float mpPercent = (float)bat.currentMorale / Mathf.Max(1, bat.GetMaxMorale());
                         moraleSlider.value = mpPercent;
                     }
                 }

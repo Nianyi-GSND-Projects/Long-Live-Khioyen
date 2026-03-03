@@ -32,7 +32,6 @@ namespace LongLiveKhioyen
         
         public bool isAssigned;
         
-        
         [Header("Traits & Skills")]
         public CommanderPersonalitySO personality;
         public List<CommanderTraitSO> traits = new List<CommanderTraitSO>();
@@ -174,7 +173,21 @@ namespace LongLiveKhioyen
         {
             return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.defenceBonus : 0);
         }
-        
+
+        public int GetZocBonus()
+        {
+                return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.zocPowerBonus : 0);
+        }
+        public int GetMovementBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.movementBonus : 0);
+        }
+
+        public int GetActionChanceBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.actionChanceBonus : 0);
+        }
+
         private int GetEquipmentBonus(System.Func<EquipmentEffect, int> selector)
         {
             int bonus = 0;
