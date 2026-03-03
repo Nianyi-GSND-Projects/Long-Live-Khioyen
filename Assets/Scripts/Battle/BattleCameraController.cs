@@ -47,30 +47,23 @@ namespace LongLiveKhioyen
             Zoom(scrollY);
         }
 
-        // --- 核心逻辑 ---
         void Pan(Vector2 screenDelta)
         {
             if (Battle == null) return;
 
-            // 计算上一帧的屏幕位置
             Vector2 prevScreenPos = _pointerScreenPos - screenDelta;
 
-            // 射线检测：从上一帧位置射向地面
             if(!Battle.ScreenToGround(prevScreenPos, out var to))
                return;
             
-            // 射线检测：从当前位置射向地面
             if(!Battle.ScreenToGround(_pointerScreenPos, out var from))
                return;
             
-            // 计算位移向量 (反向移动，因为是拖拽地面)
             Vector3 pos = Battle.AnchorPosition + (to - from) * panSpeed;
             
-            // 边界限制
             Vector3 totalSize = new Vector3(Battle.Size.x * Battle.Xscale, 0, Battle.Size.y * Battle.Yscale);
             Bounds bounds = new(totalSize*0.5f, totalSize);
             
-            // 将世界坐标转为 Battle 局部坐标进行边界检查
             Vector3 localPos = Battle.transform.worldToLocalMatrix.MultiplyPoint(pos);
             Vector3 boundedLocalPos = bounds.ClosestPoint(localPos);
             Vector3 boundedWorldPos = Battle.transform.localToWorldMatrix.MultiplyPoint(boundedLocalPos);
@@ -84,10 +77,9 @@ namespace LongLiveKhioyen
         void Zoom(float scrollY)
         {
             if (Battle == null) return;
-
+            float delta = Mathf.Clamp(scrollY, -10f, 10f) * zoomSpeed;
             float z = Battle.CameraDistance;
-            // 使用指数缩放，手感更平滑
-            z *= Mathf.Exp(-scrollY * zoomSpeed);
+            z *= Mathf.Exp(-delta);
             z = Mathf.Clamp(z, zoomRange.x, zoomRange.y);
             Battle.CameraDistance = z;
         }

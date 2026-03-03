@@ -901,9 +901,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f60bf7b256eaeb49aa6db4b30805e29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panSpeed: 1
-  zoomSpeed: 1
-  zoomRange: {x: 2, y: 100}
+  panSpeed: 0.5
+  zoomSpeed: 0.3
+  zoomRange: {x: 2, y: 80}
   rotateSpeed: 1
   minAzimuth: 10
 --- !u!114 &575322486
