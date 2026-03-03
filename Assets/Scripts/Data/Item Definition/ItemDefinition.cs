@@ -29,7 +29,6 @@ namespace LongLiveKhioyen
         [Header("Identity")]
         public string itemId;
         public string itemName;
-        
         public string[] tags;
         public string description;
         
