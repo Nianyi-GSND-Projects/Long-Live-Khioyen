@@ -31,8 +31,24 @@ namespace LongLiveKhioyen
         public override float GetPower()
         {
             if (entryStats == null) return 0;
+            
             float baseVal = entryStats.attackPower;
-            float ratio = (float)currentSoliders / entryStats.maxHealth;
+            
+            float ratio = (float)currentSoliders / BattleParam.Instance.defaultSoliderAmountForOnePower;
+            
+            //TODO：其他修正
+            
+            return baseVal * ratio;
+        }
+        
+        public override float GetRepairPower()
+        {
+            if (entryStats == null) return 0;
+            
+            float baseVal = entryStats.repairPower;
+            
+            float ratio = (float)currentSoliders / BattleParam.Instance.defaultSoliderAmountForOnePower;
+            
             //TODO：其他修正
             
             return baseVal * ratio;
@@ -64,7 +80,7 @@ namespace LongLiveKhioyen
             }
         }
         
-        public int MaxMovement => Mathf.FloorToInt(CurrentFlexibility)/10;
+        public int MaxMovement => Mathf.FloorToInt(CurrentFlexibility/BattleParam.Instance.mobilityPerMovement);
         
         public float CurrentDiscipline
         {
@@ -149,27 +165,57 @@ namespace LongLiveKhioyen
             // 1. 基础值
             float baseAttack = Definition.defaultPower;
             float baseDef = Definition.defaultDefense;
-            int rawFlex = batDesc.flexibility > 0 ? batDesc.flexibility : Definition.defaultFlexibility;
-            int rawDisc = batDesc.discipline > 0 ? batDesc.discipline : Definition.defaultDiscipline; // 假设有
-            int rawStrat = batDesc.strategy > 0 ? batDesc.strategy : Definition.defaultStrategy; // 假设有
-
+            float baseRepair = Definition.defaultRepairPower;
+            
+            float baseFlex = batDesc.flexibility > 0 ? batDesc.flexibility : Definition.defaultFlexibility;
+            float baseDisc = batDesc.discipline > 0 ? batDesc.discipline : Definition.defaultDiscipline; 
+            float baseStrat = batDesc.strategy > 0 ? batDesc.strategy : Definition.defaultStrategy; 
+            
             // 2. 指挥官属性修正
+            float commanderAttackBonus = 0;
+            float commanderDefBonus = 0;
+            float commanderFlexBonus = 0;
+            float commanderDiscBonus = 0;
+            float commanderStratBonus = 0;
+            
+            if (battalionCommander != null)
+            {
+                var param = BattleParam.Instance;
+                commanderAttackBonus = CalculateBonus(param.attackScaling);
+                commanderDefBonus = CalculateBonus(param.defenseScaling);
+                commanderFlexBonus = CalculateBonus(param.mobilityScaling); // 对应 Flexibility
+                commanderDiscBonus = CalculateBonus(param.disciplineScaling);
+                commanderStratBonus = CalculateBonus(param.strategyScaling);
+            }
+
             //3. 科技修正
             //4.指挥官技能修正
-            //TODO
             entryStats.maxHealth = batDesc.maxSolider;
             entryStats.maxMorale = batDesc.maxMorale;
             
-            entryStats.defensePower = baseDef;
-            entryStats.attackPower = baseAttack;
-            entryStats.discipline = rawDisc;
-            entryStats.strategy = rawStrat;
-            entryStats.flexibility = rawFlex;
+            entryStats.attackPower = baseAttack + commanderAttackBonus;
+            entryStats.defensePower = baseDef + commanderDefBonus;
+            entryStats.repairPower = baseRepair;
+            entryStats.flexibility = baseFlex + commanderFlexBonus;
+            entryStats.discipline = baseDisc + commanderDiscBonus;
+            entryStats.strategy = baseStrat + commanderStratBonus;
             //设置初始状态
             currentHealth = batDesc.currentSoliders; // 从 Descriptor 读取初始兵力
             currentMurale = batDesc.currentMurale;
             currentTraining = batDesc.currentTraining;
+            
+            currentMovement = MaxMovement;
             Debug.Log($"[Stats] Battalion {name} Entry Stats Calculated.");
+        }
+        
+        float CalculateBonus(CommanderStatScaling scaling)
+        {
+            if (scaling == null) return 0;
+            return battalionCommander.Zhi * scaling.zhiFactor +
+                   battalionCommander.Xin * scaling.xinFactor +
+                   battalionCommander.Ren * scaling.renFactor +
+                   battalionCommander.Yong * scaling.yongFactor +
+                   battalionCommander.Yan * scaling.yanFactor;
         }
     }
     

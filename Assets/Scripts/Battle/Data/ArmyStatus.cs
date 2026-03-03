@@ -45,7 +45,7 @@ namespace LongLiveKhioyen
 				if(battalionCommander == null)
 					return battalionDefinition.defaultMaxSolider;
 
-				return (int)(battalionDefinition.defaultMaxSolider + battalionCommander.Xin * param.solidersPerXin);
+				return (int)(battalionDefinition.defaultMaxSolider);
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace LongLiveKhioyen
 				if(battalionCommander == null)
 					return battalionDefinition.defaultMaxMorale;
 
-				return (int)(battalionDefinition.defaultMaxMorale + battalionCommander.Ren * param.moralePerRen);
+				return (int)(battalionDefinition.defaultMaxMorale);
 			}
 		}
 

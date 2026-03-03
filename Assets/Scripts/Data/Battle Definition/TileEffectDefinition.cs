@@ -7,9 +7,14 @@ namespace LongLiveKhioyen
     public abstract class TileEffectDefinition : ScriptableObject
     {
         public string effectName;
-        public GameObject vfxPrefab;
         public bool isPassable = false; 
         
+        [Header("Visual Settings")]
+        public GameObject vfxPrefab;
+        [Min(1)] public int instanceCount = 1;
+        public float scatterRadius = 0.8f;
+        public float minScatterRadius = 0.3f;
+        public bool useBillboard = true;
         // tile: 当前地块数据
         // pos: 坐标
         public virtual void OnTick(TileData tile, Vector2Int pos) 

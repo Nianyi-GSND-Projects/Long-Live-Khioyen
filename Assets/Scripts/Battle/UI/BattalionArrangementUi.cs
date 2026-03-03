@@ -37,7 +37,7 @@ namespace LongLiveKhioyen
         {
           //  localizedBattalionName.TableEntryReference = battalionDefinition.armyId;
            // localizedBattalionName.RefreshString();
-           // image.sprite = battalionDefinition.figure;
+           // image.sprite = battalionDefinition.icon;
         }
         
         protected void OnDestroy()
@@ -71,7 +71,7 @@ namespace LongLiveKhioyen
 
             // 3. 设置图标
             if (unitIcon != null)
-                unitIcon.sprite = descriptor.Definition.figure;
+                unitIcon.sprite = descriptor.Definition.icon;
         }
     }
 }

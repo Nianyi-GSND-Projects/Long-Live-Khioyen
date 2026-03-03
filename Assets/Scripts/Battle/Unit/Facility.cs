@@ -91,11 +91,7 @@ namespace LongLiveKhioyen
             float baseDef = Definition.defaultDefense;
             float basePower = Definition.defaultPower;
             int rawCost = facDesc.cost > 0 ? facDesc.cost : Definition.defaultCost; // 假设 FacilityDefinition 有 defaultCost
-
-
-            // 2. 科技修正 (假设有)
-            // float techMod = TechManager.Instance.GetBuildingHealthBonus();
-
+            
             // 3. 赋值
             entryStats.defensePower = baseDef;
             entryStats.maxHealth = facDesc.maxDurability;

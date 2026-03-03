@@ -363,20 +363,35 @@ namespace LongLiveKhioyen
             if (!IsValidMapPosition(pos)) return;
             TileData tile = mapData[pos.x, pos.y];
 
-            // 1. 创建数据实例
             TileEffect effect = new TileEffect(def, duration, source);
 
-            // 2. 生成视觉特效
             if (def.vfxPrefab != null)
             {
-                Vector3 worldPos = MapToLocal(pos);
-                // 稍微抬高一点防止穿模，或者依靠Prefab自带偏移
-                GameObject vfx = Instantiate(def.vfxPrefab, transform); 
-                vfx.transform.localPosition = worldPos;
-                effect.vfxInstance = vfx;
+                GameObject effectRoot = new GameObject($"Effect_{def.effectName}_{pos}");
+                effectRoot.transform.SetParent(transform);
+                effectRoot.transform.localPosition = MapToLocal(pos);
+                
+                effect.vfxInstance = effectRoot;
+
+                for (int i = 0; i < def.instanceCount; i++)
+                {
+                    
+                    Vector2 randomPos = Random.insideUnitCircle * def.scatterRadius;
+                    Vector3 offset = new Vector3(randomPos.x, 0, randomPos.y);
+
+                    GameObject vfx = Instantiate(def.vfxPrefab, effectRoot.transform);
+                    vfx.transform.localPosition = offset;
+                    
+                    if (def.useBillboard)
+                    {
+                        if (vfx.GetComponent<Billboard>() == null)
+                        {
+                            vfx.AddComponent<Billboard>();
+                        }
+                    }
+                }
             }
 
-            // 3. 加入数据
             tile.Effects.Add(effect);
             Debug.Log($"Tile {pos} added effect: {def.effectName}");
         }

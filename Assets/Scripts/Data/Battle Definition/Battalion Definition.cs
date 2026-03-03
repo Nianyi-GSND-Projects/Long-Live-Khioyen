@@ -24,7 +24,6 @@ namespace LongLiveKhioyen
         #endregion
         
         [Header("Visuals")]
-        public GameObject soldierModelPrefab;
         public int soldiersPerModel = 100;
         public float modelSpacing = 0.05f;
         

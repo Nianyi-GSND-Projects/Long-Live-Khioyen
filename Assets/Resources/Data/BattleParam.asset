@@ -12,8 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9252e2384cff024281fca715fdbe260, type: 3}
   m_Name: BattleParam
   m_EditorClassIdentifier: 
-  solidersPerZhi: 0
-  solidersPerXin: 10
-  solidersPerRen: 10
-  solidersPerYong: 5
-  solidersPerYan: 5
+  defaultMaxExp: 0
+  attackScaling:
+    zhiFactor: 0
+    xinFactor: 0
+    renFactor: 0
+    yongFactor: 0.5
+    yanFactor: 0
+  defenseScaling:
+    zhiFactor: 0
+    xinFactor: 0
+    renFactor: 0
+    yongFactor: 0
+    yanFactor: 0.5
+  mobilityScaling:
+    zhiFactor: 0
+    xinFactor: 0.2
+    renFactor: 0
+    yongFactor: 0
+    yanFactor: 0
+  strategyScaling:
+    zhiFactor: 0.5
+    xinFactor: 0
+    renFactor: 0
+    yongFactor: 0
+    yanFactor: 0
+  disciplineScaling:
+    zhiFactor: 0
+    xinFactor: 0
+    renFactor: 0.5
+    yongFactor: 0
+    yanFactor: 0
+  mobilityPerMovement: 10
+  damagePerAttack: 1
+  damageResistancePerDefense: 0.05
+  zocPowerPerStrategy: 0.1
+  schemeSuccessRatePerStrategy: 0.01
+  constructionRatePerDiscipline: 0.01
+  recoveryRatePerDiscipline: 0.01

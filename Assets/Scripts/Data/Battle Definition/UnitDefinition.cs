@@ -33,16 +33,22 @@ namespace LongLiveKhioyen
         //有设施和部队两个子类
         #region Asset
         
-        public Sprite figure;
-        public GameObject unitModelTemplate;
+        public Sprite icon;
         public AudioClip unitSelectedSoundEffect;
+        [Header("Visual Model")]
+        [Tooltip("单位的基础模型 Prefab (对于部队是单个士兵，对于设施是完整建筑)")]
+        public GameObject unitModelPrefab;
+        [Tooltip("是否让模型始终面向摄像机 (Billboard)")]
+        public bool useBillboard = false;
         
         #endregion
         
         #region Stats
-        
+        [Tooltip("默认攻击力：每100个士兵所能默认提供的攻击力")]
         public int defaultPower;
         public int defaultDefense;
+        [Tooltip("默认修补能力：每100个士兵在一次修补中提供的耐久恢复量")]
+        public int defaultRepairPower = 10;
         public int defaultZOCPower = 1;
         public bool defaultVisibility = true;
         

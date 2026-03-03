@@ -46,7 +46,8 @@ namespace LongLiveKhioyen
             entryStats = new UnitEntryStats
             {
                 maxHealth = desc.maxHealth,
-                ZOCPower = desc.ZOCPower
+                ZOCPower = desc.ZOCPower,
+                repairPower = unitDefinition != null ? unitDefinition.defaultRepairPower : 0
             };
         }
         
@@ -65,6 +66,12 @@ namespace LongLiveKhioyen
         public virtual int GetMaxMorale()
         {
             if (entryStats != null) return entryStats.maxMorale;
+            return 0;
+        }
+        
+        public virtual float GetRepairPower()
+        {
+            if (entryStats != null) return entryStats.repairPower;
             return 0;
         }
         
@@ -157,24 +164,26 @@ namespace LongLiveKhioyen
             if (entryStats == null) return;
             if (attacker != null) LastAttacker = attacker;
             
-            float threshold = Mathf.Max(1.0f, entryStats.defensePower);
-            int healthLoss = Mathf.FloorToInt(rawDamage / threshold);
+            float defense = GetDefense();
+            float resistancePerDef = 0.05f;
+            if (BattleParam.Instance != null)
+            {
+                resistancePerDef = BattleParam.Instance.damageResistancePerDefense;
+            }
+            
+            float resistanceFactor = defense * resistancePerDef;
+            resistanceFactor = Mathf.Clamp(resistanceFactor, 1f, 5f);
+            int healthLoss = Mathf.FloorToInt(rawDamage / resistanceFactor);
             
             if (healthLoss > 0)
             {
                 currentHealth -= healthLoss;
                 currentHealth = Mathf.Max(0, currentHealth);
-                
-                Debug.Log($"{name} took {rawDamage} raw damage. Threshold: {threshold}. Lost {healthLoss} HP. Remaining: {currentHealth}");
-                
+                Debug.Log($"{name} took {rawDamage} raw damage. Threshold: {resistanceFactor}. Lost {healthLoss} HP. Remaining: {currentHealth}");
                 OnHealthChanged();
                 
                 if (Battle.Instance != null) 
                     Battle.Instance.MarkUnitDirty(this);
-            }
-            else
-            {
-                Debug.Log($"{name} took {rawDamage} raw damage but resisted (Threshold: {threshold}).");
             }
         }
         
@@ -202,10 +211,9 @@ namespace LongLiveKhioyen
                 transform.localPosition = Battle.Instance.MapToLocal(newPosition);
             }
 
-            // 3. 通知视觉控制器 (例如刷新 UI跟随，或者播放尘土特效)
             if (visualController != null)
             {
-                visualController.RefreshVisuals(); // 或者专门写一个 OnMove 接口
+                visualController.RefreshVisuals();
             }
 
             // 4. [核心] 触发移动钩子

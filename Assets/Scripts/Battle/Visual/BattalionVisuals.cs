@@ -15,7 +15,7 @@ namespace LongLiveKhioyen
             foreach (var s in activeSoldiers) Destroy(s);
             activeSoldiers.Clear();
 
-            if (bat.Definition.soldierModelPrefab == null) return;
+            if (bat.Definition.unitModelPrefab == null) return;
 
             int perModel = Mathf.Max(1, bat.Definition.soldiersPerModel); 
             int modelCount = Mathf.CeilToInt((float)bat.currentSoliders / perModel);
@@ -31,7 +31,7 @@ namespace LongLiveKhioyen
             
             for (int i = 0; i < count; i++)
             {
-                GameObject soldier = Instantiate(def.soldierModelPrefab, modelContainer);
+                GameObject soldier = Instantiate(def.unitModelPrefab, modelContainer);
                 
                 // 计算位置
                 float x = (i % rowLength) * spacing;
@@ -51,9 +51,7 @@ namespace LongLiveKhioyen
                 }
 
                 soldier.transform.localPosition = pos;
-                
-                // 随机朝向 (但大体朝前)
-                //soldier.transform.localRotation = Quaternion.Euler(0, Random.Range(-15, 15), 0);
+
                 
                 var sr = soldier.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null)

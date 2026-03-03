@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: Fire
   m_EditorClassIdentifier: 
   effectName: Fire
-  vfxPrefab: {fileID: 0}
   isPassable: 1
+  vfxPrefab: {fileID: 7368210190530369482, guid: 56da788b74428cc4497478707ee7f0e6, type: 3}
+  instanceCount: 3
+  scatterRadius: 0.5
+  minScatterRadius: 0.5
+  useBillboard: 1
   damagePerTurn: 50
+  ignoreDefense: 0

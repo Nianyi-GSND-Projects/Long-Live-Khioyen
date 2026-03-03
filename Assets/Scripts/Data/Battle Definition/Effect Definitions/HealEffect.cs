@@ -2,10 +2,23 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
+    public enum HealScalingSource
+    {
+        None,           // 固定值
+        Power,          // 基于攻击力
+        RepairPower     // 基于修补力
+    }
+    
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Heal")]
     public class HealEffect : EffectDefinition
     {
-        public int healAmount = 10;
+        [Header("Heal Settings")]
+        public int baseHealAmount = 0;
+        [Tooltip("治疗量的加成来源")]
+        public HealScalingSource scalingSource = HealScalingSource.None;
+        [Tooltip("属性加成的倍率 (默认为 1.0)")]
+        public float scalingFactor = 1.0f;
+        
         public bool canHealBattalion = true;
         public bool canHealFacility = true;
         
@@ -14,12 +27,38 @@ namespace LongLiveKhioyen
         public override void Execute(ActionContext ctx)
         {
             Unit target = ctx.TargetUnit;
+            Unit user = ctx.User; // 获取来源单位
+
             if (target == null) return;
 
             if (target is Battalion && !canHealBattalion) return;
             if (target is Facility && !canHealFacility) return;
 
-            target.Heal(healAmount);
+            // 计算治疗量
+            float finalHeal = baseHealAmount;
+
+            if (user != null)
+            {
+                float bonus = 0;
+                switch (scalingSource)
+                {
+                    case HealScalingSource.Power:
+                        bonus = user.GetPower();
+                        break;
+                    case HealScalingSource.RepairPower:
+                        bonus = user.GetRepairPower();
+                        break;
+                }
+                finalHeal += bonus * scalingFactor;
+            }
+
+            // 取整并应用
+            int amount = Mathf.FloorToInt(finalHeal);
+            if (amount > 0)
+            {
+                target.Heal(amount);
+                Debug.Log($"{user?.name} healed {target.name} for {amount} (Base: {baseHealAmount}, Bonus: {finalHeal - baseHealAmount})");
+            }
             
             if (vfxPrefab != null) Instantiate(vfxPrefab, target.transform.position, Quaternion.identity);
             

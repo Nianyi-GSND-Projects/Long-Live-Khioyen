@@ -4,11 +4,6 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    public struct FacilityState
-    {
-        [Range(0, 1)] public float healthPercentage; // 低于这个百分比时显示
-        public GameObject stateModel; // 对应的模型预制体
-    }
     
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Definitions/Facility Definition")]
     public class FacilityDefinition : UnitDefinition
@@ -16,7 +11,6 @@ namespace LongLiveKhioyen
         public string[] tags;
         
         public string description;
-        public Sprite icon;
         
         public int defaultMaxDurability;
         
@@ -27,7 +21,16 @@ namespace LongLiveKhioyen
         public bool block = false;
         
         [Header("Visuals")]
-        public List<FacilityState> damageStates;
+        [Tooltip("是否像部队一样，使用多个模型实例来组成一个单位")]
+        public bool useFormationDisplay = false;
+        [Tooltip("如果使用阵型显示，生成多少个模型实例")]
+        [Min(1)] public int formationInstanceCount = 1;
+        [Tooltip("如果使用阵型显示，模型之间的间距")]
+        public float formationSpacing = 0.5f;
+
+        [Header("Construction Visuals")]
+        [Tooltip("建设过程中的模型列表。会根据建设进度（耐久度百分比）自动选择。")]
+        public List<GameObject> constructionStagePrefabs = new List<GameObject>();
         
         [Header("Interaction")]
         public bool isInteractable = false;

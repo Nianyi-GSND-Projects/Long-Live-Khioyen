@@ -19,7 +19,7 @@ MonoBehaviour:
   unitModelTemplate: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
   defaultPower: 50
-  defaultDefense: 1
+  defaultDefense: 100
   defaultZOCPower: 1
   defaultVisibility: 1
   passability: 0

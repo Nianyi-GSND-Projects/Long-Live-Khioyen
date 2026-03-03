@@ -92,7 +92,7 @@ namespace LongLiveKhioyen
             
             if (unit.unitDefinition != null && iconImage != null)
             {
-                iconImage.sprite = unit.unitDefinition.figure;
+                iconImage.sprite = unit.unitDefinition.icon;
             }
             
             if (healthSlider != null)

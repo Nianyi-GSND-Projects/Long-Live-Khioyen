@@ -15,11 +15,14 @@ MonoBehaviour:
   id: 5
   unitName: 
   unitType: 1
-  figure: {fileID: 0}
-  unitModelTemplate: {fileID: 919132149155446097, guid: 1bacad875c4c2df48bb4f2a6ce8c0e62, type: 3}
+  icon: {fileID: 21300000, guid: 6e21438ff5f12104faac4189c14abb66, type: 3}
   unitSelectedSoundEffect: {fileID: 0}
+  unitModelPrefab: {fileID: 366021807918811276, guid: 6aef77c3b36ae7146a7b6ee0ab342725, type: 3}
+  useBillboard: 1
   defaultPower: 0
   defaultDefense: 0
+  defaultZOCPower: 0
+  defaultVisibility: 1
   passability: 0
   movable: 0
   actionable: 0
@@ -35,11 +38,14 @@ MonoBehaviour:
   lootRules: []
   tags: []
   description: 
-  icon: {fileID: 21300000, guid: 6e21438ff5f12104faac4189c14abb66, type: 3}
   defaultMaxDurability: 1000
   defaultCost: 0
   special: 0
   block: 0
+  useFormationDisplay: 1
+  formationInstanceCount: 15
+  formationSpacing: 0.3
+  constructionStagePrefabs: []
   isInteractable: 1
   itemToGive: {fileID: 11400000, guid: eed1fc4557682d840a1b8552f251ba30, type: 2}
   baseAmount: 10

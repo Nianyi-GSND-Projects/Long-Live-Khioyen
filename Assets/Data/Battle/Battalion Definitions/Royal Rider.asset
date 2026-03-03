@@ -15,11 +15,13 @@ MonoBehaviour:
   id: 3
   unitName: Royal Rider
   unitType: 0
-  figure: {fileID: 21300000, guid: f21f95e11cfec5346a5ac697f126b966, type: 3}
-  unitModelTemplate: {fileID: 0}
+  icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
-  defaultPower: 500
-  defaultDefense: 0
+  unitModelPrefab: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
+  useBillboard: 0
+  defaultPower: 70
+  defaultDefense: 100
+  defaultRepairPower: 10
   defaultZOCPower: 1
   defaultVisibility: 1
   passability: 0
@@ -43,7 +45,6 @@ MonoBehaviour:
   defaultStrategy: 1000
   defaultMaxSolider: 1000
   defaultMaxMorale: 100
-  soldierModelPrefab: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
   soldiersPerModel: 100
   modelSpacing: 0.2
   battalionAttackType: 0
