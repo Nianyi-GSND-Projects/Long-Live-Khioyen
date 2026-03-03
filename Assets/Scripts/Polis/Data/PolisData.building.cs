@@ -45,6 +45,7 @@ namespace LongLiveKhioyen
 			building.underConstruction = false;
 
 			onBuildingConstructed?.Invoke(building);
+			CheckAndExecuteOnConstructionCompletedTasks(building);
 			onBuildingChanged?.Invoke(building);
 			OnAnyBuildingChanged();
 		}
@@ -72,6 +73,28 @@ namespace LongLiveKhioyen
 		{
 			int x = int.Parse(task.parameters[0]), y = int.Parse(task.parameters[1]);
 			FinishConstructionSite(new(x, y));
+		}
+
+		[SerializeField] List<KeyValuePair<string, PolisTask>> scheduledOnConstructionCompletedTasks = new();
+
+		void ExecuteScheduleOnConstructionCompleted(PolisTask task)
+		{
+			string tag = task.parameters[0];
+			string taskType = task.parameters[1];
+			string[] taskParams = task.parameters.Skip(2).ToArray();
+			scheduledOnConstructionCompletedTasks.Add(new(tag, new(taskType, 0, taskParams)));
+		}
+
+		/// <summary>在建造完成时，检查是否有建造完成事件可触发，并触发之。</summary>
+		void CheckAndExecuteOnConstructionCompletedTasks(BuildingPlacement placement)
+		{
+			var targetTasks = scheduledOnConstructionCompletedTasks
+				.Where(pair => placement.Definition.tags.Contains(pair.Key))
+				.Select(pair => pair.Value)
+				.ToArray();
+			scheduledOnConstructionCompletedTasks.RemoveAll(pair => targetTasks.Any(task => task == pair.Value));
+			foreach(var task in targetTasks)
+				AddTask(task);
 		}
 		#endregion
 

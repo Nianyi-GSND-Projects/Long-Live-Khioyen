@@ -47,6 +47,9 @@ namespace LongLiveKhioyen
 				case PolisTaskType.scheduleDialog:
 					ExecuteScheduleDialogTask(task);
 					break;
+				case PolisTaskType.scheduleOnConstructionCompleted:
+					ExecuteScheduleOnConstructionCompleted(task);
+					break;
 				default: throw new NotSupportedException();
 			}
 		}
@@ -80,5 +83,6 @@ namespace LongLiveKhioyen
 		public const string itemProduced = "item-produced";
 		public const string startDialog = "start-dialog";
 		public const string scheduleDialog = "schedule-dialog";
+		public const string scheduleOnConstructionCompleted = "schedule-on-construction-completed";
 	}
 }

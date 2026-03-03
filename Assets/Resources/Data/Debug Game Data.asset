@@ -82,7 +82,15 @@ MonoBehaviour:
           population: 0
           items:
             records: []
-      tasks: []
+      tasks:
+      - type: schedule-on-construction-completed
+        totalTime: 0
+        remainingTime: 0
+        requiredPopulation: 0
+        parameters:
+        - dwelling
+        - start-dialog
+        - 2
       lastTime:
         monthsElapsed: 0
     - buildings: []
