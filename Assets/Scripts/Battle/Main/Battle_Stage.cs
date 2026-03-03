@@ -104,16 +104,17 @@ namespace LongLiveKhioyen
                 CurrentTurnState = TurnState.PlayerTurn;
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerTurnStart);
-				
                 yield return StartCoroutine(PlayerTurnCoroutine());
-				
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerTurnEnd);
 				
                 CheckBattleEnd();
                 if (CurrentStage == Stage.Settlement) yield break;
 				
+                
                 CurrentTurnState = TurnState.Processing;
+                
+                OnPlayerTurnEnded?.Invoke();
                 yield return new WaitForSeconds(1);
                 
                 CurrentTurnState = TurnState.EnemyTurn;
@@ -160,14 +161,13 @@ namespace LongLiveKhioyen
             {
                 yield return null;
             }
+            
             Debug.Log("Player Turn End!");
             ChangeActionStage(PlayerActionStage.None);
             foreach (var unit in factionActiveUnits[Faction.Player])
             {
-                //改成实际数值
                 unit.selected = false;
             }
-            OnPlayerTurnEnded?.Invoke();
         }
         
         public void EndPlayerTurn()
@@ -190,6 +190,7 @@ namespace LongLiveKhioyen
                     ClearAllSelection();
                     ChangeActionStage(PlayerActionStage.None);
                 }
+
                 ClearAllHexHighlights();
                 IsPlayerTurnOver = true;
             }

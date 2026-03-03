@@ -24,6 +24,7 @@ namespace LongLiveKhioyen
             {
                 Battle.OnStageChanged += RefreshState;
                 Battle.OnPlayerTurnStarted += RefreshState;
+                Battle.OnPlayerTurnEnded += RefreshState;
                 Battle.OnUnitPlaced += RefreshState;
                 Battle.OnActionStageChanged += HandleActionStageChanged;
             }
@@ -37,6 +38,7 @@ namespace LongLiveKhioyen
             {
                 Battle.OnStageChanged -= RefreshState;
                 Battle.OnPlayerTurnStarted -= RefreshState;
+                Battle.OnPlayerTurnEnded -= RefreshState;
                 Battle.OnUnitPlaced -= RefreshState;
                 Battle.OnActionStageChanged -= HandleActionStageChanged;
             }
