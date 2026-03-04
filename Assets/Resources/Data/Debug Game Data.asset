@@ -55,7 +55,9 @@ MonoBehaviour:
         money: 800000
         population: 200
         items:
-          records: []
+          records:
+          - itemId: test-equip
+            quantity: 100
       queuedProductions: []
       forSaleItems:
         records: []
@@ -72,6 +74,10 @@ MonoBehaviour:
           Yong: 0
           Yan: 0
           isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
           personality: {fileID: 0}
           traits: []
           commanderActions: []
@@ -122,6 +128,10 @@ MonoBehaviour:
           Yong: 0
           Yan: 0
           isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
           personality: {fileID: 0}
           traits: []
           commanderActions: []
@@ -164,6 +174,10 @@ MonoBehaviour:
           Yong: 0
           Yan: 0
           isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
           personality: {fileID: 0}
           traits: []
           commanderActions: []
@@ -206,6 +220,10 @@ MonoBehaviour:
           Yong: 0
           Yan: 0
           isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
           personality: {fileID: 0}
           traits: []
           commanderActions: []

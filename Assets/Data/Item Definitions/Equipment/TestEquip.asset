@@ -45,11 +45,11 @@ MonoBehaviour:
   m_Name: TestEquip
   m_EditorClassIdentifier: 
   id: 6
-  itemId: 
+  itemId: test-equip
   itemName: 
   tags: []
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
   rarity: 0
   value: 0
   itemWeightFactor: 1

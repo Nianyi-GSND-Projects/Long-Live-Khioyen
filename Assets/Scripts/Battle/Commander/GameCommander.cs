@@ -31,6 +31,9 @@ namespace LongLiveKhioyen
         public int Yan;
         
         public bool isAssigned;
+
+        [Header("Equipments")]
+        public EquipmentDefinition[] equipments = new EquipmentDefinition[3];
         
         [Header("Traits & Skills")]
         public CommanderPersonalitySO personality;

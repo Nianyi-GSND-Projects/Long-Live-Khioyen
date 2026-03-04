@@ -132,7 +132,7 @@ namespace LongLiveKhioyen
 			{
 				battalionCommander = promotion.commander,
 				currentSolider = 0,
-				battalionDefinition = UnitDatabase.BattalionDefinitionSheet.GetUnit(0) as BattalionDefinition,  // 龙鸣
+				battalionDefinition = UnitDatabase.BattalionDefinitionSheet.GetUnit(0) as BattalionDefinition,  // TODO: 稳定获取龙鸣
 			};
 			garrisonedBattalions.Add(battalion);
 
@@ -142,6 +142,47 @@ namespace LongLiveKhioyen
 			// 刷新下一个
 			nextPromotion = null;
 			onNextPromotableCommanderChanged?.Invoke();
+		}
+		#endregion
+
+		#region 将领
+		public void EquipForCommander(GameCommander commander, EquipmentDefinition equipment, int slot)
+		{
+			if(commander == null || equipment == null || slot < 0 || slot >= (commander.equipments?.Length ?? 0))
+				return;
+
+			ResourceDescriptor cost = new()
+			{
+				type = ResourceType.Item,
+				quantity = 1,
+				itemId = equipment.itemId,
+			};
+			if(!Economy.CanCover(cost))
+			{
+				Debug.LogWarning($"尝试给武将 {commander.commanderName} 装备 {equipment.itemName}，库存不足。");
+				return;
+			}
+
+			if(commander.equipments[slot] != null)
+			{
+				Economy.Add(new ResourceDescriptor()
+				{
+					type = ResourceType.Item,
+					quantity = 1,
+					itemId = equipment.itemId,
+				});
+				commander.equipments[slot] = null;
+			}
+
+			if(equipment != null)
+			{
+				Economy.Cost(cost);
+				commander.equipments[slot] = equipment;
+			}
+
+			Debug.Log($"武将 {commander.commanderName} 在第 {slot} 个槽装备了 {equipment.itemName}。");
+
+			onGarrisonChanged?.Invoke();
 		}
 		#endregion
 	}

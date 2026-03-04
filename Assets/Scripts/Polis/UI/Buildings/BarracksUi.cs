@@ -10,6 +10,7 @@ namespace LongLiveKhioyen
 		#region Life cycle
 		protected void Start()
 		{
+			SetupEquipmentSlots();
 			SetupBattalionArea();
 
 			PolisData.Current.onGarrisonChanged += RefreshCommanders;
@@ -99,6 +100,7 @@ namespace LongLiveKhioyen
 		[SerializeField] Image commanderAvatarImage;
 		[SerializeField] TMP_Text commanderNameText;
 		[SerializeField] TMP_Text zhiText, xinText, renText, yongText, yanText;
+		[SerializeField] EquipmentSlot[] equipmentSlots;
 
 		void InspectCommander()
 		{
@@ -112,7 +114,34 @@ namespace LongLiveKhioyen
 			yongText.text = SelectedCommander?.Yong.ToString();
 			yanText.text = SelectedCommander?.Yan.ToString();
 
+			RefreshEquipmentSlots();
 			RefreshBattalionArea();
+		}
+
+		void SetupEquipmentSlots()
+		{
+			for(int i = 0; i < equipmentSlots.Length; ++i)
+			{
+				equipmentSlots[i].onSelected += e => PolisData.Current.EquipForCommander(SelectedCommander, e, i);
+			}
+		}
+
+		static bool IsEquipment(ItemDefinition item)
+		{
+			return item != null && item is EquipmentDefinition;
+		}
+
+		void RefreshEquipmentSlots()
+		{
+			var items = PolisData.Current.Economy.items.ToArray();
+			for(int i = 0; i < equipmentSlots.Length; ++i)
+			{
+				var slot = equipmentSlots[i];
+				slot.Options = PolisData.Current.Economy.items
+					.Where(record => IsEquipment(record.Definition))
+					.Select(r => r.Definition as EquipmentDefinition);
+				slot.DisplaySprite = SelectedCommander == null ? null : SelectedCommander.equipments[i]?.icon;
+			}
 		}
 
 		[Header("军队编制")]
