@@ -194,16 +194,63 @@ namespace LongLiveKhioyen
         private int GetEquipmentBonus(System.Func<EquipmentEffect, int> selector)
         {
             int bonus = 0;
-            //TODO
-            
+
+            foreach (var equipment in equipments)
+            {
+                if (equipment != null && equipment.effects != null)
+                {
+                    foreach (var effect in equipment.effects)
+                    {
+                        if (effect != null)
+                        {
+                            bonus += selector(effect);
+                        }
+                    }
+                }
+            }
+            return bonus;
+        }
+        
+        private float GetEquipmentBonus(System.Func<EquipmentEffect, float> selector)
+        {
+            float bonus = 0;
+            foreach (var equipment in equipments)
+            {
+                if (equipment != null && equipment.effects != null)
+                {
+                    foreach (var effect in equipment.effects)
+                    {
+                        if (effect != null)
+                        {
+                            bonus += selector(effect);
+                        }
+                    }
+                }
+            }
             return bonus;
         }
         
         public List<ActionDefinition> GetAllActions()
         {
             HashSet<ActionDefinition> allActions = new HashSet<ActionDefinition>(commanderActions);
-            //TODO
-
+            foreach (var equipment in equipments)
+            {
+                if (equipment != null && equipment.effects != null)
+                {
+                    foreach (var effect in equipment.effects)
+                    {
+                        if (effect is GrantSkillEffect grantSkillEffect && grantSkillEffect.skillsToGrant != null)
+                            foreach (var skill in grantSkillEffect.skillsToGrant)
+                            {
+                                if (skill != null)
+                                {
+                                    allActions.Add(skill);
+                                }
+                            }
+                    }
+                }
+            }
+            
             return allActions.ToList();
         }
         
