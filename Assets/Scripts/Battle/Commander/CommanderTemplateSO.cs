@@ -24,6 +24,7 @@ namespace LongLiveKhioyen
         public List<CommanderTraitSO> traits;
         public List<ActionDefinition> commanderActions;
         
+        public EquipmentDefinition[] presetEquipments = new EquipmentDefinition[3];
         public GameCommander CreateInstance(int newId)
         {
             return new GameCommander()
@@ -43,9 +44,10 @@ namespace LongLiveKhioyen
                 personality = personality,
                 traits = new List<CommanderTraitSO>(traits),
                 commanderActions = new List<ActionDefinition>(commanderActions),
-            
+                equipments = presetEquipments,
                 isAssigned = false
             };
+            
         }
     }
 }

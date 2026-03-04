@@ -23,5 +23,6 @@ MonoBehaviour:
   Yan: 70
   personality: {fileID: 11400000, guid: d7daa87ce2afdd34ab42ced61de6b1f3, type: 2}
   traits: []
-  commanderActions:
-  - {fileID: 11400000, guid: 1757f2b6b55ba3b46bcde010b759c6dd, type: 2}
+  commanderActions: []
+  presetEquipments:
+  - {fileID: 11400000, guid: 720d2e58d88d4444589215203cb07cee, type: 2}
