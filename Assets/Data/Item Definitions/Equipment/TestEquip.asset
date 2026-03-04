@@ -54,8 +54,11 @@ MonoBehaviour:
   value: 0
   itemWeightFactor: 1
   maxStackNumber: 100
-  productable: 0
-  costs: []
+  productable: 1
+  costs:
+  - type: 6
+    itemId: 
+    quantity: 2
   canSell: 1
   sellPrice: 0
   canBuy: 1

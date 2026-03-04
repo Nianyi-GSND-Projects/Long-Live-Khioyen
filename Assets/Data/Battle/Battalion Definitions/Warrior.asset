@@ -41,6 +41,7 @@ MonoBehaviour:
   lootRules: []
   tags: []
   isTrainable: 1
+  requiredWeapon: {fileID: 11400000, guid: 720d2e58d88d4444589215203cb07cee, type: 2}
   defaultDiscipline: 100
   defaultFlexibility: 20
   defaultStrategy: 100

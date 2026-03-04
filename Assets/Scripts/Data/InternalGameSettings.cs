@@ -31,6 +31,7 @@ namespace LongLiveKhioyen
 
 		[Header("军备")]
 		[Label("武将招募成本")] public Economy promotionCost;
+		[Label("默认兵种")] public BattalionDefinition defaultBattalionType;
 
 		[Header("行军")]
 		[Label("行军耗粮速率（每距离每重量）"), Min(0)] public float worldMapFoodCostRate;

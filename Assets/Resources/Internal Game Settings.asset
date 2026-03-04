@@ -33,6 +33,7 @@ MonoBehaviour:
     population: 1
     items:
       records: []
+  defaultBattalionType: {fileID: 11400000, guid: 68a08bd622c12224baf72f41aca7000c, type: 2}
   worldMapFoodCostRate: 0.0015
   worldMapTimeScale: 0.5
   foodCostPerBattle: 50

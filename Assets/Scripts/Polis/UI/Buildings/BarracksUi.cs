@@ -15,6 +15,7 @@ namespace LongLiveKhioyen
 
 			PolisData.Current.onGarrisonChanged += RefreshCommanders;
 			PolisData.Current.onNextPromotableCommanderChanged += RefreshPromotion;
+			PolisData.Current.StockedItems.onChanged += RefreshBattalionArea;
 
 			Refresh();
 			InspectCommander();
@@ -25,6 +26,7 @@ namespace LongLiveKhioyen
 			SelectedBattalion = null;  // 解绑事件
 			PolisData.Current.onGarrisonChanged -= RefreshCommanders;
 			PolisData.Current.onNextPromotableCommanderChanged -= RefreshPromotion;
+			PolisData.Current.StockedItems.onChanged -= RefreshBattalionArea;
 		}
 
 		void Refresh()
@@ -115,6 +117,7 @@ namespace LongLiveKhioyen
 			yanText.text = SelectedCommander?.Yan.ToString();
 
 			RefreshEquipmentSlots();
+			SyncBattalionTypeDropDown();
 			RefreshBattalionArea();
 		}
 
@@ -154,12 +157,17 @@ namespace LongLiveKhioyen
 		[SerializeField] TMP_Dropdown battalionTypeDropDown;
 		[SerializeField] Slider battalionSlider;
 		[SerializeField] TMP_Text currentCountText, availableCountText;
+		BattalionDefinition[] trainableBattalionDefinitions;
 
 		void SetupBattalionArea()
 		{
+			trainableBattalionDefinitions = UnitDatabase.BattalionDefinitionSheet.unitDefinitions
+				.OfType<BattalionDefinition>()
+				.Where(d => d != null && d.isTrainable)
+				.ToArray();
+
 			battalionTypeDropDown.ClearOptions();
-			battalionTypeDropDown.AddOptions(UnitDatabase.BattalionDefinitionSheet.unitDefinitions
-				.Where(d => (d as BattalionDefinition).isTrainable)
+			battalionTypeDropDown.AddOptions(trainableBattalionDefinitions
 				.Select(d => new TMP_Dropdown.OptionData()
 				{
 					text = d.name,
@@ -169,8 +177,50 @@ namespace LongLiveKhioyen
 
 		void OnSelectBattalionType(int i)
 		{
-			if(SelectedCommander == null)
+			if(SelectedBattalion == null)
 				return;
+			if(i < 0 || i >= (trainableBattalionDefinitions?.Length ?? 0))
+				return;
+
+			var definition = trainableBattalionDefinitions[i];
+			if(definition == null)
+				return;
+
+			// 切兵种的资源结算走数据层，避免只在 UI 层改显示。
+			PolisData.Current.TryChangeBattalionDefinition(SelectedBattalion, definition);
+		}
+
+		void SyncBattalionTypeDropDown()
+		{
+			if(SelectedBattalion?.battalionDefinition == null)
+				return;
+
+			int index = System.Array.IndexOf(trainableBattalionDefinitions, SelectedBattalion.battalionDefinition);
+			if(index >= 0)
+				battalionTypeDropDown.SetValueWithoutNotify(index);
+		}
+
+		BattalionDefinition GetSelectedBattalionDefinition()
+		{
+			if(trainableBattalionDefinitions == null || trainableBattalionDefinitions.Length == 0)
+				return SelectedBattalion?.battalionDefinition;
+
+			int index = battalionTypeDropDown.value;
+			if(index < 0 || index >= trainableBattalionDefinitions.Length)
+				return SelectedBattalion?.battalionDefinition;
+
+			return trainableBattalionDefinitions[index] ?? SelectedBattalion?.battalionDefinition;
+		}
+
+		int GetRequiredWeaponStock(BattalionDefinition definition)
+		{
+			if(definition?.requiredWeapon == null)
+				return int.MaxValue;
+
+			if(string.IsNullOrEmpty(definition.requiredWeapon.itemId))
+				return 0;
+
+			return PolisData.Current.StockedItems.GetItemQuantity(definition.requiredWeapon.itemId);
 		}
 
 		void RefreshBattalionArea()
@@ -180,8 +230,17 @@ namespace LongLiveKhioyen
 			if(SelectedBattalion == null)
 				return;
 
-			weaponNameText.text = "";  // TODO
-			weaponCountText.text = "";  // TODO
+			var definition = GetSelectedBattalionDefinition();
+			if(definition?.requiredWeapon == null)
+			{
+				weaponNameText.text = "无";
+				weaponCountText.text = "不限制";
+			}
+			else
+			{
+				weaponNameText.text = string.IsNullOrEmpty(definition.requiredWeapon.itemName) ? definition.requiredWeapon.name : definition.requiredWeapon.itemName;
+				weaponCountText.text = GetRequiredWeaponStock(definition).ToString();
+			}
 
 			populationText.text = PolisData.Current.FreePopulation.ToString();
 			currentCountText.text = SelectedBattalion.currentSolider.ToString();
@@ -200,8 +259,17 @@ namespace LongLiveKhioyen
 			if(SelectedBattalion == null)
 				return default;
 
-			int res = PolisData.Current.FreePopulation + SelectedBattalion.currentSolider;
-			return res;
+			int populationCap = PolisData.Current.FreePopulation + SelectedBattalion.currentSolider;
+			int weaponCap = int.MaxValue;
+
+			var definition = GetSelectedBattalionDefinition();
+			if(definition?.requiredWeapon != null)
+			{
+				// 当前兵员已视作占用完毕，库存仅限制“新增”可募兵数量。
+				weaponCap = SelectedBattalion.currentSolider + GetRequiredWeaponStock(definition);
+			}
+
+			return Mathf.Min(populationCap, weaponCap);
 		}
 
 		void OnSetSoldierCount(float v)

@@ -64,15 +64,155 @@ namespace LongLiveKhioyen
 
 		public void SetBattalionSoldierCount(BattalionStatus battalion, int targetCount)
 		{
-			int dCount = targetCount - battalion.currentSolider;
-			if(dCount > FreePopulation)
-			{
-				Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：需要 {FreePopulation - dCount} 空闲人口，当前空闲人口 {FreePopulation}。");
+			if(battalion == null)
 				return;
+
+			targetCount = Mathf.Clamp(targetCount, 0, battalion.MaxSolider);
+			int dCount = targetCount - battalion.currentSolider;
+			if(dCount == 0)
+				return;
+
+			if(dCount > 0)
+			{
+				if(dCount > FreePopulation)
+				{
+					Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：需要 {dCount} 空闲人口，当前空闲人口 {FreePopulation}。");
+					return;
+				}
+
+				if(!TryCostBattalionWeapons(battalion.battalionDefinition, dCount))
+				{
+					Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：对应兵器库存不足。");
+					return;
+				}
 			}
+			else
+			{
+				// 缩编时把对应兵器返还库存。
+				ReturnBattalionWeapons(battalion.battalionDefinition, -dCount);
+			}
+
 			battalion.currentSolider += dCount;
 			Population -= dCount;
 			battalion.onChanged?.Invoke();
+		}
+
+		/// <summary>
+		/// 切换驻军兵种：先返还旧兵器，再按新兵器上限裁剪兵员并扣除新兵器。
+		/// </summary>
+		public bool TryChangeBattalionDefinition(BattalionStatus battalion, BattalionDefinition targetDefinition)
+		{
+			if(battalion == null || targetDefinition == null)
+				return false;
+
+			if(battalion.battalionDefinition == targetDefinition)
+				return true;
+
+			int oldSoldierCount = battalion.currentSolider;
+
+			// 1) 把旧兵种占用的兵器先返还到库存。
+			ReturnBattalionWeapons(battalion.battalionDefinition, oldSoldierCount);
+
+			// 2) 计算新兵种可承载上限（人口、编制、新兵器库存）。
+			int populationCap = FreePopulation + oldSoldierCount;
+			int formationCap = GetMaxSoldierForDefinition(battalion.battalionCommander, targetDefinition);
+			int weaponCap = GetWeaponLimitedSoldierCap(targetDefinition, oldSoldierCount);
+			int newSoldierCount = Mathf.Clamp(oldSoldierCount, 0, Mathf.Min(populationCap, Mathf.Min(formationCap, weaponCap)));
+
+			// 防御性约束：不允许切兵种后出现负闲置人口。
+			int maxByFreePopulation = oldSoldierCount + Mathf.Max(FreePopulation, 0);
+			newSoldierCount = Mathf.Min(newSoldierCount, maxByFreePopulation);
+
+			// 3) 扣除新兵种需要占用的兵器。
+			if(!TryCostBattalionWeapons(targetDefinition, newSoldierCount))
+			{
+				// 理论上不会到这里（上面已按 weaponCap 裁剪），留保护并回滚旧兵器。
+				TryCostBattalionWeapons(battalion.battalionDefinition, oldSoldierCount);
+				Debug.LogWarning($"切换 {battalion.battalionCommander?.commanderName} 的兵种失败：新兵器库存不足。");
+				return false;
+			}
+
+			// 4) 应用兵种与兵员变更。
+			battalion.battalionDefinition = targetDefinition;
+			int dCount = newSoldierCount - oldSoldierCount;
+			battalion.currentSolider = newSoldierCount;
+			Population -= dCount;
+			battalion.onChanged?.Invoke();
+			return true;
+		}
+
+		int GetMaxSoldierForDefinition(GameCommander commander, BattalionDefinition definition)
+		{
+			if(definition == null)
+				return 0;
+
+			int maxSoldier = definition.defaultMaxSolider;
+			if(commander != null)
+				maxSoldier += commander.GetMaxSoldiersBonus();
+			return Mathf.Max(maxSoldier, 0);
+		}
+
+		int GetWeaponLimitedSoldierCap(BattalionDefinition definition, int currentSoldierCount)
+		{
+			string requiredWeaponId = GetRequiredWeaponItemId(definition);
+			if(string.IsNullOrEmpty(requiredWeaponId))
+				return int.MaxValue;
+
+			int stock = StockedItems.GetItemQuantity(requiredWeaponId);
+			return currentSoldierCount + Mathf.Max(stock, 0);
+		}
+
+		string GetRequiredWeaponItemId(BattalionDefinition definition)
+		{
+			if(definition?.requiredWeapon == null)
+				return null;
+
+			if(string.IsNullOrEmpty(definition.requiredWeapon.itemId))
+				return string.Empty;
+
+			return definition.requiredWeapon.itemId;
+		}
+
+		bool TryCostBattalionWeapons(BattalionDefinition definition, int count)
+		{
+			if(count <= 0)
+				return true;
+
+			string requiredWeaponId = GetRequiredWeaponItemId(definition);
+			if(requiredWeaponId == null)
+				return true;
+
+			if(requiredWeaponId == string.Empty)
+				return false;
+
+			ResourceDescriptor cost = new()
+			{
+				type = ResourceType.Item,
+				itemId = requiredWeaponId,
+				quantity = count,
+			};
+			if(!Economy.CanCover(cost))
+				return false;
+
+			Economy.Cost(cost);
+			return true;
+		}
+
+		void ReturnBattalionWeapons(BattalionDefinition definition, int count)
+		{
+			if(count <= 0)
+				return;
+
+			string requiredWeaponId = GetRequiredWeaponItemId(definition);
+			if(string.IsNullOrEmpty(requiredWeaponId))
+				return;
+
+			Economy.Add(new ResourceDescriptor()
+			{
+				type = ResourceType.Item,
+				itemId = requiredWeaponId,
+				quantity = count,
+			});
 		}
 		#endregion
 
@@ -132,7 +272,7 @@ namespace LongLiveKhioyen
 			{
 				battalionCommander = promotion.commander,
 				currentSolider = 0,
-				battalionDefinition = UnitDatabase.BattalionDefinitionSheet.GetUnit(0) as BattalionDefinition,  // TODO: 稳定获取龙鸣
+				battalionDefinition = GameManager.InternalSettings.defaultBattalionType,
 			};
 			garrisonedBattalions.Add(battalion);
 

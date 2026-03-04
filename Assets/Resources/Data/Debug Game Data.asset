@@ -61,6 +61,8 @@ MonoBehaviour:
       queuedProductions: []
       forSaleItems:
         records: []
+      monthlyBuyItems:
+        records: []
       nextPromotion:
         commander:
           commanderId: 0
@@ -115,6 +117,8 @@ MonoBehaviour:
       queuedProductions: []
       forSaleItems:
         records: []
+      monthlyBuyItems:
+        records: []
       nextPromotion:
         commander:
           commanderId: 0
@@ -161,6 +165,8 @@ MonoBehaviour:
       queuedProductions: []
       forSaleItems:
         records: []
+      monthlyBuyItems:
+        records: []
       nextPromotion:
         commander:
           commanderId: 0
@@ -206,6 +212,8 @@ MonoBehaviour:
           records: []
       queuedProductions: []
       forSaleItems:
+        records: []
+      monthlyBuyItems:
         records: []
       nextPromotion:
         commander:

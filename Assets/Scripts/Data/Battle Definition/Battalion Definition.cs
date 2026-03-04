@@ -12,6 +12,9 @@ namespace LongLiveKhioyen
         
         public bool isTrainable = false;
         
+        [Header("Training")]
+        public ItemDefinition requiredWeapon;
+        
         #region Battalion Attributes
         
         public int defaultDiscipline;

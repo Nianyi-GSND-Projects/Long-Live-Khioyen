@@ -129,7 +129,12 @@ namespace LongLiveKhioyen
 			get => Economy.population;
 			set
 			{
-				int delta = Mathf.Min(value, PopulationCap) - value;
+				// setter 语义是“设置为目标总人口”，因此应按当前值计算增量。
+				int clampedValue = Mathf.Clamp(value, 0, PopulationCap);
+				int delta = clampedValue - Economy.population;
+				if(delta == 0)
+					return;
+
 				Economy.Add(new ResourceDescriptor()
 				{
 					type = ResourceType.Population,
