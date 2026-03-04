@@ -71,16 +71,35 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		public ArmyStatus ActiveArmy { get; set; }
+		ArmyStatus activeArmy;
+		public ArmyStatus ActiveArmy
+		{
+			get
+			{
+				if(activeArmy == null)
+					activeArmy = new();
+				return activeArmy;
+			}
+			set => activeArmy = value;
+		}
 
-		public enum Mode { Polis, WorldMap, Battle }
-		Mode currentMode = Mode.Polis;
+		public enum Mode { Undefined, Polis, WorldMap, Battle }
+		public System.Action onModeChanged;
 		public Mode CurrentMode
 		{
-			get => currentMode;
+			get
+			{
+				return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex switch
+				{
+					1 => Mode.Polis,
+					2 => Mode.WorldMap,
+					3 => Mode.Battle,
+					_ => Mode.Undefined,
+				};
+			}
 			private set
 			{
-				switch(currentMode = value)
+				switch(value)
 				{
 					case Mode.WorldMap:
 						GameManager.SwitchScene("World Map");
@@ -94,6 +113,7 @@ namespace LongLiveKhioyen
 					default:
 						throw new System.NotSupportedException();
 				}
+				onModeChanged?.Invoke();
 			}
 		}
 

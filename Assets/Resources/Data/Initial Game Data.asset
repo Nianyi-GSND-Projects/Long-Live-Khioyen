@@ -21,7 +21,7 @@ MonoBehaviour:
       data2D:
         scale: 0.0001
         mapAddress: 
-    lastPolis: juyan
+    lastPolis: huns-debug
     poleis:
     - buildings:
       - id: water-well
@@ -64,7 +64,6 @@ MonoBehaviour:
         population: 100
         items:
           records: []
-      population: 100
       queuedProductions: []
       forSaleItems:
         records: []
@@ -81,6 +80,10 @@ MonoBehaviour:
           Yong: 0
           Yan: 0
           isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
           personality: {fileID: 0}
           traits: []
           commanderActions: []
@@ -114,7 +117,6 @@ MonoBehaviour:
         population: 0
         items:
           records: []
-      population: 0
       queuedProductions: []
       forSaleItems:
         records: []
@@ -131,6 +133,10 @@ MonoBehaviour:
           Yong: 0
           Yan: 0
           isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
           personality: {fileID: 0}
           traits: []
           commanderActions: []

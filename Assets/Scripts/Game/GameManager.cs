@@ -211,34 +211,17 @@ namespace LongLiveKhioyen
 
 		public static void StartNewGame()
 		{
-			if(IsGameRunning)
-			{
-				Debug.LogError("A game instance is already running, cannot start new game.");
-				return;
-			}
-
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Initial Game Data").gameData);
 			StartGameInstanceWithData(data);
-			GameInstance.Instance.EnterPolis(data.lastPolis);
+			Utilities.CreateController<NewGameController>();
 		}
 
 #if UNITY_EDITOR
 		static void StartDebugGame()
 		{
-			Debug.Log("启动 debug 存档。");
 			GameData data = Utilities.DeepCopy(Resources.Load<GameDataSO>("Data/Debug Game Data").gameData);
 			StartGameInstanceWithData(data);
-
-			if(SceneManager.GetActiveScene().buildIndex != 1)  // 城外启动，须填充 ActiveArmy
-			{
-				GameInstance.Instance.ActiveArmy = new()
-				{
-					armyCommander = null,
-					battalionStatuses = new(),
-					initialFood = 1000,
-					carriedFood = 900,
-				};
-			}
+			Utilities.CreateController<DebugGameController>();
 		}
 #endif
 

@@ -1,9 +1,9 @@
-using UnityEngine;
-using UnityEngine.AI;
-using Unity.AI.Navigation;
 using Nianyi.UnityPack;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
+using UnityEngine;
+using UnityEngine.AI;
 using WearnessTensor = UnityEngine.Vector3;
 
 namespace LongLiveKhioyen
@@ -451,7 +451,7 @@ namespace LongLiveKhioyen
 
 		static WearnessTensor CalculateWearnessTensor(Vector2 movement)
 		{
-			float theta = Mathf.Atan2(movement.y, movement.x) ;
+			float theta = Mathf.Atan2(movement.y, movement.x);
 			float cos = Mathf.Cos(theta), sin = Mathf.Sin(theta);
 			return new(cos * cos, cos * sin, sin * sin);
 		}
@@ -468,5 +468,23 @@ namespace LongLiveKhioyen
 			return new(direction.x, direction.y, 0, strength);
 		}
 		#endregion
+
+		public static void Once(this System.Action ev, System.Action listener)
+		{
+#pragma warning disable IDE0039 // 变量提升，否则报错
+			System.Action wrapper = null;
+#pragma warning restore IDE0039
+			wrapper = () =>
+			{
+				listener?.Invoke();
+				ev -= listener;
+			};
+			ev += listener;
+		}
+
+		public static void CreateController<T>() where T : GameController
+		{
+			new GameObject("Game Controller").AddComponent<T>();
+		}
 	}
 }
