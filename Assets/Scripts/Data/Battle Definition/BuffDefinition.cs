@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 namespace LongLiveKhioyen
 {
     public enum BuffFactionType
@@ -18,8 +18,10 @@ namespace LongLiveKhioyen
         Facility,
         Both
     }
+    [Serializable]
     public class BuffDescriptor
     {
+        [SerializeReference]
         public BuffDefinition definition;
         public int defaultDuration;
     }
@@ -34,8 +36,8 @@ namespace LongLiveKhioyen
             currentDuration--;
         }
     }
-    
-    public abstract class BuffDefinition : ScriptableObject
+    [Serializable]
+    public abstract class BuffDefinition: ScriptableObject
     {
         public string buffNameEn;
         public string buffNameCh;

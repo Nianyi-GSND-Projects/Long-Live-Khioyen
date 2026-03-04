@@ -15,18 +15,19 @@ namespace LongLiveKhioyen
         
         public override float GetPower()
         {
-            if (entryStats == null) return 0;
-            float ratio = 1.0f;
-            return entryStats.attackPower * ratio; 
+            return GetStat(StatType.AttackPower);
         }
         
         public override float GetDefense()
         {
-            if (entryStats == null) return 0;
-            float ratio = 1.0f;
-            return entryStats.defensePower* ratio;
+            return GetStat(StatType.DefensePower);
         }
-        
+
+        public override float GetRepairPower()
+        {
+            return GetStat(StatType.RepairPower);
+        }
+
         protected override void OnHealthChanged()
         {
             base.OnHealthChanged();
@@ -76,11 +77,6 @@ namespace LongLiveKhioyen
                 
                 buffs.Add(newBuff);
             }
-        }
-        
-        public override int GetMaxHealth()
-        {
-            return Definition.defaultMaxDurability;
         }
         
         public override void CalculateEntryStats(UnitDescriptor desc)

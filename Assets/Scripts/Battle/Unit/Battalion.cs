@@ -28,56 +28,35 @@ namespace LongLiveKhioyen
             InstanceId = -1;
             inventory = new List<inBattleItem>();
         }
-
+        
         public override float GetPower()
         {
-            if (entryStats == null) return 0;
-            
-            float baseVal = entryStats.attackPower;
-            
-            float ratio = (float)currentSoliders / BattleParam.Instance.defaultSoliderAmountForOnePower;
-            
-            //TODO：其他修正
-            
-            return baseVal * ratio;
+            float finalStatPower = GetStat(StatType.AttackPower);
+
+            float soldierRatio = (float)currentSoliders / BattleParam.Instance.defaultSoliderAmountForOnePower;
+
+            return finalStatPower * soldierRatio;
         }
         
         public override float GetRepairPower()
         {
-            if (entryStats == null) return 0;
-            
-            float baseVal = entryStats.repairPower;
-            
-            float ratio = (float)currentSoliders / BattleParam.Instance.defaultSoliderAmountForOnePower;
-            
-            //TODO：其他修正
-            
-            return baseVal * ratio;
+            float finalStatRepair = GetStat(StatType.RepairPower);
+
+            float soldierRatio = (float)currentSoliders / BattleParam.Instance.defaultSoliderAmountForOnePower;
+
+            return finalStatRepair * soldierRatio;
         }
         
         public override float GetDefense()
         {
-            if (entryStats == null) return 0;
-        
-            float baseVal = entryStats.defensePower;
-            float ratio = 1.0f;
-            //TODO:修正
-        
-            return baseVal * ratio;
+            return GetStat(StatType.DefensePower);
         }
         
         public float CurrentFlexibility
         {
             get
             {
-                if (entryStats == null) return 0;
-            
-                float baseVal = entryStats.flexibility;
-            
-                float ratio = 1.0f;
-                //TODO:修正
-        
-                return baseVal * ratio;
+               return GetStat(StatType.Flexibility);
             }
         }
         
@@ -87,14 +66,7 @@ namespace LongLiveKhioyen
         {
             get
             {
-                if (entryStats == null) return 0;
-                
-                float baseVal = entryStats.discipline;
-            
-                float ratio = 1.0f;
-                //TODO:修正
-        
-                return baseVal * ratio;
+                return GetStat(StatType.Discipline);
             }
         }
         
@@ -102,13 +74,7 @@ namespace LongLiveKhioyen
         {
             get
             {
-                if (entryStats == null) return 0;
-                float baseVal = entryStats.strategy;
-            
-                float ratio = 1.0f;
-                //TODO:修正
-        
-                return baseVal * ratio;
+                return GetStat(StatType.Strategy);
             }
         }
         
@@ -118,7 +84,6 @@ namespace LongLiveKhioyen
             if (buffDescriptor.definition.unitType == BuffUnitType.Battalion ||
                 buffDescriptor.definition.unitType == BuffUnitType.Both)
             {
-                //处理逻辑
                 Buff newBuff = new Buff()
                 {
                     descriptor = buffDescriptor,
@@ -126,7 +91,6 @@ namespace LongLiveKhioyen
                 };
                 
                 buffs.Add(newBuff);
-                
             }
         }
         

@@ -75,7 +75,7 @@ namespace LongLiveKhioyen
                     moraleBarRoot.SetActive(true);
                     if (moraleSlider != null)
                     {
-                        float mpPercent = (float)bat.currentMorale / Mathf.Max(1, bat.GetMaxMorale());
+                        float mpPercent = (float)bat.currentMorale / Mathf.Max(1, bat.GetStat(StatType.MaxMorale));
                         moraleSlider.value = mpPercent;
                     }
                 }
@@ -97,13 +97,13 @@ namespace LongLiveKhioyen
             
             if (healthSlider != null)
             {
-                float hpPercent = (float)unit.currentHealth / Mathf.Max(1, unit.GetMaxHealth());
+                float hpPercent = (float)unit.currentHealth / Mathf.Max(1, unit.GetStat(StatType.MaxHealth));
                 healthSlider.value = hpPercent;
             }
             
             if (unitInfoText != null)
             {
-                unitInfoText.text = $"{unit.currentHealth}/{unit.GetMaxHealth()}";
+                unitInfoText.text = $"{unit.currentHealth}/{unit.GetStat(StatType.MaxHealth)}";
             }
             
             if (iconImage != null && Battle.Instance != null)

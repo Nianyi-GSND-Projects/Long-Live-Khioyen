@@ -30,7 +30,7 @@ namespace LongLiveKhioyen
         public Unit LastAttacker { get; private set; }
         public bool IsVisible { get; set; } = true;
         
-        public virtual int ZocPower => GetZocPower();
+        public virtual int ZocPower => (int)GetStat(StatType.ZocPower);
         protected virtual void Start()
         {
             visualController = GetComponent<UnitVisualController>();
@@ -47,32 +47,78 @@ namespace LongLiveKhioyen
             {
                 maxHealth = desc.maxHealth,
                 ZOCPower = desc.ZOCPower,
-                repairPower = unitDefinition.defaultRepairPower
+                repairPower = unitDefinition.defaultRepairPower,
+                actionChance = desc.actionChance
             };
         }
-        
-        public virtual int GetMaxHealth()
+        public virtual float GetStat(StatType stat)
         {
-            if (entryStats != null) return entryStats.maxHealth;
-            return 0;
+            if (entryStats == null) return 0;
+
+            float baseValue = GetBaseStatValue(stat);
+
+            float additiveBonus = 0f;
+            float multiplicativeBonus = 1f;
+
+            foreach (var buff in buffs)
+            {
+                if (buff.descriptor.definition is StatModifierBuffDefinition statBuff)
+                {
+                    foreach (var modifier in statBuff.Modifiers)
+                    {
+                        if (modifier.StatToModify == stat)
+                        {
+                            if (modifier.Type == ModifierType.Additive)
+                            {
+                                additiveBonus += modifier.Value;
+                            }
+                            else if (modifier.Type == ModifierType.Multiplicative)
+                            {
+                                multiplicativeBonus *= modifier.Value;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (baseValue + additiveBonus) * multiplicativeBonus;
         }
         
-        public virtual int GetZocPower()
+        public float GetBaseStatValue(StatType stat)
         {
-            if (entryStats != null) return entryStats.ZOCPower;
-            return 0;
-        }
-    
-        public virtual int GetMaxMorale()
-        {
-            if (entryStats != null) return entryStats.maxMorale;
-            return 0;
-        }
-        
-        public virtual float GetRepairPower()
-        {
-            if (entryStats != null) return entryStats.repairPower;
-            return 0;
+            switch (stat)
+            {
+                case StatType.AttackPower:
+                    return entryStats.attackPower;
+                case StatType.DefensePower:
+                    return entryStats.defensePower;
+                case StatType.RepairPower:
+                    return entryStats.repairPower;
+                case StatType.Flexibility:
+                    return entryStats.flexibility;
+                case StatType.Discipline:
+                    return entryStats.discipline;
+                case StatType.Strategy:
+                    return entryStats.strategy;
+                case StatType.MaxHealth:
+                    return entryStats.maxHealth;
+                case StatType.MaxMorale:
+                    return entryStats.maxMorale;
+                case StatType.ZocPower:
+                    return entryStats.ZOCPower;
+                case StatType.ActionChance:
+                    return entryStats.actionChance;
+                case StatType.Movement:
+                    float flexibility = GetStat(StatType.Flexibility);
+                    int extra = 0;
+                    if (this is Battalion bat) extra = bat.ExtraMovement;
+                    return Mathf.FloorToInt(flexibility / BattleParam.Instance.mobilityPerMovement) + extra;
+                case StatType.DamageResistance:
+                    float defense = GetStat(StatType.DefensePower);
+                    return defense * BattleParam.Instance.damageResistancePerDefense;
+                default:
+                    return 0;
+            }
         }
         
         public void OnUnitStateChanged()
@@ -164,7 +210,7 @@ namespace LongLiveKhioyen
             if (entryStats == null) return;
             if (attacker != null) LastAttacker = attacker;
             
-            float defense = GetDefense();
+            float defense = GetStat(StatType.DefensePower);
             float resistancePerDef = 0.05f;
             if (BattleParam.Instance != null)
             {
@@ -189,23 +235,18 @@ namespace LongLiveKhioyen
         
         protected virtual void OnHealthChanged() { }
 
-        public virtual float GetPower()
-        {
-            return entryStats != null ? entryStats.attackPower : 0;
-        }
+        public abstract float GetPower();
+
+        public abstract float GetDefense();
+
+        public abstract float GetRepairPower();
         
-        public virtual float GetDefense() 
-        {
-            return entryStats != null ? entryStats.defensePower : 0;
-        }
         public void ReceiveForcedMove(Vector2Int newPosition)
         {
             Vector2Int oldPosition = this.position;
             
-            // 1. 更新数据坐标
             this.position = newPosition;
 
-            // 2. 更新视觉位置 (直接瞬移，或者你可以改成 Tween 动画)
             if (Battle.Instance != null)
             {
                 transform.localPosition = Battle.Instance.MapToLocal(newPosition);
@@ -216,7 +257,6 @@ namespace LongLiveKhioyen
                 visualController.RefreshVisuals();
             }
 
-            // 4. [核心] 触发移动钩子
             OnPostForcedMove(oldPosition, newPosition);
         }
         
@@ -253,19 +293,15 @@ namespace LongLiveKhioyen
             {
                 Buff buff = buffs[i];
                 
-                // 执行逻辑钩子 (比如中毒扣血)
                 if (buff.descriptor.definition != null)
                 {
                     buff.descriptor.definition.OnTick(this, buff);
                 }
 
-                // 计时
                 buff.TimePass();
 
-                // 移除判定
                 if (buff.currentDuration <= 0)
                 {
-                    // 执行移除逻辑 (比如恢复属性)
                     if (buff.descriptor.definition != null)
                         buff.descriptor.definition.OnRemove(this, buff);
 
@@ -273,6 +309,7 @@ namespace LongLiveKhioyen
                 }
             }
         }
+        
         #endregion
     }
     

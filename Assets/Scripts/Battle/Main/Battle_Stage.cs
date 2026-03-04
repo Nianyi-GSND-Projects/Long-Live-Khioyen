@@ -110,12 +110,19 @@ namespace LongLiveKhioyen
 				
                 CheckBattleEnd();
                 if (CurrentStage == Stage.Settlement) yield break;
-				
-                
                 CurrentTurnState = TurnState.Processing;
-                
                 OnPlayerTurnEnded?.Invoke();
-                yield return new WaitForSeconds(1);
+                Debug.Log("Updating Player & Friend units buffs...");
+                foreach (var unit in factionActiveUnits[Faction.Player])
+                {
+                    unit.UpdateBuffs();
+                }
+                foreach (var unit in factionActiveUnits[Faction.Friend])
+                {
+                    unit.UpdateBuffs();
+                }
+                
+                yield return new WaitForSeconds(0.5f);
                 
                 CurrentTurnState = TurnState.EnemyTurn;
                 if (BattleEventManager.Instance != null)
@@ -128,10 +135,16 @@ namespace LongLiveKhioyen
                 if (CurrentStage == Stage.Settlement) yield break;
 				
                 CurrentTurnState = TurnState.Processing;
-                yield return new WaitForSeconds(1);
+                
+                Debug.Log("Updating Enemy units buffs...");
+                foreach (var unit in factionActiveUnits[Faction.Enemy])
+                {
+                    unit.UpdateBuffs();
+                }
+                
+                yield return new WaitForSeconds(0.5f);
 				
                 UpdateAllTileEffects(); 
-                //UpdateAllUnitBuffs(); 
             }
 
         }

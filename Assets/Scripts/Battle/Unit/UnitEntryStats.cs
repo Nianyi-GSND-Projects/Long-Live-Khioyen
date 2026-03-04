@@ -17,5 +17,7 @@ namespace LongLiveKhioyen
         
         public int cost;
         public int ZOCPower;
+
+        public int actionChance;
     }
 }

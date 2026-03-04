@@ -60,7 +60,8 @@ MonoBehaviour:
   sellPrice: 0
   canBuy: 1
   buyPrice: 0
-  effects: []
+  effects:
+  - {fileID: 8034151213336445734}
 --- !u!114 &5304813268255671838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,6 +85,21 @@ MonoBehaviour:
   movementBonus: 0
   zocPowerBonus: 0
   actionChanceBonus: 0
+--- !u!114 &8034151213336445734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant:
+  - {fileID: 11400000, guid: 1757f2b6b55ba3b46bcde010b759c6dd, type: 2}
 --- !u!114 &8147000186067009897
 MonoBehaviour:
   m_ObjectHideFlags: 0

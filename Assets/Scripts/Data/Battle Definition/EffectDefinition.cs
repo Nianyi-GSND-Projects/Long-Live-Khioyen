@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 namespace LongLiveKhioyen
 {
    
@@ -18,8 +18,8 @@ namespace LongLiveKhioyen
         Other
     }
     
-    
-    public abstract class EffectDefinition : ScriptableObject
+    [Serializable]
+    public abstract class EffectDefinition: ScriptableObject
     {
         public EffectType effectType;
         public abstract void Execute(ActionContext context);

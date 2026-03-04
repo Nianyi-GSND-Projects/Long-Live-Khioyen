@@ -8,8 +8,6 @@ namespace LongLiveKhioyen
         Power,          // 基于攻击力
         RepairPower     // 基于修补力
     }
-    
-    [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Heal")]
     public class HealEffect : EffectDefinition
     {
         [Header("Heal Settings")]
@@ -43,10 +41,10 @@ namespace LongLiveKhioyen
                 switch (scalingSource)
                 {
                     case HealScalingSource.Power:
-                        bonus = user.GetPower();
+                        bonus = user.GetStat(StatType.AttackPower);
                         break;
                     case HealScalingSource.RepairPower:
-                        bonus = user.GetRepairPower();
+                        bonus = user.GetStat(StatType.RepairPower);
                         break;
                 }
                 finalHeal += bonus * scalingFactor;
@@ -60,7 +58,6 @@ namespace LongLiveKhioyen
                 Debug.Log($"{user?.name} healed {target.name} for {amount} (Base: {baseHealAmount}, Bonus: {finalHeal - baseHealAmount})");
             }
             
-            if (vfxPrefab != null) Instantiate(vfxPrefab, target.transform.position, Quaternion.identity);
             
             // 标记刷新
             if (Battle.Instance != null) Battle.Instance.MarkUnitDirty(target);

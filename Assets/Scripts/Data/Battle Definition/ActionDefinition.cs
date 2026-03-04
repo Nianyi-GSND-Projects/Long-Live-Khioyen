@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 namespace LongLiveKhioyen
 {
     public class ActionContext
@@ -92,10 +91,10 @@ namespace LongLiveKhioyen
         [Header("Conditions")]
         [Tooltip("展示条件：通常用于判断是否在UI上显示该技能（例如：只有勇>80才能看到此技能）")]
         public List<ActionCondition> displayConditions = new List<ActionCondition>();
-
         [Tooltip("使用条件：通常用于判断技能是否可用（例如：士气>10, AP>2）")]
         public List<ActionCondition> useConditions = new List<ActionCondition>();
         
+        [SerializeReference]
         [Header("Logic")]
         public List<EffectDefinition> effects = new List<EffectDefinition>();
         

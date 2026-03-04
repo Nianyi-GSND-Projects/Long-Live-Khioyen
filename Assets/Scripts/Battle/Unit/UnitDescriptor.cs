@@ -13,6 +13,7 @@ namespace LongLiveKhioyen
         public bool isVisible = true;
         
         public int ZOCPower;
+        public int actionChance = 1;
     }
 
     public class BattalionDescriptor : UnitDescriptor

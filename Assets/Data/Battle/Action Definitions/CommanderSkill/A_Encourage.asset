@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5720884430109982679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153ad98879c03ca42b274a8bda4fc5ed, type: 3}
+  m_Name: AddBuffEffect
+  m_EditorClassIdentifier: 
+  effectType: 0
+  buffDefinition: {fileID: 7460833634097892350}
+  duration: 3
+  vfxPrefab: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37ebe457fc6c8784d8f70352ea9796d2, type: 3}
+  m_Name: A_Encourage
+  m_EditorClassIdentifier: 
+  actionName: Encourage
+  actionId: 0
+  description: Raise Target Battalion Attack For Three Turns
+  icon: {fileID: 0}
+  actionPointCost: 0
+  targetFactionType: 0
+  targetCountType: 1
+  displayConditions: []
+  useConditions: []
+  effects:
+  - {fileID: -5720884430109982679}
+  range: 3
+  minRange: 0
+  targetType: 0
+--- !u!114 &7460833634097892350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afa26c44e8bbebc43af9adaa83594481, type: 3}
+  m_Name: StatModifierBuffDefinition
+  m_EditorClassIdentifier: 
+  buffNameEn: Encourage
+  buffNameCh: "\u9F13\u52B1"
+  icon: {fileID: 0}
+  factionType: 0
+  unitType: 0
+  vfxPrefab: {fileID: 0}
+  Modifiers:
+  - StatToModify: 0
+    Type: 1
+    Value: 1.2

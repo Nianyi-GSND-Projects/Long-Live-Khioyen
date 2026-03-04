@@ -125,6 +125,7 @@ namespace LongLiveKhioyen
 
 					desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
 					desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
+					desc.actionChance += desc.battalionCommander.GetActionChanceBonus();
 					
 					desc.currentSoliders = data.overrideSoldiers > 0
 						? data.overrideSoldiers
@@ -135,6 +136,7 @@ namespace LongLiveKhioyen
 						: desc.maxMorale;
 					
 					desc.currentExp = 50;
+					
 					
 					playerReserveTeam.Add(desc);
 				}
@@ -310,6 +312,8 @@ namespace LongLiveKhioyen
 							desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
 
 							desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
+							
+							desc.actionChance += desc.battalionCommander.GetActionChanceBonus();
 						}
 						
 						desc.currentSoliders = spawnData.overrideSoldiers > 0
