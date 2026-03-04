@@ -49,6 +49,9 @@ namespace LongLiveKhioyen
 			// 清空寄卖物品
 			forSaleItems.Clear();
 
+			// 刷新当月商队货物
+			RegenerateMonthlyBuyItems();
+
 			NotifyPossiblePopulationChange();
 		}
 
@@ -250,6 +253,20 @@ namespace LongLiveKhioyen
 
 		#region 交易
 		[ShowIf("type", PolisType.Controlled)] public ItemRecords forSaleItems;
+		[ShowIf("type", PolisType.Controlled)] public ItemRecords monthlyBuyItems;
+		bool hasInitializedMonthlyBuyItems;
+		bool isRegeneratingMonthlyBuyItems;
+
+		/// <summary>当月商队可购买货物，按月刷新，中途不变。</summary>
+		public ItemRecords MonthlyBuyItems
+		{
+			get
+			{
+				if(monthlyBuyItems == null)
+					monthlyBuyItems = new();
+				return monthlyBuyItems;
+			}
+		}
 
 		public void SetItemForSale(string itemId, int quantity)
 		{
@@ -261,6 +278,128 @@ namespace LongLiveKhioyen
 		{
 			if(!TransferItemRecord(itemId, quantity, forSaleItems, StockedItems))
 				Debug.LogWarning($"尝试取消寄卖 {quantity} 个 {itemId} 失败。");
+		}
+
+		public void BuyItem(string itemId, int quantity)
+		{
+			if(quantity <= 0)
+				return;
+
+			var record = MonthlyBuyItems.FirstOrDefault(r => r.itemId == itemId);
+			if(record == null)
+			{
+				Debug.LogWarning($"尝试购买 {quantity} 个 {itemId} 失败：商队没有此货物。");
+				return;
+			}
+
+			quantity = Mathf.Min(quantity, record.quantity);
+			var itemDefinition = record.Definition;
+			float cost = itemDefinition.buyPrice * quantity;
+
+			if(!Economy.CanCover(new ResourceDescriptor() { type = ResourceType.Money, quantity = cost, }))
+			{
+				Debug.LogWarning($"尝试购买 {quantity} 个 {itemId} 失败：钱财不足。");
+				return;
+			}
+
+			Economy.Cost(new ResourceDescriptor() { type = ResourceType.Money, quantity = cost, });
+			MonthlyBuyItems.ChangeItemQuantity(itemId, -quantity);
+			StockedItems.ChangeItemQuantity(itemId, quantity);
+		}
+
+		/// <summary>若当月货物为空则补一次，避免初始月份没有商队货物。</summary>
+		public void EnsureMonthlyBuyItems()
+		{
+			if(isRegeneratingMonthlyBuyItems)
+				return;
+
+			if(MonthlyBuyItems.Count > 0)
+			{
+				hasInitializedMonthlyBuyItems = true;
+				return;
+			}
+
+			// 仅在本局首次进入驿站且尚未生成过时补货一次。
+			// 若本月已被买空，则保持为空，等待下次度月刷新。
+			if(hasInitializedMonthlyBuyItems)
+				return;
+
+			RegenerateMonthlyBuyItems();
+		}
+
+		/// <summary>按稀有度加权生成当月商队货物。</summary>
+		void RegenerateMonthlyBuyItems()
+		{
+			if(isRegeneratingMonthlyBuyItems)
+				return;
+
+			isRegeneratingMonthlyBuyItems = true;
+			MonthlyBuyItems.Clear();
+
+			var candidates = ItemDatabase.Instance.items
+				.Where(item => item != null && item.canBuy)
+				.ToList();
+
+			if(candidates.Count == 0)
+			{
+				hasInitializedMonthlyBuyItems = true;
+				isRegeneratingMonthlyBuyItems = false;
+				return;
+			}
+
+			int slotCount = Mathf.Clamp(UnityEngine.Random.Range(3, 7), 1, candidates.Count);
+			for(int i = 0; i < slotCount; i++)
+			{
+				var item = PickWeightedByRarity(candidates);
+				candidates.Remove(item);
+
+				int quantity = RollMonthlyBuyQuantity(item.rarity);
+				MonthlyBuyItems.SetItemQuantity(item.itemId, quantity);
+			}
+
+			hasInitializedMonthlyBuyItems = true;
+			isRegeneratingMonthlyBuyItems = false;
+		}
+
+		ItemDefinition PickWeightedByRarity(List<ItemDefinition> candidates)
+		{
+			float totalWeight = candidates.Select(item => GetRarityWeight(item.rarity)).Sum();
+			float roll = UnityEngine.Random.Range(0f, totalWeight);
+
+			foreach(var item in candidates)
+			{
+				roll -= GetRarityWeight(item.rarity);
+				if(roll <= 0)
+					return item;
+			}
+
+			return candidates[candidates.Count - 1];
+		}
+
+		float GetRarityWeight(Rarity rarity)
+		{
+			return rarity switch
+			{
+				Rarity.Common => 40f,
+				Rarity.Uncommon => 24f,
+				Rarity.Rare => 14f,
+				Rarity.Epic => 8f,
+				Rarity.Legendary => 4f,
+				_ => 1f,
+			};
+		}
+
+		int RollMonthlyBuyQuantity(Rarity rarity)
+		{
+			return rarity switch
+			{
+				Rarity.Common => UnityEngine.Random.Range(6, 13),
+				Rarity.Uncommon => UnityEngine.Random.Range(4, 9),
+				Rarity.Rare => UnityEngine.Random.Range(2, 6),
+				Rarity.Epic => UnityEngine.Random.Range(1, 4),
+				Rarity.Legendary => UnityEngine.Random.Range(1, 3),
+				_ => 1,
+			};
 		}
 
 		bool TransferItemRecord(string itemId, int quantity, ItemRecords from, ItemRecords to)
