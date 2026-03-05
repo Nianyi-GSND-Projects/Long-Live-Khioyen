@@ -47,6 +47,7 @@ namespace LongLiveKhioyen
                     Debug.Log("OnEnter: 准备阶段");
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
+                    HighlightTiles(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Arrangement:
                     Debug.Log("OnEnter: 布置阶段");

@@ -55,3 +55,5 @@ MonoBehaviour:
   constructionRatePerDiscipline: 0.01
   recoveryRatePerDiscipline: 0.01
   invisibleAllyAlpha: 0.509
+  deployZoneVisionRange: 1
+  extractionZoneVisionRange: 1

@@ -373,7 +373,7 @@ namespace LongLiveKhioyen
                }
                else 
                {
-                   if (CurrentStage == Stage.Arrangement && availableArrangementPositions.Contains(sourcePos))
+                   if ((CurrentStage == Stage.Arrangement ||CurrentStage == Stage.Preparation)&& availableArrangementPositions.Contains(sourcePos))
                        visionRange = BattleParam.Instance.deployZoneVisionRange;
                    if (mapData[sourcePos.x, sourcePos.y].isExtractionPoint)
                        visionRange = BattleParam.Instance.extractionZoneVisionRange;
@@ -450,10 +450,12 @@ namespace LongLiveKhioyen
                 _playerVisionSourceTiles.Add(unit.position);
             }
 
-            // 如果在部署阶段，添加部署区
-            if (CurrentStage == Stage.Arrangement)
+            if (CurrentStage == Stage.Arrangement||CurrentStage == Stage.Preparation)
             {
-                _playerVisionSourceTiles.UnionWith(availableArrangementPositions);
+                if (availableArrangementPositions != null)
+                {
+                    _playerVisionSourceTiles.UnionWith(availableArrangementPositions);
+                }
             }
         }
         public bool IsUnitVisibleToPlayer(Unit unit)
