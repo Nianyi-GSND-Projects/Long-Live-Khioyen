@@ -10,17 +10,14 @@ namespace LongLiveKhioyen
         private BattlePresetSO currentPreset;
         private TerrainDatabase _terrainDatabase;
         
-        // [修改] 添加 Select 模式
-        private enum ToolMode { None, Select, DeployPoint, ExtractionPoint, PlaceUnit, PlaceFacility, Erase }
+        private enum ToolMode { None, Select, DeployPoint, ExtractionPoint,EnemySpawnZone, PlaceUnit, PlaceFacility, Erase }
         private ToolMode currentTool = ToolMode.None;
 
-        // 笔刷设置
         private Faction selectedFaction = Faction.Enemy;
         private BattalionDefinition selectedBattalionDef;
         private FacilityDefinition selectedFacilityDef;
 
-        // [新增] 当前选中的单位数据
-        private PreplacedUnitData _selectedUnitData; // 假设你已经将 UnitSpawnData 重命名为 PreplacedUnitData
+        private PreplacedUnitData _selectedUnitData;
 
         private const float CELL_SIZE = 30f;
         private const float OFFSET_X = 15f; 
@@ -142,10 +139,17 @@ namespace LongLiveKhioyen
             if (DrawToggleBtn("Unit (Bat)", ToolMode.PlaceUnit)) currentTool = ToolMode.PlaceUnit;
             if (DrawToggleBtn("Facility", ToolMode.PlaceFacility)) currentTool = ToolMode.PlaceFacility;
             GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            GUI.backgroundColor = new Color(1f, 0.7f, 0.4f); // 橙色
+            if (DrawToggleBtn("Enemy Spawn", ToolMode.EnemySpawnZone)) currentTool = ToolMode.EnemySpawnZone;
+            GUI.backgroundColor = Color.white;
+            GUILayout.EndHorizontal();
 
             DrawToolSettings();
             
             showReserve = EditorGUILayout.Foldout(showReserve, "Player Reserve (Preset)", true);
+            
             if (showReserve && currentPreset != null)
             {
                 GUILayout.BeginVertical("helpbox");
@@ -185,16 +189,38 @@ namespace LongLiveKhioyen
                 if (GUI.changed) EditorUtility.SetDirty(currentPreset);
                 GUILayout.EndVertical();
             }
-            
+            DrawRandomEnemySettings();
             GUILayout.EndVertical();
+        }
+        private void DrawRandomEnemySettings()
+        {
+            if (currentPreset == null) return;
+
+            EditorGUILayout.Space();
+            var so = new SerializedObject(currentPreset);
+            var useFixedProp = so.FindProperty("useFixedEnemies");
+        
+            EditorGUILayout.PropertyField(useFixedProp);
+
+            if (!useFixedProp.boolValue)
+            {
+                GUILayout.BeginVertical("helpbox");
+                EditorGUILayout.PropertyField(so.FindProperty("nonPlayerUnitsSpawnZones"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("randomEnemyRules"), true);
+        
+                GUILayout.EndVertical();
+            }
+
+            so.ApplyModifiedProperties();
         }
 
         private bool DrawToggleBtn(string label, ToolMode mode)
         {
             bool isActive = currentTool == mode;
-            if (GUILayout.Toggle(isActive, label, EditorStyles.toolbarButton))
+            if (GUILayout.Toggle(isActive, label, EditorStyles.toolbarButton)!= isActive)
             {
-                return true; 
+                if(!isActive) 
+                    return true; 
             }
             return false;
         }
@@ -378,7 +404,7 @@ namespace LongLiveKhioyen
             }
 
             Undo.RecordObject(currentPreset, "Edit Level");
-
+            if (currentPreset.nonPlayerUnitsSpawnZones == null) currentPreset.nonPlayerUnitsSpawnZones = new List<Vector2Int>();
             if (currentPreset.playerDeployPoints == null) currentPreset.playerDeployPoints = new List<Vector2Int>();
             if (currentPreset.extractionPoints == null) currentPreset.extractionPoints = new List<Vector2Int>();
             if (currentPreset.preplacedUnits == null) currentPreset.preplacedUnits = new List<PreplacedUnitData>();
@@ -407,6 +433,10 @@ namespace LongLiveKhioyen
                 
                 case ToolMode.Erase:
                     EraseAt(pos);
+                    break;
+                
+                case ToolMode.EnemySpawnZone:
+                    ToggleList(currentPreset.nonPlayerUnitsSpawnZones,pos);
                     break;
             }
 
@@ -483,6 +513,12 @@ namespace LongLiveKhioyen
             {
                 EditorGUI.DrawRect(rect, new Color(0f, 1f, 0.2f, 0.4f));
                 GUI.Label(rect, "E", EditorStyles.miniLabel);
+            }
+
+            if (currentPreset.nonPlayerUnitsSpawnZones != null && currentPreset.nonPlayerUnitsSpawnZones.Contains(pos))
+            {
+                EditorGUI.DrawRect(rect, new Color(0.5f, 0f, 0.2f, 0.4f));
+                GUI.Label(rect, "N", EditorStyles.miniLabel);
             }
         }
 

@@ -125,7 +125,7 @@ namespace LongLiveKhioyen
         {
             base.CalculateEntryStats(desc);
             if (desc is not BattalionDescriptor batDesc) return;
-
+            
             var definition = Definition;
             var commander = battalionCommander;
             var param = BattleParam.Instance;

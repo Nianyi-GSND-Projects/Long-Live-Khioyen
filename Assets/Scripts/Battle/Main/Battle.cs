@@ -39,6 +39,7 @@ namespace LongLiveKhioyen
 		public BattleMetaData data;
 		public ArmyStatus armyStatus;
 		public Vector2Int Size => data.battleSize;
+		
 		public string BattleName => data.battleName;
 		#endregion
 
@@ -64,6 +65,7 @@ namespace LongLiveKhioyen
 			
 			InitializeData();
 			
+			Debug.Log($"Current map Size: {Size.x}x{Size.y}");
 			InitializeScene();
 			
 			InitializeComponent();
@@ -192,13 +194,11 @@ namespace LongLiveKhioyen
 			#else
 			armyStatus = GameInstance.Instance.ActiveArmy;
 			#endif
-
 			InitializeBuildableFacilities();
 			
 			actionDataBase.Initialize();
 			commanderRegistry = CommanderRegistry.Instance; 
 			
-			mapTerrainData = new string[Size.x, Size.y];
 			availableMovePositions = new HashSet<Vector2Int>();
 			availableArrangementPositions = new HashSet<Vector2Int>();
 			availableTargetPositions = new HashSet<Vector2Int>();
@@ -228,6 +228,7 @@ namespace LongLiveKhioyen
 				Debug.Log($"使用预设地图尺寸: {Size}");
 			}
 			
+			mapTerrainData = new string[Size.x, Size.y];
 			mapData = new TileData[Size.x, Size.y];
 			
 			for(int x=0; x<Size.x; x++)
@@ -262,9 +263,69 @@ namespace LongLiveKhioyen
 
 			if (useLevelPreset && levelPreset != null)
 			{
-				foreach (var spawnData in levelPreset.preplacedUnits)
+				if (levelPreset.useFixedEnemies)
 				{
-					if (spawnData.isFacility)
+					PlaceFixedNonPlayerUnits();
+				}
+				else
+				{
+					PlaceRandomNonPlayerUnits();
+				}
+				
+				return;
+			}
+
+		}
+		
+		private void PlaceFixedNonPlayerUnits()
+		{
+			Debug.Log("Placing fixed preplaced units...");
+			foreach (var spawnData in levelPreset.preplacedUnits)
+				{
+						RegisterUnitToBattle(GenerateDescriptorFromSpawnData(spawnData), spawnData.position,spawnData.isVisible);
+				}
+		}
+
+		private void PlaceRandomNonPlayerUnits()
+		{
+			Debug.Log("Placing random enemies based on rules...");
+			if (levelPreset.nonPlayerUnitsSpawnZones == null || levelPreset.nonPlayerUnitsSpawnZones.Count == 0)
+			{
+				Debug.LogError(
+					"Random enemy generation failed: Enemy Spawn Zones are not defined in the BattlePresetSO.");
+				return;
+			}
+
+			List<Vector2Int> availableSpawnPoints = new List<Vector2Int>(levelPreset.nonPlayerUnitsSpawnZones);
+			foreach (var rule in levelPreset.randomEnemyRules)
+			{
+				if (rule.unitDefinition == null) continue;
+
+				int count = Random.Range(rule.minCount, rule.maxCount + 1);
+
+				for (int i = 0; i < count; i++)
+				{
+					if (availableSpawnPoints.Count == 0)
+					{
+						Debug.LogWarning("Ran out of spawn points. Some enemies were not placed.");
+						break;
+					}
+
+					int randomIndex = Random.Range(0, availableSpawnPoints.Count);
+					Vector2Int spawnPos = availableSpawnPoints[randomIndex];
+					availableSpawnPoints.RemoveAt(randomIndex);
+					UnitDescriptor desc = GenerateDescriptorFromRule(rule);
+					if (desc != null)
+					{
+						RegisterUnitToBattle(desc, spawnPos);
+					}
+				}
+			}
+		}
+
+		private UnitDescriptor GenerateDescriptorFromSpawnData(PreplacedUnitData spawnData)
+		{
+			if (spawnData.isFacility)
 					{
 						FacilityDescriptor facDesc = new FacilityDescriptor
 						{
@@ -276,7 +337,7 @@ namespace LongLiveKhioyen
 							maxDurability = spawnData.facilityDef.defaultMaxDurability,
 							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
 						};
-						RegisterUnitToBattle(facDesc, spawnData.position);
+						return facDesc;
 					}
 					else
 					{
@@ -324,17 +385,69 @@ namespace LongLiveKhioyen
 							spawnData.overrideMorale > 0 ? spawnData.overrideMorale : desc.maxMorale;
 						
 						desc.currentExp = 50;
-						
-						RegisterUnitToBattle(desc, spawnData.position,spawnData.isVisible);
-					}
-				}
-				return;
-			}
 
-			//GenerateEnemyData();
-			//TODO 
+						return desc;
+					}
 		}
 		
+		private UnitDescriptor GenerateDescriptorFromRule(RandomEnemySpawnRule enemySpawnRule)
+			{
+				if (enemySpawnRule.unitDefinition is  FacilityDefinition facDef)
+					{
+						FacilityDescriptor facDesc = new FacilityDescriptor
+						{
+							Definition = facDef,
+							faction = enemySpawnRule.faction,
+							isVisible = facDef.defaultVisibility,
+							ZOCPower = facDef.defaultZOCPower,
+							maxDurability = facDef.defaultMaxDurability,
+							currentDurability = facDef.defaultMaxDurability,
+						};
+						return facDesc;
+					}
+					else if(enemySpawnRule.unitDefinition is BattalionDefinition batDef)
+					{
+						BattalionDescriptor desc = new BattalionDescriptor
+						{
+							Definition =  batDef,
+							faction = enemySpawnRule.faction,
+							isVisible = batDef.defaultVisibility,
+							ZOCPower = batDef.defaultZOCPower,
+							placed = false,
+						};
+						if (enemySpawnRule.useRandomCommander)
+						{
+							desc.battalionCommander = CommanderRegistry.Instance.GenerateCommander(enemySpawnRule.commanderProfile);
+						}
+						else
+						{
+							desc.battalionCommander = null;
+						}
+
+						desc.maxSolider = batDef.defaultMaxSolider;
+						desc.maxMorale = batDef.defaultMaxMorale;
+						
+						if (desc.battalionCommander != null)
+						{
+							desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
+
+							desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
+							
+							desc.actionChance += desc.battalionCommander.GetActionChanceBonus();
+						}
+						
+						desc.currentSoliders = desc.maxSolider;
+						
+						desc.currentMorale = desc.maxMorale;
+						
+						desc.currentExp = 50;
+
+						return desc;
+					}
+
+				return null;
+			}
+
 		#endregion
 		
 		#region Interface
