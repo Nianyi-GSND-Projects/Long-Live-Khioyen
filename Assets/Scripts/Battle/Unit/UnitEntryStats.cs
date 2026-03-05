@@ -16,8 +16,8 @@ namespace LongLiveKhioyen
         public float strategy;
         
         public int cost;
-        public int ZOCPower;
-
+        public int zocPower;
+        public int visionRange;
         public int actionChance;
     }
 }

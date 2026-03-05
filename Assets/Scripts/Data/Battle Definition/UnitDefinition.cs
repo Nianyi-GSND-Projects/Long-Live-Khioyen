@@ -49,8 +49,9 @@ namespace LongLiveKhioyen
         public int defaultDefense;
         [Tooltip("默认修补能力：每100个士兵在一次修补中提供的耐久恢复量")]
         public int defaultRepairPower = 10;
-        public int defaultZOCPower = 1;
+        public int defaultZocPower = 1;
         public bool defaultVisibility = true;
+        public int defaultVisionRange = 2;
         
         #endregion
         

@@ -79,8 +79,8 @@ namespace LongLiveKhioyen
 
             battalionDescriptor.faction = Faction.Player;
             battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
-            battalionDescriptor.ZOCPower = battalionStatus.battalionDefinition.defaultZOCPower;
-			
+            battalionDescriptor.zocPower = battalionStatus.battalionDefinition.defaultZocPower;
+            battalionDescriptor.visionRange = battalionStatus.battalionDefinition.defaultVisionRange;
             battalionDescriptor.maxSolider = battalionStatus.MaxSolider;
             battalionDescriptor.maxMorale = battalionStatus.MaxMorale;
             battalionDescriptor.currentSoliders = battalionStatus.currentSolider;

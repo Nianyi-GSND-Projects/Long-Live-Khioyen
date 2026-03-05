@@ -19,5 +19,6 @@ namespace LongLiveKhioyen
         public int movementBonus;
         public int zocPowerBonus;
         public int actionChanceBonus;
+        public int visionBonus;
     }
 }

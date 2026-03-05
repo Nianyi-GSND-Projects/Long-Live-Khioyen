@@ -20,6 +20,7 @@ namespace LongLiveKhioyen
         Movement,       // 移动力
         ZocPower,       // 控制力
         DamageResistance, // 伤害抵抗
-        ActionChance
+        ActionChance,
+        VisionRange
     }
 }

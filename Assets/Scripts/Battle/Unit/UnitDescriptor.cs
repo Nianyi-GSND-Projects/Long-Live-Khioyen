@@ -12,7 +12,8 @@ namespace LongLiveKhioyen
         public int currentHealth;
         public bool isVisible = true;
         
-        public int ZOCPower;
+        public int zocPower;
+        public int visionRange;
         public int actionChance = 1;
     }
 

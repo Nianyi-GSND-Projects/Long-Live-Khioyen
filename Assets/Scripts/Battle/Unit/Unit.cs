@@ -40,10 +40,15 @@ namespace LongLiveKhioyen
             entryStats = new UnitEntryStats
             {
                 maxHealth = desc.maxHealth,
-                ZOCPower = desc.ZOCPower,
+                zocPower = desc.zocPower,
+                visionRange = desc.visionRange,
                 repairPower = unitDefinition.defaultRepairPower,
                 actionChance = desc.actionChance
             };
+        }
+        public virtual int GetVisionRange()
+        {
+            return (int)GetStat(StatType.VisionRange);
         }
         
         public virtual float GetStat(StatType stat)
@@ -100,7 +105,7 @@ namespace LongLiveKhioyen
                 case StatType.MaxMorale:
                     return entryStats.maxMorale;
                 case StatType.ZocPower:
-                    return entryStats.ZOCPower;
+                    return entryStats.zocPower;
                 case StatType.ActionChance:
                     return entryStats.actionChance;
                 case StatType.Movement:
@@ -111,6 +116,8 @@ namespace LongLiveKhioyen
                 case StatType.DamageResistance:
                     float defense = GetStat(StatType.DefensePower);
                     return defense * BattleParam.Instance.damageResistancePerDefense;
+                case StatType.VisionRange:
+                    return entryStats.visionRange;
                 default:
                     return 0;
             }

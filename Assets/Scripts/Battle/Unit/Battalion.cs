@@ -147,6 +147,7 @@ namespace LongLiveKhioyen
             float commanderStratBonus = 0;
             int commanderZocBonus = 0;
             int commanderMovementBonus = 0;
+            int commanderVisionBonus = 0;
             
             if (commander != null)
             {
@@ -165,6 +166,7 @@ namespace LongLiveKhioyen
                 commanderStratBonus *= commander.GetStrategyBonus();
                 commanderMovementBonus += commander.GetMovementBonus();
                 commanderZocBonus += commander.GetZocBonus();
+                commanderVisionBonus += commander.GetVisionBonus();
             }
             
             
@@ -185,7 +187,9 @@ namespace LongLiveKhioyen
             entryStats.strategy = baseStrat + commanderStratBonus;
             
             //6.应用特殊效果修改
-            entryStats.ZOCPower = definition.defaultZOCPower + commanderZocBonus;
+            entryStats.zocPower = definition.defaultZocPower + commanderZocBonus;
+            entryStats.visionRange = definition.defaultVisionRange + commanderVisionBonus;
+            
             ExtraMovement = commanderMovementBonus;
             
             //7.初始化移动力

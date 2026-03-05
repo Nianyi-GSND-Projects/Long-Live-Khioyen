@@ -14,6 +14,15 @@ namespace LongLiveKhioyen
             Battle,
             Settlement
         }
+        /// <summary>
+        /// 战争迷雾状态
+        /// </summary>
+        public enum FogState
+        {
+            Concealed, //完全遮蔽 (黑色)
+            Explored,  // 已探索 (历史视野，灰色半透明)
+            Visible    // 当前可见 (完全透明)
+        }
 
         /// <summary>
         /// 寻找单位时的过滤器

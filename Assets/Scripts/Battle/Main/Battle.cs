@@ -327,7 +327,8 @@ namespace LongLiveKhioyen
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
 							isVisible = spawnData.isVisible,
-							ZOCPower = spawnData.facilityDef.defaultZOCPower,
+							zocPower = spawnData.facilityDef.defaultZocPower,
+							visionRange = spawnData.facilityDef.defaultVisionRange,
 							maxDurability = spawnData.facilityDef.defaultMaxDurability,
 							currentDurability = spawnData.overrideSoldiers > 0 ? spawnData.overrideSoldiers : spawnData.facilityDef.defaultMaxDurability, // 复用 overrideSoldiers 字段作为耐久度
 						};
@@ -341,7 +342,8 @@ namespace LongLiveKhioyen
 							faction = spawnData.faction,
 							instanceId = spawnData.instanceId,
 							isVisible = spawnData.isVisible,
-							ZOCPower = spawnData.battalionDef.defaultZOCPower,
+							zocPower = spawnData.battalionDef.defaultZocPower,
+							visionRange = spawnData.battalionDef.defaultVisionRange,
 							placed = false,
 						};
 						if (spawnData.commanderTemplate != null)
@@ -393,7 +395,8 @@ namespace LongLiveKhioyen
 							Definition = facDef,
 							faction = enemySpawnRule.faction,
 							isVisible = facDef.defaultVisibility,
-							ZOCPower = facDef.defaultZOCPower,
+							zocPower = facDef.defaultZocPower,
+							visionRange = facDef.defaultVisionRange,
 							maxDurability = facDef.defaultMaxDurability,
 							currentDurability = facDef.defaultMaxDurability,
 						};
@@ -406,7 +409,8 @@ namespace LongLiveKhioyen
 							Definition =  batDef,
 							faction = enemySpawnRule.faction,
 							isVisible = batDef.defaultVisibility,
-							ZOCPower = batDef.defaultZOCPower,
+							zocPower = batDef.defaultZocPower,
+							visionRange = batDef.defaultVisionRange,
 							placed = false,
 						};
 						if (enemySpawnRule.useRandomCommander)

@@ -181,6 +181,10 @@ namespace LongLiveKhioyen
         {
                 return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.zocPowerBonus : 0);
         }
+        public int GetVisionBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.visionBonus : 0);
+        }
         public int GetMovementBonus()
         {
             return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.movementBonus : 0);
