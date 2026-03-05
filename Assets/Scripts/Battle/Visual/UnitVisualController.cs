@@ -34,35 +34,41 @@ namespace LongLiveKhioyen
         public virtual void RefreshVisuals()
         {
             if (_ownerUnit == null) return;
-         //   Debug.Log($"Visibility:{_ownerUnit.IsVisible}");
+            
+            bool isActuallyVisible = Battle.Instance.IsUnitVisibleToPlayer(_ownerUnit);
+            
             bool isPlayerSide = _ownerUnit.faction == Faction.Player || _ownerUnit.faction == Faction.Friend;
             
-            if (!_ownerUnit.IsVisible)
+            if (isActuallyVisible)
             {
-                if (isPlayerSide)
+                gameObject.SetActive(true);
+                if (isPlayerSide && !_ownerUnit.IsVisible)
                 {
-                    gameObject.SetActive(true);
+                    
                     SetOverallVisibility(true, BattleParam.Instance.invisibleAllyAlpha);
                     if (overheadUI != null) overheadUI.SetAlpha(BattleParam.Instance.invisibleAllyAlpha);
                 }
                 else
                 {
-                    gameObject.SetActive(false);
-                    if (overheadUI != null) overheadUI.SetAlpha(0f);
-                    return;
+                    SetOverallVisibility(true, 1.0f);
+                    if (overheadUI != null) overheadUI.SetAlpha(1.0f);
                 }
             }
             else
             {
-                gameObject.SetActive(true);
-                SetOverallVisibility(true, 1.0f);
-                if (overheadUI != null) overheadUI.SetAlpha(1.0f);
+                gameObject.SetActive(false);
+                if (overheadUI != null) overheadUI.SetAlpha(0f);
+                return;
             }
             
             if (overheadUI != null) overheadUI.UpdateInfo(_ownerUnit);
             
-            //CreateOrUpdateFlag();
-            RefreshModel();
+            if (gameObject.activeSelf)
+            {
+                if (overheadUI != null) overheadUI.UpdateInfo(_ownerUnit);
+                CreateOrUpdateFlag();
+                RefreshModel();
+            }
         }
         
         public void SetVisualState(bool selected, bool actionDone)
@@ -106,7 +112,6 @@ namespace LongLiveKhioyen
                 if (r == null) continue;
                 r.enabled = visible;
                 
-                // 保留当前的 RGB，只修改 alpha
                 Color current = r.material.color;
                 current.a = alpha;
                

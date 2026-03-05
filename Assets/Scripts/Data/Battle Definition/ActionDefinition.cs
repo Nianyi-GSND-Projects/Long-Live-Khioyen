@@ -109,9 +109,8 @@ namespace LongLiveKhioyen
         {
             if (Battle.Instance == null) return false;
             TileData tile = Battle.Instance.mapData[pos.x, pos.y];
-
+            
             Unit primaryTarget = GetPrimaryTargetOnTile(tile);
-
             switch (targetType)
             {
                 case ActionTargetType.BattalionOnly:
@@ -141,15 +140,28 @@ namespace LongLiveKhioyen
         
         public Unit GetPrimaryTargetOnTile(TileData tile)
         {
-            // 情况 A: 只有部队 -> 部队
-            if (tile.Battalion != null && tile.Facility == null) return tile.Battalion;
+            bool battalionVisible = Battle.Instance.IsUnitVisibleToPlayer(tile.Battalion);
+            bool facilityVisible = Battle.Instance.IsUnitVisibleToPlayer(tile.Facility);
+            //都没有/不可见 -> 空地
+            if ((tile.Battalion == null || !battalionVisible) && (!facilityVisible || tile.Facility == null))
+                return null;
             
-            // 情况 B: 只有设施 -> 设施
-            if (tile.Battalion == null && tile.Facility != null) return tile.Facility;
+            // 只有部队且可见 -> 部队
+            if (tile.Battalion != null && tile.Facility == null&&battalionVisible) return tile.Battalion;
+            
+            // 只有设施且可见 -> 设施
+            if (tile.Battalion == null && tile.Facility != null&&facilityVisible) return tile.Facility;
 
+            
             // 情况 C: 都有 -> 看 Block
             if (tile.Battalion != null && tile.Facility != null)
             {
+                if (battalionVisible &&
+                    !facilityVisible) return tile.Battalion;
+                if(!battalionVisible&&
+                   facilityVisible) 
+                    return tile.Facility;
+                
                 // 如果设施 Block 为真，设施优先（挡住了部队）
                 if (tile.Facility.Definition.block) return tile.Facility;
                 

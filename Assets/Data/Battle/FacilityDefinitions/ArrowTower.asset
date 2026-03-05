@@ -15,11 +15,16 @@ MonoBehaviour:
   id: 0
   unitName: ArrowTower
   unitType: 1
-  figure: {fileID: 0}
-  unitModelTemplate: {fileID: 0}
+  icon: {fileID: 21300000, guid: bba06ffcbd7eef84e82fc3d857fa66ee, type: 3}
   unitSelectedSoundEffect: {fileID: 0}
+  unitModelPrefab: {fileID: 0}
+  useBillboard: 0
   defaultPower: 200
   defaultDefense: 10
+  defaultRepairPower: 10
+  defaultZocPower: 1
+  defaultVisibility: 1
+  defaultVisionRange: 3
   passability: 0
   movable: 0
   actionable: 1
@@ -35,9 +40,12 @@ MonoBehaviour:
   lootRules: []
   tags: []
   description: A tough defence facility
-  icon: {fileID: 21300000, guid: bba06ffcbd7eef84e82fc3d857fa66ee, type: 3}
   defaultMaxDurability: 500
   defaultCost: 100
   special: 0
   block: 0
+  useFormationDisplay: 0
+  formationInstanceCount: 1
+  formationSpacing: 0.5
+  constructionStagePrefabs: []
   isInteractable: 0

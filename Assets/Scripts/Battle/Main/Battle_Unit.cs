@@ -163,6 +163,15 @@ namespace LongLiveKhioyen
                 OnUnitPlaced?.Invoke();
                 unit.UpdateVisualState();
                 unit.OnUnitStateChanged();
+                if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+                {
+                    UpdatePlayerVisionSources();
+                    UpdateFogOfWar(); // 这个方法内部会调用 RefreshAllUnitsVisuals
+                }
+                else
+                {
+                    RefreshAllUnitsVisuals();
+                }
                 Debug.Log($"Unit {unit.name} (ID:{unit.InstanceId}) registered to battle at {pos}.");
             }
 
@@ -293,7 +302,8 @@ namespace LongLiveKhioyen
         public void RemoveUnitFromBattle(Unit unit)
         {
             if(unit == null) return;
-			
+            
+            RefreshZOCVisualsAround(unit);
             RemoveUnitFromMap(unit);
 			
             if (SelectedUnit == unit) 
@@ -327,7 +337,13 @@ namespace LongLiveKhioyen
             {
                 deadUnits.Add(unit);
             }
-			
+            
+            if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+            {
+                UpdatePlayerVisionSources();
+                UpdateFogOfWar();
+            }
+            
         }
         
         public void RemoveUnitFromMap(Unit unit)
@@ -389,6 +405,11 @@ namespace LongLiveKhioyen
             UpdateZOC(unit, true);
             CheckDeath(unit);
             unit.OnUnitStateChanged();
+            if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+            {
+                UpdatePlayerVisionSources();
+                UpdateFogOfWar();
+            }
         }
         
         
@@ -402,6 +423,11 @@ namespace LongLiveKhioyen
             if (unit is Battalion bat) newTile.Battalion = bat;
             else if (unit is Facility fac) newTile.Facility = fac;
             unit.ReceiveForcedMove(newPos);
+            if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+            {
+                UpdatePlayerVisionSources();
+                UpdateFogOfWar();
+            }
             // PlaceUnitOnMap(unit, newPos);
             //
             // unit.transform.localPosition = MapToLocal(newPos);

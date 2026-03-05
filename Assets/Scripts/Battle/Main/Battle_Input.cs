@@ -75,8 +75,15 @@ namespace LongLiveKhioyen
                         break;
                     
                     case PlayerActionStage.SelectingAction:
-                        CancelMovement();
-                        ChangeActionStage(PlayerActionStage.MovingBattalion);
+                        if (SelectedUnit != null && SelectedUnit.hasMovedThisTurn)
+                        {
+                            Debug.Log("Unit has already moved, cannot cancel movement.");
+                        }
+                        else
+                        {
+                            ClearAllSelection();
+                            ChangeActionStage(PlayerActionStage.None);
+                        }
                         break;
 
                     case PlayerActionStage.MovingBattalion:
@@ -205,7 +212,9 @@ namespace LongLiveKhioyen
                 List<Unit> candidates = new List<Unit>();
                 if (tile.Battalion != null) candidates.Add(tile.Battalion);
                 if (tile.Facility != null) candidates.Add(tile.Facility);
-
+                
+                candidates.RemoveAll(unit => !IsUnitVisibleToPlayer(unit));
+                
                 if (candidates.Count == 0)
                 {
                     if (CurrentActionStage == PlayerActionStage.None)

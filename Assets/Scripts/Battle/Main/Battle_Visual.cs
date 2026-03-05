@@ -16,6 +16,9 @@ namespace LongLiveKhioyen
         public Material playerFactionMaterial;
         public Material enemyFactionMaterial;
         
+        [Header("Fog of War")]
+        public FogOfWarController fogOfWarController;
+        
         [Header("UI Colors")]
         public Color playerUIColor = new Color(0.6f, 0.8f, 1f);
         public Color enemyUIColor = new Color(1f, 0.6f, 0.6f);
@@ -77,29 +80,69 @@ namespace LongLiveKhioyen
         public void UpdateTileZOCVisual(Vector2Int pos)
         {
             if (!hexTiles.TryGetValue(pos, out HexTile tileScript)) return;
-        
-            // 如果当前处于 Target 选择阶段，不要覆盖 Target 高亮
-            // 这需要检查 CurrentActionStage
+            
             if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(pos))
             {
-                return; // 保持 Target 高亮
+                return;
             }
 
-            TileData data = mapData[pos.x, pos.y];
-            int balance = data.PlayerZOC - data.EnemyZOC;
-        
-            Color c = Color.clear;
+            if (fogMap[pos.x, pos.y] != FogState.Visible) return;
+            
+            int visualPlayerZOC = 0;
+            int visualEnemyZOC = 0;
+            var neighborTiles = GetAllTilesInRange(pos, 1);
+
+            void AddVisualZOC(Unit unit)
+            {
+                if (unit != null && IsUnitVisibleToPlayer(unit))
+                {
+                    if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+                    {
+                        visualPlayerZOC += (int)unit.GetStat(StatType.ZocPower);
+                    }
+                    else if (unit.faction == Faction.Enemy)
+                    {
+                        visualEnemyZOC += (int)unit.GetStat(StatType.ZocPower);
+                    }
+                }
+            }
+
+            var tileOnPos = mapData[pos.x, pos.y];
+            AddVisualZOC(tileOnPos.Battalion);
+            AddVisualZOC(tileOnPos.Facility);
+            
+            int parity = pos.y & 1;
+            foreach (var offset in neighborOffsets[parity])
+            {
+                Vector2Int neighborPos = pos + offset;
+
+                if (!IsValidMapPosition(neighborPos)) continue;
+
+                var tileOnNeighbor = mapData[neighborPos.x, neighborPos.y];
+                AddVisualZOC(tileOnNeighbor.Battalion);
+                AddVisualZOC(tileOnNeighbor.Facility);
+            }
+
+
+            ZOCState visualState = ZOCState.Neutral;
+            int balance = visualPlayerZOC - visualEnemyZOC;
+            Color zocColor = Color.clear;
             float intensity = Mathf.Min(Mathf.Abs(balance) * 0.2f, zocMaxAlpha);
-
-            if (balance > 0) c = zocPlayerColor;
-            else if (balance < 0) c = zocEnemyColor;
-        
-            c.a = intensity;
-            tileScript.SetOverlayColor(c);
-        
+            if (balance > 0) zocColor = zocPlayerColor;
+            else if (balance < 0) zocColor = zocEnemyColor;
+            zocColor.a = intensity;
+            tileScript.SetOverlayColor(zocColor);
         }
-
-
+        
+        private void RefreshZOCVisualsAround(Unit unit)
+        {
+            if (unit == null) return;
+            var tilesToUpdate = GetAllTilesInRange(unit.position, 1);
+            foreach (var pos in tilesToUpdate)
+            {
+                UpdateTileZOCVisual(pos);
+            }
+        }
 
         #endregion
 
@@ -296,5 +339,164 @@ namespace LongLiveKhioyen
 
         #endregion
 
+        #region FogOfWar
+        
+        private void UpdateFogOfWar()
+       {
+           if (fogMap == null) return;
+           Debug.Log($"--- Running UpdateFogOfWar ---");
+           for (int x = 0; x < Size.x; x++)
+           {
+               for (int y = 0; y < Size.y; y++)
+               {
+                   if (fogMap[x, y] == FogState.Visible)
+                   {
+                       fogMap[x, y] = FogState.Explored;
+                   }
+               }
+           }
+
+           // 2. 根据视野源，计算新的可见格子
+           HashSet<Vector2Int> currentlyVisibleTiles = new HashSet<Vector2Int>();
+           Debug.Log($"Found {_playerVisionSourceTiles.Count} vision sources.");
+           
+           foreach (var sourcePos in _playerVisionSourceTiles)
+           {
+               // 获取提供视野的单位
+               var tileData = mapData[sourcePos.x, sourcePos.y];
+               Unit visionProvider = tileData.Battalion ?? (Unit)tileData.Facility;
+               int visionRange = 0;
+
+               if (visionProvider != null)
+               {
+                   visionRange = visionProvider.GetVisionRange();
+               }
+               else 
+               {
+                   if (CurrentStage == Stage.Arrangement && availableArrangementPositions.Contains(sourcePos))
+                       visionRange = BattleParam.Instance.deployZoneVisionRange;
+                   if (mapData[sourcePos.x, sourcePos.y].isExtractionPoint)
+                       visionRange = BattleParam.Instance.extractionZoneVisionRange;
+               }
+
+               if (visionRange > 0)
+               {
+                   var tilesInRange = GetAllTilesInRange(sourcePos, visionRange);
+                   currentlyVisibleTiles.UnionWith(tilesInRange);
+               }
+           }
+
+           // 3. 更新 fogMap
+           foreach (var pos in currentlyVisibleTiles)
+           {
+               fogMap[pos.x, pos.y] = FogState.Visible;
+           }
+           
+           // 4. 特殊处理：撤离点提供历史视野
+           if (levelPreset != null)
+           {
+               foreach (var pos in levelPreset.extractionPoints)
+               {
+                   var tilesInRange = GetAllTilesInRange(pos, BattleParam.Instance.extractionZoneVisionRange);
+                   foreach (var tile in tilesInRange)
+                   {
+                       if (fogMap[tile.x, tile.y] == FogState.Concealed)
+                       {
+                           fogMap[tile.x, tile.y] = FogState.Explored;
+                       }
+                   }
+               }
+           }
+
+           // 5. 根据新的 fogMap 更新所有单位的 IsVisible 状态
+           RefreshAllUnitsVisuals();
+           foreach (var factionUnits in factionActiveUnits.Values)
+           {
+               foreach (var unit in factionUnits)
+               {
+                   if (unit != null)
+                   {
+                       bool oldVisibility = unit.gameObject.activeSelf;
+                       unit.OnUnitStateChanged();
+
+                       // 如果一个单位的可见性刚刚发生了变化（从可见->不可见 或 不可见->可见）
+                       if (oldVisibility != IsUnitVisibleToPlayer(unit))
+                       {
+                           // 刷新它周围的 ZOC 视觉
+                           RefreshZOCVisualsAround(unit);
+                       }
+                   }
+               }
+           }
+
+           // 6. 通知视觉控制器更新迷雾
+           if (fogOfWarController != null)
+           {
+               fogOfWarController.UpdateFogVisuals(fogMap);
+           }
+       }
+        
+        private void UpdatePlayerVisionSources()
+        {
+            _playerVisionSourceTiles.Clear();
+           
+            // 添加玩家和友方单位
+            foreach (var unit in factionActiveUnits[Faction.Player])
+            {
+                _playerVisionSourceTiles.Add(unit.position);
+            }
+            foreach (var unit in factionActiveUnits[Faction.Friend])
+            {
+                _playerVisionSourceTiles.Add(unit.position);
+            }
+
+            // 如果在部署阶段，添加部署区
+            if (CurrentStage == Stage.Arrangement)
+            {
+                _playerVisionSourceTiles.UnionWith(availableArrangementPositions);
+            }
+        }
+        public bool IsUnitVisibleToPlayer(Unit unit)
+        {
+            if (unit == null) return false;
+
+            // 己方单位，我们自己永远能看到
+            if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+            {
+                return true;
+            }
+
+            // 对于敌方和中立单位
+            if (fogMap == null) return true; // 如果没有迷雾系统，默认都可见
+
+            // 必须在当前视野格子里
+            if (fogMap[unit.position.x, unit.position.y] != FogState.Visible)
+            {
+                return false;
+            }
+
+            // 同时，单位本身不能是隐身状态
+            if (!unit.IsVisible)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        
+        public void RefreshAllUnitsVisuals()
+        {
+            foreach (var factionUnits in factionActiveUnits.Values)
+            {
+                foreach (var unit in factionUnits)
+                {
+                    if (unit != null)
+                    {
+                        unit.OnUnitStateChanged();
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

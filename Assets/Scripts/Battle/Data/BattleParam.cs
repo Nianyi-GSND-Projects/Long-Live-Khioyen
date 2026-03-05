@@ -96,5 +96,11 @@ namespace LongLiveKhioyen
         [Header("视觉效果")]
         [Tooltip("己方单位在不可见状态下的透明度 (0-1)")]
         [Range(0, 1)] public float invisibleAllyAlpha = 0.5f;
+        
+        [Header("视野范围")] // [新增]
+        [Tooltip("部署阶段，每个部署格提供的视野范围")]
+        public int deployZoneVisionRange = 2;
+        [Tooltip("撤离点提供的历史视野范围")]
+        public int extractionZoneVisionRange = 1;
     }
 }

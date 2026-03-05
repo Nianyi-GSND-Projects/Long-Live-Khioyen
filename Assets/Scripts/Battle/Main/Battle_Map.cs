@@ -12,6 +12,9 @@ namespace LongLiveKhioyen
         
         public TileData[,] mapData; 
         public string[,] mapTerrainData; 
+        private FogState[,] fogMap;
+        
+        private HashSet<Vector2Int> _playerVisionSourceTiles = new HashSet<Vector2Int>();
         private Dictionary<Vector2Int,HexTile> hexTiles = new();
         
         #region Generation

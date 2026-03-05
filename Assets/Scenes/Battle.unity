@@ -122,6 +122,54 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &50267505
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 50267507}
+  - component: {fileID: 50267506}
+  m_Layer: 0
+  m_Name: FogOfWar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &50267506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50267505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62c9ef12b6363294eba0a80ad2c310c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fogTilePrefab: {fileID: 5875933169087041189, guid: 3f375ebbb8911ba4a8178e8bda97085d, type: 3}
+  concealedColor: {r: 0, g: 0, b: 0, a: 1}
+  exploredColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.7}
+  visibleColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!4 &50267507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50267505}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 22.30597, y: 0.61587703, z: 4.9252334}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1069218211}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &165860662
 GameObject:
   m_ObjectHideFlags: 0
@@ -2265,6 +2313,7 @@ Transform:
   m_Children:
   - {fileID: 1514081784}
   - {fileID: 413733173}
+  - {fileID: 50267507}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1069218212
@@ -2300,6 +2349,7 @@ MonoBehaviour:
   HextilePrefab: {fileID: 5875933169087041189, guid: 6872ce78ac512bd448ed71ab8c135201, type: 3}
   playerFactionMaterial: {fileID: 2100000, guid: 4bbf67c496672644a95c4a5fdfac2999, type: 2}
   enemyFactionMaterial: {fileID: 2100000, guid: d7f9f499b2286ee41879d3172011bdea, type: 2}
+  fogOfWarController: {fileID: 50267506}
   playerUIColor: {r: 0.6961997, g: 0.84338284, b: 0.990566, a: 1}
   enemyUIColor: {r: 0.9056604, g: 0.6707013, b: 0.6707013, a: 1}
   neutralUIColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}

@@ -170,6 +170,10 @@ namespace LongLiveKhioyen
 				GenerateArrangementSlot();
 			}
 			
+			if (fogOfWarController != null)
+			{
+				fogOfWarController.Initialize(Size);
+			}
 			
 		}
 		
@@ -230,6 +234,10 @@ namespace LongLiveKhioyen
 			
 			mapTerrainData = new string[Size.x, Size.y];
 			mapData = new TileData[Size.x, Size.y];
+			fogMap = new FogState[Size.x, Size.y];
+			for (int x = 0; x < Size.x; x++)
+			for (int y = 0; y < Size.y; y++)
+				fogMap[x, y] = FogState.Concealed;
 			
 			for(int x=0; x<Size.x; x++)
 				for(int y=0; y<Size.y; y++)
@@ -495,7 +503,7 @@ namespace LongLiveKhioyen
 			{
 				foreach (var unit in factionActiveUnits[Faction.Enemy])
 				{
-					if (unit is Battalion bat && bat.gameObject.activeSelf && bat.currentSoliders > 0)
+					if (unit is Battalion bat && bat.currentSoliders > 0)
 					{
 						enemyBattalionWipedOut = false;
 						break;
@@ -510,7 +518,6 @@ namespace LongLiveKhioyen
 			{
 				foreach (var unit in factionActiveUnits[Faction.Player])
 				{
-					// 关键修改：只检查 Battalion 类型
 					if (unit is Battalion bat && bat.gameObject.activeSelf && bat.currentSoliders > 0)
 					{
 						playerBattalionWipedOut = false;
@@ -519,7 +526,7 @@ namespace LongLiveKhioyen
 				}
 			}
 
-			if (playerBattalionWipedOut) return (true, false); // 我方部队全灭 -> 失败
+			if (playerBattalionWipedOut) return (true, false);
 
 
 			return (false, false);

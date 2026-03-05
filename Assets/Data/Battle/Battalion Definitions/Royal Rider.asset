@@ -22,8 +22,9 @@ MonoBehaviour:
   defaultPower: 70
   defaultDefense: 100
   defaultRepairPower: 10
-  defaultZOCPower: 1
-  defaultVisibility: 0
+  defaultZocPower: 1
+  defaultVisibility: 1
+  defaultVisionRange: 2
   passability: 0
   movable: 1
   actionable: 1

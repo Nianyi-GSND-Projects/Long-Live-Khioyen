@@ -36,8 +36,9 @@ namespace LongLiveKhioyen
                 
                 if (consumeOnTrigger)
                 {
-                    trapInstance.currentDurability = 0;
+                    trapInstance.currentDurability = -1;
                     Battle.Instance.MarkUnitDirty(trapInstance);
+                    Battle.Instance.CheckDeath(trapInstance);
                 }
             }
         }

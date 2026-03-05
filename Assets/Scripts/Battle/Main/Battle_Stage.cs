@@ -34,7 +34,6 @@ namespace LongLiveKhioyen
         public void ChangeStage(Stage stage)
         {
             OnExitStage(CurrentStage);
-			
             CurrentStage = stage;
             OnEnterStage(CurrentStage);
             OnStageChanged?.Invoke();
@@ -44,13 +43,22 @@ namespace LongLiveKhioyen
         {
             switch (stage)
             {
+                case Stage.Preparation:
+                    Debug.Log("OnEnter: 准备阶段");
+                    UpdatePlayerVisionSources();
+                    UpdateFogOfWar();
+                    break;
                 case Stage.Arrangement:
                     Debug.Log("OnEnter: 布置阶段");
                     ClearAllSelection();
+                    UpdatePlayerVisionSources();
+                    UpdateFogOfWar();
                     HighlightTiles(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Battle:
                     RefreshAllZOC();
+                    UpdatePlayerVisionSources();
+                    UpdateFogOfWar();
                     battleLoopCoroutine = StartCoroutine(BattleTurnLoop());
                     Debug.Log("OnEnter: 战斗阶段");
                     break;
@@ -195,7 +203,8 @@ namespace LongLiveKhioyen
                 }
                 if (CurrentActionStage == PlayerActionStage.SelectingAction)
                 {
-                    CancelMovement();
+                    //CancelMovement();
+                    ClearAllSelection();
                     ChangeActionStage(PlayerActionStage.MovingBattalion);
                 }
                 if (CurrentActionStage == PlayerActionStage.MovingBattalion)

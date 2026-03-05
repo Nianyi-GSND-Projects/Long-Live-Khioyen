@@ -133,6 +133,7 @@ namespace LongLiveKhioyen
         public HashSet<Vector2Int> GetValidActionTargetTiles(Unit user, ActionDefinition action)
         {
             HashSet<Vector2Int> validTiles = new HashSet<Vector2Int>();
+            HashSet<Vector2Int> allTilesInRange = GetAllTilesInRange(user.position, action.range);
             
             // 如果是 Self 类型，只返回自己脚下
             if (action.targetCountType == TargetCountType.Self)
