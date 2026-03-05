@@ -103,15 +103,13 @@ namespace LongLiveKhioyen
                     }
 					
                     initialUnitPosition = SelectedUnit.position;
-                    if(unit is Battalion battalion)
-                        initialUnitMovement = battalion.currentMovement;
+                    
                     if (CurrentActionStage == PlayerActionStage.None)
                     {
-                        if (unit.unitDefinition.movable)
+                        if (unit is Battalion battalion)
                         {
-                            
                             int moveRange = initialUnitMovement;
-                            availableMovePositions = GetAccessableTilesInRange(SelectedUnit, moveRange,true);
+                            UpdateAvailableMovePositions(battalion);
                             ChangeActionStage(PlayerActionStage.MovingBattalion);
                         }
                         else if (unit.unitDefinition.actionable)
@@ -128,7 +126,35 @@ namespace LongLiveKhioyen
             }
 			
         }
-        
+
+        private void UpdateAvailableMovePositions(Battalion bat)
+        {
+            if (bat == null) return;
+            var reachableTiles = GetAccessableTilesInRange(bat, bat.currentMovement, true);
+            var visibleTiles = GetAllVisibleTiles();
+            reachableTiles.IntersectWith(visibleTiles);
+            availableMovePositions = reachableTiles;
+            HighlightTiles(availableMovePositions, moveRingColor);
+        }
+
+        public HashSet<Vector2Int> GetAllVisibleTiles()
+        {
+            HashSet<Vector2Int> visibleTiles = new HashSet<Vector2Int>(); if (fogMap == null) return visibleTiles;
+            for (int x = 0; x < Size.x; x++)
+            {
+                for (int y = 0; y < Size.y; y++)
+                {
+                    if (fogMap[x, y] == FogState.Visible)
+                    {
+                        visibleTiles.Add(new Vector2Int(x, y));
+                    }
+                }
+            }
+            return visibleTiles;
+        }
+
+
+
         #endregion
 
         #region AmbiguousSelection

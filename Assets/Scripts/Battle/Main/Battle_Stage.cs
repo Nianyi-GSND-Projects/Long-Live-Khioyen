@@ -422,24 +422,48 @@ namespace LongLiveKhioyen
             ExecuteActionLogic(SelectedUnit, mapPosition);
 			
         }
-        
         private void ExecuteActionLogic(Unit source, Vector2Int targetPos)
         {
-
-            bool success = CurrentAction.Perform(source, targetPos);
+            ExecuteActionLogic(source, targetPos, CurrentAction);
+        }
+        
+        public void ExecuteActionLogic(Unit source, Vector2Int targetPos, ActionDefinition actionToPerform)
+        {
+            if (actionToPerform == null)
+            {
+                Debug.LogError("ExecuteActionLogic called with a null action!");
+                return;
+            }
+            bool success = actionToPerform.Perform(source, targetPos);
 
             if (success)
             {
                 ResolveDirtyUnits();
-
-                if (SelectedUnit) SelectedUnit.actionDone = true;
-                ClearAllSelection();
-                ChangeActionStage(PlayerActionStage.None);
-				
+                if (source != null && source == SelectedUnit)
+                {
+                    source.actionDone = true;
+                    ClearAllSelection();
+                    ChangeActionStage(PlayerActionStage.None);
+                }
+                else if (source != null)
+                {
+                    source.actionDone = true;
+                }
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd,source);
 
             }
+        }
+        public int CalculatePathCost(List<Vector2Int> path, Unit unit)
+        {
+            if (path == null || path.Count == 0) return 0;
+            
+            int totalCost = 0;
+            foreach (var pos in path)
+            {
+                totalCost += (1 + CalculateExtraMoveCost(unit, pos));
+            }
+            return totalCost;
         }
         
         private IEnumerator PerformPlayerMove(Unit unit, Vector2Int targetPos)
@@ -457,17 +481,36 @@ namespace LongLiveKhioyen
 	
             if (path != null && path.Count > 0)
             {
-                yield return StartCoroutine(MoveUnit(unit, path));
+                bool moveInterrupted = false;
+                yield return StartCoroutine(MoveUnit(unit, path, wasInterrupted => {
+                    moveInterrupted = wasInterrupted;
+                }));
 		
                 if (targetPos != initialUnitPosition)
                 {
                     unit.hasMovedThisTurn = true;
                 }
-		
-                // TODO: 移动实际减少移动力 (目前简化为不减，或者在 MoveUnit 里减)
-                // unit.currentMovement -= path.Count; 
-
-                ChangeActionStage(PlayerActionStage.SelectingAction);
+                int realMoveCost = CalculatePathCost(path, unit);
+                if(unit is Battalion bat)
+                    bat.currentMovement -= realMoveCost; 
+                
+                if (moveInterrupted)
+                {
+                    // 如果被打断，直接结束移动，进入行动选择
+                    Debug.Log("移动被打断，本回合无法继续移动。");
+                    ChangeActionStage(PlayerActionStage.SelectingAction);
+                }
+                else if (unit is Battalion batAfterMove && batAfterMove.currentMovement > 0)
+                {
+                    // 正常完成且还有移动力，刷新范围
+                    UpdateAvailableMovePositions(batAfterMove);
+                }
+                else
+                {
+                    // 正常完成但移动力耗尽，进入行动选择
+                    ChangeActionStage(PlayerActionStage.SelectingAction);
+                }
+                
             }
             else
             {

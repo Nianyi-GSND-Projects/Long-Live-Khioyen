@@ -25,7 +25,7 @@ namespace LongLiveKhioyen
 
             // 2. 范围搜索：找到一个就返回 True
             Vector3Int centerCube = OffsetToCube(user.position);
-            int N = action.range;
+            int N = action.maxRange;
             int minN = action.minRange;
 
             for (int q = -N; q <= N; q++)

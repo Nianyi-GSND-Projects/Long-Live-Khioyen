@@ -4,59 +4,102 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
+    public class Node 
+    {
+        public Vector2Int position;
+        public int cost;
+        public float priority; // 用于 A*
+        public Node(Vector2Int pos, int c) { position = pos; cost = c; }
+    }
     public partial class Battle
     {
         #region PathFind
 
-        public List<Vector2Int> FindPath(Vector2Int start, Vector2Int end, Unit unit,bool CheckVisibility = true)
+        public List<Vector2Int> FindPath(Vector2Int start, Vector2Int end, Unit unit, bool checkVisibility = true)
         {
-            List<Vector2Int> path = new List<Vector2Int>();
-            if (start == end) return path;
+            if (start == end) return new List<Vector2Int>();
 
-            Queue<Vector2Int> frontier = new Queue<Vector2Int>();
-            frontier.Enqueue(start);
-			
+            // 使用一个简单的 List 作为优先队列，每次查找并移除 F 值最小的节点
+            List<Node> frontier = new List<Node>();
+            frontier.Add(new Node(start, 0));
+
             Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
-            cameFrom[start] = start; // 标记起点
+            Dictionary<Vector2Int, int> costSoFar = new Dictionary<Vector2Int, int>();
+            cameFrom[start] = start;
+            costSoFar[start] = 0;
 
             while (frontier.Count > 0)
             {
-                Vector2Int current = frontier.Dequeue();
+                // 找到 F 值最小的节点
+                Node current = null;
+                float minPriority = float.MaxValue;
+                foreach (var node in frontier)
+                {
+                    if (node.priority < minPriority)
+                    {
+                        minPriority = node.priority;
+                        current = node;
+                    }
+                }
+                frontier.Remove(current);
 
-                if (current == end) break;
+                if (current.position == end)
+                {
+                    // 找到终点，重建路径
+                    return ReconstructPath(cameFrom, start, end);
+                }
 
-                int parity = current.y & 1;
+                // 遍历邻居
+                int parity = current.position.y & 1;
                 foreach (var offset in neighborOffsets[parity])
                 {
-                    Vector2Int next = current + offset;
-					
+                    Vector2Int next = current.position + offset;
+
                     if (!IsValidMapPosition(next)) continue;
-                    if (cameFrom.ContainsKey(next)) continue;
-					
-                    // 检查通行性 (如果是终点，允许停留检查；如果是中间点，允许穿过检查)
+
+                    // 检查通行性
                     bool isEnd = (next == end);
                     if (isEnd)
                     {
-                        if (!CanUnitStopOnTile(unit, next, CheckVisibility)) continue;
+                        if (!CanUnitStopOnTile(unit, next, checkVisibility)) continue;
                     }
                     else
                     {
-                        if (!CanUnitPassThroughTile(unit, next, CheckVisibility)) continue;
+                        if (!CanUnitPassThroughTile(unit, next, checkVisibility)) continue;
                     }
 
-                    frontier.Enqueue(next);
-                    cameFrom[next] = current;
+                    // 计算新的 G-cost (实际消耗)
+                    int moveCostToNext = 1 + CalculateVisualExtraMoveCost(unit, next);
+                    int newCost = costSoFar[current.position] + moveCostToNext;
+
+                    if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
+                    {
+                        costSoFar[next] = newCost;
+                        // 计算 F-cost (G + H)
+                        float priority = newCost + GetHexDistance(next, end);
+                        
+                        var nextNode = new Node(next, newCost) { priority = priority };
+                        frontier.Add(nextNode);
+                        cameFrom[next] = current.position;
+                    }
                 }
             }
 
-            if (!cameFrom.ContainsKey(end)) return null; // 无法到达
-
-            // 重建路径
-            Vector2Int curr = end;
-            while (curr != start)
+            return null; // 无法到达
+        }
+        
+        private List<Vector2Int> ReconstructPath(Dictionary<Vector2Int, Vector2Int> cameFrom, Vector2Int start, Vector2Int end)
+        {
+            List<Vector2Int> path = new List<Vector2Int>();
+            Vector2Int current = end;
+            while (current != start)
             {
-                path.Add(curr);
-                curr = cameFrom[curr];
+                path.Add(current);
+                if (!cameFrom.ContainsKey(current))
+                {
+                    return null; 
+                }
+                current = cameFrom[current];
             }
             path.Reverse();
             return path;
@@ -110,7 +153,7 @@ namespace LongLiveKhioyen
  
                     int moveCost = 1; 
                     
-                    moveCost += CalculateExtraMoveCost(movingUnit, neighborPos);
+                    moveCost += CalculateVisualExtraMoveCost(movingUnit, neighborPos);
                     
                     int newCost = CostSofar[currentPos] + moveCost;
                     if (newCost <= range && !CostSofar.ContainsKey(neighborPos))
@@ -120,20 +163,46 @@ namespace LongLiveKhioyen
                     }
                 }
             }
-
+            
             return validDestinations;
         }
-
 
 
         #endregion
 
         #region TargetSearch
+        public List<Unit> FindVisibleOpponentsInVision(Unit aiUnit)
+        {
+            List<Unit> visibleOpponents = new List<Unit>();
+            if (aiUnit == null) return visibleOpponents;
+
+            int visionRange = aiUnit.GetVisionRange();
+            var tilesInVision = GetAllTilesInRange(aiUnit.position, visionRange);
+
+            // 2. 确定目标阵营
+            Faction targetFaction = (aiUnit.faction == Faction.Enemy) ? Faction.Player : Faction.Enemy;
+            // 也可以包含友军
+            // Faction secondaryTargetFaction = (aiUnit.faction == Faction.Enemy) ? Faction.Friend : Faction.SomeOtherAI;
+
+            // 3. 遍历视野内的格子
+            foreach (var pos in tilesInVision)
+            {
+                var tileData = mapData[pos.x, pos.y];
+                Unit unitOnTile = tileData.Battalion ?? (Unit)tileData.Facility;
+
+                if (unitOnTile != null && unitOnTile.faction == targetFaction && unitOnTile.IsVisible)
+                {
+                    // 这个单位是可见的敌方单位
+                    visibleOpponents.Add(unitOnTile);
+                }
+            }
+            return visibleOpponents;
+        }
 
         public HashSet<Vector2Int> GetValidActionTargetTiles(Unit user, ActionDefinition action)
         {
             HashSet<Vector2Int> validTiles = new HashSet<Vector2Int>();
-            HashSet<Vector2Int> allTilesInRange = GetAllTilesInRange(user.position, action.range);
+            HashSet<Vector2Int> allTilesInRange = GetAllTilesInRange(user.position, action.maxRange);
             
             // 如果是 Self 类型，只返回自己脚下
             if (action.targetCountType == TargetCountType.Self)
@@ -143,7 +212,7 @@ namespace LongLiveKhioyen
             }
             
             Vector3Int centerCube = OffsetToCube(user.position);
-            int N = action.range;
+            int N = action.maxRange;
             int minN = action.minRange; // 假设你有最小射程
 
             for (int q = -N; q <= N; q++)

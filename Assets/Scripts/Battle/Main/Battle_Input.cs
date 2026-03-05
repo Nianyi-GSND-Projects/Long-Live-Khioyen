@@ -187,13 +187,20 @@ namespace LongLiveKhioyen
 			
             if (CurrentActionStage == PlayerActionStage.SelectingAction)
             {
-                CancelMovement();
-                ChangeActionStage(PlayerActionStage.MovingBattalion);
                 return;
             }
 			
             if (CurrentActionStage == PlayerActionStage.MovingBattalion)
             {
+                if((IsUnitSelected && SelectedUnit is Battalion selectedBat))
+                {
+                    if (gridPos == selectedBat.position)
+                    {
+                        Debug.Log("移动结束，进入行动选择。");
+                        ChangeActionStage(PlayerActionStage.SelectingAction); 
+                        return; 
+                    }
+                }
                 if (availableMovePositions.Contains(gridPos))
                 {
                     MovingBattalion(gridPos);

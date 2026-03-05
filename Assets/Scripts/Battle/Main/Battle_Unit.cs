@@ -330,6 +330,11 @@ namespace LongLiveKhioyen
             
             if (CurrentStage == Stage.Battle) UpdateZOC(unit, false);
             
+            var visualController = unit.GetComponent<UnitVisualController>();
+            if (visualController != null)
+            {
+                visualController.CleanupVisuals();
+            }
             unit.gameObject.SetActive(false);
             unit.transform.SetParent(null);
 			
@@ -366,13 +371,17 @@ namespace LongLiveKhioyen
 
         #region Operation
         
-        public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path)
+        public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path,System.Action<bool> onComplete)
         {
-            if (unit == null || path == null || path.Count == 0) yield break;
+            if (unit == null || path == null || path.Count == 0)
+            {
+                onComplete?.Invoke(false);
+                yield break;
+            }
             
             UpdateZOC(unit, false);
             unit.hasMovedThisTurn = true;
-			
+            bool interrupted = false;
             // 2. 逐步移动
             foreach (var pos in path)
             {
@@ -393,11 +402,12 @@ namespace LongLiveKhioyen
                 }
                 unit.transform.localPosition = endPos;
 
-                bool interrupted = CheckTileEffectOnEnter(unit, pos);
+                interrupted = CheckTileEffectOnEnter(unit, pos);
                 
                 if (interrupted)
                 {
                     Debug.Log($"{unit.name} 的移动被陷阱打断！");
+                    
                     break;
                 }
                 
@@ -410,6 +420,7 @@ namespace LongLiveKhioyen
                 UpdatePlayerVisionSources();
                 UpdateFogOfWar();
             }
+            onComplete?.Invoke(interrupted);
         }
         
         

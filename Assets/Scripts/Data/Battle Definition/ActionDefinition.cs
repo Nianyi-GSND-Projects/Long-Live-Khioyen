@@ -99,18 +99,34 @@ namespace LongLiveKhioyen
         public List<EffectDefinition> effects = new List<EffectDefinition>();
         
         [Header("Constraints")]
-        public int range = 1; 
+        public int maxRange = 1; 
         public int minRange = 1;
         
         [Header("Targeting")]
         public ActionTargetType targetType = ActionTargetType.UnitOnly;
+        public bool IsTileValidTarget(Unit user, Vector2Int targetPos)
+        {
+            return IsTileValidTarget(user, targetPos, user.position);
+        }
         
-        public bool IsTileValidTarget(Unit user, Vector2Int pos)
+        public bool IsTileValidTarget(Unit user, Vector2Int targetPos,Vector2Int sourcePos)
         {
             if (Battle.Instance == null) return false;
-            TileData tile = Battle.Instance.mapData[pos.x, pos.y];
+            if (!Battle.Instance.IsValidMapPosition(targetPos))
+            {
+                return false;
+            }
+            
+            int dist = Battle.Instance.GetHexDistance(sourcePos, targetPos);
+            if (dist > maxRange || dist < minRange)
+            {
+                return false;
+            }
+            
+            TileData tile = Battle.Instance.mapData[targetPos.x, targetPos.y];
             
             Unit primaryTarget = GetPrimaryTargetOnTile(tile);
+            
             switch (targetType)
             {
                 case ActionTargetType.BattalionOnly:

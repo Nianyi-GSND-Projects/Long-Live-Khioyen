@@ -47,6 +47,17 @@ namespace LongLiveKhioyen
             OnUnitStateChanged();
         }
         
+        public override int GetVisionRange()
+        {
+            // 如果设施未建设完成
+            if (!isConstructed)
+            {
+                // 只提供自身格子的视野
+                return 0; 
+            }
+            return base.GetVisionRange();
+        }
+        
         public override void OnTurnStart()
         {
             if (!isConstructed) return; // 未建成不回体/不重置行动

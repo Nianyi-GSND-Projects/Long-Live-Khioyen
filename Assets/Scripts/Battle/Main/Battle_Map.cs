@@ -494,7 +494,68 @@ namespace LongLiveKhioyen
 
             return PreventMovement;
         }
-        
+
+        public int CalculateVisualExtraMoveCost(Unit movingUnit, Vector2Int targetPos)
+        {
+            if (!IsValidMapPosition(targetPos)) return 999;
+
+            // [重构] 模拟 TileData 中的 ZOC 计算，但只考虑可见单位
+            int visualPlayerZOC = 0;
+            int visualEnemyZOC = 0;
+
+            // 辅助方法，用于累加一个单位的视觉 ZOC
+            void AddVisualZOC(Unit zocProvider)
+            {
+                if (zocProvider != null && IsUnitVisibleToPlayer(zocProvider))
+                {
+                    if (zocProvider.faction == Faction.Player || zocProvider.faction == Faction.Friend)
+                    {
+                        visualPlayerZOC += (int)zocProvider.GetStat(StatType.ZocPower);
+                    }
+                    else if (zocProvider.faction == Faction.Enemy)
+                    {
+                        visualEnemyZOC += (int)zocProvider.GetStat(StatType.ZocPower);
+                    }
+                }
+            }
+
+            // 检查 targetPos 自身和所有邻居，看它们上面的单位是否对 targetPos 施加了 ZOC
+            var tilesToCheck = GetAllTilesInRange(targetPos, 1);
+            foreach (var pos in tilesToCheck)
+            {
+                var tileData = mapData[pos.x, pos.y];
+                AddVisualZOC(tileData.Battalion);
+                AddVisualZOC(tileData.Facility);
+            }
+
+            // 根据视觉 ZOC 的对比，决定最终的 ZOC 状态
+            ZOCState visualState = ZOCState.Neutral;
+            if (visualPlayerZOC > visualEnemyZOC)
+            {
+                visualState = ZOCState.PlayerControlled;
+            }
+            else if (visualEnemyZOC > visualPlayerZOC)
+            {
+                visualState = ZOCState.EnemyControlled;
+            }
+
+            // 判断是否产生额外消耗
+            bool isMovingUnitPlayerSide = movingUnit.faction == Faction.Player || movingUnit.faction == Faction.Friend;
+
+            if (isMovingUnitPlayerSide && visualState == ZOCState.EnemyControlled)
+            {
+                return 1; // 玩家单位进入看起来是敌方控制的区域，消耗+1
+            }
+            
+            // AI 的情况（虽然当前需求是为玩家计算，但为了完整性）
+            if (!isMovingUnitPlayerSide && visualState == ZOCState.PlayerControlled)
+            {
+                return 1;
+            }
+
+            return 0; // 其他情况（进入己方或中立区域）不产生额外消耗
+        }
+
         public int CalculateExtraMoveCost(Unit unit, Vector2Int pos)
         {
             if (!IsValidMapPosition(pos)) return 999;

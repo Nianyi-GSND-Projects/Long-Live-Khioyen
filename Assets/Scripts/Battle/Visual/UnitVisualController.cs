@@ -31,6 +31,25 @@ namespace LongLiveKhioyen
            // CreateOrUpdateFlag();
         }
 
+        public void CleanupVisuals()
+        {
+            if (_activeFlag != null)
+            {
+                Destroy(_activeFlag);
+            }
+            if (modelContainer != null)
+            {
+                foreach (Transform child in modelContainer)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            if (overheadUI != null)
+            {
+                overheadUI.gameObject.SetActive(false);
+            }
+        }
+
         public virtual void RefreshVisuals()
         {
             if (_ownerUnit == null) return;
