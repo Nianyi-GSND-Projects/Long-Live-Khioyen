@@ -62,7 +62,7 @@ namespace LongLiveKhioyen
             return path;
         }
         
-        public HashSet<Vector2Int> GetAccessableTilesInRange(Unit movingUnit, int range,bool checkVisibility)
+        public HashSet<Vector2Int> GetAccessableTilesInRange(Unit movingUnit, int range,bool checkVisibility = true)
         {
 			
             HashSet<Vector2Int> validDestinations = new HashSet<Vector2Int>();

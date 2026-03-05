@@ -443,7 +443,7 @@ namespace LongLiveKhioyen
                 yield break;
             }
             
-            List<Vector2Int> path = FindPath(unit.position, targetPos, unit, false);
+            List<Vector2Int> path = FindPath(unit.position, targetPos, unit, true);
 	
             if (path != null && path.Count > 0)
             {

@@ -194,11 +194,22 @@ namespace LongLiveKhioyen
             //假如目标地点有设施，则设施的可通行性覆盖地形本身的可通行性
             //否则，考虑地形本身的可通行性
             UnitPassability p;
-            if (tile.Facility&&(!checkVisibility||tile.Facility.IsVisible||tile.Facility.faction==unit.faction))
+            if (tile.Facility)
             { 
-                p = tile.Facility.Definition.passability;
+                // 如果需要检查可见性，并且设施不可见，则我们无视该设施，直接判断地形
+                if (checkVisibility && !tile.Facility.IsVisible)
+                {
+                    p = hexTiles[pos].TerrainDefinition.unitPassability;
+                }
+                else // 否则，设施可见，使用设施的通行性规则
+                {
+                    p = tile.Facility.Definition.passability;
+                }
             }
-            else p = hexTiles[pos].TerrainDefinition.unitPassability;
+            else // 没有设施，直接判断地形
+            {
+                p = hexTiles[pos].TerrainDefinition.unitPassability;
+            }
 
             return p switch
             {
@@ -233,11 +244,22 @@ namespace LongLiveKhioyen
             }
             
             UnitPassability p;
-            if (tile.Facility&&(!checkVisibility||tile.Facility.IsVisible||tile.Facility.faction==unit.faction))
+            if (tile.Facility)
             { 
-                p = tile.Facility.Definition.passability;
+                // 如果需要检查可见性，并且设施不可见，则我们无视该设施，直接判断地形
+                if (checkVisibility && !tile.Facility.IsVisible)
+                {
+                    p = hexTiles[pos].TerrainDefinition.unitPassability;
+                }
+                else // 否则，设施可见，使用设施的通行性规则
+                {
+                    p = tile.Facility.Definition.passability;
+                }
             }
-            else p = hexTiles[pos].TerrainDefinition.unitPassability;
+            else // 没有设施，直接判断地形
+            {
+                p = hexTiles[pos].TerrainDefinition.unitPassability;
+            }
 
             return p switch
             {
