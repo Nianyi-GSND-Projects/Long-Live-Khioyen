@@ -92,5 +92,9 @@ namespace LongLiveKhioyen
         public float constructionRatePerDiscipline = 0.01f;
         [Tooltip("每1点【纪律】值增加多少战后伤兵恢复率")]
         public float recoveryRatePerDiscipline = 0.01f;
+        
+        [Header("视觉效果")]
+        [Tooltip("己方单位在不可见状态下的透明度 (0-1)")]
+        [Range(0, 1)] public float invisibleAllyAlpha = 0.5f;
     }
 }

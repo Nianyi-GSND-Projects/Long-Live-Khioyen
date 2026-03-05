@@ -26,6 +26,8 @@ namespace LongLiveKhioyen
         [Header("Visuals")]
         public int soldiersPerModel = 100;
         public float modelSpacing = 0.05f;
+        [Tooltip("如果 soldierModelPrefab 使用 SpriteRenderer，可以为其指定一个特定的材质。如果为空，则使用默认材质。")] 
+        public Material spriteMaterial;
         
         public BattalionAttackType battalionAttackType;
         public int attackRange;

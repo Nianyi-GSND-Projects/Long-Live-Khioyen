@@ -161,7 +161,8 @@ namespace LongLiveKhioyen
                 if (CurrentStage == Stage.Battle) UpdateZOC(unit, true);
                 
                 OnUnitPlaced?.Invoke();
-            
+                unit.UpdateVisualState();
+                unit.OnUnitStateChanged();
                 Debug.Log($"Unit {unit.name} (ID:{unit.InstanceId}) registered to battle at {pos}.");
             }
 
@@ -184,13 +185,13 @@ namespace LongLiveKhioyen
             unit.InstanceId = descriptor.instanceId;
             unit.faction = descriptor.faction;
             unit.position = pos;
+            unit.IsVisible = descriptor.isVisible;
             
             unit.currentHealth = descriptor.currentHealth;
-			
             unit.CalculateEntryStats(descriptor);
 			
-            SetupUnitVisuals(unit);
-            
+            var controller = SetupUnitVisuals(unit);
+            unit.SetVisualController(controller);
             PlaceUnitOnMap(unit, pos);
             
             unit.transform.SetParent(transform, false);
@@ -204,7 +205,6 @@ namespace LongLiveKhioyen
             {
                 unit.actionDone = false;
             }
-            unit.UpdateVisualState();
             Debug.Log($"SpawnUnit: {unit.name}, Stage: {CurrentStage}, ActionDone: {unit.actionDone}");
             return unit;
         }

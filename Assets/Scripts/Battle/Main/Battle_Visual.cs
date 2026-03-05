@@ -136,7 +136,7 @@ namespace LongLiveKhioyen
         }
 
         
-        public void SetupUnitVisuals(Unit unit)
+        public UnitVisualController SetupUnitVisuals(Unit unit)
         {
             GameObject go = unit.gameObject;
             UnitVisualController visuals = null;
@@ -150,11 +150,8 @@ namespace LongLiveKhioyen
             {
                 visuals = go.AddComponent<FacilityVisuals>();
             }
-
-            if (visuals == null) return;
-
-            // 2. 创建模型容器子物体
-            // 检查是否已经有了，防止重复创建
+            if(visuals != null)
+            visuals.Initialize(unit);
             Transform containerTrans = go.transform.Find("ModelContainer");
             if (containerTrans == null)
             {
@@ -163,8 +160,6 @@ namespace LongLiveKhioyen
             }
             visuals.modelContainer = containerTrans;
 
-            // 3. 加载并生成 UI
-            // 这里的路径可以提取为常量，或者从 Battle 配置里读
             var uiPrefab = Resources.Load<GameObject>("Prefabs/Battle/UI/PF_UnitUI");
             if (uiPrefab)
             {
@@ -186,8 +181,7 @@ namespace LongLiveKhioyen
                 }
             }
     
-            // 4. (可选) 如果你希望在这里就 Initialize，也可以
-            // 但通常依靠 Unit.Start() 来调用 Initialize 更符合生命周期
+            return visuals;
         }
 
 

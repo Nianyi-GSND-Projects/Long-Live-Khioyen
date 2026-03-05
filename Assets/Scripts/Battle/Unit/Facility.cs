@@ -44,6 +44,7 @@ namespace LongLiveKhioyen
                     // TODO: 播放完成特效
                 }
             }
+            OnUnitStateChanged();
         }
         
         public override void OnTurnStart()

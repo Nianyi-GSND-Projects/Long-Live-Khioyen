@@ -303,7 +303,8 @@ namespace LongLiveKhioyen
             EditorGUILayout.LabelField("Definition", _selectedUnitData.isFacility ? 
                 (_selectedUnitData.facilityDef ? _selectedUnitData.facilityDef.name : "None") : 
                 (_selectedUnitData.battalionDef ? _selectedUnitData.battalionDef.name : "None"));
-
+            
+            _selectedUnitData.isVisible = EditorGUILayout.Toggle("Is Visible", _selectedUnitData.isVisible);
             GUILayout.Space(5);
             
             // 覆盖属性

@@ -9,7 +9,7 @@ namespace LongLiveKhioyen
     public class UnitOverheadUI : MonoBehaviour
     {
         [Header("UI References")]
-        public CanvasGroup canvasGroup;
+        public CanvasGroup _canvasGroup;
         public TMP_Text commanderNameText;
         public TMP_Text unitInfoText;
         public Image iconImage; 
@@ -26,6 +26,15 @@ namespace LongLiveKhioyen
         private Transform _targetUnitTransform;
         
         private Unit _targetUnit; 
+        
+        void Awake()
+        {
+            _canvasGroup = GetComponent<CanvasGroup>();
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
+        }
         
         public void Initialize(Unit unit)
         {
@@ -111,6 +120,17 @@ namespace LongLiveKhioyen
                 iconImage.color = Battle.Instance.GetFactionUIColor(unit.faction);
             }
             
+        }
+        
+        public void SetAlpha(float alpha)
+        {
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = alpha;
+                // 如果完全透明（或透明度很低），则使其不可交互/不阻挡射线
+                _canvasGroup.interactable = alpha > 0.01f; 
+                _canvasGroup.blocksRaycasts = alpha > 0.01f; 
+            }
         }
     }
 }

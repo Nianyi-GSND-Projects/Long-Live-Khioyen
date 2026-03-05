@@ -42,6 +42,7 @@ namespace LongLiveKhioyen
             }
             
             lastUsedPrefab = targetPrefab;
+            CacheRenderers();
         }
         
         private GameObject GetTargetPrefab(Facility fac, FacilityDefinition def)

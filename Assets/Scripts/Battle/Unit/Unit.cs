@@ -28,17 +28,11 @@ namespace LongLiveKhioyen
         public bool hasMovedThisTurn = false;
         public Vector2Int position { get; set; }
         public Unit LastAttacker { get; private set; }
-        public bool IsVisible { get; set; } = true;
+        public bool IsVisible { get; set; }
         
         public virtual int ZocPower => (int)GetStat(StatType.ZocPower);
         protected virtual void Start()
         {
-            visualController = GetComponent<UnitVisualController>();
-            
-            if (visualController != null)
-            {
-                visualController.Initialize(this);
-            }
         }
         
         public virtual void CalculateEntryStats(UnitDescriptor desc)
@@ -51,6 +45,7 @@ namespace LongLiveKhioyen
                 actionChance = desc.actionChance
             };
         }
+        
         public virtual float GetStat(StatType stat)
         {
             if (entryStats == null) return 0;
@@ -180,8 +175,15 @@ namespace LongLiveKhioyen
             {
                 visualController.SetVisualState(selected, actionDone);
             }
+            
         }
 
+        public void SetVisualController(UnitVisualController controller)
+        {
+            visualController = controller;
+        }
+        
+        
        
         #endregion
 

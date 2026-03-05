@@ -15,12 +15,15 @@ MonoBehaviour:
   id: 0
   unitName: Trap
   unitType: 1
-  defaultVisibility: 0
-  figure: {fileID: 21300000, guid: 291da373b1b19564d862d403bc703915, type: 3}
-  unitModelTemplate: {fileID: 0}
+  icon: {fileID: 21300000, guid: 291da373b1b19564d862d403bc703915, type: 3}
   unitSelectedSoundEffect: {fileID: 0}
+  unitModelPrefab: {fileID: 366021807918811276, guid: 6aef77c3b36ae7146a7b6ee0ab342725, type: 3}
+  useBillboard: 0
   defaultPower: 0
   defaultDefense: 0
+  defaultRepairPower: 10
+  defaultZOCPower: 1
+  defaultVisibility: 0
   passability: 1
   movable: 0
   actionable: 0
@@ -36,11 +39,14 @@ MonoBehaviour:
   lootRules: []
   tags: []
   description: Trap
-  icon: {fileID: 21300000, guid: 291da373b1b19564d862d403bc703915, type: 3}
   defaultMaxDurability: 1
   defaultCost: 0
   special: 0
   block: 0
+  useFormationDisplay: 0
+  formationInstanceCount: 1
+  formationSpacing: 0.5
+  constructionStagePrefabs: []
   isInteractable: 0
   damage: 100
   consumeOnTrigger: 1

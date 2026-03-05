@@ -22,6 +22,7 @@ namespace LongLiveKhioyen
             modelCount = Mathf.Min(modelCount, 20); // 上限限制
 
             GenerateFormation(modelCount, bat.Definition);
+            CacheRenderers();
         }
 
         private void GenerateFormation(int count, BattalionDefinition def)
@@ -56,6 +57,11 @@ namespace LongLiveKhioyen
                 var sr = soldier.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null)
                 {
+                    if (def.spriteMaterial != null)
+                    {
+                        sr.material = def.spriteMaterial;
+                    }
+                    
                     sr.flipX = Random.value > 0.5f;
                     
                     // sr.color = Battle.Instance.GetFactionColor(_ownerUnit.faction); // 需在 Battle 中实现 GetFactionColor 返回 Color
@@ -64,5 +70,6 @@ namespace LongLiveKhioyen
                 activeSoldiers.Add(soldier);
             }
         }
+        
     }
 }

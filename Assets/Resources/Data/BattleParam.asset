@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: BattleParam
   m_EditorClassIdentifier: 
   defaultMaxExp: 0
+  defaultMaxMorale: 100
+  defaultMaxSolider: 1000
+  defaultStrategySuccessRate: 0.5
+  defaultSoliderAmountForOnePower: 100
   attackScaling:
     zhiFactor: 0
     xinFactor: 0
@@ -50,3 +54,4 @@ MonoBehaviour:
   schemeSuccessRatePerStrategy: 0.01
   constructionRatePerDiscipline: 0.01
   recoveryRatePerDiscipline: 0.01
+  invisibleAllyAlpha: 0.509
