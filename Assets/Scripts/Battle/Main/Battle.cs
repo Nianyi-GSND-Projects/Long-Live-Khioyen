@@ -263,15 +263,9 @@ namespace LongLiveKhioyen
 
 			if (useLevelPreset && levelPreset != null)
 			{
-				if (levelPreset.useFixedEnemies)
-				{
-					PlaceFixedNonPlayerUnits();
-				}
-				else
-				{
-					PlaceRandomNonPlayerUnits();
-				}
 				
+					PlaceFixedNonPlayerUnits();
+					PlaceRandomNonPlayerUnits();
 				return;
 			}
 

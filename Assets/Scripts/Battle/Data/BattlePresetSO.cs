@@ -46,10 +46,6 @@ namespace LongLiveKhioyen
         [Header("Events")]
         public List<BattleEventDefinition> levelEvents = new List<BattleEventDefinition>(); // 预设事件
         
-        [Header("Enemy Settings")]
-        [Tooltip("是否使用下方 'Preplaced Units' 列表中的固定敌人配置。如果为 false，则使用下方的随机生成规则。")]
-        public bool useFixedEnemies = true;
-        
         [Header("Random Enemy Generation (if not using fixed enemies)")]
        [Tooltip("敌人可以生成的区域")]
        public List<Vector2Int> nonPlayerUnitsSpawnZones = new List<Vector2Int>();

@@ -198,18 +198,11 @@ namespace LongLiveKhioyen
 
             EditorGUILayout.Space();
             var so = new SerializedObject(currentPreset);
-            var useFixedProp = so.FindProperty("useFixedEnemies");
-        
-            EditorGUILayout.PropertyField(useFixedProp);
-
-            if (!useFixedProp.boolValue)
-            {
                 GUILayout.BeginVertical("helpbox");
+                EditorGUILayout.LabelField("Random Unit Generation", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(so.FindProperty("nonPlayerUnitsSpawnZones"), true);
                 EditorGUILayout.PropertyField(so.FindProperty("randomEnemyRules"), true);
-        
                 GUILayout.EndVertical();
-            }
 
             so.ApplyModifiedProperties();
         }
