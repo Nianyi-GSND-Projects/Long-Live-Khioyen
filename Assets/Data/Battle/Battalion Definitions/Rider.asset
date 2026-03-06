@@ -22,8 +22,9 @@ MonoBehaviour:
   defaultPower: 40
   defaultDefense: 100
   defaultRepairPower: 10
-  defaultZOCPower: 1
+  defaultZocPower: 1
   defaultVisibility: 1
+  defaultVisionRange: 2
   passability: 0
   movable: 1
   actionable: 1
@@ -43,9 +44,10 @@ MonoBehaviour:
   defaultDiscipline: 100
   defaultFlexibility: 30
   defaultStrategy: 100
-  defaultMaxSolider: 100
+  defaultMaxSolider: 1000
   defaultMaxMorale: 100
   soldiersPerModel: 100
   modelSpacing: 0.2
+  spriteMaterial: {fileID: 0}
   battalionAttackType: 0
   attackRange: 1

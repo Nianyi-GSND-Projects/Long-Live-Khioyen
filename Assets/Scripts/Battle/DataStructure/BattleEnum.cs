@@ -14,6 +14,22 @@ namespace LongLiveKhioyen
             Battle,
             Settlement
         }
+        
+        public enum BattleType
+        {
+            Seige, //攻城战
+            Defend, //守城战
+            Encounter //遭遇战
+        }
+
+        public enum BattleGoal
+        {
+            Annihilate, //歼灭战：所有敌人离开战场即获胜
+            Guard,//防守战：规定回合数内敌人无法占领目标点或我方依然有部队存活即获胜
+            Convey,//护送目标单位撤离抵达目标点
+            Escape //有部队撤离战斗即可获胜
+        
+        }
         /// <summary>
         /// 战争迷雾状态
         /// </summary>

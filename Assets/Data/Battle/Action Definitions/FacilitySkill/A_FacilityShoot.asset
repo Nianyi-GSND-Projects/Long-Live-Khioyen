@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_FacilityShoot
   m_EditorClassIdentifier: 
   actionName: Shoot
-  actionId: 0
+  actionId: 9
   description: Shoot on Enemy Battalion
   icon: {fileID: 0}
   actionPointCost: 0
@@ -23,6 +23,6 @@ MonoBehaviour:
   useConditions: []
   effects:
   - {fileID: 11400000, guid: f855f2eef3f8c654a8c08044f5c42fd1, type: 2}
-  range: 2
+  maxRange: 1
   minRange: 1
   targetType: 0

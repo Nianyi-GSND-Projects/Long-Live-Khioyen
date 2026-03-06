@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_Build
   m_EditorClassIdentifier: 
   actionName: Construct
-  actionId: 0
+  actionId: 10
   description: 'Build Facility
 
 '
@@ -26,6 +26,6 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: 84d9529237367d747a2a91da36f06625, type: 2}
   - {fileID: 11400000, guid: 041311d30c87d864f9e8bf5487675c9b, type: 2}
-  range: 1
+  maxRange: 1
   minRange: 1
   targetType: 2

@@ -4,46 +4,30 @@ using UnityEngine;
 
 namespace LongLiveKhioyen
 {
-    public enum BattleType
-    {
-        Seige, //攻城战
-        Defend, //守城战
-        Encounter //遭遇战
-    }
-
-    public enum BattleGoal
-    {
-        Annihilate, //歼灭战：所有敌人离开战场即获胜
-        Guard,//防守战：规定回合数内敌人无法占领目标点或我方依然有部队存活即获胜
-        Convey,//护送目标单位撤离抵达目标点
-        Escape //有部队撤离战斗即可获胜
-        
-    }
+    
 
     public class BattleMetaData
     {
-        public string battleName;
-        //战役名称
-        public int battleId;
-        //战役id
-        public int battleTime;
-        //战役发生时间
-        public BattleType battleType;
-        //战役类型
-
+        #region PreBattle Parameter
+        
         public Vector2 battlePosition;
         //战役发生地在大地图上的坐标
+        
         public Vector2 encounterOrientation;
         //玩家进入战役时行军的方向向量
+
+        public int difficulity;
+        //动态难度系数
+        #endregion
+
+        #region BattleSetting
         
-        public Vector2Int battleSize;
-        //战斗场地规模
+        [Header("Battle Generation")]
+        public bool useRandomBattle = true;
+        public BattlePresetSO fixedBattlePreset;
+
+        #endregion
         
-        public BattleGoal battleGoal;
-
-        public int enemyCount;
-
-
         public void GenerateMetaData()
         {
             //从GameInstance中取得需要的数据

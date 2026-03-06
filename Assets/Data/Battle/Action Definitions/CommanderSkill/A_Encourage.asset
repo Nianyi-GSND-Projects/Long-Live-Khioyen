@@ -29,7 +29,7 @@ MonoBehaviour:
   m_Name: A_Encourage
   m_EditorClassIdentifier: 
   actionName: Encourage
-  actionId: 0
+  actionId: 8
   description: Raise Target Battalion Attack For Three Turns
   icon: {fileID: 0}
   actionPointCost: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
   useConditions: []
   effects:
   - {fileID: -5720884430109982679}
-  range: 3
+  maxRange: 1
   minRange: 0
   targetType: 0
 --- !u!114 &7460833634097892350

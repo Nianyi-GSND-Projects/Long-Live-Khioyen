@@ -39,6 +39,9 @@ namespace LongLiveKhioyen
         [Header("Level Config")]
         public string levelName = "New Battle";
         
+        [Tooltip("本场战斗的胜利条件")]
+        public BattleGoal battleGoal = BattleGoal.Annihilate;
+        
         [Header("Spawn Points")]
         public List<Vector2Int> playerDeployPoints = new List<Vector2Int>(); // 玩家部署区
         public List<Vector2Int> extractionPoints = new List<Vector2Int>();   // 撤离点

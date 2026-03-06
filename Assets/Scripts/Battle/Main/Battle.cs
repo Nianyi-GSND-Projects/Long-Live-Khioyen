@@ -13,12 +13,15 @@ namespace LongLiveKhioyen
 		public System.Action onInitialized;
 		public ActionDatabase actionDataBase;
 		private CommanderRegistry commanderRegistry;
+		public RandomBattleRuleSO randomBattleRule;
+
+		public string battleName => levelPreset.levelName;
+		public BattleGoal battlegoal =>levelPreset.battleGoal;
 		
 		AudioSource audioSource;
 
 		#region Preset
 		[Header("Level Preset Settings")]
-		public bool useLevelPreset = false;
 		public MapDataSO presetMapData; 
 		public BattlePresetSO levelPreset;
 		#endregion
@@ -35,12 +38,8 @@ namespace LongLiveKhioyen
 		}
 		
 		#region Battle data
-
-		public BattleMetaData data;
 		public ArmyStatus armyStatus;
-		public Vector2Int Size => data.battleSize;
-		
-		public string BattleName => data.battleName;
+		public Vector2Int Size;
 		#endregion
 
 
@@ -57,11 +56,7 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
-			#if BATTLE_TEST
-				GenerateTestData();
-			#else
-				LoadBattleMetaData();
-			#endif
+			InitializeBattlePreset();
 			
 			InitializeData();
 			
@@ -71,12 +66,6 @@ namespace LongLiveKhioyen
 			InitializeComponent();
 			
 			InitializeGameStatus();
-			
-			#if BATTLE_TEST
-
-			GenerateTestArmyData();
-			
-			#endif
 			
 			ImportArmyData();
 			
@@ -94,12 +83,64 @@ namespace LongLiveKhioyen
 		#endregion
 		
 		#region Initialization
+
+		private void InitializeBattlePreset()
+		{
+			BattleMetaData data = null;
+			if (GameInstance.Instance != null)
+			{
+				data = GameInstance.Instance.BattleMetaData;
+			}
+			
+
+			if (data == null)
+			{
+				Debug.LogWarning("BattleMetaData is null. Using Inspector settings.");
+				//测试模式
+				return;
+			}
+			
+			if (data.useRandomBattle)
+			{
+				// 随机模式
+				if (randomBattleRule != null)
+				{
+					var pool = randomBattleRule.GetBattlePool(data);
+					if (pool != null)
+					{
+						levelPreset = pool.GetRandomBattlePreset();
+						Debug.Log($"[Battle] Loaded Random Preset: {levelPreset?.name}");
+					}
+					else
+					{
+						Debug.LogError("[Battle] Failed to get BattlePool from RandomBattleRule.");
+					}
+				}
+				else
+				{
+					Debug.LogError("[Battle] RandomBattleRule is null!");
+				}
+			}
+			else
+			{
+				// 固定模式
+				if (data.fixedBattlePreset != null)
+				{
+					levelPreset = data.fixedBattlePreset;
+					Debug.Log($"[Battle] Loaded Fixed Preset: {levelPreset.name}");
+				}
+				else
+				{
+					Debug.LogError("[Battle] useRandomBattle is false, but fixedBattlePreset is null!");
+				}
+			}
+		}
 		
 		
 		private void ImportArmyData()
 		{
 			Debug.Log("正在读取军队数据");
-			if (useLevelPreset && levelPreset != null && levelPreset.usePresetPlayerArmy)
+			if (levelPreset != null && levelPreset.usePresetPlayerArmy)
 			{
 				Debug.Log("Using Preset Player Army.");
               
@@ -142,11 +183,15 @@ namespace LongLiveKhioyen
 					
 					playerReserveTeam.Add(desc);
 				}
-				return;
+				
 			}
-			
-			for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
-				playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
+			else
+			{
+				Debug.Log("Using Player's Own Army.");
+				if (armyStatus != null && armyStatus.battalionStatuses != null)
+					for (int i = 0; i < armyStatus.battalionStatuses.Count; i++) 
+						playerReserveTeam.Add(GenerateBattalionDescriptorFromBattalionStatus(armyStatus.battalionStatuses[i]));
+			}
 		}
 
 
@@ -156,8 +201,8 @@ namespace LongLiveKhioyen
 			transform.rotation = Quaternion.Euler(0, 0, 0);
 			gameObject.isStatic = true;
 			GenerateHexGrid();
-			AnchorPosition = MapToWorld(new Vector2Int(data.battleSize.x/2, data.battleSize.y/2));
-			if (useLevelPreset && levelPreset != null)
+			AnchorPosition = MapToWorld(new Vector2Int(Size.x/2, Size.y/2));
+			if (levelPreset != null)
 			{
 				foreach(var p in levelPreset.extractionPoints) CreateExtractionPoint(p);
                 
@@ -167,14 +212,13 @@ namespace LongLiveKhioyen
 			}
 			else
 			{
-				GenerateArrangementSlot();
+				Debug.Log("No levelpreset!");
 			}
 			
 			if (fogOfWarController != null)
 			{
 				fogOfWarController.Initialize(Size);
 			}
-			
 		}
 		
 		private void InitializeComponent()
@@ -193,55 +237,59 @@ namespace LongLiveKhioyen
 		private void InitializeData()
 		{
 			Debug.Log("正在初始化数据");
-			#if BATTLE_TEST
-			armyStatus = new ArmyStatus();
-			#else
-			armyStatus = GameInstance.Instance.ActiveArmy;
-			#endif
+			if(GameInstance.Instance.ActiveArmy!=null)
+				armyStatus = GameInstance.Instance.ActiveArmy;
+			else armyStatus = new ArmyStatus();
+			
 			InitializeBuildableFacilities();
 			
 			actionDataBase.Initialize();
+			
 			commanderRegistry = CommanderRegistry.Instance; 
 			
 			availableMovePositions = new HashSet<Vector2Int>();
 			availableArrangementPositions = new HashSet<Vector2Int>();
 			availableTargetPositions = new HashSet<Vector2Int>();
 
-			if (useLevelPreset && levelPreset != null)
+			
+			if (levelPreset != null)
 			{
 				presetMapData = levelPreset.mapData;
+				
 				if (BattleEventManager.Instance != null && levelPreset.levelEvents != null)
 				{
 					BattleEventManager.Instance.levelEvents.Clear(); 
-                  
 					foreach (var evt in levelPreset.levelEvents)
-					{
-						if (evt != null)
-						{
-							BattleEventManager.Instance.levelEvents.Add(evt);
-						}
-					}
+						if (evt != null) BattleEventManager.Instance.levelEvents.Add(evt);
 					Debug.Log($"Loaded {levelPreset.levelEvents.Count} events from preset.");
 				}
-			}
 				
-			
-			if (presetMapData != null)
+				if (presetMapData != null)
+				{
+					Size = new Vector2Int(presetMapData.width, presetMapData.height);
+					Debug.Log($"使用预设地图尺寸: {Size}");
+				}
+				else
+				{
+					Debug.LogError("LevelPreset has no MapData!");
+					Size = new Vector2Int(10, 10); // Fallback
+				}
+			}
+			else
 			{
-				data.battleSize = new Vector2Int(presetMapData.width, presetMapData.height);
-				Debug.Log($"使用预设地图尺寸: {Size}");
+				Debug.LogWarning("LevelPreset is null!");
 			}
 			
 			mapTerrainData = new string[Size.x, Size.y];
 			mapData = new TileData[Size.x, Size.y];
 			fogMap = new FogState[Size.x, Size.y];
+			
 			for (int x = 0; x < Size.x; x++)
 			for (int y = 0; y < Size.y; y++)
+			{
 				fogMap[x, y] = FogState.Concealed;
-			
-			for(int x=0; x<Size.x; x++)
-				for(int y=0; y<Size.y; y++)
-					mapData[x,y] = new TileData();
+				mapData[x,y] = new TileData();
+			}
 			
 			playerReserveTeam = new List<BattalionDescriptor>();
 			factionActiveUnits = new Dictionary<Faction, HashSet<Unit>>();
@@ -268,15 +316,16 @@ namespace LongLiveKhioyen
 		private void PlaceNonPlayerBattalionUnit()
 		{
 			List<BattalionDescriptor> enemyReserveTeam = new List<BattalionDescriptor>();
-
-			if (useLevelPreset && levelPreset != null)
+			if (levelPreset != null)
 			{
 				
 					PlaceFixedNonPlayerUnits();
 					PlaceRandomNonPlayerUnits();
-				return;
 			}
-
+			else
+			{
+				Debug.LogError("Cannot place enemies: LevelPreset is null.");
+			}
 		}
 		
 		private void PlaceFixedNonPlayerUnits()
@@ -476,7 +525,7 @@ namespace LongLiveKhioyen
 			bool isBattleOver = false;
 			bool isWin = false;
 
-			switch (data.battleGoal)
+			switch (battlegoal)
 			{
 				case BattleGoal.Annihilate:
 					(isBattleOver, isWin) = CheckAnnihilateCondition();
@@ -486,7 +535,7 @@ namespace LongLiveKhioyen
 				// case BattleGoal.Capture: ...
 		
 				default:
-					Debug.LogWarning($"未实现的战斗目标: {data.battleGoal}");
+					Debug.LogWarning($"未实现的战斗目标: {battlegoal}");
 					break;
 			}
 

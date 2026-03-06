@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapData: {fileID: 11400000, guid: fd587be859713a341ab1c03fea982c77, type: 2}
   levelName: New Battle
+  battleGoal: 0
   playerDeployPoints:
   - {x: 14, y: 3}
   - {x: 15, y: 4}
@@ -138,7 +139,7 @@ MonoBehaviour:
     faction: 0
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
+    battalionDef: {fileID: 11400000, guid: 78df0e99e69fe98418e249f90e18cff7, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1

@@ -24,6 +24,6 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: f855f2eef3f8c654a8c08044f5c42fd1, type: 2}
   - {fileID: 11400000, guid: ce10cf54062bec841b52edce151fd608, type: 2}
-  range: 2
+  maxRange: 2
   minRange: 1
   targetType: 3
