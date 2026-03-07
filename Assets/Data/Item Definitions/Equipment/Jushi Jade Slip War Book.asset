@@ -1,0 +1,166 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5920973927518951727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6df3cbe7773d4548b359503dfc5ea13, type: 3}
+  m_Name: Jushi Jade Slip War Book
+  m_EditorClassIdentifier: 
+  id: 319
+  itemId: eq_jade_warbook_g
+  itemName: Jushi Jade Slip War Book
+  tags:
+  - Equipment
+  description: An out-of-print tactical document with Juyan's surrounding terrain
+    survey results carved onto Jushi chalcedony slips, possessing dual value in both
+    intelligence integration and pacifying public sentiment.
+  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  rarity: 3
+  value: 600
+  itemWeightFactor: 1
+  maxStackNumber: 1
+  productable: 1
+  costs:
+  - type: 16
+    itemId: mat_desert_jade
+    quantity: 2
+  - type: 16
+    itemId: mat_meteor_iron
+    quantity: 1
+  - type: 16
+    itemId: mat_refined_steel
+    quantity: 1
+  canSell: 1
+  sellPrice: 600
+  canBuy: 1
+  buyPrice: 600
+  effects:
+  - {fileID: 6129103313796554235}
+  - {fileID: 6623262121673491207}
+--- !u!114 &5304813268255671838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 0
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 1
+  moraleConsumptionBonus: 0
+--- !u!114 &6129103313796554235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 0
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 1
+  moraleConsumptionBonus: 0
+--- !u!114 &6623262121673491207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 345ac4e0c49a528468060ac59bd1db7f, type: 3}
+  m_Name: StatBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  zhiBonus: 20
+  xinBonus: 0
+  renBonus: 20
+  yongBonus: 0
+  yanBonus: 0
+--- !u!114 &8034151213336445734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant: []
+--- !u!114 &8147000186067009897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 0
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0

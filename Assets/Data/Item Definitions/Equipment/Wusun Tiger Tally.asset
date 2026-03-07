@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5920973927518951727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6df3cbe7773d4548b359503dfc5ea13, type: 3}
+  m_Name: Wusun Tiger Tally
+  m_EditorClassIdentifier: 
+  id: 323
+  itemId: eq_wusun_tiger_tally_r
+  itemName: Wusun Tiger Tally
+  tags:
+  - Equipment
+  description: One half of the tiger tally, the highest symbol of military power
+    in the Wusun Kingdom. The holder possesses the legitimacy to mobilize the armies
+    of the entire Wusun territory and can obtain military support from Wusun.
+  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  rarity: 4
+  value: 2350
+  itemWeightFactor: 1
+  maxStackNumber: 1
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 2350
+  canBuy: 0
+  buyPrice: 2350
+  effects:
+  - {fileID: 806199110724272471}
+--- !u!114 &806199110724272471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant:
+  - {fileID: 11400000, guid: 591bb3c3d9bc884458f39411d637067d, type: 2}
+--- !u!114 &5304813268255671838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 0
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0
+--- !u!114 &8034151213336445734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant: []
+--- !u!114 &8147000186067009897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 0
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0

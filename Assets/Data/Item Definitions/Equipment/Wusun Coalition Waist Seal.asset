@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8539304313921587486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 10
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0
+--- !u!114 &-7964051869787134253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 345ac4e0c49a528468060ac59bd1db7f, type: 3}
+  m_Name: StatBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  zhiBonus: 0
+  xinBonus: 18
+  renBonus: 0
+  yongBonus: 0
+  yanBonus: 0
+--- !u!114 &-5920973927518951727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6df3cbe7773d4548b359503dfc5ea13, type: 3}
+  m_Name: Wusun Coalition Waist Seal
+  m_EditorClassIdentifier: 
+  id: 314
+  itemId: eq_wusun_ring_p
+  itemName: Wusun Coalition Waist Seal
+  tags:
+  - Equipment
+  description: A coordination token given by Wusun allies to Han generals. During
+    mixed-unit operations, Wusun soldiers are more obedient to the holder's dispatch,
+    making the joint force's formation changes more efficient.
+  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  rarity: 2
+  value: 150
+  itemWeightFactor: 1
+  maxStackNumber: 1
+  productable: 1
+  costs:
+  - type: 16
+    itemId: mat_desert_jade
+    quantity: 1
+  - type: 16
+    itemId: mat_wusun_mane
+    quantity: 2
+  canSell: 1
+  sellPrice: 150
+  canBuy: 1
+  buyPrice: 150
+  effects:
+  - {fileID: -7964051869787134253}
+  - {fileID: -8539304313921587486}
+--- !u!114 &5304813268255671838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 20
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0
+--- !u!114 &8034151213336445734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant: []
+--- !u!114 &8147000186067009897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea8b4f139bd1f54e9a623816714ad41, type: 3}
+  m_Name: BattalionBonusEffect
+  m_EditorClassIdentifier: 
+  description: 
+  maxSoldiersBonus: 0
+  maxMoraleBonus: 0
+  attackBonus: 0
+  defenceBonus: 0
+  flexibilityBonus: 0
+  disciplineBonus: 0
+  strategyBonus: 0
+  movementBonus: 0
+  zocPowerBonus: 0
+  actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0
