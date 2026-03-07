@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Heavenly Horse Teardrop
+  m_EditorClassIdentifier: 
+  id: 119
+  itemId: loot_wusun_blood
+  itemName: Heavenly Horse Teardrop
+  tags:
+  - Sellable
+  description: "A rare ruby resembling weeping blood, said to be formed from the tears of the Western Extreme Heavenly Horse before its death. This is the most legendary natural treasure in the Western Regions."
+  icon: {fileID: 0}
+  rarity: 3
+  value: 800
+  itemWeightFactor: 1
+  maxStackNumber: 99
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 800
+  canBuy: 0
+  buyPrice: 0

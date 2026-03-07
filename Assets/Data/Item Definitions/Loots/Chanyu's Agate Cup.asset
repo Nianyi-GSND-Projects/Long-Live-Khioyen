@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Chanyu's Agate Cup
+  m_EditorClassIdentifier: 
+  id: 115
+  itemId: loot_royal_agate
+  itemName: Chanyu's Agate Cup
+  tags:
+  - Sellable
+  description: "A blood-red agate cup carved with a wolf totem. The Xiongnu Chanyu only gifts this to tribal chiefs who have made illustrious military achievements. On the Central Plains black market, this piece of art can fetch an astronomical price."
+  icon: {fileID: 0}
+  rarity: 3
+  value: 400
+  itemWeightFactor: 1
+  maxStackNumber: 99
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 400
+  canBuy: 0
+  buyPrice: 0

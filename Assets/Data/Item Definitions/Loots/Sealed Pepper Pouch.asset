@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Sealed Pepper Pouch
+  m_EditorClassIdentifier: 
+  id: 112
+  itemId: loot_spice_pouch
+  itemName: Sealed Pepper Pouch
+  tags:
+  - Sellable
+  description: "Spices from the Western Regions that were more expensive than gold during the Han Dynasty. Although it's just a small pouch, it can fetch a shocking amount among the dignitaries in Chang'an."
+  icon: {fileID: 0}
+  rarity: 2
+  value: 180
+  itemWeightFactor: 1
+  maxStackNumber: 99
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 180
+  canBuy: 0
+  buyPrice: 0

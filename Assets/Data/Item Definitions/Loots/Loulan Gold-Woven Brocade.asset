@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Loulan Gold-Woven Brocade
+  m_EditorClassIdentifier: 
+  id: 118
+  itemId: loot_loulan_silk
+  itemName: Loulan Gold-Woven Brocade
+  tags:
+  - Sellable
+  description: "Woven with a lost art known only to the weavers of Loulan, this exquisite textile features silk threads gilded in gold. It is a miraculous survivor of the fires of war, an artifact beyond compare."
+  icon: {fileID: 0}
+  rarity: 3
+  value: 700
+  itemWeightFactor: 1
+  maxStackNumber: 99
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 700
+  canBuy: 0
+  buyPrice: 0

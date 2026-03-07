@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Heavenly Horse Remains
+  m_EditorClassIdentifier: 
+  id: 212
+  itemId: mat_heaven_horse_bone
+  itemName: Heavenly Horse Remains
+  tags:
+  - Material
+  description: "Bones left behind only by pure-blood Western Extreme Heavenly Horses that died on the front lines throughout the history of the Wusun Kingdom. Possessing some miraculous intimidating power, it is the core for crafting top-tier tokens or horse gear capable of commanding thousands of troops."
+  icon: {fileID: 0}
+  rarity: 3
+  value: 400
+  itemWeightFactor: 1
+  maxStackNumber: 999
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 400
+  canBuy: 0
+  buyPrice: 0

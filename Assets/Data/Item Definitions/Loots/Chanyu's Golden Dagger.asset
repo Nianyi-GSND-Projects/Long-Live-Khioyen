@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Chanyu's Golden Dagger
+  m_EditorClassIdentifier: 
+  id: 120
+  itemId: loot_chanyu_dagger
+  itemName: Chanyu's Golden Dagger
+  tags:
+  - Sellable
+  description: "A status symbol personally bestowed by the Xiongnu Chanyu to a tribal chief. With a hilt cast of pure gold and inlaid with red agate, it will cause frantic bidding if it enters the black market."
+  icon: {fileID: 0}
+  rarity: 4
+  value: 2350
+  itemWeightFactor: 1
+  maxStackNumber: 99
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 2350
+  canBuy: 0
+  buyPrice: 0

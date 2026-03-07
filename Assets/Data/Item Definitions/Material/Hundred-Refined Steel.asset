@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19cdd043f0e57c4b9954da17e9816dd, type: 3}
+  m_Name: Hundred-Refined Steel
+  m_EditorClassIdentifier: 
+  id: 208
+  itemId: mat_refined_steel
+  itemName: Hundred-Refined Steel
+  tags:
+  - Material
+  description: A top-tier metal forged by repeatedly infusing steel into Luntai rough
+    iron hundreds of times. Capable of cutting through iron like mud, only high-ranking
+    colonels in the Han army qualify to be issued weapons forged from this.
+  icon: {fileID: 0}
+  rarity: 2
+  value: 200
+  itemWeightFactor: 1
+  maxStackNumber: 999
+  productable: 0
+  costs: []
+  canSell: 1
+  sellPrice: 200
+  canBuy: 1
+  buyPrice: 300
