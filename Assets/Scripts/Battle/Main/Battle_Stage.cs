@@ -47,14 +47,14 @@ namespace LongLiveKhioyen
                     Debug.Log("OnEnter: 准备阶段");
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
-                    HighlightTiles(availableArrangementPositions, deployRingColor);
+                    HighlightTilesRing(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Arrangement:
                     Debug.Log("OnEnter: 布置阶段");
                     ClearAllSelection();
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
-                    HighlightTiles(availableArrangementPositions, deployRingColor);
+                    HighlightTilesRing(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Battle:
                     RefreshAllZOC();
@@ -75,7 +75,7 @@ namespace LongLiveKhioyen
             {
                 case Stage.Arrangement:
                     Debug.Log("OnExit: 布置阶段");
-                    ClearAllHexHighlights();
+                    ClearAllHexRingHighlights();
                     ClearAllSelection();
                     break;
                 case Stage.Battle:
@@ -214,25 +214,10 @@ namespace LongLiveKhioyen
                     ChangeActionStage(PlayerActionStage.None);
                 }
 
-                ClearAllHexHighlights();
+                ClearAllHexRingHighlights();
                 IsPlayerTurnOver = true;
             }
             else Debug.LogError("It's not player's turn!");
-        }
-        
-        public void CancelMovement()
-        {
-            UpdateZOC(SelectedUnit, false);
-            RemoveUnitFromMap(SelectedUnit);
-            SelectedUnit.position = initialUnitPosition;
-            PlaceUnitOnMap( SelectedUnit,initialUnitPosition);
-            
-            UpdateZOC(SelectedUnit, true);
-            
-            if(SelectedUnit is Battalion bat) bat.currentMovement = initialUnitMovement;
-            SelectedUnit.transform.localPosition = MapToLocal(initialUnitPosition);
-            SelectedUnit.hasMovedThisTurn = false;
-            availableMovePositions = GetAccessableTilesInRange(SelectedUnit, initialUnitMovement,true);
         }
         
         public void CancelAction()
@@ -240,7 +225,7 @@ namespace LongLiveKhioyen
             availableTargetPositions.Clear();
             CurrentAction = null;
             IsPreparingAction = false;
-            ClearAllHexHighlights();
+            ClearAllHexRingHighlights();
         }
         
         public FacilityDefinition PendingFacility { get; set; }
@@ -288,25 +273,25 @@ namespace LongLiveKhioyen
                 OnActionSelectionEnded?.Invoke();
             }
             
-            ClearAllHexHighlights();
+            ClearAllHexRingHighlights();
             CurrentActionStage = stage;
             switch (stage)
             {
                 case PlayerActionStage.None:
                     Debug.Log("Change action stage to None");
                     ClearAllSelection();
-                    ClearAllHexHighlights();
+                    ClearAllHexRingHighlights();
                     break;
 				
                 case PlayerActionStage.MovingBattalion:
                     Debug.Log("Change action stage to MovingBattalion");
-                    ClearAllHexHighlights();
-                    HighlightTiles(availableMovePositions, moveRingColor);
+                    ClearAllHexRingHighlights();
+                    HighlightTilesRing(availableMovePositions, moveRingColor);
                     break;
 				
                 case PlayerActionStage.SelectingAction:
                     Debug.Log("Change action stage to SelectingAction");
-                    ClearAllHexHighlights();
+                    ClearAllHexRingHighlights();
                     OnActionSelectionStarted?.Invoke();
                     break;
                 
@@ -330,7 +315,7 @@ namespace LongLiveKhioyen
                         else if (CurrentAction.targetFactionType==TargetFactionType.Friend||CurrentAction.targetCountType==TargetCountType.Self)
                             targetColor = targetFriendColor;
                 
-                        HighlightTargets(availableTargetPositions, targetColor);
+                        HighlightTilesOverlay(availableTargetPositions, targetColor);
                     }
                     else
                     {
@@ -341,7 +326,7 @@ namespace LongLiveKhioyen
 				
                 case PlayerActionStage.SelectingAmbiguousTarget:
                     Debug.Log("Change action stage to SelectingAmbiguousTarget");
-                    ClearAllHexHighlights();
+                    ClearAllHexRingHighlights();
                     // 触发事件，把刚才存下来的列表发给 UI
                     OnAmbiguousSelectionStarted?.Invoke(currentAmbiguousCandidates);
                     break;
@@ -470,7 +455,7 @@ namespace LongLiveKhioyen
         private IEnumerator PerformPlayerMove(Unit unit, Vector2Int targetPos)
         {
             IsUnitMoving = true;
-			
+            
             if (targetPos == unit.position)
             {
                 ChangeActionStage(PlayerActionStage.SelectingAction);
@@ -482,6 +467,7 @@ namespace LongLiveKhioyen
 	
             if (path != null && path.Count > 0)
             {
+                Vector2Int startPos = unit.position;
                 bool moveInterrupted = false;
                 yield return StartCoroutine(MoveUnit(unit, path, wasInterrupted => {
                     moveInterrupted = wasInterrupted;
@@ -491,6 +477,7 @@ namespace LongLiveKhioyen
                 {
                     unit.hasMovedThisTurn = true;
                 }
+                
                 int realMoveCost = CalculatePathCost(path, unit);
                 if(unit is Battalion bat)
                     bat.currentMovement -= realMoveCost; 
@@ -504,6 +491,7 @@ namespace LongLiveKhioyen
                 else if (unit is Battalion batAfterMove && batAfterMove.currentMovement > 0)
                 {
                     // 正常完成且还有移动力，刷新范围
+                    
                     UpdateAvailableMovePositions(batAfterMove);
                 }
                 else

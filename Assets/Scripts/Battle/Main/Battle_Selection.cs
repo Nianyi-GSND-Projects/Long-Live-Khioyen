@@ -72,7 +72,7 @@ namespace LongLiveKhioyen
             if (!factionActiveUnits[Faction.Player].Contains(unit))
             {
                 Debug.Log("Battalion " + unit.InstanceId + " is not your battalion.");
-                if(CurrentStage == Stage.Battle) ClearAllHexHighlights();
+                if(CurrentStage == Stage.Battle) ClearAllHexRingHighlights();
                 return;
             }
 			
@@ -130,11 +130,12 @@ namespace LongLiveKhioyen
         private void UpdateAvailableMovePositions(Battalion bat)
         {
             if (bat == null) return;
+            ClearAllHexRingHighlights();
             var reachableTiles = GetAccessableTilesInRange(bat, bat.currentMovement, true);
             var visibleTiles = GetAllVisibleTiles();
             reachableTiles.IntersectWith(visibleTiles);
             availableMovePositions = reachableTiles;
-            HighlightTiles(availableMovePositions, moveRingColor);
+            HighlightTilesRing(availableMovePositions, moveRingColor);
         }
 
         public HashSet<Vector2Int> GetAllVisibleTiles()
@@ -191,7 +192,7 @@ namespace LongLiveKhioyen
         {
             SelectedUnit = null;
             IsUnitSelected = false;
-            if(CurrentStage == Stage.Battle) ClearAllHexHighlights();
+            if(CurrentStage == Stage.Battle) ClearAllHexRingHighlights();
             availableMovePositions.Clear();
         }
         

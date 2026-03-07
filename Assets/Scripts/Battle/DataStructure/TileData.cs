@@ -34,6 +34,23 @@ namespace LongLiveKhioyen
             return ZOCState.Neutral;
         }
         
+        public (int player, int enemy) GetZOCRadiation()
+        {
+            int p = 0;
+            int e = 0;
+
+            void AddRadiation(Unit unit)
+            {
+                if (unit != null && unit.IsVisible)
+                {
+                    if (unit.faction == Faction.Player || unit.faction == Faction.Friend) p += (int)unit.GetStat(StatType.ZocPower);
+                    else if (unit.faction == Faction.Enemy) e += (int)unit.GetStat(StatType.ZocPower);
+                }
+            }
+            AddRadiation(Battalion);
+            AddRadiation(Facility);
+            return (p, e);
+        }
 
         #endregion
     }

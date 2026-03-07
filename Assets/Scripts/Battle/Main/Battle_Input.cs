@@ -114,6 +114,8 @@ namespace LongLiveKhioyen
                 if (!ValidateArrangementPlacement(gridPos)) return;
                 
                 PlacingPlayerBattalion(SelectedBattalionDescriptor, gridPos);
+                UpdateZOCAroundPoint(gridPos);
+                ClearReserveTeamSelection();
             }
             else if (IsUnitSelected)
             {

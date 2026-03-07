@@ -246,26 +246,22 @@ namespace LongLiveKhioyen
 
         public abstract float GetPower();
 
-        public abstract float GetDefense();
-
         public abstract float GetRepairPower();
         
         public void ReceiveForcedMove(Vector2Int newPosition)
         {
             Vector2Int oldPosition = this.position;
-            
-            this.position = newPosition;
 
             if (Battle.Instance != null)
             {
                 transform.localPosition = Battle.Instance.MapToLocal(newPosition);
             }
-
+            OnEnterNewTile(newPosition);
             if (visualController != null)
             {
                 visualController.RefreshVisuals();
             }
-
+            
             OnPostForcedMove(oldPosition, newPosition);
         }
         
@@ -283,6 +279,45 @@ namespace LongLiveKhioyen
                 }
             }
             */
+        }
+
+        public bool OnEnterNewTile(Vector2Int newPos)
+        {
+            Vector2Int oldPos = this.position;
+            this.position = newPos;
+            bool shouldstop = false;
+            if (Battle.Instance != null)
+            {
+                // 2. 触发地图效果 (陷阱、地形)
+                shouldstop = Battle.Instance.CheckTileEffectOnEnter(this, newPos);
+
+                // 3. 更新 ZOC (添加新位置的 ZOC)
+                //Battle.Instance.UpdateZOC(this, true);
+
+                // 4. 更新视野
+                if (faction == Faction.Player || faction == Faction.Friend)
+                {
+                    Battle.Instance.RefreshFogOfWar();
+                }
+                else
+                {
+                    Battle.Instance.RefreshAllUnitsVisuals();
+                }
+
+                // 5. 检查死亡 (例如踩到陷阱)
+                Battle.Instance.CheckDeath(this);
+                if (currentHealth <= 0) shouldstop = true;
+                // 6. 刷新自身视觉 (位置改变、状态改变)
+                OnUnitStateChanged();
+                
+                if (Battle.Instance != null)
+                {
+                    Battle.Instance.RefreshZOCVisualsAroundPoint(oldPos);
+                    Battle.Instance.RefreshZOCVisualsAroundPoint(newPos);
+                }
+            }
+            Debug.Log($"Enemy {name} entered {newPos}. Visible? {Battle.Instance.IsUnitVisibleToPlayer(this)}");
+            return shouldstop;
         }
         public abstract void ApplyBuff(BuffDescriptor buffDescriptor);
 

@@ -119,7 +119,7 @@ MonoBehaviour:
     position: {x: 15, y: 10}
     faction: 2
     isFacility: 0
-    isVisible: 0
+    isVisible: 1
     battalionDef: {fileID: 11400000, guid: 78df0e99e69fe98418e249f90e18cff7, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
@@ -139,7 +139,7 @@ MonoBehaviour:
     faction: 0
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: 78df0e99e69fe98418e249f90e18cff7, type: 2}
+    battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1

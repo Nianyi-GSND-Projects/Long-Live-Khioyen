@@ -42,7 +42,7 @@ namespace LongLiveKhioyen
 
         #region Tiles
 
-        public void HighlightTiles(HashSet<Vector2Int> positions, Color color)
+        public void HighlightTilesRing(HashSet<Vector2Int> positions, Color color)
         {
             if (positions == null) return;
             foreach (Vector2Int pos in positions)
@@ -54,7 +54,7 @@ namespace LongLiveKhioyen
             }
         }
         
-        public void HighlightTargets(HashSet<Vector2Int> positions, Color color)
+        public void HighlightTilesOverlay(HashSet<Vector2Int> positions, Color color)
         {
             if (positions == null) return;
             foreach (Vector2Int pos in positions)
@@ -66,82 +66,71 @@ namespace LongLiveKhioyen
             }
         }
         
-        public void ClearAllHexHighlights()
+        public void ClearAllHexRingHighlights()
         {
             foreach (var kvp in hexTiles)
             {
                 HexTile tile = kvp.Value;
                 tile.SetRingColor(Color.clear);
-            
                 UpdateTileZOCVisual(kvp.Key); 
             }
+        }
+        
+        public int GetVisualZOCValue(Vector2Int myPos)
+        {
+            int visualPlayerZOC = 0;
+            int visualEnemyZOC = 0;
+
+            var neighbors = GetAllTilesInRange(myPos, 1);
+            foreach (var neighborPos in neighbors)
+            {
+                if (fogMap[neighborPos.x, neighborPos.y] == FogState.Visible)
+                {
+                    var neighborTile = mapData[neighborPos.x, neighborPos.y];
+                    var (p, e) = neighborTile.GetZOCRadiation();
+                    visualPlayerZOC += p;
+                    visualEnemyZOC += e;
+                }
+            }
+            return visualPlayerZOC - visualEnemyZOC;
         }
         
         public void UpdateTileZOCVisual(Vector2Int pos)
         {
             if (!hexTiles.TryGetValue(pos, out HexTile tileScript)) return;
-            
+            Debug.Log($"UpdateZOC at {pos}");
             if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(pos))
             {
                 return;
             }
-
-            if (fogMap[pos.x, pos.y] != FogState.Visible) return;
             
-            int visualPlayerZOC = 0;
-            int visualEnemyZOC = 0;
-            var neighborTiles = GetAllTilesInRange(pos, 1);
-
-            void AddVisualZOC(Unit unit)
+            if (fogMap[pos.x, pos.y] != FogState.Visible)
             {
-                if (unit != null && IsUnitVisibleToPlayer(unit))
-                {
-                    if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
-                    {
-                        visualPlayerZOC += (int)unit.GetStat(StatType.ZocPower);
-                    }
-                    else if (unit.faction == Faction.Enemy)
-                    {
-                        visualEnemyZOC += (int)unit.GetStat(StatType.ZocPower);
-                    }
-                }
+                tileScript.SetOverlayColor(Color.clear);
+                return;
             }
-
-            var tileOnPos = mapData[pos.x, pos.y];
-            AddVisualZOC(tileOnPos.Battalion);
-            AddVisualZOC(tileOnPos.Facility);
             
-            int parity = pos.y & 1;
-            foreach (var offset in neighborOffsets[parity])
-            {
-                Vector2Int neighborPos = pos + offset;
-
-                if (!IsValidMapPosition(neighborPos)) continue;
-
-                var tileOnNeighbor = mapData[neighborPos.x, neighborPos.y];
-                AddVisualZOC(tileOnNeighbor.Battalion);
-                AddVisualZOC(tileOnNeighbor.Facility);
-            }
-
-
-            ZOCState visualState = ZOCState.Neutral;
-            int balance = visualPlayerZOC - visualEnemyZOC;
+            int zocValue = GetVisualZOCValue(pos);
+            Debug.Log($"Value is {zocValue}");
             Color zocColor = Color.clear;
-            float intensity = Mathf.Min(Mathf.Abs(balance) * 0.2f, zocMaxAlpha);
-            if (balance > 0) zocColor = zocPlayerColor;
-            else if (balance < 0) zocColor = zocEnemyColor;
+            float intensity = Mathf.Min(Mathf.Abs(zocValue) * 0.2f, zocMaxAlpha);
+            if (zocValue > 0) zocColor = zocPlayerColor;
+            else if (zocValue < 0) zocColor = zocEnemyColor;
             zocColor.a = intensity;
             tileScript.SetOverlayColor(zocColor);
         }
-        
-        private void RefreshZOCVisualsAround(Unit unit)
+        public void RefreshZOCVisualsAroundPoint(Vector2Int centerPos)
         {
-            if (unit == null) return;
-            var tilesToUpdate = GetAllTilesInRange(unit.position, 1);
+            var tilesToUpdate = GetAllTilesInRange(centerPos, 1);
             foreach (var pos in tilesToUpdate)
             {
                 UpdateTileZOCVisual(pos);
             }
+        }
+        private void RefreshZOCVisualsAround(Unit unit)
+        {
+            if (unit == null) return;
+            RefreshZOCVisualsAroundPoint(unit.position);
         }
 
         #endregion
@@ -154,11 +143,11 @@ namespace LongLiveKhioyen
             if (unit.IsVisible == isVisible) return;
             
             bool wasVisible = unit.IsVisible;
-            if (wasVisible) UpdateZOC(unit, false);
+            if (wasVisible) UpdateZOCAroundUnit(unit);
 
             unit.IsVisible = isVisible;
             
-            if (isVisible) UpdateZOC(unit, true);
+            if (isVisible) UpdateZOCAroundUnit(unit);
             if (isVisible)
             {
                 if (!factionVisibleUnits[unit.faction].Contains(unit))
@@ -253,6 +242,7 @@ namespace LongLiveKhioyen
             }
         }
         #endregion
+        
         #region Camera
         public Transform anchor;		
         [SerializeField] new CinemachineVirtualCamera camera;
@@ -416,7 +406,7 @@ namespace LongLiveKhioyen
                {
                    if (unit != null)
                    {
-                       bool oldVisibility = unit.gameObject.activeSelf;
+                       bool oldVisibility = unit.IsVisible;
                        unit.OnUnitStateChanged();
 
                        // 如果一个单位的可见性刚刚发生了变化（从可见->不可见 或 不可见->可见）
@@ -441,13 +431,16 @@ namespace LongLiveKhioyen
             _playerVisionSourceTiles.Clear();
            
             // 添加玩家和友方单位
-            foreach (var unit in factionActiveUnits[Faction.Player])
+            if (CurrentStage != Stage.Arrangement && CurrentStage != Stage.Preparation)
             {
-                _playerVisionSourceTiles.Add(unit.position);
-            }
-            foreach (var unit in factionActiveUnits[Faction.Friend])
-            {
-                _playerVisionSourceTiles.Add(unit.position);
+                foreach (var unit in factionActiveUnits[Faction.Player])
+                {
+                    _playerVisionSourceTiles.Add(unit.position);
+                }
+                foreach (var unit in factionActiveUnits[Faction.Friend])
+                {
+                    _playerVisionSourceTiles.Add(unit.position);
+                }
             }
 
             if (CurrentStage == Stage.Arrangement||CurrentStage == Stage.Preparation)
@@ -458,6 +451,8 @@ namespace LongLiveKhioyen
                 }
             }
         }
+        
+        
         public bool IsUnitVisibleToPlayer(Unit unit)
         {
             if (unit == null) return false;
@@ -498,6 +493,13 @@ namespace LongLiveKhioyen
                     }
                 }
             }
+        }
+        
+        public void RefreshFogOfWar()
+        {
+            UpdatePlayerVisionSources();
+            
+            UpdateFogOfWar();
         }
         #endregion
     }

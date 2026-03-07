@@ -47,10 +47,6 @@ namespace LongLiveKhioyen
             return finalStatRepair * soldierRatio;
         }
         
-        public override float GetDefense()
-        {
-            return GetStat(StatType.DefensePower);
-        }
         
         public float CurrentFlexibility
         {

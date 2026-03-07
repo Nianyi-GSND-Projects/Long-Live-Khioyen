@@ -17,11 +17,6 @@ namespace LongLiveKhioyen
         {
             return GetStat(StatType.AttackPower);
         }
-        
-        public override float GetDefense()
-        {
-            return GetStat(StatType.DefensePower);
-        }
 
         public override float GetRepairPower()
         {

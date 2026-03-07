@@ -57,10 +57,10 @@ namespace LongLiveKhioyen
             bool isActuallyVisible = Battle.Instance.IsUnitVisibleToPlayer(_ownerUnit);
             
             bool isPlayerSide = _ownerUnit.faction == Faction.Player || _ownerUnit.faction == Faction.Friend;
-            
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
             if (isActuallyVisible)
             {
-                gameObject.SetActive(true);
+                
                 if (isPlayerSide && !_ownerUnit.IsVisible)
                 {
                     
@@ -75,19 +75,14 @@ namespace LongLiveKhioyen
             }
             else
             {
-                gameObject.SetActive(false);
+                SetOverallVisibility(false, 0.0f);
                 if (overheadUI != null) overheadUI.SetAlpha(0f);
                 return;
             }
             
             if (overheadUI != null) overheadUI.UpdateInfo(_ownerUnit);
-            
-            if (gameObject.activeSelf)
-            {
-                if (overheadUI != null) overheadUI.UpdateInfo(_ownerUnit);
-                CreateOrUpdateFlag();
-                RefreshModel();
-            }
+            CreateOrUpdateFlag();
+            RefreshModel();
         }
         
         public void SetVisualState(bool selected, bool actionDone)

@@ -38,10 +38,8 @@ namespace LongLiveKhioyen
             // 2. 替换
             mats[materialIndex] = mat;
 
-            // 3. 赋值回去 (关键！)
             targetRenderer.sharedMaterials = mats;
             
-            Debug.Log($"旗帜颜色已更新为: {mat.name}");
         }
     }
 }

@@ -97,6 +97,7 @@ namespace LongLiveKhioyen
         }
         public Unit RegisterUnitToBattle(UnitDescriptor descriptor, Vector2Int pos, bool isVisible)
         {
+            
             if (descriptor == null) return null;
             if (!IsValidMapPosition(pos))
             {
@@ -114,7 +115,8 @@ namespace LongLiveKhioyen
                 Debug.LogWarning($"Instance ID {descriptor.instanceId} conflict! Generating new ID.");
                 descriptor.instanceId = GenerateUniqueId();
             }
-
+            
+            descriptor.placed = true;
             Unit unit = null;
 
             if (descriptor is BattalionDescriptor batDesc)
@@ -156,10 +158,7 @@ namespace LongLiveKhioyen
                     factionVisibleUnits[unit.faction].Add(unit);
                 }
                 _instanceIdMap[unit.InstanceId] = unit;
-                descriptor.placed = true;
-                
-                if (CurrentStage == Stage.Battle) UpdateZOC(unit, true);
-                
+                //UpdateZOCAroundUnit(unit);
                 OnUnitPlaced?.Invoke();
                 unit.UpdateVisualState();
                 unit.OnUnitStateChanged();
@@ -328,7 +327,7 @@ namespace LongLiveKhioyen
                 _instanceIdMap.Remove(unit.InstanceId);
             }
             
-            if (CurrentStage == Stage.Battle) UpdateZOC(unit, false);
+            if (CurrentStage == Stage.Battle) UpdateZOCAroundUnit(unit);
             
             var visualController = unit.GetComponent<UnitVisualController>();
             if (visualController != null)
@@ -379,7 +378,8 @@ namespace LongLiveKhioyen
                 yield break;
             }
             
-            UpdateZOC(unit, false);
+            UpdateZOCAroundUnit(unit);
+            RefreshZOCVisualsAround(unit);
             unit.hasMovedThisTurn = true;
             bool interrupted = false;
             // 2. 逐步移动
@@ -387,7 +387,7 @@ namespace LongLiveKhioyen
             {
                 RemoveUnitFromMap(unit);
 				
-                unit.position = pos;
+                interrupted = unit.OnEnterNewTile(pos);
 				
                 PlaceUnitOnMap(unit, pos);
 				
@@ -401,18 +401,13 @@ namespace LongLiveKhioyen
                     yield return null;
                 }
                 unit.transform.localPosition = endPos;
-
-                interrupted = CheckTileEffectOnEnter(unit, pos);
-                
                 if (interrupted)
                 {
                     Debug.Log($"{unit.name} 的移动被陷阱打断！");
                     
                     break;
                 }
-                
             }
-            UpdateZOC(unit, true);
             CheckDeath(unit);
             unit.OnUnitStateChanged();
             if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
@@ -428,24 +423,23 @@ namespace LongLiveKhioyen
         public void ForceMoveUnit(Unit unit, Vector2Int newPos)
         {
             if (unit == null || !IsValidMapPosition(newPos)) return;
-
+            
+            UpdateZOCAroundUnit(unit);
+            RefreshZOCVisualsAround(unit);
+            
             RemoveUnitFromMap(unit);
             TileData newTile = mapData[newPos.x, newPos.y];
             if (unit is Battalion bat) newTile.Battalion = bat;
             else if (unit is Facility fac) newTile.Facility = fac;
+            
             unit.ReceiveForcedMove(newPos);
+            
             if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
             {
                 UpdatePlayerVisionSources();
                 UpdateFogOfWar();
             }
-            // PlaceUnitOnMap(unit, newPos);
-            //
-            // unit.transform.localPosition = MapToLocal(newPos);
-            //          
-            // unit.OnUnitStateChanged();
-            //          
-            // Debug.Log($"{unit.name} 被强制位移至 {newPos}");
+            
         }
         
         public void WithdrawUnit(Unit unit)
