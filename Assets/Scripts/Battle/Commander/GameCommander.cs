@@ -195,6 +195,11 @@ namespace LongLiveKhioyen
             return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.actionChanceBonus : 0);
         }
 
+        public int GetMoraleConsumptionBonus()
+        {
+            return GetEquipmentBonus(e => e is BattalionBonusEffect b ? b.moraleConsumptionBonus : 0);
+        }
+
         private int GetEquipmentBonus(System.Func<EquipmentEffect, int> selector)
         {
             int bonus = 0;

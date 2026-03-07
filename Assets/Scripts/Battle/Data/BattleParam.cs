@@ -53,7 +53,7 @@ namespace LongLiveKhioyen
         [Header("Default Parameter")]
         public int defaultMaxExp = 100;
 
-        public int defaultMaxMorale = 100;
+        public int defaultMaxMorale = 1000;
 
         public int defaultMaxSolider = 1000;
 
@@ -102,5 +102,14 @@ namespace LongLiveKhioyen
         public int deployZoneVisionRange = 2;
         [Tooltip("撤离点提供的历史视野范围")]
         public int extractionZoneVisionRange = 1;
+
+        [Header("士气损耗")] 
+        [Tooltip("每回合自动损耗的士气")]
+        public int moraleConsumePreTurn = 20;
+        [Tooltip("最大士气损耗减免百分比")]
+        public int maxMoraleConsumptionBonusPercent = 30;
+        [Tooltip("士气为0时，每回合溃散的士兵比例 (0-1)")]
+        [Range(0f, 1f)]
+        public float moraleBreakAttritionRate = 0.1f;
     }
 }

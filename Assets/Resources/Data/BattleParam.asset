@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BattleParam
   m_EditorClassIdentifier: 
   defaultMaxExp: 0
-  defaultMaxMorale: 100
+  defaultMaxMorale: 1000
   defaultMaxSolider: 1000
   defaultStrategySuccessRate: 0.5
   defaultSoliderAmountForOnePower: 100

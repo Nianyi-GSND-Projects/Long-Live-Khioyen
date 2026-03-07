@@ -19,5 +19,6 @@ namespace LongLiveKhioyen
         public int zocPower;
         public int visionRange;
         public int actionChance;
+        public int moraleConsumption;
     }
 }

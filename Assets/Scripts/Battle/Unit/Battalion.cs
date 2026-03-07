@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,23 @@ namespace LongLiveKhioyen
         {
             InstanceId = -1;
             inventory = new List<inBattleItem>();
+        }
+        
+        public override void OnTurnStart()
+        {
+            base.OnTurnStart();
+            
+            currentMovement = MaxMovement;
+            //TODO
+        }
+        
+        public override void OnTurnEnd()
+        {
+            base.OnTurnEnd();
+            
+            ConsumeMoralePerTurn();
+
+            if (currentMorale <= 0) MoraleBreak();
         }
         
         public override float GetPower()
@@ -109,13 +127,7 @@ namespace LongLiveKhioyen
             // TODO: 战斗内升级？或者只累积到战后结算
         }
         
-        public override void OnTurnStart()
-        {
-            actionDone = false;
-            hasMovedThisTurn = false;
-            currentMovement = MaxMovement;
-            //TODO
-        }
+        
         
         public override void CalculateEntryStats(UnitDescriptor desc)
         {
@@ -144,6 +156,7 @@ namespace LongLiveKhioyen
             int commanderZocBonus = 0;
             int commanderMovementBonus = 0;
             int commanderVisionBonus = 0;
+            int commanderMoraleConsumptionBonus = 0;
             
             if (commander != null)
             {
@@ -163,6 +176,7 @@ namespace LongLiveKhioyen
                 commanderMovementBonus += commander.GetMovementBonus();
                 commanderZocBonus += commander.GetZocBonus();
                 commanderVisionBonus += commander.GetVisionBonus();
+                commanderMoraleConsumptionBonus += commander.GetMoraleConsumptionBonus();
             }
             
             
@@ -185,6 +199,8 @@ namespace LongLiveKhioyen
             //6.应用特殊效果修改
             entryStats.zocPower = definition.defaultZocPower + commanderZocBonus;
             entryStats.visionRange = definition.defaultVisionRange + commanderVisionBonus;
+            entryStats.moraleConsumption =
+                Mathf.FloorToInt(BattleParam.Instance.moraleConsumePreTurn * (1.0f -(Mathf.Min(commanderMoraleConsumptionBonus,30)/100.0f))); //最大不超过30
             
             ExtraMovement = commanderMovementBonus;
             
@@ -201,6 +217,49 @@ namespace LongLiveKhioyen
                    battalionCommander.GetTotalRen() * scaling.renFactor +
                    battalionCommander.GetTotalYong() * scaling.yongFactor +
                    battalionCommander.GetTotalYan() * scaling.yanFactor;
+        }
+        
+        public void ConsumeMoralePerTurn()
+        {
+            int consumption = Mathf.RoundToInt(GetStat(StatType.MoraleConsumption));
+            
+            if (consumption < 0) consumption = 0;
+
+            if (consumption > 0)
+            {
+                currentMorale -= consumption;
+                currentMorale = Mathf.Max(0, currentMorale);
+                Debug.Log($"[Morale] {name} consumed {consumption} morale. Current: {currentMorale}");
+                
+                if (currentMorale <= 0)
+                {
+                    // HandleMoraleBreak();
+                }
+            }
+        }
+
+        private void MoraleBreak()
+        {
+            if (BattleParam.Instance == null) return;
+            float rate = BattleParam.Instance.moraleBreakAttritionRate;
+            int lostSoldiers = Mathf.FloorToInt(currentSoliders * rate);
+            
+            if (lostSoldiers == 0 && currentSoliders > 0) lostSoldiers = 1;
+            
+            if (lostSoldiers > 0)
+            {
+                currentSoliders -= lostSoldiers;
+                currentSoliders = Mathf.Max(0, currentSoliders);
+                
+                Debug.Log($"[Morale Break] {name} lost {lostSoldiers} soldiers due to low morale. Remaining: {currentSoliders}");
+                
+                OnHealthChanged(); // 更新 UI
+
+                if (Battle.Instance != null)
+                {
+                    Battle.Instance.MarkUnitDirty(this); // 检查是否因此死亡
+                }
+            }
         }
     }
     

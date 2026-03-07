@@ -20,7 +20,8 @@ namespace LongLiveKhioyen
         Movement,       // 移动力
         ZocPower,       // 控制力
         DamageResistance, // 伤害抵抗
-        ActionChance,
-        VisionRange
+        ActionChance, //行动次数
+        MoraleConsumption,//每回合自动损耗的士气
+        VisionRange//视野距离
     }
 }

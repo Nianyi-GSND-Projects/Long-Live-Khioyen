@@ -113,26 +113,30 @@ namespace LongLiveKhioyen
                 CurrentTurnState = TurnState.PlayerTurn;
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerTurnStart);
+                
                 yield return StartCoroutine(PlayerTurnCoroutine());
+                
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnPlayerTurnEnd);
-				
                 CheckBattleEnd();
+                
                 if (CurrentStage == Stage.Settlement) yield break;
                 CurrentTurnState = TurnState.Processing;
                 OnPlayerTurnEnded?.Invoke();
-                Debug.Log("Updating Player & Friend units buffs...");
-                foreach (var unit in factionActiveUnits[Faction.Player])
+                Debug.Log("Updating Player & Friend units...");
+                var playerunits = new List<Unit>(factionActiveUnits[Faction.Player]);
+                foreach (var unit in playerunits)
                 {
-                    unit.UpdateBuffs();
+                    unit.OnTurnEnd();
                 }
-                foreach (var unit in factionActiveUnits[Faction.Friend])
+                var friendunits = new List<Unit>(factionActiveUnits[Faction.Friend]);
+                foreach (var unit in friendunits)
                 {
-                    unit.UpdateBuffs();
+                    unit.OnTurnEnd();
                 }
+                ResolveDirtyUnits();
                 
                 yield return new WaitForSeconds(0.5f);
-                
                 CurrentTurnState = TurnState.EnemyTurn;
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnEnemyTurnStart);
@@ -146,14 +150,16 @@ namespace LongLiveKhioyen
                 CurrentTurnState = TurnState.Processing;
                 
                 Debug.Log("Updating Enemy units buffs...");
-                foreach (var unit in factionActiveUnits[Faction.Enemy])
+                var units = new List<Unit>(factionActiveUnits[Faction.Enemy]);
+                foreach (var unit in units)
                 {
-                    unit.UpdateBuffs();
+                    unit.OnTurnEnd();;
                 }
-                
+                ResolveDirtyUnits();
                 yield return new WaitForSeconds(0.5f);
 				
                 UpdateAllTileEffects(); 
+                ResolveDirtyUnits();
             }
 
         }

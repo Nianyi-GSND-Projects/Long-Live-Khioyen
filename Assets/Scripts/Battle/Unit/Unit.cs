@@ -34,6 +34,17 @@ namespace LongLiveKhioyen
         protected virtual void Start()
         {
         }
+        public virtual void OnTurnStart()
+        {
+            actionDone = false;
+            hasMovedThisTurn = false;
+        }
+        public virtual void OnTurnEnd()
+        {
+            // 1. 更新 Buff (持续时间减少，移除过期 Buff)
+            UpdateBuffs();
+            
+        }
         
         public virtual void CalculateEntryStats(UnitDescriptor desc)
         {
@@ -108,6 +119,8 @@ namespace LongLiveKhioyen
                     return entryStats.zocPower;
                 case StatType.ActionChance:
                     return entryStats.actionChance;
+                case StatType.MoraleConsumption:
+                    return entryStats.moraleConsumption;
                 case StatType.Movement:
                     float flexibility = GetStat(StatType.Flexibility);
                     int extra = 0;
@@ -151,12 +164,7 @@ namespace LongLiveKhioyen
             }
         }
         
-        public virtual void OnTurnStart()
-        {
-            actionDone = false;
-            hasMovedThisTurn = false;
-            
-        }
+        
         
         #region Action
         
