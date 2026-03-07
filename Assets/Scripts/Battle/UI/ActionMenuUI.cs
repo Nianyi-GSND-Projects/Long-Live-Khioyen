@@ -284,7 +284,6 @@ namespace LongLiveKhioyen
 
             // 清理旧内容
             foreach (Transform child in subMenuContainer) Destroy(child.gameObject);
-
             // 生成技能按钮
             foreach (var action in actions)
             {

@@ -2330,7 +2330,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionDataBase: {fileID: 11400000, guid: f14839d6bac28cb41a750e238bd1fc53, type: 2}
   randomBattleRule: {fileID: 11400000, guid: 75952003dcccb464ab23cba0355b36bb, type: 2}
-  useLevelPreset: 1
   presetMapData: {fileID: 0}
   levelPreset: {fileID: 11400000, guid: de70873aa13f71c42806d7fa08bab8c4, type: 2}
   Size: {x: 0, y: 0}

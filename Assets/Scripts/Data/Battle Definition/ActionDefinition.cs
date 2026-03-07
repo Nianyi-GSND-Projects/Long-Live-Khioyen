@@ -94,6 +94,13 @@ namespace LongLiveKhioyen
         [Tooltip("使用条件：通常用于判断技能是否可用（例如：士气>10, AP>2）")]
         public List<ActionCondition> useConditions = new List<ActionCondition>();
         
+        [Header("Restrictions")]
+        [Tooltip("如果为真，该技能在整场战斗中只能使用一次")]
+        public bool oncePerBattle = false;
+
+        [Tooltip("如果为真，目标格子必须在施法者的视野内")]
+        public bool requireVision = true;
+        
         [SerializeReference]
         [Header("Logic")]
         public List<EffectDefinition> effects = new List<EffectDefinition>();
@@ -123,9 +130,23 @@ namespace LongLiveKhioyen
                 return false;
             }
             
+            if (requireVision)
+            {
+                if (Battle.Instance != null)
+                {
+                    if (Battle.Instance.IsTileVisible(targetPos) != FogState.Visible)
+                    {
+                        return false;
+                    }
+                }
+            }
             TileData tile = Battle.Instance.mapData[targetPos.x, targetPos.y];
             
             Unit primaryTarget = GetPrimaryTargetOnTile(tile);
+            if (primaryTarget != null && !Battle.Instance.IsUnitVisibleToPlayer(primaryTarget))
+            {
+                primaryTarget = null;
+            }
             
             switch (targetType)
             {
@@ -139,7 +160,7 @@ namespace LongLiveKhioyen
 
                 case ActionTargetType.EmptyTileOnly:
                     // 必须完全为空
-                    return tile.IsEmpty;
+                    return tile.IsVisualEmpty();
 
                 case ActionTargetType.UnitOnly:
                     // 如果首选目标存在，且满足条件 -> OK
@@ -205,6 +226,10 @@ namespace LongLiveKhioyen
                 effect.Execute(ctx);
 
             Debug.Log($"Action {actionName} performed at {targetPos}");
+            if (oncePerBattle)
+            {
+                user.MarkActionAsUsed(this);
+            }
             return true;
         }
 
@@ -222,8 +247,19 @@ namespace LongLiveKhioyen
         
         public bool CheckUseConditions(Unit user)
         {
-            if (useConditions == null || useConditions.Count == 0) return true;
+            if ((useConditions == null || useConditions.Count == 0)&&!oncePerBattle)
+                return true;
+            
+            if (oncePerBattle)
+            {
+                if (user.HasUsedAction(this))
+                {
+                    return false;
+                }
+            }
 
+            if ((useConditions == null || useConditions.Count == 0)) return true;
+            
             foreach (var condition in useConditions)
             {
                 if (!condition.Evaluate(user,null)) 
@@ -235,13 +271,13 @@ namespace LongLiveKhioyen
         private bool CheckUnitConditions(Unit user, Unit target)
         {
             if (!CheckFactionLogic(user, target)) return false;
-
-            // 2. 检查脚本化条件 (比如：目标必须是受损的才能治疗)
+            if(target.faction!=Faction.Player&&target.faction!=Faction.Friend)
+                if (!target.IsVisible)
+                    return false;
             if (useConditions != null)
             {
                 foreach (var condition in useConditions)
                 {
-                    // 这里传入 target，让 ConditionOperand.GetValue 能够获取目标属性
                     if (!condition.Evaluate(user, target))
                         return false;
                 }

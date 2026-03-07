@@ -24,3 +24,7 @@ MonoBehaviour:
   personality: {fileID: 11400000, guid: d7daa87ce2afdd34ab42ced61de6b1f3, type: 2}
   traits: []
   commanderActions: []
+  presetEquipments:
+  - {fileID: 11400000, guid: 720d2e58d88d4444589215203cb07cee, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}

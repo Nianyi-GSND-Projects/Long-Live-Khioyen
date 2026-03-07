@@ -224,7 +224,46 @@ namespace LongLiveKhioyen
                 _ => true,
             };
         }
-		
+
+        public bool CanDescriptorPlaceOnTile(UnitDescriptor desc, Vector2Int pos, bool checkVisibility)
+        {
+            if (!IsValidMapPosition(pos)) return false;
+            TileData tile = mapData[pos.x, pos.y];
+            if (tile.Battalion)
+            {
+                return false;
+            }
+            if (tile.Facility&&desc is FacilityDescriptor facDesc) 
+                return false;
+
+            UnitPassability p;
+            if (tile.Facility)
+            { 
+                // 如果需要检查可见性，并且设施不可见，则我们无视该设施，直接判断地形
+                if (checkVisibility && !tile.Facility.IsVisible)
+                {
+                    p = hexTiles[pos].TerrainDefinition.unitPassability;
+                }
+                else // 否则，设施可见，使用设施的通行性规则
+                {
+                    p = tile.Facility.Definition.passability;
+                }
+            }
+            else // 没有设施，直接判断地形
+            {
+                p = hexTiles[pos].TerrainDefinition.unitPassability;
+            }
+
+            return p switch
+            {
+                UnitPassability.Impassable => false,
+                UnitPassability.Passable => false,
+                UnitPassability.AlliesPassable => false,
+                UnitPassability.Stoppable => true,
+                UnitPassability.AlliesStoppable => tile.Facility.faction == desc.faction,
+                _ => true,
+            };
+        }
         public bool CanUnitPassThroughTile(Unit unit, Vector2Int pos,bool checkVisibility = false)
         {
             if (!IsValidMapPosition(pos)) return false;
@@ -378,8 +417,6 @@ namespace LongLiveKhioyen
         }
         
         #endregion
-        
-
 
         #region Tile Effect
 
@@ -594,6 +631,17 @@ namespace LongLiveKhioyen
         
         
 
+        #endregion
+        
+        #region Fog
+        
+        public FogState IsTileVisible(Vector2Int pos)
+        {
+            if (!IsValidMapPosition(pos)) return FogState.Concealed;
+            if (fogMap == null) return FogState.Visible;
+            return fogMap[pos.x, pos.y];
+        }
+        
         #endregion
     }
 }

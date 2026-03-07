@@ -1,5 +1,20 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6724453386621166593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50521c7f28181ee418429f93c07a7e3c, type: 3}
+  m_Name: GrantSkillEffect
+  m_EditorClassIdentifier: 
+  description: 
+  skillsToGrant:
+  - {fileID: 11400000, guid: 591bb3c3d9bc884458f39411d637067d, type: 2}
 --- !u!114 &-5920973927518951727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14,24 +29,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: 
   skillsToGrant: []
---- !u!114 &-366996738618299948
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 345ac4e0c49a528468060ac59bd1db7f, type: 3}
-  m_Name: StatBonusEffect
-  m_EditorClassIdentifier: 
-  description: 
-  zhiBonus: 0
-  xinBonus: 0
-  renBonus: 0
-  yongBonus: 0
-  yanBonus: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,7 +61,7 @@ MonoBehaviour:
   canBuy: 1
   buyPrice: 0
   effects:
-  - {fileID: 8034151213336445734}
+  - {fileID: -6724453386621166593}
 --- !u!114 &5304813268255671838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,6 +85,8 @@ MonoBehaviour:
   movementBonus: 0
   zocPowerBonus: 0
   actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0
 --- !u!114 &8034151213336445734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,6 +102,7 @@ MonoBehaviour:
   description: 
   skillsToGrant:
   - {fileID: 11400000, guid: 1757f2b6b55ba3b46bcde010b759c6dd, type: 2}
+  - {fileID: 11400000, guid: 591bb3c3d9bc884458f39411d637067d, type: 2}
 --- !u!114 &8147000186067009897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,3 +126,5 @@ MonoBehaviour:
   movementBonus: 0
   zocPowerBonus: 0
   actionChanceBonus: 0
+  visionBonus: 0
+  moraleConsumptionBonus: 0

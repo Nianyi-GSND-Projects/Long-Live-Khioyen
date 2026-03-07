@@ -104,6 +104,12 @@ namespace LongLiveKhioyen
                 Debug.LogError($"尝试在无效位置 {pos} 注册单位！");
                 return null;
             }
+
+            if (!CanDescriptorPlaceOnTile(descriptor, pos, true))
+            {
+                Debug.Log("部署失败！");
+                return null;
+            }
             
             if (descriptor.instanceId == -1)
             {

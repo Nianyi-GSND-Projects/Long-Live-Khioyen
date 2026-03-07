@@ -18,6 +18,23 @@ namespace LongLiveKhioyen
         public Facility Facility;
         public List<TileEffect> Effects = new List<TileEffect>();
         public bool IsEmpty => Battalion == null && Facility == null;
+
+        public bool IsVisualEmpty()
+        {
+            if (Battalion != null)
+            {
+                if (Battalion.faction == Faction.Player || Battalion.faction == Faction.Friend) return false;
+                if (Battalion.IsVisible) return false;
+            }
+
+            if (Facility != null)
+            {
+                if (Facility.faction == Faction.Player || Facility.faction == Faction.Friend) return false;
+                if (Facility.IsVisible) return false;
+            }
+
+            return true;
+        }
         
         public bool isExtractionPoint = false;
         public GameObject TileVFX;

@@ -30,6 +30,20 @@ namespace LongLiveKhioyen
         public Unit LastAttacker { get; private set; }
         public bool IsVisible { get; set; }
         
+        private HashSet<ActionDefinition> _usedOnceActions = new HashSet<ActionDefinition>();
+        public bool HasUsedAction(ActionDefinition action)
+        {
+            return _usedOnceActions.Contains(action);
+        }
+
+        public void MarkActionAsUsed(ActionDefinition action)
+        {
+            if (!_usedOnceActions.Contains(action))
+            {
+                _usedOnceActions.Add(action);
+            }
+        }
+
         public virtual int ZocPower => (int)GetStat(StatType.ZocPower);
         protected virtual void Start()
         {
