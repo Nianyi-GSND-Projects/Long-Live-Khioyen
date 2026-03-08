@@ -12,16 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 115b50472847567478d5e0b8f048148a, type: 3}
   m_Name: Han
   m_EditorClassIdentifier: 
-  ruleName: Han
+  ruleName: han
+  race: 0
   firstNames:
-  - "\u8D75"
-  - "\u5B59"
-  - "\u674E"
-  - "\u5468"
+  - 1
+  - 2
+  - 3
   lastNames:
-  - "\u4E91"
-  - "\u6B66"
-  - "\u5E7F"
-  - "\u4E9A\u592B"
-  portraits:
-  - {fileID: 0}
+  - z
+  - w
+  - l
+  portraits: []

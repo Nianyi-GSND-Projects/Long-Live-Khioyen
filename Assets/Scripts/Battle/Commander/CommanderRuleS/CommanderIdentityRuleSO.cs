@@ -7,6 +7,7 @@ namespace LongLiveKhioyen
     public class CommanderIdentityRuleSO : ScriptableObject
     {
         public string ruleName; // e.g., "Han", "Xiong"
+        
         public Race race;
         [Header("Name Pool")]
         public List<string> firstNames;

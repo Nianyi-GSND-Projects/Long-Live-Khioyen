@@ -278,6 +278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2872512687398623746}
   - component: {fileID: 4172266639492525029}
+  - component: {fileID: 1259580220315832064}
   m_Layer: 5
   m_Name: UnitResultEntry
   m_TagString: Untagged
@@ -325,6 +326,26 @@ MonoBehaviour:
   hpText: {fileID: 2860849602748731832}
   moraleText: {fileID: 7779245748162385243}
   statusText: {fileID: 6833231089652788956}
+--- !u!114 &1259580220315832064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3849642129198070930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 250
+  m_PreferredHeight: 100
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &4545029383147102086
 GameObject:
   m_ObjectHideFlags: 0

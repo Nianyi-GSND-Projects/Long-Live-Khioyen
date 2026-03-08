@@ -72,13 +72,17 @@ namespace LongLiveKhioyen
         
         public BattalionDescriptor GenerateBattalionDescriptorFromBattalionStatus(BattalionStatus battalionStatus)
         {
+            if(battalionStatus==null) Debug.Log("Null battalion");
             BattalionDescriptor battalionDescriptor = new BattalionDescriptor();
             battalionDescriptor.Definition = battalionStatus.battalionDefinition;
 			
             battalionDescriptor.armyId = battalionStatus.battalionId;
 
             battalionDescriptor.faction = Faction.Player;
-            battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
+            if(battalionStatus.battalionCommander != null) 
+                battalionDescriptor.battalionCommander = battalionStatus.battalionCommander;
+            if(battalionStatus.battalionDefinition == null)
+                Debug.Log("Null battalion definition");
             battalionDescriptor.zocPower = battalionStatus.battalionDefinition.defaultZocPower;
             battalionDescriptor.visionRange = battalionStatus.battalionDefinition.defaultVisionRange;
             battalionDescriptor.maxSolider = battalionStatus.MaxSolider;

@@ -1329,7 +1329,7 @@ MonoBehaviour:
   page1_ArmyStatus: {fileID: 483556701}
   page2_Loot: {fileID: 1640066943}
   titleText: {fileID: 235429227}
-  armyListContainer: {fileID: 2127851187}
+  armyListContainer: {fileID: 2035939958}
   unitEntryPrefab: {fileID: 3849642129198070930, guid: c96b2e17db2fd8245845887ae34a0f98, type: 3}
   lootListContainer: {fileID: 1819832147}
   lootEntryPrefab: {fileID: 6866505629226578246, guid: 8202d3382ff683d45a21ecd243e2ce46, type: 3}
@@ -1419,7 +1419,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1789278940}
   m_HandleRect: {fileID: 1789278939}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7596,6 +7596,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2035939958}
+  - component: {fileID: 2035939960}
+  - component: {fileID: 2035939959}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -7619,9 +7621,47 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &2035939959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035939957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 0
+--- !u!114 &2035939960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035939957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 250, y: 120}
+  m_Spacing: {x: 20, y: 20}
+  m_Constraint: 1
+  m_ConstraintCount: 2
 --- !u!1 &2043838491
 GameObject:
   m_ObjectHideFlags: 0

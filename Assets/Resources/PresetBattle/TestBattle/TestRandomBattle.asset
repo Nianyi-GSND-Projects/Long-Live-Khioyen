@@ -121,7 +121,7 @@ MonoBehaviour:
       traitsRule: 
       level: 0
     useRandomCommander: 0
-  usePresetPlayerArmy: 1
+  usePresetPlayerArmy: 0
   playerReserveList:
   - instanceId: 0
     unitName: 
