@@ -57,3 +57,7 @@ MonoBehaviour:
   invisibleAllyAlpha: 0.509
   deployZoneVisionRange: 1
   extractionZoneVisionRange: 1
+  moraleConsumePreTurn: 20
+  maxMoraleConsumptionBonusPercent: 30
+  moraleBreakAttritionRate: 0.1
+  droppedLootChestDefinition: {fileID: 11400000, guid: 3e5044fae0fce274392635c04964f5c4, type: 2}

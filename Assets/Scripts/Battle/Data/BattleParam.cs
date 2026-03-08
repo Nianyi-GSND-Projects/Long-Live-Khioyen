@@ -111,5 +111,8 @@ namespace LongLiveKhioyen
         [Tooltip("士气为0时，每回合溃散的士兵比例 (0-1)")]
         [Range(0f, 1f)]
         public float moraleBreakAttritionRate = 0.1f;
+        
+        [Header("Loot")]
+        public FacilityDefinition droppedLootChestDefinition;
     }
 }

@@ -416,6 +416,7 @@ namespace LongLiveKhioyen
             }
             CheckDeath(unit);
             unit.OnUnitStateChanged();
+            UpdateZOCAroundPoint(unit.position);
             if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
             {
                 UpdatePlayerVisionSources();
@@ -492,6 +493,7 @@ namespace LongLiveKhioyen
         {
             if (unit == null) return;
             bool isDead = false;
+            
             if(unit is Battalion battalion && battalion.currentSoliders <= 0)
             {
                 isDead = true;
@@ -505,26 +507,8 @@ namespace LongLiveKhioyen
 			
             if (isDead)
             {
-                // 2. 处理掉落 (Loot)
-                // 规则：击杀者存在 + 击杀者是玩家 + 死者不是玩家 + 击杀者是部队
-                Debug.Log($"[CheckDeath] Unit {unit.name} is dead. Checking loot...");
-                Unit killer = unit.LastAttacker;
-				
-                if (killer == null) Debug.Log("[CheckDeath] No killer (LastAttacker is null).");
-                else Debug.Log($"[CheckDeath] Killer: {killer.name}, Faction: {killer.faction}, Type: {killer.GetType().Name}");
-
-                if (killer != null && 
-                    killer.faction == Faction.Player && 
-                    unit.faction != Faction.Player &&
-                    killer is Battalion killerBat)
-                {
-                    Debug.Log("[CheckDeath] Loot conditions met. Processing...");
-                    ProcessLoot(unit, killerBat);
-                }
-                else
-                {
-                    Debug.Log("[CheckDeath] Loot conditions NOT met.");
-                }
+                Debug.Log($"[CheckDeath] Unit {unit.name} is dead. Processing loot...");
+                HandleUnitDeathLoot(unit);
 
                 // 3. 触发死亡事件 (Event System)
                 // 这允许剧情脚本响应特定单位的死亡
@@ -541,23 +525,111 @@ namespace LongLiveKhioyen
             return;
         }
         
-        private void ProcessLoot(Unit victim, Battalion killerBat)
+        private void HandleUnitDeathLoot(Unit victim)
         {
-            if (victim.unitDefinition == null || victim.unitDefinition.lootRules == null) return;
+            // 1. 收集所有掉落物
+            List<inBattleItem> allLoot = new List<inBattleItem>();
 
-            foreach (var rule in victim.unitDefinition.lootRules)
+            // A. 从掉落规则生成
+            if (victim.unitDefinition != null && victim.unitDefinition.lootRules != null)
             {
-                if (rule.lootTable == null) continue;
-
-                // 判定概率
-                if (UnityEngine.Random.Range(0, 100) < rule.dropChance)
+                foreach (var rule in victim.unitDefinition.lootRules)
                 {
-                    // Roll 物品
-                    var item = rule.lootTable.Roll();
-                    if (item != null)
+                    if (rule.lootTable != null && UnityEngine.Random.Range(0, 100) < rule.dropChance)
                     {
-                        killerBat.AddItem(item.definition,item.amount);
+                        var item = rule.lootTable.Roll();
+                        if (item != null) allLoot.Add(item);
                     }
+                }
+            }
+
+            // B. 从背包继承 (全掉落)
+            if (victim.inventory != null)
+            {
+                allLoot.AddRange(victim.inventory);
+            }
+
+            if (allLoot.Count == 0) 
+            {
+                Debug.Log("Nothing To Loot");
+                return; // 没有东西可掉
+}
+
+            // 2. 确定接收者
+            Unit receiver = null;
+            Unit killer = victim.LastAttacker;
+            bool isMeleeKill = false;
+
+            if (killer != null && killer is Battalion)
+            {
+                // 判断是否相邻 (近战)
+                int dist = GetHexDistance(victim.position, killer.position);
+                if (dist <= 1)
+                {
+                    isMeleeKill = true;
+                    receiver = killer;
+                    Debug.Log("Loot: Melee kill, loot goes to killer.");
+                }
+            }
+            
+
+            if (!isMeleeKill)
+            {
+                // 远程/陷阱击杀 -> 掉落在地上
+                Debug.Log("Loot: Ranged/Trap kill, loot drops on ground.");
+                
+                TileData tile = mapData[victim.position.x, victim.position.y];
+                
+                // 检查是否有非陷阱设施
+                if (tile.Facility != null && !(tile.Facility.Definition is TrapFacilityDefinition))
+                {
+                    receiver = tile.Facility;
+                    Debug.Log("Loot: Added to existing facility.");
+                }
+                else
+                {
+                    // 需要生成宝箱
+                    // 首先，如果这里有陷阱，先移除陷阱 (因为我们要放宝箱了)
+                    if (tile.Facility != null)
+                    {
+                        RemoveUnitFromBattle(tile.Facility);
+                    }
+
+                    // 生成宝箱
+                    if (BattleParam.Instance.droppedLootChestDefinition != null)
+                    {
+                        FacilityDescriptor chestDesc = new FacilityDescriptor
+                        {
+                            Definition = BattleParam.Instance.droppedLootChestDefinition,
+                            faction = Faction.Neutral,
+                            isVisible = true,
+                            maxDurability = BattleParam.Instance.droppedLootChestDefinition.defaultMaxDurability,
+                            currentDurability = BattleParam.Instance.droppedLootChestDefinition.defaultMaxDurability,
+                            isConstructed = true
+                        };
+                        
+                        // 注意：RegisterUnitToBattle 会把单位放到 mapData 上
+                        // 但此时 victim 还在 mapData 上 (CheckDeath 在 RemoveUnitFromBattle 之前调用)
+                        // 所以我们需要先临时把 victim 从 mapData 移除，或者 RegisterUnitToBattle 能处理覆盖
+                        // 我们的 RegisterUnitToBattle 会报错如果位置被占用。
+                        
+                        // 解决方案：我们手动在这里把 victim 从 mapData 移除 (逻辑移除，不销毁)
+                        RemoveUnitFromMap(victim); 
+                        
+                        receiver = RegisterUnitToBattle(chestDesc, victim.position, true);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("BattleParam.droppedLootChestDefinition is null! Loot lost.");
+                    }
+                }
+            }
+
+            if (receiver != null)
+            {
+                foreach (var item in allLoot)
+                {
+                    receiver.AddItem(item.definition, item.amount);
                 }
             }
         }

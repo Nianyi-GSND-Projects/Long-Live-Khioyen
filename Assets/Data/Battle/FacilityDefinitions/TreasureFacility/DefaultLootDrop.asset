@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9e896d7e3a8f5a4f82881e064828dd7, type: 3}
+  m_Name: DefaultLootDrop
+  m_EditorClassIdentifier: 
+  id: 0
+  unitName: 
+  unitType: 0
+  icon: {fileID: 0}
+  unitSelectedSoundEffect: {fileID: 0}
+  unitModelPrefab: {fileID: 366021807918811276, guid: 1a755ee8671cb79408947c24d4de8fc9, type: 3}
+  useBillboard: 0
+  defaultPower: 0
+  defaultDefense: 0
+  defaultRepairPower: 0
+  defaultZocPower: 0
+  defaultVisibility: 1
+  defaultVisionRange: 0
+  passability: 2
+  movable: 0
+  actionable: 0
+  beAttacked: 0
+  beInteracted: 1
+  beMoved: 0
+  defaultAttack: {fileID: 0}
+  defaultRetreat: {fileID: 0}
+  defaultInteract: {fileID: 0}
+  defaultConstructAction: {fileID: 0}
+  defaultRepairAction: {fileID: 0}
+  unitUniqueActions: []
+  lootRules: []
+  tags: []
+  description: 
+  defaultMaxDurability: 1
+  defaultCost: 0
+  special: 0
+  block: 0
+  useFormationDisplay: 0
+  formationInstanceCount: 1
+  formationSpacing: 0.5
+  constructionStagePrefabs: []
+  isInteractable: 1
+  openVfxPrefab: {fileID: 0}
+  destroyOnOpen: 1

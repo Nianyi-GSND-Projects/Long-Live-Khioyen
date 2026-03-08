@@ -98,7 +98,7 @@ namespace LongLiveKhioyen
         public void UpdateTileZOCVisual(Vector2Int pos)
         {
             if (!hexTiles.TryGetValue(pos, out HexTile tileScript)) return;
-            Debug.Log($"UpdateZOC at {pos}");
+            //Debug.Log($"UpdateZOC at {pos}");
             if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(pos))
             {
                 return;
@@ -111,7 +111,7 @@ namespace LongLiveKhioyen
             }
             
             int zocValue = GetVisualZOCValue(pos);
-            Debug.Log($"Value is {zocValue}");
+            //Debug.Log($"Value is {zocValue}");
             Color zocColor = Color.clear;
             float intensity = Mathf.Min(Mathf.Abs(zocValue) * 0.2f, zocMaxAlpha);
             if (zocValue > 0) zocColor = zocPlayerColor;

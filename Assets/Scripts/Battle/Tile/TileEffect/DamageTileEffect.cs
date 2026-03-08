@@ -12,6 +12,7 @@ namespace LongLiveKhioyen
 
         protected override void ApplyEffectToUnit(Unit unit)
         {
+            if (!unit.unitDefinition.beAttacked) return;
             Debug.Log($"{unit.name} 在火中受到灼烧！");
             unit.TakeDamage(damagePerTurn);
         }

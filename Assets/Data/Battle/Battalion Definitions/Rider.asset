@@ -38,13 +38,15 @@ MonoBehaviour:
   defaultRepairAction: {fileID: 0}
   unitUniqueActions:
   - {fileID: 11400000, guid: 26c7e5a101031894ca187bdbefdf3df1, type: 2}
-  lootRules: []
+  lootRules:
+  - lootTable: {fileID: 11400000, guid: 18177c4fd797bc447a2fa076a3fb6ce1, type: 2}
+    dropChance: 100
   tags: []
   isTrainable: 1
   defaultDiscipline: 100
   defaultFlexibility: 30
   defaultStrategy: 100
-  defaultMaxSolider: 1000
+  defaultMaxSolider: 500
   defaultMaxMorale: 1000
   soldiersPerModel: 100
   modelSpacing: 0.2
