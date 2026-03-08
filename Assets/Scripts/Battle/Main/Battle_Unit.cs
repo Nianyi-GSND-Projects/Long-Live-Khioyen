@@ -556,16 +556,7 @@ namespace LongLiveKhioyen
                     var item = rule.lootTable.Roll();
                     if (item != null)
                     {
-                        killerBat.inventory.Add(item);
-                
-                        // [修改] 拼合字符串并显示
-                        string msg = $"{killerBat.name} looted {item.amount}x {item.definition.itemName}";
-                        Debug.Log($"[Loot] {msg}");
-                
-                        if (LootNotificationManager.Instance != null)
-                        {
-                            LootNotificationManager.Instance.ShowMessage(msg);
-                        }
+                        killerBat.AddItem(item.definition,item.amount);
                     }
                 }
             }

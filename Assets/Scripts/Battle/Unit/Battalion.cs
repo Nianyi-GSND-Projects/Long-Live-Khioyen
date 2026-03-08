@@ -237,6 +237,36 @@ namespace LongLiveKhioyen
                 }
             }
         }
+        
+        public void AddItem(ItemDefinition itemDef, int amount)
+        {
+            if (itemDef == null || amount <= 0) return;
+
+            if (inventory == null) inventory = new List<inBattleItem>();
+
+            var existingItem = inventory.Find(i => i.definition == itemDef);
+            
+            if (existingItem != null)
+            {
+                existingItem.amount += amount;
+                Debug.Log($"[Inventory] {name} added {amount} to existing {itemDef.itemName}. Total: {existingItem.amount}");
+            }
+            else
+            {
+                inventory.Add(new inBattleItem { definition = itemDef, amount = amount });
+                Debug.Log($"[Inventory] {name} obtained new item: {amount} x {itemDef.itemName}");
+            }
+            
+            string msg = $"{name} looted {amount}x {itemDef.itemName}";
+            
+            Debug.Log($"[Loot] {msg}");
+            
+            //触发UI提示
+            if (LootNotificationManager.Instance != null)
+            {
+                LootNotificationManager.Instance.ShowMessage(msg);
+            }
+        }
 
         private void MoraleBreak()
         {

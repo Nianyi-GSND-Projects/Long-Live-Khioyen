@@ -27,7 +27,6 @@ namespace LongLiveKhioyen
         [Min(1)] public int formationInstanceCount = 1;
         [Tooltip("如果使用阵型显示，模型之间的间距")]
         public float formationSpacing = 0.5f;
-
         [Header("Construction Visuals")]
         [Tooltip("建设过程中的模型列表。会根据建设进度（耐久度百分比）自动选择。")]
         public List<GameObject> constructionStagePrefabs = new List<GameObject>();

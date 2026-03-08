@@ -12,24 +12,13 @@ namespace LongLiveKhioyen
 
         public override void OnInteract(Unit user, Facility facility)
         {
-            // 1. 计算产出数量 (暂时固定，预留属性挂钩)
             int amount = CalculateOutputAmount(user);
 
-            // 2. 给单位加物品
             if (user is Battalion bat)
             {
-                var existingItem = bat.inventory.Find(i => i.definition == itemToGive);
-                if (existingItem != null)
-                {
-                    existingItem.amount += amount;
-                }
-                else
-                {
-                    bat.inventory.Add(new inBattleItem { definition = itemToGive, amount = amount });
-                }
-                
-                Debug.Log($"{user.name} 采集了 {amount} 个 {itemToGive.itemName}");
+                bat.AddItem(itemToGive, amount);
             }
+            else return;
 
             facility.TakeDamage(durabilityCost);
             
