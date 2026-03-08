@@ -117,12 +117,15 @@ namespace LongLiveKhioyen
                     yield return StartCoroutine(Battle.Instance.MoveUnit(aiUnit, path, wasInterrupted => {
                         moveInterrupted = wasInterrupted;
                     }));
-
+                    
+                    Battle.Instance.RefreshAllZOCAndVision(aiUnit);
                     if (moveInterrupted)
                     {
                         Debug.Log($"[AI] {aiUnit.name} 的移动被打断！");
+                        
                         yield break; // 移动被打断，结束回合
                     }
+                    
 
                     // 移动后再次检查是否可以攻击
                     if (attackAction != null && attackAction.IsTileValidTarget(aiUnit, nearestTarget.position))
@@ -150,11 +153,11 @@ namespace LongLiveKhioyen
                 if (path != null && path.Count > 0)
                 {
                     Debug.Log($"[AI] {aiUnit.name} 巡逻到 {patrolTarget}");
-                    // [修改] 适配新的 MoveUnit 接口
                     yield return StartCoroutine(Battle.Instance.MoveUnit(aiUnit, path, wasInterrupted => {
                         if (wasInterrupted) Debug.Log($"[AI] {aiUnit.name} 的巡逻移动被打断！");
                     }));
                 }
+                Battle.Instance.RefreshAllZOCAndVision(aiUnit);
             }
             // 如果没有可移动的点，则原地待命
             aiUnit.actionDone = true;

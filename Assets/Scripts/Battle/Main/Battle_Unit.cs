@@ -164,19 +164,10 @@ namespace LongLiveKhioyen
                     factionVisibleUnits[unit.faction].Add(unit);
                 }
                 _instanceIdMap[unit.InstanceId] = unit;
-                //UpdateZOCAroundUnit(unit);
                 OnUnitPlaced?.Invoke();
                 unit.UpdateVisualState();
                 unit.OnUnitStateChanged();
-                if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
-                {
-                    UpdatePlayerVisionSources();
-                    UpdateFogOfWar(); // 这个方法内部会调用 RefreshAllUnitsVisuals
-                }
-                else
-                {
-                    RefreshAllUnitsVisuals();
-                }
+                RefreshAllZOCAndVision(unit);
                 Debug.Log($"Unit {unit.name} (ID:{unit.InstanceId}) registered to battle at {pos}.");
             }
 
@@ -384,8 +375,6 @@ namespace LongLiveKhioyen
                 yield break;
             }
             
-            UpdateZOCAroundUnit(unit);
-            RefreshZOCVisualsAround(unit);
             unit.hasMovedThisTurn = true;
             bool interrupted = false;
             // 2. 逐步移动
@@ -416,12 +405,6 @@ namespace LongLiveKhioyen
             }
             CheckDeath(unit);
             unit.OnUnitStateChanged();
-            UpdateZOCAroundPoint(unit.position);
-            if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
-            {
-                UpdatePlayerVisionSources();
-                UpdateFogOfWar();
-            }
             onComplete?.Invoke(interrupted);
         }
         

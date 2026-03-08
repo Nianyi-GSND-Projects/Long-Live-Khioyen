@@ -297,6 +297,7 @@ namespace LongLiveKhioyen
 				
                 case PlayerActionStage.SelectingAction:
                     Debug.Log("Change action stage to SelectingAction");
+                    RefreshAllZOCAndVision(SelectedUnit);
                     ClearAllHexRingHighlights();
                     OnActionSelectionStarted?.Invoke();
                     break;
@@ -478,6 +479,12 @@ namespace LongLiveKhioyen
                 yield return StartCoroutine(MoveUnit(unit, path, wasInterrupted => {
                     moveInterrupted = wasInterrupted;
                 }));
+                
+                if (unit != null && (unit.faction == Faction.Player || unit.faction == Faction.Friend))
+                {
+                    UpdatePlayerVisionSources();
+                    UpdateFogOfWar();
+                }
 		
                 if (targetPos != initialUnitPosition)
                 {
@@ -497,7 +504,6 @@ namespace LongLiveKhioyen
                 else if (unit is Battalion batAfterMove && batAfterMove.currentMovement > 0)
                 {
                     // 正常完成且还有移动力，刷新范围
-                    
                     UpdateAvailableMovePositions(batAfterMove);
                 }
                 else

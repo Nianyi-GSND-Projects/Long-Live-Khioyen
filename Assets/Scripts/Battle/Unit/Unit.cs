@@ -285,7 +285,7 @@ namespace LongLiveKhioyen
             {
                 visualController.RefreshVisuals();
             }
-            
+            Battle.Instance.RefreshAllZOCAndVision(this);
             OnPostForcedMove(oldPosition, newPosition);
         }
         
@@ -314,9 +314,6 @@ namespace LongLiveKhioyen
             {
                 // 2. 触发地图效果 (陷阱、地形)
                 shouldstop = Battle.Instance.CheckTileEffectOnEnter(this, newPos);
-
-                // 3. 更新 ZOC (添加新位置的 ZOC)
-                //Battle.Instance.UpdateZOC(this, true);
 
                 // 4. 更新视野
                 if (faction == Faction.Player || faction == Faction.Friend)

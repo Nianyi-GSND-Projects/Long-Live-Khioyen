@@ -114,7 +114,6 @@ namespace LongLiveKhioyen
                 if (!ValidateArrangementPlacement(gridPos)) return;
                 
                 PlacingPlayerBattalion(SelectedBattalionDescriptor, gridPos);
-                UpdateZOCAroundPoint(gridPos);
                 ClearReserveTeamSelection();
             }
             else if (IsUnitSelected)
@@ -261,6 +260,7 @@ namespace LongLiveKhioyen
                     SelectedUnit.transform.localPosition = MapToLocal(SelectedUnit.position);
                     PlaceUnitOnMap(SelectedUnit, SelectedUnit.position);
                     SelectedUnit.OnUnitStateChanged();
+                    RecalculateAllZOC();
                     break;
 				
                 case Stage.Battle:

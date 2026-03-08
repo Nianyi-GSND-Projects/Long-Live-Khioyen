@@ -85,6 +85,9 @@ namespace LongLiveKhioyen
         [Header("Cost")]
         public int actionPointCost;
         
+        [Header("Target Requirements")]
+        public bool requireInteractable = false;
+        public bool requireAttackable = false;
         public TargetFactionType targetFactionType;
         public TargetCountType targetCountType;
         
@@ -146,6 +149,30 @@ namespace LongLiveKhioyen
             if (primaryTarget != null && !Battle.Instance.IsUnitVisibleToPlayer(primaryTarget))
             {
                 primaryTarget = null;
+            }
+            if (requireInteractable)
+            {
+                bool isInteractable = false;
+                if (primaryTarget is Facility fac)
+                {
+                    isInteractable = fac.Definition.isInteractable;
+                }
+                else if (primaryTarget is Battalion bat)
+                {
+                    return false;
+                }
+
+                if (!isInteractable) return false;
+            }
+            
+            if (requireAttackable)
+            {
+                bool isAttackable = false;
+                if (primaryTarget.unitDefinition != null)
+                {
+                    isAttackable = primaryTarget.unitDefinition.beAttacked;
+                }
+                if (!isAttackable) return false;
             }
             
             switch (targetType)

@@ -72,7 +72,11 @@ namespace LongLiveKhioyen
             if (!factionActiveUnits[Faction.Player].Contains(unit))
             {
                 Debug.Log("Battalion " + unit.InstanceId + " is not your battalion.");
-                if(CurrentStage == Stage.Battle) ClearAllHexRingHighlights();
+                if(CurrentStage == Stage.Battle)
+                {
+                    ClearAllHexRingHighlights();
+                    RefreshAllVisualZoc();
+                }
                 return;
             }
 			
@@ -192,7 +196,11 @@ namespace LongLiveKhioyen
         {
             SelectedUnit = null;
             IsUnitSelected = false;
-            if(CurrentStage == Stage.Battle) ClearAllHexRingHighlights();
+            if (CurrentStage == Stage.Battle)
+            {
+                ClearAllHexRingHighlights();
+                RefreshAllVisualZoc();
+            }
             availableMovePositions.Clear();
         }
         

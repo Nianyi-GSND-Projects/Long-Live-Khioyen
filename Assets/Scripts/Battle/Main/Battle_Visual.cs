@@ -72,7 +72,6 @@ namespace LongLiveKhioyen
             {
                 HexTile tile = kvp.Value;
                 tile.SetRingColor(Color.clear);
-                UpdateTileZOCVisual(kvp.Key); 
             }
         }
         
@@ -98,7 +97,6 @@ namespace LongLiveKhioyen
         public void UpdateTileZOCVisual(Vector2Int pos)
         {
             if (!hexTiles.TryGetValue(pos, out HexTile tileScript)) return;
-            //Debug.Log($"UpdateZOC at {pos}");
             if (CurrentActionStage == PlayerActionStage.SelectingTarget && availableTargetPositions.Contains(pos))
             {
                 return;
@@ -143,11 +141,8 @@ namespace LongLiveKhioyen
             if (unit.IsVisible == isVisible) return;
             
             bool wasVisible = unit.IsVisible;
-            if (wasVisible) UpdateZOCAroundUnit(unit);
 
             unit.IsVisible = isVisible;
-            
-            if (isVisible) UpdateZOCAroundUnit(unit);
             if (isVisible)
             {
                 if (!factionVisibleUnits[unit.faction].Contains(unit))
@@ -164,6 +159,7 @@ namespace LongLiveKhioyen
                 }
                 Debug.Log($"{unit.name} is now HIDDEN.");
             }
+            if(isVisible != wasVisible) RefreshAllZOCAndVision(unit);
             unit.OnUnitStateChanged();
         }
 
@@ -400,24 +396,6 @@ namespace LongLiveKhioyen
 
            // 5. 根据新的 fogMap 更新所有单位的 IsVisible 状态
            RefreshAllUnitsVisuals();
-           foreach (var factionUnits in factionActiveUnits.Values)
-           {
-               foreach (var unit in factionUnits)
-               {
-                   if (unit != null)
-                   {
-                       bool oldVisibility = unit.IsVisible;
-                       unit.OnUnitStateChanged();
-
-                       // 如果一个单位的可见性刚刚发生了变化（从可见->不可见 或 不可见->可见）
-                       if (oldVisibility != IsUnitVisibleToPlayer(unit))
-                       {
-                           // 刷新它周围的 ZOC 视觉
-                           RefreshZOCVisualsAround(unit);
-                       }
-                   }
-               }
-           }
 
            // 6. 通知视觉控制器更新迷雾
            if (fogOfWarController != null)

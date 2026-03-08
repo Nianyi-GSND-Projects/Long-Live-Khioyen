@@ -41,6 +41,21 @@ namespace LongLiveKhioyen
                     }
                 }
             }
+            
+            if (facility.inventory != null && facility.inventory.Count > 0)
+            {
+                if (user is Battalion bat)
+                {
+                    foreach (var item in facility.inventory)
+                    {
+                        if (item != null && item.definition != null)
+                        {
+                            bat.AddItem(item.definition, item.amount);
+                        }
+                    }
+                    facility.inventory.Clear();
+                }
+            }
 
             // 2. 播放特效
             if (openVfxPrefab != null)

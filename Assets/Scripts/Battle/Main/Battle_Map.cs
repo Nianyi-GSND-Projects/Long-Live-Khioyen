@@ -614,7 +614,6 @@ namespace LongLiveKhioyen
                 mapData[myPos.x,myPos.y].EnemyZOC += e;
             }
 
-            //UpdateTileZOCVisual(myPos);
         }
         
         public void RefreshAllZOC()
@@ -626,11 +625,47 @@ namespace LongLiveKhioyen
                     UpdateRealZOC(new Vector2Int(x,y));
                 }
             }
-
         }
         
-        
+        public void RecalculateAllZOC()
+        {
+            RefreshAllZOC();
+            RefreshAllVisualZoc();
+        }
 
+        public void RefreshAllVisualZoc()
+        {
+            for (int x = 0; x < Size.x; x++)
+            {
+                for (int y = 0; y < Size.y; y++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+
+                    // 2. 更新视觉 ZOC
+                    if (fogMap[x, y] != FogState.Visible)
+                    {
+                        if (hexTiles.TryGetValue(pos, out HexTile tile))
+                        {
+                            tile.SetOverlayColor(Color.clear);
+                        }
+                    }
+                    else
+                    {
+                        UpdateTileZOCVisual(pos);
+                    }
+                }
+            }
+        }
+        
+        public void RefreshAllZOCAndVision(Unit sourceUnit)
+        {
+            if (sourceUnit != null && (sourceUnit.faction == Faction.Player || sourceUnit.faction == Faction.Friend))
+            {
+                UpdatePlayerVisionSources();
+                UpdateFogOfWar();
+            }
+            RecalculateAllZOC();
+        }
         #endregion
         
         #region Fog

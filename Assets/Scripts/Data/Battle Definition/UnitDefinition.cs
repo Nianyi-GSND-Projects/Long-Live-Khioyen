@@ -63,7 +63,6 @@ namespace LongLiveKhioyen
         public bool actionable;
         
         public bool beAttacked;
-        public bool beInteracted;
         public bool beMoved;
 
         #endregion
