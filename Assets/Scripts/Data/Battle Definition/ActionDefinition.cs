@@ -152,6 +152,7 @@ namespace LongLiveKhioyen
             }
             if (requireInteractable)
             {
+                if (primaryTarget == null) return false;
                 bool isInteractable = false;
                 if (primaryTarget is Facility fac)
                 {
@@ -167,6 +168,7 @@ namespace LongLiveKhioyen
             
             if (requireAttackable)
             {
+                if (primaryTarget == null) return false;
                 bool isAttackable = false;
                 if (primaryTarget.unitDefinition != null)
                 {

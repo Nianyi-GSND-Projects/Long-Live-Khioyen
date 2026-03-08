@@ -17,13 +17,17 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   actionPointCost: 0
+  requireInteractable: 0
+  requireAttackable: 1
   targetFactionType: 2
   targetCountType: 1
   displayConditions: []
   useConditions: []
+  oncePerBattle: 0
+  requireVision: 1
   effects:
   - {fileID: 11400000, guid: 10d0d1774c5e67241a3c21320954941f, type: 2}
   - {fileID: 11400000, guid: 03756d16644a91548abf9e6789ff396e, type: 2}
-  range: 1
+  maxRange: 1
   minRange: 1
   targetType: 3

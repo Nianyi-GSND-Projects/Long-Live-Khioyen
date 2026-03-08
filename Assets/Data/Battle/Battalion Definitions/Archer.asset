@@ -29,7 +29,6 @@ MonoBehaviour:
   movable: 1
   actionable: 1
   beAttacked: 1
-  beInteracted: 1
   beMoved: 1
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
@@ -40,6 +39,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 75b920ce36862ca41885e650af5e19e8, type: 2}
   lootRules:
   - lootTable: {fileID: 11400000, guid: 18177c4fd797bc447a2fa076a3fb6ce1, type: 2}
+    dropChance: 100
+  - lootTable: {fileID: 11400000, guid: 13deff6a7e8d05449bb5ef51466d6816, type: 2}
     dropChance: 100
   tags: []
   isTrainable: 0

@@ -18,13 +18,17 @@ MonoBehaviour:
     with terrain or other units.
   icon: {fileID: 0}
   actionPointCost: 0
+  requireInteractable: 0
+  requireAttackable: 1
   targetFactionType: 2
   targetCountType: 1
   displayConditions: []
   useConditions: []
+  oncePerBattle: 0
+  requireVision: 1
   effects:
   - {fileID: 11400000, guid: f588f30788e4ff64ebd8d520858a4fe8, type: 2}
   - {fileID: 11400000, guid: 64f26e890cf27a14f9a8e7a59be13308, type: 2}
-  range: 1
+  maxRange: 1
   minRange: 1
   targetType: 3

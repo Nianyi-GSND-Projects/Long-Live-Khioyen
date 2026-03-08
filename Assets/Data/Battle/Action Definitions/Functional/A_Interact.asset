@@ -17,12 +17,16 @@ MonoBehaviour:
   description: Interact with Facilities
   icon: {fileID: 0}
   actionPointCost: 0
+  requireInteractable: 1
+  requireAttackable: 0
   targetFactionType: 3
   targetCountType: 1
   displayConditions: []
   useConditions: []
+  oncePerBattle: 0
+  requireVision: 1
   effects:
   - {fileID: 11400000, guid: bd2d5fa33ea4a0e4899cda997557cb44, type: 2}
-  range: 1
+  maxRange: 1
   minRange: 1
   targetType: 1

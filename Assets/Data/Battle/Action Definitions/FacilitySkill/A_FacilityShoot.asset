@@ -17,10 +17,14 @@ MonoBehaviour:
   description: Shoot on Enemy Battalion
   icon: {fileID: 0}
   actionPointCost: 0
+  requireInteractable: 0
+  requireAttackable: 1
   targetFactionType: 2
   targetCountType: 1
   displayConditions: []
   useConditions: []
+  oncePerBattle: 0
+  requireVision: 1
   effects:
   - {fileID: 11400000, guid: f855f2eef3f8c654a8c08044f5c42fd1, type: 2}
   maxRange: 1

@@ -114,5 +114,24 @@ namespace LongLiveKhioyen
         
         [Header("Loot")]
         public FacilityDefinition droppedLootChestDefinition;
+        [Header("Item Rarity Colors")]
+        public Color commonColor = Color.white;
+        public Color uncommonColor = Color.green;
+        public Color rareColor = Color.blue;
+        public Color epicColor = Color.magenta;
+        public Color legendaryColor = new Color(1f, 0.5f, 0f); // Orange
+
+        public Color GetRarityColor(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Common: return commonColor;
+                case Rarity.Uncommon: return uncommonColor;
+                case Rarity.Rare: return rareColor;
+                case Rarity.Epic: return epicColor;
+                case Rarity.Legendary: return legendaryColor;
+                default: return commonColor;
+            }
+        }
     }
 }

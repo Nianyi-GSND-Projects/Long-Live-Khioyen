@@ -536,7 +536,7 @@ namespace LongLiveKhioyen
             {
                 Debug.Log("Nothing To Loot");
                 return; // 没有东西可掉
-}
+            }
 
             // 2. 确定接收者
             Unit receiver = null;
@@ -564,7 +564,7 @@ namespace LongLiveKhioyen
                 TileData tile = mapData[victim.position.x, victim.position.y];
                 
                 // 检查是否有非陷阱设施
-                if (tile.Facility != null && !(tile.Facility.Definition is TrapFacilityDefinition))
+                if (tile.Facility != null &&tile.Facility != victim && !(tile.Facility.Definition is TrapFacilityDefinition))
                 {
                     receiver = tile.Facility;
                     Debug.Log("Loot: Added to existing facility.");

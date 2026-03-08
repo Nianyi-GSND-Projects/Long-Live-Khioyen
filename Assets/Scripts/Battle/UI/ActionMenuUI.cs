@@ -89,8 +89,10 @@ namespace LongLiveKhioyen
         public void Show(Unit unit)
         {
             currentUnit = unit;
+            Debug.Log("NullCheck");
             if (currentUnit == null) return;
             
+            Debug.Log("NullCheck Pass");
             if (Battle.Instance != null) Battle.Instance.SetCameraLocked(true);
 
             PositionMenu(unit.position);
