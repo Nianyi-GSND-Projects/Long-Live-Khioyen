@@ -46,8 +46,8 @@ namespace LongLiveKhioyen
             titleText.text = _result.Victory ? "Victory" : "Defeated";
             titleText.color = _result.Victory ? Color.yellow : Color.red;
 
-            //SwitchToPage(1);
-            SwitchToPage(2);
+            SwitchToPage(1);
+            //SwitchToPage(2);
         }
 
         private void SetupPage1()
