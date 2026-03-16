@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
   m_Name: Xiongnu King Rider
   m_EditorClassIdentifier: 
-  id: 2
+  id: 18
   unitName: "\u9A91\u624B"
   unitType: 0
   icon: {fileID: 0}
@@ -29,7 +29,6 @@ MonoBehaviour:
   movable: 1
   actionable: 1
   beAttacked: 1
-  beInteracted: 1
   beMoved: 1
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
@@ -43,6 +42,8 @@ MonoBehaviour:
     dropChance: 100
   tags: []
   isTrainable: 1
+  requiredWeapon: {fileID: 0}
+  requiredBuildingTags: []
   defaultDiscipline: 500
   defaultFlexibility: 30
   defaultStrategy: 500

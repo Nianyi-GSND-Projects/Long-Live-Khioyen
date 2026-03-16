@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9aa5011acce0304ea1cbd088445c612, type: 3}
   m_Name: ArrowTower
   m_EditorClassIdentifier: 
-  id: 0
+  id: 19
   unitName: ArrowTower
   unitType: 1
   icon: {fileID: 21300000, guid: bba06ffcbd7eef84e82fc3d857fa66ee, type: 3}
@@ -29,7 +29,6 @@ MonoBehaviour:
   movable: 0
   actionable: 1
   beAttacked: 1
-  beInteracted: 0
   beMoved: 0
   defaultAttack: {fileID: 11400000, guid: db7335d492f9dd94ca31d7a10df6e0c7, type: 2}
   defaultRetreat: {fileID: 0}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae3cacda50e17343af28ae3d3560805, type: 3}
   m_Name: Trap
   m_EditorClassIdentifier: 
-  id: 0
+  id: 20
   unitName: Trap
   unitType: 1
   icon: {fileID: 21300000, guid: 291da373b1b19564d862d403bc703915, type: 3}
@@ -29,7 +29,6 @@ MonoBehaviour:
   movable: 0
   actionable: 0
   beAttacked: 1
-  beInteracted: 0
   beMoved: 0
   defaultAttack: {fileID: 0}
   defaultRetreat: {fileID: 0}

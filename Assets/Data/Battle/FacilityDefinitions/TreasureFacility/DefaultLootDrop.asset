@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9e896d7e3a8f5a4f82881e064828dd7, type: 3}
   m_Name: DefaultLootDrop
   m_EditorClassIdentifier: 
-  id: 0
+  id: 21
   unitName: 
   unitType: 0
   icon: {fileID: 0}
@@ -29,7 +29,6 @@ MonoBehaviour:
   movable: 0
   actionable: 0
   beAttacked: 0
-  beInteracted: 1
   beMoved: 0
   defaultAttack: {fileID: 0}
   defaultRetreat: {fileID: 0}

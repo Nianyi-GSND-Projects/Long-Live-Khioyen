@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
   m_Name: workman
   m_EditorClassIdentifier: 
-  id: 0
+  id: 17
   unitName: workman
   unitType: 0
   icon: {fileID: 21300000, guid: 2ad85e0ef7b8dd842b63520d3e8e5f19, type: 3}
@@ -29,7 +29,6 @@ MonoBehaviour:
   movable: 1
   actionable: 1
   beAttacked: 1
-  beInteracted: 0
   beMoved: 1
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
@@ -40,6 +39,8 @@ MonoBehaviour:
   lootRules: []
   tags: []
   isTrainable: 0
+  requiredWeapon: {fileID: 0}
+  requiredBuildingTags: []
   defaultDiscipline: 50
   defaultFlexibility: 50
   defaultStrategy: 50

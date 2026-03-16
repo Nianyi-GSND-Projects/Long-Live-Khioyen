@@ -9,23 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9e896d7e3a8f5a4f82881e064828dd7, type: 3}
-  m_Name: TestTreasureChest
+  m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
+  m_Name: Imperial Guard
   m_EditorClassIdentifier: 
-  id: 22
-  unitName: 
+  id: 13
+  unitName: Imperial Guard
   unitType: 0
   icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
-  unitModelPrefab: {fileID: 366021807918811276, guid: 9bbc4c379c06c0e4ea4f62a2abcc6998, type: 3}
+  unitModelPrefab: {fileID: 0}
   useBillboard: 0
   defaultPower: 0
   defaultDefense: 0
-  defaultRepairPower: 0
-  defaultZocPower: 0
+  defaultRepairPower: 10
+  defaultZocPower: 1
   defaultVisibility: 1
-  defaultVisionRange: 0
-  passability: 2
+  defaultVisionRange: 2
+  passability: 0
   movable: 0
   actionable: 0
   beAttacked: 0
@@ -36,19 +36,18 @@ MonoBehaviour:
   defaultConstructAction: {fileID: 0}
   defaultRepairAction: {fileID: 0}
   unitUniqueActions: []
-  lootRules:
-  - lootTable: {fileID: 11400000, guid: 18177c4fd797bc447a2fa076a3fb6ce1, type: 2}
-    dropChance: 100
+  lootRules: []
   tags: []
-  description: 
-  defaultMaxDurability: 1
-  defaultCost: 0
-  special: 0
-  block: 0
-  useFormationDisplay: 0
-  formationInstanceCount: 1
-  formationSpacing: 0.5
-  constructionStagePrefabs: []
-  isInteractable: 1
-  openVfxPrefab: {fileID: 0}
-  destroyOnOpen: 1
+  isTrainable: 1
+  requiredWeapon: {fileID: 11400000, guid: 83fddd3cb387eef4c858c3302e03e220, type: 2}
+  requiredBuildingTags: []
+  defaultDiscipline: 0
+  defaultFlexibility: 0
+  defaultStrategy: 0
+  defaultMaxSolider: 0
+  defaultMaxMorale: 0
+  soldiersPerModel: 100
+  modelSpacing: 0.05
+  spriteMaterial: {fileID: 0}
+  battalionAttackType: 0
+  attackRange: 0
