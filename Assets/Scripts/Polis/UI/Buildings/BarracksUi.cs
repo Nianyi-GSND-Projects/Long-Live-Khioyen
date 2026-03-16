@@ -161,10 +161,7 @@ namespace LongLiveKhioyen
 
 		void SetupBattalionArea()
 		{
-			trainableBattalionDefinitions = UnitDatabase.BattalionDefinitionSheet.unitDefinitions
-				.OfType<BattalionDefinition>()
-				.Where(d => d != null && d.isTrainable)
-				.ToArray();
+			trainableBattalionDefinitions = PolisData.Current.GetTrainableBattalions().ToArray();
 
 			battalionTypeDropDown.ClearOptions();
 			battalionTypeDropDown.AddOptions(trainableBattalionDefinitions

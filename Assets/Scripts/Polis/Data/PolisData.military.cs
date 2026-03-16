@@ -325,5 +325,13 @@ namespace LongLiveKhioyen
 			onGarrisonChanged?.Invoke();
 		}
 		#endregion
+
+		#region 训练
+		public IEnumerable<BattalionDefinition> GetTrainableBattalions()
+		{
+			return UnitDatabase.BattalionDefinitionSheet.unitDefinitions.OfType<BattalionDefinition>()
+				.Where(d => d.isTrainable && HasBuildingsWithTags(d.requiredBuildingTags));
+		}
+		#endregion
 	}
 }
