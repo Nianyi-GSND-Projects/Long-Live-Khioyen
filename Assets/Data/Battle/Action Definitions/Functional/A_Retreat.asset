@@ -19,26 +19,34 @@ MonoBehaviour:
     (Can only be used while in Retreat Zone)'
   icon: {fileID: 0}
   actionPointCost: 0
+  requireInteractable: 0
+  requireAttackable: 0
   targetFactionType: 0
   targetCountType: 0
   displayConditions: []
   useConditions:
-  - operandA:
+  - category: 0
+    operandA:
       sourceType: 10
       constantValue: 0
     compareOp: 4
     operandB:
       sourceType: 0
       constantValue: 1
-  - operandA:
+    targetTag: 
+  - category: 0
+    operandA:
       sourceType: 11
       constantValue: 0
     compareOp: 4
     operandB:
       sourceType: 0
       constantValue: 1
+    targetTag: 
+  oncePerBattle: 0
+  requireVision: 1
   effects:
   - {fileID: 11400000, guid: c22aea635a97bc04286e4c141e5ae917, type: 2}
-  range: 1
-  minRange: 1
+  maxRange: 0
+  minRange: 0
   targetType: 3

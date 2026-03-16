@@ -442,16 +442,30 @@ namespace LongLiveKhioyen
             {
                 factionActiveUnits[unit.faction].Remove(unit);
             }
+            if (factionVisibleUnits.ContainsKey(unit.faction))
+            {
+                factionVisibleUnits[unit.faction].Remove(unit);
+            }
+            
             RemoveUnitFromMap(unit);
             
             ClearAllSelection();
-			
+            RefreshZOCVisualsAround(unit);
+            if (CurrentStage == Stage.Battle) UpdateZOCAroundUnit(unit);
+            
             unit.gameObject.SetActive(false);
-          
+            unit.transform.SetParent(null);
+            Debug.Log($"[Withdraw] Unit {unit.name} has successfully retreated.");
+            if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
+            {
+                UpdatePlayerVisionSources(); 
+                UpdateFogOfWar(); 
+            }
             if (!retreatedUnits.Contains(unit))
             {
                 retreatedUnits.Add(unit);
             }
+            CheckBattleEnd();
         }
         
         public void ResolveDirtyUnits()
