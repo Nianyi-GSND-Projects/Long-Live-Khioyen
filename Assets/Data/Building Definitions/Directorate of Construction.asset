@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a291e6bdf3089f241a4ab811eecfdaf5, type: 3}
+  m_Name: Directorate of Construction
+  m_EditorClassIdentifier: 
+  id: workshop
+  tags: []
+  figure: {fileID: 0}
+  defaultOrientation: 0
+  pivot: {x: 1, y: 1}
+  size: {x: 4, y: 4}
+  center: {x: 2, y: 2}
+  canConstruct: 0
+  preliminaryBuildingTags:
+  - commandant-office
+  constructionTime: 1
+  constructionPopulation: 10
+  persistentPopulation: 10
+  cost:
+    food: 0
+    material: 200
+    money: 150
+    population: 0
+    items:
+      records: []
