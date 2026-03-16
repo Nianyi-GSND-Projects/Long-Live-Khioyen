@@ -20,8 +20,9 @@ namespace LongLiveKhioyen
 
 		#region 查询接口
 		/// <summary>给定的建筑 tag 是否在城里存在？</summary>
-		public bool HasBuildingWithTag(string tag)
-			=> buildings.Any(p => p.Definition.tags.Contains(tag));
+		public bool HasBuildingWithTag(string tag) {
+			return buildings.Any(p => p.Definition.tags.Contains(tag));
+		}
 		/// <summary>给定的建筑 tags 是否都在城里存在（不限于一栋建筑）？</summary>
 		public bool HasBuildingsWithTags(IEnumerable<string> tags)
 			=> tags.All(HasBuildingWithTag);

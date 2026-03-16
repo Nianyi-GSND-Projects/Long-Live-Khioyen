@@ -14,7 +14,7 @@ namespace LongLiveKhioyen
         
         [Header("Training")]
         public ItemDefinition requiredWeapon;
-        public string[] requiredBuildingTags;
+        public string[] requiredBuildingTags = new string[0];
         
         #region Battalion Attributes
         

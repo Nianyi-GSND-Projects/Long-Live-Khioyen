@@ -8,7 +8,7 @@ namespace LongLiveKhioyen
 	public class BuildingDefinition : ScriptableObject
 	{
 		public string id;
-		public string[] tags;
+		public string[] tags = new string[0];
 		public Sprite figure;
 
 		[Header("几何")]
