@@ -20,11 +20,15 @@ MonoBehaviour:
   pivot: {x: 2, y: 2}
   size: {x: 5, y: 5}
   center: {x: 2.5, y: 2.5}
+  canConstruct: 0
+  preliminaryBuildingTags:
+  - commandant-office
   constructionTime: 0.6666667
   constructionPopulation: 30
   cost:
     food: 0
     material: 600
     money: 600
+    population: 0
     items:
       records: []

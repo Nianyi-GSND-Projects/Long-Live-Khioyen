@@ -217,7 +217,7 @@ namespace LongLiveKhioyen
 			// 若战斗成功，使城池变为友好
 			if(result.Victory)
 			{
-				polis.type = PolisType.Friendly;
+				polis.type = polis.canControl ? PolisType.Controlled : PolisType.Friendly;
 				Debug.Log($"成功攻克城池 \"{result.polisId}\"。");
 			}
 			else

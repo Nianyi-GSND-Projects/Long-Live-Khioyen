@@ -10,6 +10,7 @@ namespace LongLiveKhioyen
 		public static PolisData Current => Polis.Instance.Data;
 
 		public string id;
+		public bool canControl = false;
 		public PolisType type;
 
 		public Vector2 position;

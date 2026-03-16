@@ -1,6 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -59,7 +60,7 @@ namespace LongLiveKhioyen
 				Destroy(child.gameObject);
 
 			var cardTemplate = Resources.Load<GameObject>("Prefabs/Polis/UI/Construct Option Card");
-			foreach(var definition in GameManager.BuildingDefinitions)
+			foreach(var definition in GameManager.BuildingDefinitions.Where(PolisData.Current.CanConstructBuilding))
 			{
 				var card = Instantiate(cardTemplate).GetComponent<ConstructOptionCard>();
 				card.buildingDefinition = definition;

@@ -18,7 +18,30 @@ namespace LongLiveKhioyen
 		public Action<BuildingPlacement> onBuildingRemoved;
 		#endregion
 
-		#region 公有方法
+		#region 查询接口
+		/// <summary>给定的建筑 tag 是否在城里存在？</summary>
+		public bool HasBuildingWithTag(string tag)
+			=> buildings.Any(p => p.Definition.tags.Contains(tag));
+		/// <summary>给定的建筑 tags 是否都在城里存在（不限于一栋建筑）？</summary>
+		public bool HasBuildingsWithTags(IEnumerable<string> tags)
+			=> tags.All(HasBuildingWithTag);
+		public bool HasBuildingsWithTags(params string[] tags)
+			=> HasBuildingsWithTags(tags as IEnumerable<string>);
+
+		public bool HasBuildingWithId(string id)
+			=> buildings.Any(p => p.Definition.id == id);
+
+		public bool CanConstructBuilding(BuildingDefinition building)
+		{
+			if(!building.canConstruct)
+				return false;
+			if(!HasBuildingsWithTags(building.preliminaryBuildingTags))
+				return false;
+			return true;
+		}
+		#endregion
+
+		#region 建造接口
 		public void ConstructBuilding(string id, Vector2Int mapPosition, int orientation)
 		{
 			if(!GameManager.FindBuildingDefinitionById(id, out var definition))

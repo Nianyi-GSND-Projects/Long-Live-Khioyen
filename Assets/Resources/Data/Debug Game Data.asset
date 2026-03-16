@@ -28,10 +28,6 @@ MonoBehaviour:
         position: {x: 19, y: 19}
         orientation: 2
         underConstruction: 0
-      - id: commandant-office
-        position: {x: 24, y: 23}
-        orientation: 0
-        underConstruction: 0
       - id: horse-station
         position: {x: 23, y: 16}
         orientation: 0
