@@ -44,6 +44,8 @@ MonoBehaviour:
     dropChance: 100
   tags: []
   isTrainable: 0
+  requiredWeapon: {fileID: 0}
+  requiredBuildingTags: []
   defaultDiscipline: 100
   defaultFlexibility: 20
   defaultStrategy: 100

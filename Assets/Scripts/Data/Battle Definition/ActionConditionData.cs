@@ -34,6 +34,11 @@ namespace LongLiveKhioyen
         Unit_IsOnExtractionPoint,
         Unit_HasNotMoved
     }
+    public enum ConditionCategory
+    {
+        NumericalComparison,
+        CheckExternalTag
+    }
     
     [Serializable]
     public class ConditionOperand
@@ -105,14 +110,35 @@ namespace LongLiveKhioyen
     [Serializable]
     public class ActionCondition
     {
+        public ConditionCategory category = ConditionCategory.NumericalComparison;
+        
         public ConditionOperand operandA;
         public ComparisonOperator compareOp;
         public ConditionOperand operandB;
-
+        [Tooltip("要检查的外部 Tag")]
+        public string targetTag;
+        
         // 判定逻辑
         public bool Evaluate(Unit user, Unit target)
         {
-            float valA = operandA.GetValue(user, target);
+            switch (category)
+            {
+                case ConditionCategory.NumericalComparison:
+                    return EvaluateNumerical(user, target);
+                
+                case ConditionCategory.CheckExternalTag:
+                    return EvaluateTag();
+        
+                default:
+                    return false;
+            }
+        }
+
+        private bool EvaluateNumerical(Unit user, Unit target)
+        {
+            if (operandA == null || operandB == null) return false;
+
+            float valA = operandA.GetValue(user,target);
             float valB = operandB.GetValue(user, target);
 
             switch (compareOp)
@@ -125,6 +151,16 @@ namespace LongLiveKhioyen
                 case ComparisonOperator.NotEqual:           return Mathf.Abs(valA - valB) > 0.001f;
                 default: return false;
             }
+        }
+
+        private bool EvaluateTag()
+        {
+            if (string.IsNullOrEmpty(targetTag)) return true;
+            if (PolisData.Main != null)
+            {
+                if (PolisData.Main.HasBuildingWithTag(targetTag)) return true;
+            }
+            return false; 
         }
     }
 }

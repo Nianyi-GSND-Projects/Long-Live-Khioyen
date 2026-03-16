@@ -21,7 +21,16 @@ MonoBehaviour:
   requireAttackable: 1
   targetFactionType: 2
   targetCountType: 1
-  displayConditions: []
+  displayConditions:
+  - category: 1
+    operandA:
+      sourceType: 0
+      constantValue: 0
+    compareOp: 0
+    operandB:
+      sourceType: 0
+      constantValue: 0
+    targetTag: granary
   useConditions: []
   oncePerBattle: 0
   requireVision: 1
