@@ -24,6 +24,8 @@ namespace LongLiveKhioyen
 				return;
 			}
 
+			Data.Population = Data.Population;  // 人口可能超出动态上限，手动触发卡一下
+
 			// 默认切到市长模式
 			SwitchToMode(Mode.Mayor);
 			IsInConstructModal = false;  // 编辑时可能没关建造面板，手动关一下
