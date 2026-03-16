@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace LongLiveKhioyen
@@ -13,7 +11,7 @@ namespace LongLiveKhioyen
         public bool isTrainable = false;
         
         [Header("Training")]
-        public ItemDefinition requiredWeapon;
+        public ItemDefinition[] requiredItems = new ItemDefinition[0];
         public string[] requiredBuildingTags = new string[0];
         
         #region Battalion Attributes

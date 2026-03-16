@@ -43,7 +43,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 6
   itemId: test-equip
-  itemName: 
+  itemName: Test Equipment
   tags: []
   description: 
   icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}

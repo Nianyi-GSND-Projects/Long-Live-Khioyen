@@ -1,7 +1,7 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace LongLiveKhioyen
 {
@@ -62,159 +62,53 @@ namespace LongLiveKhioyen
 			onGarrisonChanged?.Invoke();
 		}
 
-		public void SetBattalionSoldierCount(BattalionStatus battalion, int targetCount)
+		public static IEnumerable<ResourceDescriptor> GetEquivalantResource(BattalionStatus battalion)
 		{
-			if(battalion == null)
+			int count = battalion.currentSolider;
+			foreach(var item in battalion.battalionDefinition.requiredItems)
+				yield return new() { type = ResourceType.Item, quantity = count, itemId = item.itemId };
+		}
+		#endregion
+
+		#region 将领
+		public void EquipForCommander(GameCommander commander, EquipmentDefinition equipment, int slot)
+		{
+			if(commander == null || equipment == null || slot < 0 || slot >= (commander.equipments?.Length ?? 0))
 				return;
-
-			targetCount = Mathf.Clamp(targetCount, 0, battalion.MaxSolider);
-			int dCount = targetCount - battalion.currentSolider;
-			if(dCount == 0)
-				return;
-
-			if(dCount > 0)
-			{
-				if(dCount > FreePopulation)
-				{
-					Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：需要 {dCount} 空闲人口，当前空闲人口 {FreePopulation}。");
-					return;
-				}
-
-				if(!TryCostBattalionWeapons(battalion.battalionDefinition, dCount))
-				{
-					Debug.LogWarning($"无法将 {battalion.battalionCommander.commanderName} 的军队人数调整为 {targetCount}：对应兵器库存不足。");
-					return;
-				}
-			}
-			else
-			{
-				// 缩编时把对应兵器返还库存。
-				ReturnBattalionWeapons(battalion.battalionDefinition, -dCount);
-			}
-
-			battalion.currentSolider += dCount;
-			Population -= dCount;
-			battalion.onChanged?.Invoke();
-		}
-
-		/// <summary>
-		/// 切换驻军兵种：先返还旧兵器，再按新兵器上限裁剪兵员并扣除新兵器。
-		/// </summary>
-		public bool TryChangeBattalionDefinition(BattalionStatus battalion, BattalionDefinition targetDefinition)
-		{
-			if(battalion == null || targetDefinition == null)
-				return false;
-
-			if(battalion.battalionDefinition == targetDefinition)
-				return true;
-
-			int oldSoldierCount = battalion.currentSolider;
-
-			// 1) 把旧兵种占用的兵器先返还到库存。
-			ReturnBattalionWeapons(battalion.battalionDefinition, oldSoldierCount);
-
-			// 2) 计算新兵种可承载上限（人口、编制、新兵器库存）。
-			int populationCap = FreePopulation + oldSoldierCount;
-			int formationCap = GetMaxSoldierForDefinition(battalion.battalionCommander, targetDefinition);
-			int weaponCap = GetWeaponLimitedSoldierCap(targetDefinition, oldSoldierCount);
-			int newSoldierCount = Mathf.Clamp(oldSoldierCount, 0, Mathf.Min(populationCap, Mathf.Min(formationCap, weaponCap)));
-
-			// 防御性约束：不允许切兵种后出现负闲置人口。
-			int maxByFreePopulation = oldSoldierCount + Mathf.Max(FreePopulation, 0);
-			newSoldierCount = Mathf.Min(newSoldierCount, maxByFreePopulation);
-
-			// 3) 扣除新兵种需要占用的兵器。
-			if(!TryCostBattalionWeapons(targetDefinition, newSoldierCount))
-			{
-				// 理论上不会到这里（上面已按 weaponCap 裁剪），留保护并回滚旧兵器。
-				TryCostBattalionWeapons(battalion.battalionDefinition, oldSoldierCount);
-				Debug.LogWarning($"切换 {battalion.battalionCommander?.commanderName} 的兵种失败：新兵器库存不足。");
-				return false;
-			}
-
-			// 4) 应用兵种与兵员变更。
-			battalion.battalionDefinition = targetDefinition;
-			int dCount = newSoldierCount - oldSoldierCount;
-			battalion.currentSolider = newSoldierCount;
-			Population -= dCount;
-			battalion.onChanged?.Invoke();
-			return true;
-		}
-
-		int GetMaxSoldierForDefinition(GameCommander commander, BattalionDefinition definition)
-		{
-			if(definition == null)
-				return 0;
-
-			int maxSoldier = definition.defaultMaxSolider;
-			if(commander != null)
-				maxSoldier += commander.GetMaxSoldiersBonus();
-			return Mathf.Max(maxSoldier, 0);
-		}
-
-		int GetWeaponLimitedSoldierCap(BattalionDefinition definition, int currentSoldierCount)
-		{
-			string requiredWeaponId = GetRequiredWeaponItemId(definition);
-			if(string.IsNullOrEmpty(requiredWeaponId))
-				return int.MaxValue;
-
-			int stock = StockedItems.GetItemQuantity(requiredWeaponId);
-			return currentSoldierCount + Mathf.Max(stock, 0);
-		}
-
-		string GetRequiredWeaponItemId(BattalionDefinition definition)
-		{
-			if(definition?.requiredWeapon == null)
-				return null;
-
-			if(string.IsNullOrEmpty(definition.requiredWeapon.itemId))
-				return string.Empty;
-
-			return definition.requiredWeapon.itemId;
-		}
-
-		bool TryCostBattalionWeapons(BattalionDefinition definition, int count)
-		{
-			if(count <= 0)
-				return true;
-
-			string requiredWeaponId = GetRequiredWeaponItemId(definition);
-			if(requiredWeaponId == null)
-				return true;
-
-			if(requiredWeaponId == string.Empty)
-				return false;
 
 			ResourceDescriptor cost = new()
 			{
 				type = ResourceType.Item,
-				itemId = requiredWeaponId,
-				quantity = count,
+				quantity = 1,
+				itemId = equipment.itemId,
 			};
 			if(!Economy.CanCover(cost))
-				return false;
-
-			Economy.Cost(cost);
-			return true;
-		}
-
-		void ReturnBattalionWeapons(BattalionDefinition definition, int count)
-		{
-			if(count <= 0)
-				return;
-
-			string requiredWeaponId = GetRequiredWeaponItemId(definition);
-			if(string.IsNullOrEmpty(requiredWeaponId))
-				return;
-
-			Economy.Add(new ResourceDescriptor()
 			{
-				type = ResourceType.Item,
-				itemId = requiredWeaponId,
-				quantity = count,
-			});
+				Debug.LogWarning($"尝试给武将 {commander.commanderName} 装备 {equipment.itemName}，库存不足。");
+				return;
+			}
+
+			if(commander.equipments[slot] != null)
+			{
+				Economy.Add(new ResourceDescriptor()
+				{
+					type = ResourceType.Item,
+					quantity = 1,
+					itemId = equipment.itemId,
+				});
+				commander.equipments[slot] = null;
+			}
+
+			if(equipment != null)
+			{
+				Economy.Cost(cost);
+				commander.equipments[slot] = equipment;
+			}
+
+			Debug.Log($"武将 {commander.commanderName} 在第 {slot} 个槽装备了 {equipment.itemName}。");
+
+			onGarrisonChanged?.Invoke();
 		}
-		#endregion
 
 		#region 提拔
 		[Serializable]
@@ -284,46 +178,6 @@ namespace LongLiveKhioyen
 			onNextPromotableCommanderChanged?.Invoke();
 		}
 		#endregion
-
-		#region 将领
-		public void EquipForCommander(GameCommander commander, EquipmentDefinition equipment, int slot)
-		{
-			if(commander == null || equipment == null || slot < 0 || slot >= (commander.equipments?.Length ?? 0))
-				return;
-
-			ResourceDescriptor cost = new()
-			{
-				type = ResourceType.Item,
-				quantity = 1,
-				itemId = equipment.itemId,
-			};
-			if(!Economy.CanCover(cost))
-			{
-				Debug.LogWarning($"尝试给武将 {commander.commanderName} 装备 {equipment.itemName}，库存不足。");
-				return;
-			}
-
-			if(commander.equipments[slot] != null)
-			{
-				Economy.Add(new ResourceDescriptor()
-				{
-					type = ResourceType.Item,
-					quantity = 1,
-					itemId = equipment.itemId,
-				});
-				commander.equipments[slot] = null;
-			}
-
-			if(equipment != null)
-			{
-				Economy.Cost(cost);
-				commander.equipments[slot] = equipment;
-			}
-
-			Debug.Log($"武将 {commander.commanderName} 在第 {slot} 个槽装备了 {equipment.itemName}。");
-
-			onGarrisonChanged?.Invoke();
-		}
 		#endregion
 
 		#region 训练
@@ -331,6 +185,52 @@ namespace LongLiveKhioyen
 		{
 			return UnitDatabase.BattalionDefinitionSheet.unitDefinitions.OfType<BattalionDefinition>()
 				.Where(d => d.isTrainable && HasBuildingsWithTags(d.requiredBuildingTags));
+		}
+
+		public int GetBattalionCap(BattalionStatus ballation, BattalionDefinition type)
+		{
+			int p = FreePopulation;
+			Economy eqEconomy = new(Economy);
+
+			if(garrisonedBattalions.Contains(ballation))
+			{
+				p += ballation.currentSolider;
+				eqEconomy.Add(GetEquivalantResource(ballation));
+			}
+
+			foreach(var item in ballation.battalionDefinition.requiredItems)
+				p = Mathf.Min(p, Mathf.FloorToInt(eqEconomy.Get(new() { type = ResourceType.Item, itemId = item.itemId })));
+
+			return Mathf.Max(p, 0);
+		}
+
+		public void SetBattalionCount(BattalionStatus battalion, int targetCount)
+		{
+			targetCount = Mathf.Clamp(targetCount, 0, GetBattalionCap(battalion, battalion.battalionDefinition));
+			int dCount = targetCount - battalion.currentSolider;
+			if(dCount == 0)
+				return;
+
+			Population -= dCount;
+			battalion.currentSolider += dCount;
+			foreach(var weapon in battalion.battalionDefinition.requiredItems)
+				StockedItems.ChangeItemQuantity(weapon.itemId, -dCount);
+			battalion.onChanged?.Invoke();
+		}
+
+		public void SetBattalionType(BattalionStatus battalion, BattalionDefinition type)
+		{
+			if(type == battalion.battalionDefinition)
+				return;
+
+			int previousCount = battalion.currentSolider;
+
+			SetBattalionCount(battalion, 0);
+			battalion.battalionDefinition = type;
+			int count = Mathf.Clamp(previousCount, 0, GetBattalionCap(battalion, type));
+			SetBattalionCount(battalion, count);
+
+			battalion.onChanged?.Invoke();
 		}
 		#endregion
 	}

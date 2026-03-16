@@ -89,7 +89,7 @@ namespace LongLiveKhioyen
 		public static implicit operator ResourceDescriptor[](Economy economy)
 			=> economy.ToDescriptors().ToArray();
 
-		void Set(in ResourceDescriptor descriptor)
+		public void Set(in ResourceDescriptor descriptor)
 		{
 			switch(descriptor.type)
 			{
@@ -113,7 +113,7 @@ namespace LongLiveKhioyen
 			}
 		}
 
-		float Get(in ResourceDescriptor descriptor)
+		public float Get(in ResourceDescriptor descriptor)
 		{
 			return descriptor.type switch
 			{
