@@ -1,8 +1,9 @@
+using Mono.Cecil;
+using Nianyi.UnityPack;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections.Generic;
-using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
 {
@@ -55,9 +56,9 @@ namespace LongLiveKhioyen
 		/// <summary>
 		/// 为预定义的几种资源类型设置的方便接口。
 		/// </summary>
-		public void SetResourceType(ResourceType type)
+		public void SetResourceType(ResourceDescriptor resource)
 		{
-			switch(type)
+			switch(resource.type)
 			{
 				case ResourceType.Food:
 					UseIconFromResource("Food");
@@ -71,8 +72,9 @@ namespace LongLiveKhioyen
 				case ResourceType.Population:
 					UseIconFromResource("Population");
 					break;
-				default:
-					throw new System.NotSupportedException($"{GetType().Name}.{nameof(SetResourceType)} only supports predefined types.");
+				case ResourceType.Item:
+					IconSprite = ItemDatabase.Instance.GetItem(resource.itemId)?.icon;
+					break;
 			}
 		}
 	}

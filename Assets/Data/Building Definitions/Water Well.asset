@@ -16,16 +16,19 @@ MonoBehaviour:
   tags:
   - water-well
   figure: {fileID: 21300000, guid: 61ac40b257b3a994f841856ad38b2b6b, type: 3}
-  persistentPopulation: 0
   defaultOrientation: 0
   pivot: {x: 0, y: 0}
   size: {x: 1, y: 1}
   center: {x: 0.5, y: 0.5}
+  canConstruct: 1
+  preliminaryBuildingTags: []
   constructionTime: 0.33333334
   constructionPopulation: 0
+  persistentPopulation: 0
   cost:
     food: 20
     material: 0
     money: 30
+    population: 0
     items:
       records: []

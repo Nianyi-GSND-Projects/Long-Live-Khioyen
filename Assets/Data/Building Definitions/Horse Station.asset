@@ -15,16 +15,16 @@ MonoBehaviour:
   id: horse-station
   tags: []
   figure: {fileID: 0}
-  persistentPopulation: 10
   defaultOrientation: 0
   pivot: {x: 1, y: 0}
   size: {x: 3, y: 2}
   center: {x: 1.5, y: 1}
-  canConstruct: 0
+  canConstruct: 1
   preliminaryBuildingTags:
   - commandant-office
   constructionTime: 0.33333334
   constructionPopulation: 10
+  persistentPopulation: 10
   cost:
     food: 0
     material: 100

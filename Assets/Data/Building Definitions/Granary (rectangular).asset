@@ -16,16 +16,19 @@ MonoBehaviour:
   tags:
   - granary
   figure: {fileID: 0}
-  persistentPopulation: 5
   defaultOrientation: 0
   pivot: {x: 0, y: 0}
   size: {x: 2, y: 2}
   center: {x: 1, y: 1}
+  canConstruct: 1
+  preliminaryBuildingTags: []
   constructionTime: 0.5
   constructionPopulation: 5
+  persistentPopulation: 5
   cost:
     food: 0
     material: 200
     money: 100
+    population: 0
     items:
       records: []

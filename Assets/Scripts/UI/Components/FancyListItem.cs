@@ -82,7 +82,7 @@ namespace LongLiveKhioyen
 				var field = EconomyField.Instantiate();
 				field.transform.SetParent(infoLayoutGroup.transform, false);
 
-				field.SetResourceType(cost.type);
+				field.SetResourceType(cost);
 				field.ValueFloat = cost.quantity;
 			}
 

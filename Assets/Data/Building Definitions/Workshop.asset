@@ -15,16 +15,16 @@ MonoBehaviour:
   id: workshop
   tags: []
   figure: {fileID: 0}
-  persistentPopulation: 20
   defaultOrientation: 0
   pivot: {x: 1, y: 1}
   size: {x: 4, y: 4}
   center: {x: 2, y: 2}
-  canConstruct: 0
+  canConstruct: 1
   preliminaryBuildingTags:
   - commandant-office
   constructionTime: 1
   constructionPopulation: 20
+  persistentPopulation: 20
   cost:
     food: 0
     material: 400
