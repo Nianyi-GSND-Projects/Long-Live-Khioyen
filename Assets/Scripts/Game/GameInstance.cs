@@ -25,7 +25,7 @@ namespace LongLiveKhioyen
 
 		void Start()
 		{
-			lastPolis = Data.poleis.Find(p => p.id == Data.lastPolis);
+			lastPolis = Data.GetPolis(Data.lastPolis);
 			Paused = false;
 		}
 
@@ -119,7 +119,7 @@ namespace LongLiveKhioyen
 
 		public void EnterPolis(string polisId)
 		{
-			var polis = Data.poleis.Find(p => p.id == polisId);
+			var polis = Data.GetPolis(polisId);
 			if(polis == null)
 			{
 				Debug.LogWarning($"找不到城池 \"{polisId}\"，无法进入。");
@@ -205,7 +205,7 @@ namespace LongLiveKhioyen
 			// 度过时间
 			Data.time.AdvanceByMonth(result.passedTime);
 
-			var polis = Data.poleis.Find(p => p.id == result.polisId);
+			var polis = Data.GetPolis(result.polisId);
 			if(polis == null)
 			{
 				Debug.LogWarning($"找不到城池 \"{result.polisId}\"，无法应用战役结果。");

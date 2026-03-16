@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LongLiveKhioyen
 {
@@ -8,9 +9,15 @@ namespace LongLiveKhioyen
 	{
 		public WorldData world;
 		public string lastPolis;
+		public string mainPolis;
 		public List<PolisData> poleis = new();
 		/// <summary>以月份为单位。</summary>
 		public GameTime time;
+
+		public PolisData GetPolis(string id)
+		{
+			return poleis.FirstOrDefault(p => p.id == id);
+		}
 	}
 
 	[Serializable]

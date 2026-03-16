@@ -8,6 +8,7 @@ namespace LongLiveKhioyen
 	public partial class PolisData
 	{
 		public static PolisData Current => Polis.Instance.Data;
+		public static PolisData Main => GameInstance.Instance.Data.GetPolis(GameInstance.Instance.Data.mainPolis);
 
 		public string id;
 		public bool canControl = false;
