@@ -53,6 +53,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-zh-Hant
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a94da703422c044478cf8bac7ab6df07
+    m_Address: Building Descriptions_zh-Hant
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-Hant
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d384fd04e3462914699ad6dd3761fcde
     m_Address: Pause Menu_zh-Hant
     m_ReadOnly: 1

@@ -11,6 +11,23 @@ namespace LongLiveKhioyen
 		public string[] tags = new string[0];
 		public Sprite figure;
 
+		public string LocalizedName
+		{
+			get
+			{
+				return new LocalizedString("Building Names", id).GetLocalizedString();
+			}
+		}
+		public string LocalizedDescription
+		{
+			get
+			{
+				var table = new LocalizedStringTable("Building Descriptions").GetTable();
+				var ls = table.GetEntry(id);
+				return ls?.GetLocalizedString() ?? string.Empty;
+			}
+		}
+
 		[Header("几何")]
 		[Range(0, 3)] public int defaultOrientation;
 		public Vector2Int pivot;
@@ -30,10 +47,5 @@ namespace LongLiveKhioyen
 		/// <summary>建好后的人口占用。</summary>
 		[Label("周转所需人口"), Tooltip("建造完成后才生效"), Min(0)] public int persistentPopulation;
 		[Label("建造消耗资源")] public Economy cost;
-
-		public LocalizedString GetLocalizedName()
-		{
-			return new("Building Names", id);
-		}
 	}
 }

@@ -47,6 +47,12 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d407d6b73af24214db73815c9d43fa42
+    m_Address: Assets/Localization/Tables/Building Descriptions/Building Descriptions
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e72d650480b761f409b5e964a8ef7385
     m_Address: Assets/Localization/Tables/Settings Panel/Settings Panel Shared Data.asset
     m_ReadOnly: 1

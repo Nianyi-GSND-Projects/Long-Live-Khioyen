@@ -60,6 +60,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-han
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c368fc79c6b67d640a2d2faf1f198481
+    m_Address: Building Descriptions_han
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-han
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c4256c1ded8531d41afa251aa6dbd28c
     m_Address: UI Common_han
     m_ReadOnly: 1

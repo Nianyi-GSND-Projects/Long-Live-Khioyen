@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.UI;
 using TMPro;
 
@@ -14,7 +13,6 @@ namespace LongLiveKhioyen
 
 		const string buttonPrefabPath = "Prefabs/Polis/UI/Inspection Button";
 
-		LocalizedString localizedBuildingName;
 		string buildingName;
 
 		IBuildingLike building;
@@ -23,30 +21,8 @@ namespace LongLiveKhioyen
 			get => building;
 			set
 			{
-				if(building != null)
-				{
-					if(localizedBuildingName != null)
-						localizedBuildingName.StringChanged -= OnLocalizedBuildingNameChanged;
-				}
-
 				building = value;
-
-				if(building != null)
-				{
-					localizedBuildingName = building.Definition.GetLocalizedName();
-					localizedBuildingName.StringChanged += OnLocalizedBuildingNameChanged;
-				}
-
 				SetupContent();
-			}
-		}
-
-		protected void OnDestroy()
-		{
-			if(building != null)
-			{
-				if(localizedBuildingName != null)
-					localizedBuildingName.StringChanged -= OnLocalizedBuildingNameChanged;
 			}
 		}
 
@@ -59,7 +35,7 @@ namespace LongLiveKhioyen
 			if(building == null)
 				return;
 
-			title.text = buildingName;
+			title.text = building.Definition.LocalizedName;
 			var ui = building.CreateInspectionUi();
 			if(ui != null)
 				ui.transform.SetParent(detailArea.transform, false);
@@ -72,12 +48,6 @@ namespace LongLiveKhioyen
 				AddActionButton(action);
 			}
 			buttonLayoutGroup.CalculateLayoutInputVertical();
-		}
-
-		void OnLocalizedBuildingNameChanged(string name)
-		{
-			buildingName = name;
-			SetupContent();
 		}
 
 		void AddActionButton(InspectionAction action)

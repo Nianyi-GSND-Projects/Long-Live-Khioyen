@@ -162,7 +162,10 @@ namespace LongLiveKhioyen
 
 				costPreviewPanel.gameObject.SetActive(value);
 				if(value)
+				{
+					costPreviewPanel.Description = hoveredBuildingType.LocalizedDescription;
 					costPreviewPanel.UpdateCostData(hoveredBuildingType.cost);
+				}
 			}
 		}
 		#endregion

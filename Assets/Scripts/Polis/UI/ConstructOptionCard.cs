@@ -11,7 +11,6 @@ namespace LongLiveKhioyen
 	{
 		Polis Polis => Polis.Instance;
 		[NonSerialized] public BuildingDefinition buildingDefinition;
-		LocalizedString localizedBuildingName;
 
 		CanvasGroup group;
 		[SerializeField] Button button;
@@ -28,8 +27,7 @@ namespace LongLiveKhioyen
 
 		protected void Start()
 		{
-			localizedBuildingName = buildingDefinition.GetLocalizedName();
-			localizedBuildingName.StringChanged += s => text.text = s;
+			text.text = buildingDefinition.LocalizedName;
 			image.sprite = buildingDefinition.figure;
 
 			Polis.Data.onEconomyChanged += OnEconomyDataChanged;
