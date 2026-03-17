@@ -40,5 +40,8 @@ namespace LongLiveKhioyen
 		[Header("战斗")]
 		[Label("单次战斗耗粮（测试）"), Min(0)] public float foodCostPerBattle;  // 测试用
 		[Label("单次战斗耗时（测试）"), Min(0)] public float timeCostPerBattle;  // 测试用
+
+		[Header("UI")]
+		[Label("UI 提示显示延迟"), Min(0)] public float tooltipDelay = 1;
 	}
 }

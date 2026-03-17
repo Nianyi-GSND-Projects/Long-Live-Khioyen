@@ -21,6 +21,8 @@ namespace LongLiveKhioyen
 			}
 			instance = this;
 			DontDestroyOnLoad(this);
+
+			gameObject.AddComponent<TooltipManager>();
 		}
 
 		void Start()

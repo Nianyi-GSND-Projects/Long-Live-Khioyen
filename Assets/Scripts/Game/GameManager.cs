@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,7 +19,7 @@ namespace LongLiveKhioyen
 
 			/* Built-in resources */
 			InternalSettings = Resources.Load<InternalGameSettings>("Internal Game Settings");
-			buildingDefinitionSheet = UnityEngine.Object.Instantiate(Resources.Load<BuildingDefinitionSheet>("Data/Building Definitions"));
+			buildingDefinitionSheet = Resources.Load<BuildingDefinitionSheet>("Data/Building Definitions");
 			if(buildingDefinitionSheet == null)
 			{
 				Debug.LogError("Cannot construct buildings, cannot fetch the initial building definition sheet.");
@@ -38,11 +39,11 @@ namespace LongLiveKhioyen
 		#region Built-in resources
 		public static InternalGameSettings InternalSettings { get; private set; }
 		static BuildingDefinitionSheet buildingDefinitionSheet;
-		public static List<BuildingDefinition> BuildingDefinitions => buildingDefinitionSheet?.buildingDefinitions;
+		public static IReadOnlyList<BuildingDefinition> BuildingDefinitions => buildingDefinitionSheet?.buildingDefinitions;
 
 		public static bool FindBuildingDefinitionById(string id, out BuildingDefinition definition)
 		{
-			definition = BuildingDefinitions.Find(d => d.id == id);
+			definition = BuildingDefinitions.FirstOrDefault(d => d.id == id);
 			return definition != null;
 		}
 		#endregion
