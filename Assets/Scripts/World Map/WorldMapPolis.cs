@@ -1,10 +1,16 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace LongLiveKhioyen
 {
 	public class WorldMapPolis : MonoBehaviour
 	{
-		[SerializeField] Image image;
+		[SerializeField] SpriteRenderer image;
+
+		public void Initialize(PolisData polisData)
+		{
+			name = polisData.id;
+			image.sprite = polisData.Sprite;
+			Debug.Log($"{name}: {image.sprite}", polisData.Sprite);
+		}
 	}
 }

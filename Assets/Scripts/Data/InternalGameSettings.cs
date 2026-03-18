@@ -34,6 +34,8 @@ namespace LongLiveKhioyen
 		[Label("默认兵种")] public BattalionDefinition defaultBattalionType;
 
 		[Header("行军")]
+		[Label("默认敌方城池图标")] public Sprite fallbackHostileIcon;
+		[Label("默认友方城池图标")] public Sprite fallbackFriendlyIcon;
 		[Label("行军耗粮速率（每距离每重量）"), Min(0)] public float worldMapFoodCostRate;
 		[Label("行军时间流速"), Min(0)] public float worldMapTimeScale;
 

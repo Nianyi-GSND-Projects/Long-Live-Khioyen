@@ -46,6 +46,7 @@ namespace LongLiveKhioyen
 			var wp = HierarchyUtility.InstantiatePrefabFromResource<WorldMapPolis>("Prefabs/World Map/Polis");
 			wp.transform.SetParent(poleisContainer, false);
 			wp.transform.localPosition = new Vector3(polisData.position.x, polisData.position.y, 0) * GameInstance.Instance.Data.world.data2D.scale;
+			wp.Initialize(polisData);
 			return wp;
 		}
 		#endregion
