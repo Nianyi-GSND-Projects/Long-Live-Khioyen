@@ -48,6 +48,7 @@ namespace LongLiveKhioyen
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
                     HighlightTilesRing(availableArrangementPositions, deployRingColor);
+                    Battle.Instance.RefreshFogOfWar(true); 
                     break;
                 case Stage.Arrangement:
                     Debug.Log("OnEnter: 布置阶段");

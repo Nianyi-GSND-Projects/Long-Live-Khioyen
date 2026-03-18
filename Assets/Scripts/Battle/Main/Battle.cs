@@ -61,6 +61,7 @@ namespace LongLiveKhioyen
 			InitializeData();
 			
 			Debug.Log($"Current map Size: {Size.x}x{Size.y}");
+			
 			InitializeScene();
 			
 			InitializeComponent();
