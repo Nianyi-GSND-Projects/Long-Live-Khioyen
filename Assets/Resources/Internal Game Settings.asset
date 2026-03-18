@@ -38,3 +38,4 @@ MonoBehaviour:
   worldMapTimeScale: 0.5
   foodCostPerBattle: 50
   timeCostPerBattle: 1
+  tooltipDelay: 1

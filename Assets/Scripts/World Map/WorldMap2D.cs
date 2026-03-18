@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System.Collections.Generic;
 using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
@@ -15,6 +12,8 @@ namespace LongLiveKhioyen
 		{
 			Construct();
 			GameInstance.Instance.TimeScale = 1;
+
+			player.onMove += OnPlayerMove;
 		}
 
 		void Update()
@@ -24,24 +23,19 @@ namespace LongLiveKhioyen
 
 			float dt = Time.deltaTime;
 			GameInstance.Instance.AdvanceTime_Scaled(dt * GameManager.InternalSettings.worldMapTimeScale);
-
-			RefreshFoodSlider();
 		}
 		#endregion
 
 		#region Construction
 		[SerializeField] WorldMap2DPlayer player;
-		[SerializeField] RectTransform mapAnchor;
-		[SerializeField] Image mapImage;
-		[SerializeField] RectTransform poleisContainer;
+		public WorldMap2DPlayer Player => player;
+		[SerializeField] SpriteRenderer mapRenderer;
+		[SerializeField] Transform poleisContainer;
 
 		void Construct()
 		{
-			player.onMove += OnPlayerMove;
-
-			mapImage.sprite = GameInstance.Instance.Data.world.data2D.mapImage;
-			mapImage.SetNativeSize();
-			mapImage.transform.localScale *= GameInstance.Instance.Data.world.data2D.scale;
+			mapRenderer.sprite = GameInstance.Instance.Data.world.data2D.mapImage;
+			mapRenderer.transform.localScale = Vector3.one * GameInstance.Instance.Data.world.data2D.scale;
 
 			foreach(var polisData in GameInstance.Instance.Data.poleis)
 				SpawnPolis(polisData);
@@ -57,24 +51,13 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Food
-		[SerializeField] Slider foodSlider;
-		[SerializeField] TMP_Text foodText;
-
-		void RefreshFoodSlider()
-		{
-			float foodValue = 0;
-			if(Army.initialFood != 0)
-				foodValue = Army.carriedFood / Army.initialFood;
-			foodSlider.value = foodValue;
-			foodText.text = $"{Mathf.FloorToInt(Army.carriedFood)}";
-		}
-
 		public System.Action onStarved;
 
 		void OnPlayerMove(Vector3 movement)
 		{
 			float distance = movement.magnitude;
 			float foodCost = distance * Army.CarriedWeight * GameManager.InternalSettings.worldMapFoodCostRate;
+
 			bool willStarve = foodCost > Army.carriedFood;
 			Army.carriedFood = Mathf.Max(0, Army.carriedFood - foodCost);
 			if(willStarve)
