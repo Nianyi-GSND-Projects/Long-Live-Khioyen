@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
+using UnityEngine;
 
 namespace LongLiveKhioyen
 {
@@ -27,8 +29,6 @@ namespace LongLiveKhioyen
 		public struct WorldData3D
 		{
 			public float scale;
-			public string terrainAddress;
-			public string skyboxAddress;
 		}
 		public WorldData3D data3D;
 
@@ -36,7 +36,7 @@ namespace LongLiveKhioyen
 		public struct WorldData2D
 		{
 			public float scale;
-			public string mapAddress;
+			public Sprite mapImage;
 		}
 		public WorldData2D data2D;
 	}

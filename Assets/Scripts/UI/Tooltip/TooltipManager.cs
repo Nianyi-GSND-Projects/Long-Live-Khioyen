@@ -21,6 +21,12 @@ namespace LongLiveKhioyen
 		protected void Update()
 		{
 			var es = EventSystem.current;
+			if(!es)
+			{
+				SetHoveringGo(null);
+				return;
+			}
+
 			List<RaycastResult> hits = new();
 			es.RaycastAll(new(es) { position = MousePosition }, hits);
 			if(hits.Count < 1)
@@ -28,6 +34,7 @@ namespace LongLiveKhioyen
 				SetHoveringGo(null);
 				return;
 			}
+
 			SetHoveringGo(hits[0].gameObject);
 		}
 
