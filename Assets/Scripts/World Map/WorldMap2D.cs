@@ -10,9 +10,13 @@ namespace LongLiveKhioyen
 		#region Life cycle
 		void Awake()
 		{
-			Construct();
 			GameInstance.Instance.TimeScale = 1;
+		}
 
+		void Start()
+		{
+			Construct();
+			player.transform.localPosition = GetPolisLocalPosition(GameInstance.Instance.LastPolis);
 			player.onMove += OnPlayerMove;
 		}
 
@@ -45,10 +49,12 @@ namespace LongLiveKhioyen
 		{
 			var wp = HierarchyUtility.InstantiatePrefabFromResource<WorldMapPolis>("Prefabs/World Map/Polis");
 			wp.transform.SetParent(poleisContainer, false);
-			wp.transform.localPosition = new Vector3(polisData.position.x, polisData.position.y, 0) * GameInstance.Instance.Data.world.data2D.scale;
+			wp.transform.localPosition = GetPolisLocalPosition(polisData);
 			wp.PolisData = polisData;
 			return wp;
 		}
+
+		Vector3 GetPolisLocalPosition(PolisData polisData) => new Vector3(polisData.position.x, polisData.position.y, 0) * GameInstance.Instance.Data.world.data2D.scale;
 		#endregion
 
 		#region Food
