@@ -12,12 +12,24 @@ namespace LongLiveKhioyen
 		#endregion
 
 		#region Life cycle
-		protected void OnTriggerEnter(Collider other)
+		protected void OnTriggerEnter(Collider _)
 		{
 			onEnter?.Invoke();
 		}
 
-		protected void OnTriggerExit(Collider other)
+		protected void OnTriggerEnter2D(Collider2D _)
+		{
+			onEnter?.Invoke();
+		}
+
+		protected void OnTriggerExit(Collider _)
+		{
+			onExit?.Invoke();
+			if(oneTime)
+				Destroy(this);
+		}
+
+		protected void OnTriggerExit2D(Collider2D _)
 		{
 			onExit?.Invoke();
 			if(oneTime)

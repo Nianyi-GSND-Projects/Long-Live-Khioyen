@@ -327,7 +327,7 @@ namespace LongLiveKhioyen
 
         #region FogOfWar
         
-        private void UpdateFogOfWar()
+        private void UpdateFogOfWar(bool immediate = false)
        {
            if (fogMap == null) return;
            Debug.Log($"--- Running UpdateFogOfWar ---");
@@ -400,7 +400,7 @@ namespace LongLiveKhioyen
            // 6. 通知视觉控制器更新迷雾
            if (fogOfWarController != null)
            {
-               fogOfWarController.UpdateFogVisuals(fogMap);
+               fogOfWarController.UpdateFogVisuals(fogMap, immediate);
            }
        }
         
@@ -473,11 +473,11 @@ namespace LongLiveKhioyen
             }
         }
         
-        public void RefreshFogOfWar()
+        public void RefreshFogOfWar(bool immediate = false)
         {
             UpdatePlayerVisionSources();
             
-            UpdateFogOfWar();
+            UpdateFogOfWar(immediate);
         }
         #endregion
     }

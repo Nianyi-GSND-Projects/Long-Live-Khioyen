@@ -17,7 +17,7 @@ MonoBehaviour:
       data3D:
         scale: 0.025
       data2D:
-        scale: 0.1
+        scale: 0.01
         mapImage: {fileID: 21300000, guid: 7e2201012f8ef1246ae609ec527459b9, type: 3}
     lastPolis: juyan
     mainPolis: 
@@ -45,10 +45,13 @@ MonoBehaviour:
         underConstruction: 0
       id: juyan
       canControl: 0
+      conquered: 0
       type: 1
       position: {x: 0, y: 0}
       size: {x: 40, y: 40}
       orientation: 22.5
+      iconOverride: {fileID: 21300000, guid: df7a57672db759045829b7a3dd619319, type: 3}
+      conqueredIconOverride: {fileID: 0}
       economy:
         food: 100000
         material: 50000
@@ -104,10 +107,13 @@ MonoBehaviour:
     - buildings: []
       id: fanhe
       canControl: 0
+      conquered: 0
       type: 3
       position: {x: -5000, y: 1000}
       size: {x: 20, y: 20}
       orientation: 15
+      iconOverride: {fileID: 21300000, guid: af65e05533646ab4d955c1fdc975565e, type: 3}
+      conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
         material: 0
@@ -153,10 +159,13 @@ MonoBehaviour:
     - buildings: []
       id: dunhuang
       canControl: 0
+      conquered: 0
       type: 3
       position: {x: 5000, y: -3000}
       size: {x: 50, y: 50}
       orientation: 0
+      iconOverride: {fileID: 0}
+      conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
         material: 0
@@ -202,10 +211,13 @@ MonoBehaviour:
     - buildings: []
       id: huns-debug
       canControl: 0
+      conquered: 0
       type: 2
       position: {x: 0, y: 5000}
       size: {x: 10, y: 10}
       orientation: 45
+      iconOverride: {fileID: 0}
+      conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
         material: 0

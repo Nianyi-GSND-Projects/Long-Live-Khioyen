@@ -220,6 +220,7 @@ namespace LongLiveKhioyen
 			if(result.Victory)
 			{
 				polis.type = polis.canControl ? PolisType.Controlled : PolisType.Friendly;
+				polis.conquered = true;
 				Debug.Log($"成功攻克城池 \"{result.polisId}\"。");
 			}
 			else

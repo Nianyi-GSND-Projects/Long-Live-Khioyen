@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6845972503439615287}
   - component: {fileID: 7553878060265320437}
-  - component: {fileID: 852885796727502541}
+  - component: {fileID: 2884080139880711128}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -27,9 +27,9 @@ Transform:
   m_GameObject: {fileID: 297445602324061014}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7036468358270298669}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -74,18 +74,18 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 133614013214e5c44a90311a2a9a9cb7, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 5d4150266d5f33e4ea88f12417ef0793, type: 3}
+  m_Color: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 7.68, y: 7.68}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &852885796727502541
+--- !u!114 &2884080139880711128
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 297445602324061014}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2a208d348d14294cb2370710b71522d, type: 3}
+  m_Script: {fileID: 11500000, guid: 77638d5b94f21e84abc8a8a7b17fd047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2229188164278447998
@@ -107,7 +107,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7036468358270298669}
   m_Layer: 0
-  m_Name: PF_Soldier_Sprite
+  m_Name: PF_Infantry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

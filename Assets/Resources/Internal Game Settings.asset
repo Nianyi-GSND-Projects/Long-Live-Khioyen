@@ -34,7 +34,10 @@ MonoBehaviour:
     items:
       records: []
   defaultBattalionType: {fileID: 11400000, guid: 68a08bd622c12224baf72f41aca7000c, type: 2}
+  fallbackHostileIcon: {fileID: 21300000, guid: 61eb75109bc755f45abb3ef645cf2d33, type: 3}
+  fallbackFriendlyIcon: {fileID: 21300000, guid: e005b26c901e2124a8e35e0e51066ca3, type: 3}
   worldMapFoodCostRate: 0.0015
   worldMapTimeScale: 0.5
   foodCostPerBattle: 50
   timeCostPerBattle: 1
+  tooltipDelay: 1

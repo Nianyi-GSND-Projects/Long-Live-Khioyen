@@ -13,8 +13,7 @@ namespace LongLiveKhioyen
 		#region Life cycle
 		protected void Start()
 		{
-			localizedPolisName = Polis.Data.GetLocalizedName();
-			localizedPolisName.StringChanged += s => polisName.text = s;
+			polisName.text = Polis.Data.LocalizedName;
 
 			Polis.Data.onPopulationDataChanged += UpdatePopulation;
 			UpdatePopulation();
@@ -47,7 +46,6 @@ namespace LongLiveKhioyen
 		[Header("Status")]
 		public CanvasGroup statusBar;
 		public TMP_Text polisName;
-		LocalizedString localizedPolisName;
 
 		public void OpenPauseMenu()
 		{

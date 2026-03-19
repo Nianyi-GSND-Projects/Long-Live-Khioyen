@@ -62,8 +62,8 @@ namespace LongLiveKhioyen
                         sr.material = def.spriteMaterial;
                     }
                     
-                    sr.flipX = Random.value > 0.5f;
-                    
+                    //sr.flipX = Random.value > 0.5f;
+                    sr.flipX = false;
                     // sr.color = Battle.Instance.GetFactionColor(_ownerUnit.faction); // 需在 Battle 中实现 GetFactionColor 返回 Color
                 }
                 

@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: WM_Poleis
+    uniqueID: 2610726673
+    locked: 0
+  - name: WM_Player
+    uniqueID: 3069276871
+    locked: 0

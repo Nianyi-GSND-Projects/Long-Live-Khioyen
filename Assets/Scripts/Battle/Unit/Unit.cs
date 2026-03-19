@@ -307,9 +307,13 @@ namespace LongLiveKhioyen
 
         public bool OnEnterNewTile(Vector2Int newPos)
         {
+            if (Battle.Instance == null) return false;
+            if (Battle.Instance.CurrentStage == Stage.Arrangement) return false;
+            
             Vector2Int oldPos = this.position;
             this.position = newPos;
             bool shouldstop = false;
+            
             if (Battle.Instance != null)
             {
                 // 2. 触发地图效果 (陷阱、地形)

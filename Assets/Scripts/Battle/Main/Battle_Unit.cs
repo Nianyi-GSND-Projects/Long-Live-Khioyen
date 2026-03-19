@@ -171,6 +171,7 @@ namespace LongLiveKhioyen
                 OnUnitPlaced?.Invoke();
                 unit.UpdateVisualState();
                 unit.OnUnitStateChanged();
+                if(CurrentStage == Stage.Battle)
                 RefreshAllZOCAndVision(unit);
                 Debug.Log($"Unit {unit.name} (ID:{unit.InstanceId}) registered to battle at {pos}.");
             }
@@ -609,12 +610,6 @@ namespace LongLiveKhioyen
                             isConstructed = true
                         };
                         
-                        // 注意：RegisterUnitToBattle 会把单位放到 mapData 上
-                        // 但此时 victim 还在 mapData 上 (CheckDeath 在 RemoveUnitFromBattle 之前调用)
-                        // 所以我们需要先临时把 victim 从 mapData 移除，或者 RegisterUnitToBattle 能处理覆盖
-                        // 我们的 RegisterUnitToBattle 会报错如果位置被占用。
-                        
-                        // 解决方案：我们手动在这里把 victim 从 mapData 移除 (逻辑移除，不销毁)
                         RemoveUnitFromMap(victim); 
                         
                         receiver = RegisterUnitToBattle(chestDesc, victim.position, true);
