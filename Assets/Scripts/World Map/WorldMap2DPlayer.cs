@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace LongLiveKhioyen
 {
@@ -20,6 +18,31 @@ namespace LongLiveKhioyen
 				onMove?.Invoke(movement);
 				transform.localPosition += movement * GameInstance.Instance.Data.world.data2D.scale;
 			}
+		}
+
+		WorldMapPolis nearbyPolis;
+
+		protected void OnTriggerEnter2D(Collider2D other)
+		{
+			if(!other.TryGetComponent<WorldMapPolis>(out var polis))
+				return;
+			nearbyPolis = polis;
+		}
+
+		protected void OnTriggerExit2D(Collider2D other)
+		{
+			if(!other.TryGetComponent<WorldMapPolis>(out var polis))
+				return;
+			if(polis == nearbyPolis)
+				nearbyPolis = null;
+		}
+
+		public void InteractWithNearbyPolis()
+		{
+			if(nearbyPolis == null)
+				return;
+			var polis = nearbyPolis.PolisData;
+			GameInstance.Instance.EnterPolis(polis.id);
 		}
 	}
 }

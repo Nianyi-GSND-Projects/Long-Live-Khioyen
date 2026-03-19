@@ -8,11 +8,17 @@ namespace LongLiveKhioyen
 		[SerializeField] SpriteRenderer image;
 		[SerializeField] TMP_Text nameText;
 
-		public void Initialize(PolisData polisData)
+		PolisData polisData;
+		public PolisData PolisData
 		{
-			name = polisData.id;
-			nameText.text = polisData.LocalizedName;
-			image.sprite = polisData.Sprite;
+			get => polisData;
+			set
+			{
+				polisData = value;
+				name = polisData.id;
+				nameText.text = polisData.LocalizedName;
+				image.sprite = polisData.Sprite;
+			}
 		}
 	}
 }
