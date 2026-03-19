@@ -14,6 +14,9 @@ namespace LongLiveKhioyen
             [Header("Visuals")]
             public Material material; 
             // public GameObject propPrefab;
+            
+            [Tooltip("用于在网格面上显示的地形贴图")]
+            public Texture2D terrainTexture;
     
             [Header("Gameplay Stats")]
             public int movementCost = 1; // 移动力消耗

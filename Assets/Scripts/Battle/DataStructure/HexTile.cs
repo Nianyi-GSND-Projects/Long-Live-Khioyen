@@ -12,6 +12,8 @@ namespace LongLiveKhioyen
         private TerrainDefinition terrainDefinition;
         public TerrainDefinition TerrainDefinition => terrainDefinition;
         
+        private MaterialPropertyBlock _propBlock;
+        
         private Renderer tileRenderer;
         
         [Header("Visual Components")]
@@ -26,14 +28,22 @@ namespace LongLiveKhioyen
         private void Awake()
         {
             tileRenderer = GetComponent<Renderer>();
-            
+            _propBlock = new MaterialPropertyBlock();
         }
 
         public void SetTerrain(TerrainDefinition terrainDefinition)
         {
             this.terrainDefinition = terrainDefinition;
-            if(tileRenderer!=null && terrainDefinition.material!=null) tileRenderer.sharedMaterial = terrainDefinition.material;
-            
+            if (tileRenderer != null && terrainDefinition.material != null)
+            {
+                tileRenderer.sharedMaterial = terrainDefinition.material;
+                if (terrainDefinition.terrainTexture != null)
+                {
+                    tileRenderer.GetPropertyBlock(_propBlock);
+                    _propBlock.SetTexture("_BaseMap", terrainDefinition.terrainTexture); 
+                    tileRenderer.SetPropertyBlock(_propBlock);
+                }
+            }
         }
         
         public void Highlight(Color color)

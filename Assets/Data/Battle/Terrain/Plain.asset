@@ -15,6 +15,7 @@ MonoBehaviour:
   id: 1
   terrainName: Plain
   material: {fileID: 2100000, guid: f27c84f54aac5af44aaa0a0b64f65eda, type: 2}
+  terrainTexture: {fileID: 2800000, guid: 52a5300f4a0091e4b963d9e3eef1bbc0, type: 3}
   movementCost: 1
   defenseBonus: 0
   unitPassability: 2

@@ -271,6 +271,7 @@ namespace LongLiveKhioyen
             
             if (CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget)
             {
+                SetCameraLocked(false);
                 OnAmbiguousSelectionEnded?.Invoke();
                 currentAmbiguousCandidates = null;
             }
@@ -334,6 +335,7 @@ namespace LongLiveKhioyen
 				
                 case PlayerActionStage.SelectingAmbiguousTarget:
                     Debug.Log("Change action stage to SelectingAmbiguousTarget");
+                    SetCameraLocked(true);
                     ClearAllHexRingHighlights();
                     // 触发事件，把刚才存下来的列表发给 UI
                     OnAmbiguousSelectionStarted?.Invoke(currentAmbiguousCandidates);
