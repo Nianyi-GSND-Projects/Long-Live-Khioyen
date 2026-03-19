@@ -12,6 +12,7 @@ namespace LongLiveKhioyen
 		public static PolisData Main => GameInstance.Instance.Data.GetPolis(GameInstance.Instance.Data.mainPolis);
 
 		public string id;
+		public string LocalizedName => new LocalizedString("Polis Names", id).GetLocalizedString();
 		public bool canControl = false;
 		public bool conquered = false;
 		public PolisType type;
@@ -43,11 +44,6 @@ namespace LongLiveKhioyen
 		public PolisData()
 		{
 			lastTime.onMonthPassed += OnMonthPassed;
-		}
-
-		public LocalizedString GetLocalizedName()
-		{
-			return new("Polis Names", id);
 		}
 	}
 
