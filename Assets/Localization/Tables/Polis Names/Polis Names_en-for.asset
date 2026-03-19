@@ -30,6 +30,14 @@ MonoBehaviour:
     m_Localized: Twen'ghwang
     m_Metadata:
       m_Items: []
+  - m_Id: 59074059790458880
+    m_Localized: wusun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59074180544471040
+    m_Localized: jushi
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -19,15 +19,23 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 23700660224
-    m_Localized: Juyan
+    m_Localized: Ju Yan
     m_Metadata:
       m_Items: []
   - m_Id: 142269440000
-    m_Localized: Fanhe
+    m_Localized: Qu Li
     m_Metadata:
       m_Items: []
   - m_Id: 225991501504512
-    m_Localized: Dunhuang
+    m_Localized: Lun Tai
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59074059790458880
+    m_Localized: Wu Sun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59074180544471040
+    m_Localized: Ju Shi
     m_Metadata:
       m_Items: []
   references:

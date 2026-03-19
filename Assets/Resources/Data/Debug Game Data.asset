@@ -17,8 +17,8 @@ MonoBehaviour:
       data3D:
         scale: 0.025
       data2D:
-        scale: 0.01
-        mapImage: {fileID: 21300000, guid: 7e2201012f8ef1246ae609ec527459b9, type: 3}
+        scale: 0.017
+        mapImage: {fileID: 21300000, guid: b30dddfc3f3a8c34ca80fa5c09c4621b, type: 3}
     lastPolis: juyan
     mainPolis: 
     poleis:
@@ -47,10 +47,10 @@ MonoBehaviour:
       canControl: 0
       conquered: 0
       type: 1
-      position: {x: 0, y: 0}
+      position: {x: 8500, y: -1200}
       size: {x: 40, y: 40}
       orientation: 22.5
-      iconOverride: {fileID: 21300000, guid: df7a57672db759045829b7a3dd619319, type: 3}
+      iconOverride: {fileID: 21300000, guid: b9d1c47bcfe5062488f52e3ed07ead12, type: 3}
       conqueredIconOverride: {fileID: 0}
       economy:
         food: 100000
@@ -105,14 +105,14 @@ MonoBehaviour:
       lastTime:
         monthsElapsed: 0
     - buildings: []
-      id: fanhe
+      id: luntai
       canControl: 0
       conquered: 0
       type: 3
-      position: {x: -5000, y: 1000}
+      position: {x: -3200, y: 2500}
       size: {x: 20, y: 20}
       orientation: 15
-      iconOverride: {fileID: 21300000, guid: af65e05533646ab4d955c1fdc975565e, type: 3}
+      iconOverride: {fileID: 21300000, guid: 5adf57b31e7446c46ab6da38a12048a7, type: 3}
       conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
@@ -157,14 +157,14 @@ MonoBehaviour:
       lastTime:
         monthsElapsed: 0
     - buildings: []
-      id: dunhuang
+      id: quli
       canControl: 0
       conquered: 0
       type: 3
-      position: {x: 5000, y: -3000}
+      position: {x: 3000, y: -2000}
       size: {x: 50, y: 50}
       orientation: 0
-      iconOverride: {fileID: 0}
+      iconOverride: {fileID: 21300000, guid: 5adf57b31e7446c46ab6da38a12048a7, type: 3}
       conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
@@ -213,10 +213,114 @@ MonoBehaviour:
       canControl: 0
       conquered: 0
       type: 2
-      position: {x: 0, y: 5000}
+      position: {x: 8500, y: -3000}
       size: {x: 10, y: 10}
       orientation: 45
       iconOverride: {fileID: 0}
+      conqueredIconOverride: {fileID: 0}
+      economy:
+        food: 0
+        material: 0
+        money: 0
+        population: 0
+        items:
+          records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      monthlyBuyItems:
+        records: []
+      nextPromotion:
+        commander:
+          commanderId: 0
+          commanderName: 
+          portrait: {fileID: 0}
+          race: 0
+          level: 1
+          Zhi: 0
+          Xin: 0
+          Ren: 0
+          Yong: 0
+          Yan: 0
+          isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          personality: {fileID: 0}
+          traits: []
+          commanderActions: []
+        cost:
+          food: 0
+          material: 0
+          money: 0
+          population: 0
+          items:
+            records: []
+      tasks: []
+      lastTime:
+        monthsElapsed: 0
+    - buildings: []
+      id: wusun
+      canControl: 0
+      conquered: 0
+      type: 2
+      position: {x: -2000, y: 5000}
+      size: {x: 10, y: 10}
+      orientation: 45
+      iconOverride: {fileID: 21300000, guid: 8caaae12a391ea3468687aa3157143f1, type: 3}
+      conqueredIconOverride: {fileID: 0}
+      economy:
+        food: 0
+        material: 0
+        money: 0
+        population: 0
+        items:
+          records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      monthlyBuyItems:
+        records: []
+      nextPromotion:
+        commander:
+          commanderId: 0
+          commanderName: 
+          portrait: {fileID: 0}
+          race: 0
+          level: 1
+          Zhi: 0
+          Xin: 0
+          Ren: 0
+          Yong: 0
+          Yan: 0
+          isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          personality: {fileID: 0}
+          traits: []
+          commanderActions: []
+        cost:
+          food: 0
+          material: 0
+          money: 0
+          population: 0
+          items:
+            records: []
+      tasks: []
+      lastTime:
+        monthsElapsed: 0
+    - buildings: []
+      id: jushi
+      canControl: 0
+      conquered: 0
+      type: 2
+      position: {x: 3500, y: 4300}
+      size: {x: 10, y: 10}
+      orientation: 45
+      iconOverride: {fileID: 21300000, guid: a8b0739b2de2f994c8c4be9b0df6f488, type: 3}
       conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
