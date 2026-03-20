@@ -25,6 +25,8 @@ namespace LongLiveKhioyen
     {
         [Header("Database Info")]
         public int id;
+        public string idStr;
+        public string LocalizedDescription => new UnityEngine.Localization.LocalizedString("Battalion Descriptions", idStr).GetLocalizedString();
         public string unitName;
         public UnitType unitType;
 

@@ -48,6 +48,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-zh-Hans
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 81fe4ed8340e5e54e8e65dbb93b7c510
+    m_Address: Battalion Descriptions_zh-Hans
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-Hans
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 92db15c9796534e458ee7d145f321ab0
+    m_Address: Item Descriptions_zh-Hans
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-Hans
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9f5ceb28315d01046af25ce773d62ef4
     m_Address: Start Menu_zh-Hans
     m_ReadOnly: 1

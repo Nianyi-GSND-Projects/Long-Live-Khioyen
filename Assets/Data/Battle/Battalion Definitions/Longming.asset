@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Longming
   m_EditorClassIdentifier: 
   id: 6
+  idStr: longming
   unitName: Minbing
   unitType: 0
   icon: {fileID: 0}
@@ -29,7 +30,6 @@ MonoBehaviour:
   movable: 1
   actionable: 1
   beAttacked: 1
-  beInteracted: 0
   beMoved: 1
   defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
   defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
@@ -40,6 +40,8 @@ MonoBehaviour:
   lootRules: []
   tags: []
   isTrainable: 1
+  requiredItems: []
+  requiredBuildingTags: []
   defaultDiscipline: 30
   defaultFlexibility: 30
   defaultStrategy: 30

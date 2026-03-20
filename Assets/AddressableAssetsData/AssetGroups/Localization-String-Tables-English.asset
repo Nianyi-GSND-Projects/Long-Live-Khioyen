@@ -23,6 +23,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-en
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b8e2694cb5fcb241a1d0ea11423d79a
+    m_Address: Item Descriptions_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 633d138fa3f3f6f4a891877db4dc6648
     m_Address: Building Descriptions_en
     m_ReadOnly: 1
@@ -62,6 +68,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c335eb3da8fa08241b1f18c1e1ede11d
     m_Address: Save Panel_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d49434038e510a74085b5f4191003295
+    m_Address: Battalion Descriptions_en
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en

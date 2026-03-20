@@ -11,6 +11,8 @@ namespace LongLiveKhioyen
 	public interface ITooltipSource
 	{
 		public string GetTooltipText();
+
+		public float Delay { get; }
 	}
 
 	public class TooltipManager : MonoBehaviour
@@ -126,13 +128,22 @@ namespace LongLiveKhioyen
 			coroutine = StartCoroutine(ShowTooltipDelayed());
 		}
 
-		float TooltipDelay => GameManager.InternalSettings.tooltipDelay;
-
 		IEnumerator ShowTooltipDelayed()
 		{
 			HideTooltip();
-			yield return new WaitForSecondsRealtime(TooltipDelay);
+			yield return new WaitForSecondsRealtime(currentSource.Delay);
 			ShowTooltip();
+		}
+		#endregion
+
+		#region 静态接口
+		public static Tooltip SetTooltip(GameObject go, string text)
+		{
+			if(go.TryGetComponent<ITooltipSource>(out var existing))
+				Destroy(existing as MonoBehaviour);
+			var tooltip = go.AddComponent<Tooltip>();
+			tooltip.TooltipText = text;
+			return tooltip;
 		}
 		#endregion
 	}

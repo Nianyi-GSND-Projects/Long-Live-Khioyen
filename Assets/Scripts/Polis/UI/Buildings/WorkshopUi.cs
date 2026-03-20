@@ -1,6 +1,7 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace LongLiveKhioyen
 {
@@ -51,6 +52,7 @@ namespace LongLiveKhioyen
 				item.ApplyItem(itemDefinition);
 				item.Interactable = PolisData.Current.Economy.CanCover(itemDefinition.costs);
 				item.onClick = () => PolisData.Current.QueueProduction(itemDefinition.itemId);
+				TooltipManager.SetTooltip(item.gameObject, itemDefinition.LocalizedDescription).Delay = 0;
 			}
 
 			recipesLayoutGroup.CalculateLayoutInputVertical();
@@ -66,6 +68,7 @@ namespace LongLiveKhioyen
 				{
 					producingItem.gameObject.SetActive(false);
 					producingNoItemSign.SetActive(true);
+					TooltipManager.SetTooltip(producingItem.gameObject, null);
 				}
 				else
 				{
@@ -73,6 +76,7 @@ namespace LongLiveKhioyen
 					producingItem.ItemName = value.name;
 					producingItem.SetCosts();
 					producingNoItemSign.SetActive(false);
+					TooltipManager.SetTooltip(producingItem.gameObject, value.LocalizedDescription).Delay = 0;
 				}
 			}
 		}
@@ -100,6 +104,7 @@ namespace LongLiveKhioyen
 				item.ApplyItem(itemDefinition);
 				item.SetCosts();
 				item.Interactable = false;
+				TooltipManager.SetTooltip(item.gameObject, itemDefinition.LocalizedDescription).Delay = 0;
 			}
 
 			queuedLayoutGroup.CalculateLayoutInputVertical();

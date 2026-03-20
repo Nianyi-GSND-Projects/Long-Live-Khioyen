@@ -28,6 +28,7 @@ namespace LongLiveKhioyen
         
         [Header("Identity")]
         public string itemId;
+        public string LocalizedDescription => new UnityEngine.Localization.LocalizedString("Item Descriptions", itemId).GetLocalizedString();
         public string itemName;
         public string[] tags;
         public string description;

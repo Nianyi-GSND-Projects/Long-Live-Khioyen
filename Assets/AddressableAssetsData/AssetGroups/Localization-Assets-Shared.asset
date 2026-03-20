@@ -17,8 +17,19 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: dd279a61ebfa268419788e3d13ebe76b
   m_SerializeEntries:
+  - m_GUID: 020ed2154742c5e449e980b2d7a5be28
+    m_Address: Assets/Localization/Tables/Battalion Descriptions/Battalion Descriptions
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 299d8e9e8c7adbc4ca0bf783de658bd5
     m_Address: Assets/Localization/Tables/Settings Panel/Settings Panel Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42df08062e17ca94684b5a036b7db240
+    m_Address: Assets/Localization/Tables/Item Descriptions Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
