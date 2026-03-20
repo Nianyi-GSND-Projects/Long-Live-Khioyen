@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using Nianyi.UnityPack;
 
 namespace LongLiveKhioyen
@@ -6,6 +7,8 @@ namespace LongLiveKhioyen
 	public class WorldMap2D : MonoBehaviour
 	{
 		ArmyStatus Army => GameInstance.Instance.ActiveArmy;
+		GameData GameData => GameInstance.Instance.Data;
+		public float MapScale => GameData.world.data2D.scale;
 
 		#region Life cycle
 		void Awake()
@@ -38,10 +41,23 @@ namespace LongLiveKhioyen
 
 		void Construct()
 		{
-			mapRenderer.sprite = GameInstance.Instance.Data.world.data2D.mapImage;
-			mapRenderer.transform.localScale = Vector3.one * GameInstance.Instance.Data.world.data2D.scale;
+			mapRenderer.sprite = GameData.world.data2D.mapImage;
+			mapRenderer.transform.localScale = Vector3.one * MapScale;
 
-			foreach(var polisData in GameInstance.Instance.Data.poleis)
+			// 生成碰撞
+			var pc = mapRenderer.gameObject.AddComponent<PolygonCollider2D>();
+			Sprite mapMask = GameData.world.data2D.mapMask;
+			int shapeCount = mapMask.GetPhysicsShapeCount();
+			pc.pathCount = shapeCount;
+			for(int i = 0; i < shapeCount; ++i)
+			{
+				List<Vector2> shape = new();
+				mapMask.GetPhysicsShape(i, shape);
+				pc.SetPath(i, shape);
+			}
+
+			// 生成城池
+			foreach(var polisData in GameData.poleis)
 				SpawnPolis(polisData);
 		}
 
@@ -54,7 +70,7 @@ namespace LongLiveKhioyen
 			return wp;
 		}
 
-		Vector3 GetPolisLocalPosition(PolisData polisData) => new Vector3(polisData.position.x, polisData.position.y, 0) * GameInstance.Instance.Data.world.data2D.scale;
+		Vector3 GetPolisLocalPosition(PolisData polisData) => new Vector3(polisData.position.x, polisData.position.y, 0) * MapScale;
 		#endregion
 
 		#region Food

@@ -4,20 +4,37 @@ namespace LongLiveKhioyen
 {
 	public class WorldMap2DPlayer : AbstractCharacterController
 	{
+		Rigidbody2D rb;
+		float worldScale;
+		protected void Awake()
+		{
+			rb = GetComponent<Rigidbody2D>();
+			worldScale = GameInstance.Instance.Data.world.data2D.scale;
+		}
+
+		protected void Start()
+		{
+			prevPos = rb.position;
+		}
+
 		public System.Action<Vector3> onMove;
 
+		Vector2 prevPos;
 		protected void Update()
 		{
-			float dt = Time.deltaTime;
-			Vector3 input = new(LateralMoveInput, ForwardMoveInput, 0);
-			// 理论上在地图上应该走的距离，未经 2D scale 缩放。
-			Vector3 movement = input * (moveSpeed * dt);
+			Vector2 input = new(LateralMoveInput, ForwardMoveInput);
 
-			if(movement.sqrMagnitude > 0)
-			{
-				onMove?.Invoke(movement);
-				transform.localPosition += movement * GameInstance.Instance.Data.world.data2D.scale;
-			}
+			// 理论上在地图上应该走的速度，未经 2D scale 缩放。
+			Vector2 velocity = input * moveSpeed;
+			rb.velocity = velocity * worldScale;
+		}
+
+		protected void FixedUpdate()
+		{
+			Vector2 movement = (rb.position - prevPos) / worldScale;
+			onMove?.Invoke(movement);
+
+			prevPos = rb.position;
 		}
 
 		WorldMapPolis nearbyPolis;

@@ -37,6 +37,7 @@ namespace LongLiveKhioyen
 		{
 			public float scale;
 			public Sprite mapImage;
+			public Sprite mapMask;
 		}
 		public WorldData2D data2D;
 	}

@@ -19,6 +19,7 @@ MonoBehaviour:
       data2D:
         scale: 0.017
         mapImage: {fileID: 21300000, guid: b30dddfc3f3a8c34ca80fa5c09c4621b, type: 3}
+        mapMask: {fileID: 21300000, guid: 4dae788ca3c5be4448f5fcee00a58d83, type: 3}
     lastPolis: juyan
     mainPolis: 
     poleis:
