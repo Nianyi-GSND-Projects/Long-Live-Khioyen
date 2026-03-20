@@ -142,7 +142,7 @@ namespace LongLiveKhioyen
 				slot.Options = PolisData.Current.Economy.items
 					.Where(record => IsEquipment(record.Definition))
 					.Select(r => r.Definition as EquipmentDefinition);
-				slot.DisplaySprite = SelectedCommander == null ? null : SelectedCommander.equipments[i]?.icon;
+				slot.DisplayedEquipment = SelectedCommander?.equipments[i];
 			}
 		}
 
@@ -155,6 +155,7 @@ namespace LongLiveKhioyen
 		[SerializeField] Slider battalionSlider;
 		[SerializeField] TMP_Text currentCountText, availableCountText;
 		BattalionDefinition[] trainableBattalionDefinitions;
+		[SerializeField] TMP_Text battalionDescriptionText;
 
 		void OnSelectBattalionType(int i)
 		{
@@ -207,6 +208,8 @@ namespace LongLiveKhioyen
 
 			currentCountText.text = SelectedBattalion.currentSolider.ToString();
 			availableCountText.text = cap.ToString();
+
+			battalionDescriptionText.text = SelectedBattalion.battalionDefinition.LocalizedDescription;
 		}
 
 		IEnumerable<KeyValuePair<string, int>> GetStatistics()

@@ -10,11 +10,17 @@ namespace LongLiveKhioyen
 	{
 		[SerializeField] TMP_Dropdown dropdown;
 		[SerializeField] Image selectedIcon;
+		[SerializeField] TMP_Text nameText;
+		[SerializeField] TMP_Text descriptionText;
 
-		public Sprite DisplaySprite
+		public EquipmentDefinition DisplayedEquipment
 		{
-			get => selectedIcon.sprite;
-			set => selectedIcon.sprite = value;
+			set
+			{
+				selectedIcon.sprite = value?.icon;
+				nameText.text = value?.name ?? string.Empty;
+				descriptionText.text = value?.LocalizedDescription ?? string.Empty;
+			}
 		}
 
 		#region 生命周期
@@ -68,7 +74,7 @@ namespace LongLiveKhioyen
 		{
 			selectedIndex = i - 1;
 
-			DisplaySprite = SelectedEquipment?.icon;
+			DisplayedEquipment = SelectedEquipment;
 			onSelected?.Invoke(SelectedEquipment);
 		}
 		#endregion
