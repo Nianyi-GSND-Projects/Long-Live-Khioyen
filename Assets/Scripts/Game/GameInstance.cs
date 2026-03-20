@@ -143,7 +143,7 @@ namespace LongLiveKhioyen
 
 				case PolisType.Hostile:
 					LastPolis = polis;
-					battleMetaData = PrepareBattleMetadata();
+					battleMetaData = PrepareBattleMetadata(LastPolis.position);
 
 					Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。");
 					CurrentMode = Mode.Battle;
@@ -185,10 +185,16 @@ namespace LongLiveKhioyen
 		public BattleMetaData BattleMetaData => battleMetaData;
 
 		/// <summary>生成 Battle 生成战斗场景时需要的元信息。</summary>
-		BattleMetaData PrepareBattleMetadata()
+		BattleMetaData PrepareBattleMetadata(Vector2 worldPosition)
 		{
-			BattleMetaData data = new();
-			// TODO
+			var envParams = Data.world.GetEnviromentParams(worldPosition);
+			BattleMetaData data = new()
+			{
+				battlePosition = worldPosition,
+				envParams = envParams,
+				difficulity = Mathf.RoundToInt(envParams.difficulty),  // TODO: 难度转换公式
+				encounterOrientation = default,  // WONTFIX: 此量不打算提供
+			};
 			return data;
 		}
 

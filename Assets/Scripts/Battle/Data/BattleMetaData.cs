@@ -18,6 +18,8 @@ namespace LongLiveKhioyen
 
         public int difficulity;
         //动态难度系数
+
+        public WorldData.EnvironmentParams envParams;  // 环境参数
         #endregion
 
         #region BattleSetting

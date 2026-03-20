@@ -10,10 +10,13 @@ namespace LongLiveKhioyen
 		GameData GameData => GameInstance.Instance.Data;
 		public float MapScale => GameData.world.data2D.scale;
 
+		public WorldMap2D Instance { get; private set; }
+
 		#region Life cycle
 		void Awake()
 		{
 			GameInstance.Instance.TimeScale = 1;
+			Instance = this;
 		}
 
 		void Start()
