@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace LongLiveKhioyen
@@ -5,26 +6,49 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Effects/Retreat")]
     public class RetreatEffect : EffectDefinition
     {
-        public override void Execute(ActionContext ctx)
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
             Unit unit = ctx.User;
-            if (unit == null) return;
+            if (unit == null) yield break;
+            float t = BattleParam.Instance != null ? BattleParam.Instance.actionAnimationDuration : 0.5f;
+            float focusDist = BattleParam.Instance != null ? BattleParam.Instance.focusCameraDistance : 6f;
+            float camTransitionTime = BattleParam.Instance != null ? BattleParam.Instance.cameraTransitionDuration : 0.15f;
 
+            BattleCameraController camController = null;
+            if (Battle.Instance.inputController != null)
+                camController = Battle.Instance.inputController.cameraController;
+
+            // ==========================================
+            // 动画阶段：切换为移动状态，表现“撤退跑路”
+            // ==========================================
+            if (camController != null)
+            {
+                camController.FocusOnPosition(Battle.Instance.MapToWorld(unit.position), focusDist, camTransitionTime);
+            }
+            Battalion retreatBat = unit as Battalion;
+            if (retreatBat != null)
+            {
+                retreatBat.CurrentSoldierState = SoldierState.Move;
+            }
+
+            // 等待 t 秒，让撤退动作展示一会儿
+            yield return new WaitForSeconds(t);
+
+            // ==========================================
+            // 逻辑执行阶段：正式撤离
+            // ==========================================
             Debug.Log($"{unit.name} 已成功撤离战场！");
 
             // 1. 从地图移除
-            Battle.Instance.RemoveUnitFromMap(unit);
-
-            // 2. 从活跃列表移除 (这会影响胜利条件判断)
-            // 注意：需要修改 Battle.cs 公开移除方法，或者在这里实现
             if (Battle.Instance != null)
             {
-                Battle.Instance.WithdrawUnit(unit); // 需要在 Battle 中实现这个方法
+                Battle.Instance.RemoveUnitFromMap(unit);
+            
+                // 2. 从活跃列表移除 (这会影响胜利条件判断)
+                Battle.Instance.WithdrawUnit(unit); 
             }
 
-            // 3. 销毁对象 (或者隐藏并放入"已撤离"列表)
             unit.gameObject.SetActive(false);
-            // Destroy(unit.gameObject); // 如果你想彻底销毁
         }
     }
 }

@@ -200,13 +200,12 @@ namespace LongLiveKhioyen
         
         protected GameObject model;
 
-        public void UpdateVisualState()
+        public virtual void UpdateVisualState()
         {
             if (visualController != null)
             {
                 visualController.SetVisualState(selected, actionDone);
             }
-            
         }
 
         public void SetVisualController(UnitVisualController controller)
@@ -272,7 +271,7 @@ namespace LongLiveKhioyen
 
         public abstract float GetRepairPower();
         
-        public void ReceiveForcedMove(Vector2Int newPosition)
+        public IEnumerator ReceiveForcedMoveRoutine(Vector2Int newPosition)
         {
             Vector2Int oldPosition = this.position;
 
@@ -280,7 +279,9 @@ namespace LongLiveKhioyen
             {
                 transform.localPosition = Battle.Instance.MapToLocal(newPosition);
             }
-            OnEnterNewTile(newPosition);
+            yield return StartCoroutine(OnEnterNewTileRoutine(newPosition, (res) => {
+            }));
+            
             if (visualController != null)
             {
                 visualController.RefreshVisuals();
@@ -305,44 +306,33 @@ namespace LongLiveKhioyen
             */
         }
 
-        public bool OnEnterNewTile(Vector2Int newPos)
+        public IEnumerator OnEnterNewTileRoutine(Vector2Int newPos, System.Action<bool> onResult)
         {
-            if (Battle.Instance == null) return false;
-            if (Battle.Instance.CurrentStage == Stage.Arrangement) return false;
+            if (Battle.Instance == null) { onResult?.Invoke(false); yield break; }
+            if (Battle.Instance.CurrentStage == Stage.Arrangement) { onResult?.Invoke(false); yield break; }
             
             Vector2Int oldPos = this.position;
             this.position = newPos;
-            bool shouldstop = false;
+            bool shouldStop = false;
+    
+            yield return Battle.Instance.StartCoroutine(Battle.Instance.CheckTileEffectOnEnterRoutine(this, newPos, (res) => {
+                shouldStop = res;
+            }));
             
-            if (Battle.Instance != null)
-            {
-                // 2. 触发地图效果 (陷阱、地形)
-                shouldstop = Battle.Instance.CheckTileEffectOnEnter(this, newPos);
+            if (faction == Faction.Player || faction == Faction.Friend)
+                Battle.Instance.RefreshFogOfWar();
+            else
+                Battle.Instance.RefreshAllUnitsVisuals();
+            
+            Battle.Instance.CheckDeath(this);
+            if (currentHealth <= 0) shouldStop = true;
 
-                // 4. 更新视野
-                if (faction == Faction.Player || faction == Faction.Friend)
-                {
-                    Battle.Instance.RefreshFogOfWar();
-                }
-                else
-                {
-                    Battle.Instance.RefreshAllUnitsVisuals();
-                }
+            OnUnitStateChanged();
+    
+            Battle.Instance.RefreshZOCVisualsAroundPoint(oldPos);
+            Battle.Instance.RefreshZOCVisualsAroundPoint(newPos);
 
-                // 5. 检查死亡 (例如踩到陷阱)
-                Battle.Instance.CheckDeath(this);
-                if (currentHealth <= 0) shouldstop = true;
-                // 6. 刷新自身视觉 (位置改变、状态改变)
-                OnUnitStateChanged();
-                
-                if (Battle.Instance != null)
-                {
-                    Battle.Instance.RefreshZOCVisualsAroundPoint(oldPos);
-                    Battle.Instance.RefreshZOCVisualsAroundPoint(newPos);
-                }
-            }
-            Debug.Log($"Enemy {name} entered {newPos}. Visible? {Battle.Instance.IsUnitVisibleToPlayer(this)}");
-            return shouldstop;
+            onResult?.Invoke(shouldStop);
         }
         public abstract void ApplyBuff(BuffDescriptor buffDescriptor);
 

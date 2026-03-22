@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,15 +17,20 @@ namespace LongLiveKhioyen
         [Header("False Branch")]
         public List<EffectDefinition> ifFalseEffects = new List<EffectDefinition>();
 
-        public override void Execute(ActionContext ctx)
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
+            // 读取分支条件
             bool conditionValue = ctx.GetData<bool>(checkKey);
 
             List<EffectDefinition> targetList = conditionValue ? ifTrueEffects : ifFalseEffects;
 
+            // 依次执行符合条件的分支内的所有 Effect
             foreach (var effect in targetList)
             {
-                effect.Execute(ctx);
+                if (effect != null)
+                {
+                    yield return effect.ExecuteCoroutine(ctx);
+                }
             }
         }
     }

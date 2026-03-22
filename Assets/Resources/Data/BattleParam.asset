@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9252e2384cff024281fca715fdbe260, type: 3}
   m_Name: BattleParam
   m_EditorClassIdentifier: 
+  actionAnimationDuration: 1
+  focusCameraDistance: 15
+  cameraTransitionDuration: 0.5
   defaultMaxExp: 0
   defaultMaxMorale: 1000
   defaultMaxSolider: 1000
@@ -61,3 +64,8 @@ MonoBehaviour:
   maxMoraleConsumptionBonusPercent: 30
   moraleBreakAttritionRate: 0.1
   droppedLootChestDefinition: {fileID: 11400000, guid: 3e5044fae0fce274392635c04964f5c4, type: 2}
+  commonColor: {r: 1, g: 1, b: 1, a: 1}
+  uncommonColor: {r: 0, g: 1, b: 0, a: 1}
+  rareColor: {r: 0, g: 0, b: 1, a: 1}
+  epicColor: {r: 1, g: 0, b: 1, a: 1}
+  legendaryColor: {r: 1, g: 0.5, b: 0, a: 1}

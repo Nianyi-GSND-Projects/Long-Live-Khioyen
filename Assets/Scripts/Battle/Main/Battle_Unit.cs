@@ -387,7 +387,9 @@ namespace LongLiveKhioyen
             {
                 RemoveUnitFromMap(unit);
 				
-                interrupted = unit.OnEnterNewTile(pos);
+                yield return StartCoroutine(unit.OnEnterNewTileRoutine(pos, (res) => {
+                    interrupted = res;
+                }));
 				
                 PlaceUnitOnMap(unit, pos);
 				
@@ -415,9 +417,9 @@ namespace LongLiveKhioyen
         
         
 
-        public void ForceMoveUnit(Unit unit, Vector2Int newPos)
+        public IEnumerator ForceMoveUnitRoutine(Unit unit, Vector2Int newPos)
         {
-            if (unit == null || !IsValidMapPosition(newPos)) return;
+            if (unit == null || !IsValidMapPosition(newPos)) yield break;
             
             UpdateZOCAroundUnit(unit);
             RefreshZOCVisualsAround(unit);
@@ -427,7 +429,7 @@ namespace LongLiveKhioyen
             if (unit is Battalion bat) newTile.Battalion = bat;
             else if (unit is Facility fac) newTile.Facility = fac;
             
-            unit.ReceiveForcedMove(newPos);
+            yield return StartCoroutine(unit.ReceiveForcedMoveRoutine(newPos));
             
             if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
             {

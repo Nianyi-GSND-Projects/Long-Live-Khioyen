@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 namespace LongLiveKhioyen
 {
@@ -21,6 +22,12 @@ namespace LongLiveKhioyen
         [Tooltip("是否阻止移动")]
         public bool PreventMovement = true;
         
+        public GameObject triggerVfx;
+
+        public IEnumerator TriggerCoroutine(Unit unit, Facility facility)
+        {
+            yield break;
+        }
         public void Trigger(Unit target, Facility trapInstance)
         {
             if (target == null || trapInstance == null) return;

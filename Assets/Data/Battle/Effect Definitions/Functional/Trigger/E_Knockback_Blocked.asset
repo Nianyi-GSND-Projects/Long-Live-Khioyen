@@ -15,7 +15,7 @@ MonoBehaviour:
   effectType: 0
   checkKey: IsKnockbackBlocked
   ifTrueEffects:
-  - {fileID: 11400000, guid: 637284b3466c6ab4b86653826e61f812, type: 2}
   - {fileID: 11400000, guid: 67fdfc193e0d28744b1f7fe7da71c5eb, type: 2}
+  - {fileID: 11400000, guid: 637284b3466c6ab4b86653826e61f812, type: 2}
   ifFalseEffects:
   - {fileID: 11400000, guid: 637284b3466c6ab4b86653826e61f812, type: 2}

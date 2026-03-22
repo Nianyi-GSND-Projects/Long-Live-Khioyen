@@ -266,6 +266,7 @@ namespace LongLiveKhioyen
             
             if (stage == PlayerActionStage.SelectingTarget)
             {
+                if (SelectedUnit is Battalion bat) bat.CurrentSoldierState = SoldierState.Idle;
                 _previousActionStage = CurrentActionStage;
             }
             
@@ -315,6 +316,11 @@ namespace LongLiveKhioyen
                 case PlayerActionStage.SelectingTarget:
                     if (CurrentAction != null)
                     {
+                        if (SelectedUnit is Battalion bat)
+                        {
+                            bat.CurrentSoldierState = CurrentAction.targetingVisualState;
+                        }
+                        
                         availableTargetPositions = GetValidActionTargetTiles(SelectedUnit, CurrentAction);
                 
                         Color targetColor = targetNeutralColor;
@@ -425,31 +431,33 @@ namespace LongLiveKhioyen
         
         public void ExecuteActionLogic(Unit source, Vector2Int targetPos, ActionDefinition actionToPerform)
         {
-            if (actionToPerform == null)
-            {
-                Debug.LogError("ExecuteActionLogic called with a null action!");
-                return;
-            }
-            bool success = actionToPerform.Perform(source, targetPos);
+            if (actionToPerform == null) return;
+            
+            // 启动改写后的行动序列协程
+            StartCoroutine(ExecuteActionCoroutine(source, targetPos, actionToPerform));
+        }
+        
+        private IEnumerator ExecuteActionCoroutine(Unit source, Vector2Int targetPos, ActionDefinition actionToPerform)
+        {
+            // 等待整个行动（包括所有 Effect 及其动画）执行完毕
+            yield return StartCoroutine(actionToPerform.PerformRoutine(source, targetPos));
 
-            if (success)
+            // 行动彻底完成后的结算逻辑
+            ResolveDirtyUnits();
+            if (source != null)
             {
-                ResolveDirtyUnits();
-                if (source != null && source == SelectedUnit)
+                source.actionDone = true;
+                if (source == SelectedUnit)
                 {
-                    source.actionDone = true;
                     ClearAllSelection();
                     ChangeActionStage(PlayerActionStage.None);
                 }
-                else if (source != null)
-                {
-                    source.actionDone = true;
-                }
-                if (BattleEventManager.Instance != null)
-                    BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd,source);
-
             }
+            
+            if (BattleEventManager.Instance != null)
+                BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd, source);
         }
+
         public int CalculatePathCost(List<Vector2Int> path, Unit unit)
         {
             if (path == null || path.Count == 0) return 0;
@@ -465,9 +473,18 @@ namespace LongLiveKhioyen
         private IEnumerator PerformPlayerMove(Unit unit, Vector2Int targetPos)
         {
             IsUnitMoving = true;
+            Battalion bat = unit as Battalion;
+            if (bat != null)
+            {
+                bat.CurrentSoldierState = SoldierState.Move;
+            }
             
             if (targetPos == unit.position)
             {
+                if (bat != null)
+                {
+                    bat.CurrentSoldierState = SoldierState.Idle;
+                }
                 ChangeActionStage(PlayerActionStage.SelectingAction);
                 IsUnitMoving = false;
                 yield break;
@@ -495,8 +512,8 @@ namespace LongLiveKhioyen
                 }
                 
                 int realMoveCost = CalculatePathCost(path, unit);
-                if(unit is Battalion bat)
-                    bat.currentMovement -= realMoveCost; 
+                if(unit is Battalion batAfterMove)
+                    batAfterMove.currentMovement -= realMoveCost;
                 
                 if (moveInterrupted)
                 {
@@ -504,10 +521,10 @@ namespace LongLiveKhioyen
                     Debug.Log("移动被打断，本回合无法继续移动。");
                     ChangeActionStage(PlayerActionStage.SelectingAction);
                 }
-                else if (unit is Battalion batAfterMove && batAfterMove.currentMovement > 0)
+                else if (unit is Battalion batRemainMove && batRemainMove.currentMovement > 0)
                 {
                     // 正常完成且还有移动力，刷新范围
-                    UpdateAvailableMovePositions(batAfterMove);
+                    UpdateAvailableMovePositions(batRemainMove);
                 }
                 else
                 {
@@ -519,6 +536,11 @@ namespace LongLiveKhioyen
             else
             {
                 Debug.LogError($"无法找到通往 {targetPos} 的路径！");
+            }
+            
+            if (bat != null)
+            {
+                bat.CurrentSoldierState = SoldierState.Idle;
             }
 
             IsUnitMoving = false;

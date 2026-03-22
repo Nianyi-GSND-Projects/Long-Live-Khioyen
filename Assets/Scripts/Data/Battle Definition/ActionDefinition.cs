@@ -114,6 +114,11 @@ namespace LongLiveKhioyen
         
         [Header("Targeting")]
         public ActionTargetType targetType = ActionTargetType.UnitOnly;
+        
+        [Header("Visuals")]
+        [Tooltip("选择目标时，单位呈现的动画状态 (如: Prepare)")]
+        public SoldierState targetingVisualState = SoldierState.Prepare;
+        
         public bool IsTileValidTarget(Unit user, Vector2Int targetPos)
         {
             return IsTileValidTarget(user, targetPos, user.position);
@@ -238,28 +243,63 @@ namespace LongLiveKhioyen
             return null; // 空地
         }
         
-        public bool Perform(Unit user, Vector2Int targetPos)
+        public IEnumerator PerformRoutine(Unit user, Vector2Int targetPos)
         {
+            BattleCameraController camController = null;
+            
+            
+            // 1. 开头：阻隔交互，锁定摄像机
+            if (Battle.Instance.inputController != null)
+            {
+                Battle.Instance.inputController.inputBlocked = true;
+                Battle.Instance.inputController.cameraLocked = true;
+                camController = Battle.Instance.inputController.cameraController;
+            }
+            
+            if (camController != null)
+            {
+                camController.SaveCameraState();
+            }
+
             // 构造 Context
             Unit initialTarget = null;
-            
             if (Battle.Instance != null)
             {
                 var tile = Battle.Instance.mapData[targetPos.x, targetPos.y];
                 initialTarget = GetPrimaryTargetOnTile(tile);
             }
-            
             ActionContext ctx = new ActionContext { User = user, TargetPos = targetPos, ActionDef = this, OriginalTargetUnit = initialTarget};
-            
+    
+            // 2. 依次执行 Effect 协程并等待其完成
             foreach (var effect in effects) 
-                effect.Execute(ctx);
+            {
+                yield return effect.ExecuteCoroutine(ctx);
+            }
 
             Debug.Log($"Action {actionName} performed at {targetPos}");
             if (oncePerBattle)
             {
                 user.MarkActionAsUsed(this);
             }
-            return true;
+    
+            // 3. 行动彻底结束，强制恢复待机动画
+            if (user is Battalion bat)
+            {
+                bat.CurrentSoldierState = SoldierState.Idle;
+            }
+            
+            if (camController != null)
+            {
+                camController.RestoreCameraState(0.3f);
+                yield return new WaitForSeconds(0.3f); // 配合动画时间稍作停顿
+            }
+
+            // 4. 结尾：解锁摄像机与交互
+            if (Battle.Instance.inputController != null)
+            {
+                Battle.Instance.inputController.inputBlocked = false;
+                Battle.Instance.inputController.cameraLocked = false;
+            }
         }
 
         public bool CheckDisplayConditions(Unit user)

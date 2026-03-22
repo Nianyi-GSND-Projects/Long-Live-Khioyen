@@ -1,5 +1,4 @@
-// Assets/Scripts/Data/Battle Definition/Effect Definitions/SummonUnitEffect.cs
-
+using System.Collections; // 【新增】引入协程命名空间
 using UnityEngine;
 using System;
 
@@ -26,17 +25,25 @@ namespace LongLiveKhioyen
         [Header("Visuals")]
         public GameObject spawnVfxPrefab;
 
-        public override void Execute(ActionContext ctx)
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
-            if (Battle.Instance == null || battalionDef == null) return;
+            if (Battle.Instance == null || battalionDef == null) yield break;
+            
+            float t = BattleParam.Instance != null ? BattleParam.Instance.actionAnimationDuration : 0.5f;
+            float focusDist = BattleParam.Instance != null ? BattleParam.Instance.focusCameraDistance : 6f;
+            float camTransitionTime = BattleParam.Instance != null ? BattleParam.Instance.cameraTransitionDuration : 0.15f;
 
+            BattleCameraController camController = null;
+            if (Battle.Instance.inputController != null)
+                camController = Battle.Instance.inputController.cameraController;
+            
             Vector2Int spawnPos = ctx.TargetPos;
-
+            Battalion casterBat = ctx.User as Battalion;
             // 1. 检查位置是否有效且为空
             if (!Battle.Instance.IsValidMapPosition(spawnPos))
             {
                 Debug.LogWarning("Summon failed: Invalid position.");
-                return;
+                yield break;
             }
             
             TileData tile = Battle.Instance.mapData[spawnPos.x, spawnPos.y];
@@ -85,22 +92,35 @@ namespace LongLiveKhioyen
                 desc.currentMorale = desc.maxMorale;
             }
             
+            if (camController != null && ctx.User != null)
+            {
+                camController.FocusOnPosition(Battle.Instance.MapToWorld(ctx.User.position), focusDist, camTransitionTime);
+            }
+            if (casterBat != null) casterBat.CurrentSoldierState = SoldierState.Cast;
+            yield return new WaitForSeconds(t);
+            
+            Vector3 worldSpawnPos = Battle.Instance.MapToWorld(spawnPos);
+            if (camController != null)
+            {
+                camController.FocusOnPosition(worldSpawnPos, focusDist, camTransitionTime);
+            }
+
+            // 播放召唤特效
+            if (spawnVfxPrefab != null)
+            {
+                Instantiate(spawnVfxPrefab, worldSpawnPos, Quaternion.identity);
+            }
+            
             // 6. 注册到战场
             Unit summonedUnit = Battle.Instance.RegisterUnitToBattle(desc, spawnPos);
 
             if (summonedUnit != null)
             {
                 Debug.Log($"Summoned {summonedUnit.name} at {spawnPos}");
-                summonedUnit.OnEnterNewTile(spawnPos);
-                // 播放特效
-                if (spawnVfxPrefab != null)
-                {
-                    // 转换到世界坐标
-                    Vector3 worldPos = Battle.Instance.MapToWorld(spawnPos);
-                    GameObject.Instantiate(spawnVfxPrefab, worldPos, Quaternion.identity);
-                }
-                
+                yield return Battle.Instance.StartCoroutine(summonedUnit.OnEnterNewTileRoutine(spawnPos, (res) => { }));
             }
+            
+            yield return new WaitForSeconds(t);
         }
     }
 }

@@ -74,8 +74,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5d4150266d5f33e4ea88f12417ef0793, type: 3}
-  m_Color: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 2c457a7a8fd5aac40b66a95f89b6fc7e, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -106,6 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7036468358270298669}
+  - component: {fileID: 8532330148324110444}
   m_Layer: 0
   m_Name: PF_Infantry
   m_TagString: Untagged
@@ -129,3 +130,21 @@ Transform:
   - {fileID: 6845972503439615287}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8532330148324110444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2229188164278447998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef2f31966e5d5764eb05f01ed7d16aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 7553878060265320437}
+  idleSprite: {fileID: 21300000, guid: 2c457a7a8fd5aac40b66a95f89b6fc7e, type: 3}
+  moveSprite: {fileID: 0}
+  prepareSprite: {fileID: 0}
+  attackSprite: {fileID: 0}
+  hitSprite: {fileID: 0}

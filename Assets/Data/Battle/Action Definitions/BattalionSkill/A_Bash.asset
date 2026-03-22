@@ -31,3 +31,4 @@ MonoBehaviour:
   maxRange: 1
   minRange: 1
   targetType: 3
+  targetingVisualState: 2

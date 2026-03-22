@@ -1,3 +1,4 @@
+using System.Collections; // 【新增】引入协程需要的命名空间
 using UnityEngine;
 
 namespace LongLiveKhioyen
@@ -20,7 +21,8 @@ namespace LongLiveKhioyen
         [Range(0, 100)]
         public int chancePercentage = 100;
 
-        public override void Execute(ActionContext ctx)
+        // 【修改】将 void Execute 改为 IEnumerator ExecuteCoroutine
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
             // 如果启用了条件，先掷骰子
             if (useCondition)
@@ -29,13 +31,16 @@ namespace LongLiveKhioyen
                 if (roll >= chancePercentage)
                 {
                     // 判定失败，不设置 Flag (或者你可以选择设置为 !valueToSet)
-                    return; 
+                    yield break; // 【修改】将 return 替换为 yield break
                 }
             }
 
             // 设置值
             ctx.SetData(flagKey, valueToSet);
             // Debug.Log($"[Effect] SetFlag {flagKey} = {valueToSet}");
+            
+            // 【新增】标记协程瞬间执行完毕
+            yield break;
         }
     }
 }

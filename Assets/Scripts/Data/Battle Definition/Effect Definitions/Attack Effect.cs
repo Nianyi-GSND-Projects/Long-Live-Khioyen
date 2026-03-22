@@ -26,10 +26,9 @@ namespace LongLiveKhioyen
         [Header("Output")]
         public string outputDamageKey = "LastDamageAmount";
         
-        public override void Execute(ActionContext ctx)
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
             Unit target = null;
-            
             if (lockOriginalTarget)
             {
                 // 追踪模式：使用 Context 中缓存的初始引用
@@ -39,7 +38,7 @@ namespace LongLiveKhioyen
                 if (target == null || !target.gameObject.activeInHierarchy)
                 {
                     Debug.Log("原定目标已丢失 (死亡或销毁)，攻击失效。");
-                    return;
+                    yield break;
                 }
             }
             else
@@ -53,13 +52,13 @@ namespace LongLiveKhioyen
             if (target == null)
             {
                 Debug.Log($"攻击打在了空地 {ctx.TargetPos} 上。");
-                return;
+                yield break;
             }
             
             if (target is Facility && !canDamageFacility)
             {
                 Debug.Log("该技能无法伤害设施。");
-                return;
+                yield break;
             }
             
             bool isSurprise = false;
@@ -74,39 +73,90 @@ namespace LongLiveKhioyen
             int damageToDefender = Mathf.CeilToInt(basePower * multiplier);
             damageToDefender = Mathf.Max(minDamage, damageToDefender);
             
-            if (isSurprise)
+            int damageToAttacker = 0;
+            bool willCounter = false;
+            
+            if (!isSurprise && beCountered)
             {
-                Debug.Log("<color=yellow>[偷袭触发]</color> 优先结算攻击伤害！");
-                
-                ApplyDamage(ctx, ctx.User, target, damageToDefender);
-                
-                bool targetCanFight = (target is Battalion bat && bat.currentSoliders > 0) || 
-                                      (target is Facility fac && fac.currentDurability > 0);
-
-                if (beCountered && targetCanFight)
-                {
-                    int damageToAttacker = CalculateCounterDamage(target);
-                    ApplyDamage(ctx, target, ctx.User, damageToAttacker, isCounter: true);
-                }
-            }
-            else
-            {
-                int damageToAttacker = 0;
-                if (beCountered)
-                {
-                    damageToAttacker = CalculateCounterDamage(target);
-                }
-
-                ApplyDamage(ctx, ctx.User, target, damageToDefender);
-                
-                if (beCountered && damageToAttacker > 0)
-                {
-                    ApplyDamage(ctx, target, ctx.User, damageToAttacker, isCounter: true);
-                }
+                // 常规攻击：在受击前预先计算反击伤害
+                damageToAttacker = CalculateCounterDamage(target);
+                if (damageToAttacker > 0) willCounter = true;
             }
             
+            float t = BattleParam.Instance != null ? BattleParam.Instance.actionAnimationDuration : 0.5f;
+            float focusDist = BattleParam.Instance != null ? BattleParam.Instance.focusCameraDistance : 6f;
+            float camTransitionTime = BattleParam.Instance != null ? BattleParam.Instance.cameraTransitionDuration : 0.15f;
+            
+            BattleCameraController camController = null;
+            if (Battle.Instance.inputController != null)
+            {
+                camController = Battle.Instance.inputController.cameraController;
+            }
+            
+            Battalion attackerBat = ctx.User as Battalion;
+            Battalion defenderBat = target as Battalion;
+            Vector3 attackerWorldPos = Battle.Instance.MapToWorld(ctx.User.position);
+            Vector3 targetWorldPos = Battle.Instance.MapToWorld(target.position);
+            
+            if (camController != null) 
+            {
+                camController.FocusOnPosition(attackerWorldPos, focusDist, camTransitionTime);
+            }
+            yield return new WaitForSeconds(t);
+            // ==========================================
+            // 动画阶段 1：攻击与受击
+            // ==========================================
+            if (camController != null) 
+            {
+                camController.FocusOnPosition(targetWorldPos, focusDist, camTransitionTime);
+            }
+            if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Attack;
+            if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Hit;
+            
             if(hitEffect != null) Instantiate(hitEffect, target.transform.position, Quaternion.identity);
+            
+            yield return new WaitForSeconds(t);
+            
+            // 等待时间结束，正式结算伤害
+            ApplyDamage(ctx, ctx.User, target, damageToDefender);
+            
+            // ==========================================
+            // 动画阶段 2：反击逻辑判定与表现
+            // ==========================================
+            if (isSurprise && beCountered)
+            {
+                // 偷袭攻击：在受击后，检查存活情况以决定是否反击
+                bool targetCanFight = (target is Battalion bat && bat.currentSoliders > 0) || 
+                                      (target is Facility fac && fac.currentDurability > 0);
+                if (targetCanFight)
+                {
+                    damageToAttacker = CalculateCounterDamage(target);
+                    if (damageToAttacker > 0) willCounter = true;
+                }
+            }
 
+            if (willCounter)
+            {
+                if (camController != null) 
+                {
+                    camController.FocusOnPosition(attackerWorldPos, focusDist, camTransitionTime);
+                }
+                // 角色互换，防守方攻击，进攻方受击
+                if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Attack;
+                if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Hit;
+                
+                if(hitEffect != null) Instantiate(hitEffect, ctx.User.transform.position, Quaternion.identity);
+
+                yield return new WaitForSeconds(t);
+
+                ApplyDamage(ctx, target, ctx.User, damageToAttacker, isCounter: true);
+            }
+            
+            // ==========================================
+            // 动画阶段 3：动作结束，重置待机
+            // ==========================================
+            if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Idle;
+            if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Idle;
         }
         
         private void ApplyDamage(ActionContext ctx, Unit from, Unit to, int amount, bool isCounter = false)

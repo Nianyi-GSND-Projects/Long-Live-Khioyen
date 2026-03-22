@@ -22,8 +22,7 @@ namespace LongLiveKhioyen
     public abstract class EffectDefinition: ScriptableObject
     {
         public EffectType effectType;
-        public abstract void Execute(ActionContext context);
+        public abstract IEnumerator ExecuteCoroutine(ActionContext context);
     }
     
-   
 }

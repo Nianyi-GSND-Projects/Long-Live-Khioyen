@@ -49,6 +49,16 @@ namespace LongLiveKhioyen
             }
         }
         #endregion
+        
+        [Header("Animation Settings")]
+        [Tooltip("动作表现的时间间隔（秒）")]
+        public float actionAnimationDuration = 0.5f;
+        
+        [Tooltip("聚焦时的镜头距离")]
+        public float focusCameraDistance = 8f;
+        
+        [Tooltip("摄像机在施法者与目标之间切换镜头的过渡时间")]
+        public float cameraTransitionDuration = 0.15f;
 
         [Header("Default Parameter")]
         public int defaultMaxExp = 100;

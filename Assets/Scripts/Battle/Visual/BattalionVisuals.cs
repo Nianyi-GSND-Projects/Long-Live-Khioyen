@@ -5,22 +5,21 @@ namespace LongLiveKhioyen
 {
     public class BattalionVisuals : UnitVisualController
     {
-        private List<GameObject> activeSoldiers = new List<GameObject>();
+        private List<SoldierVisual> activeSoldiers = new List<SoldierVisual>();
 
         protected override void RefreshModel()
         {
             Battalion bat = _ownerUnit as Battalion;
             if (bat == null || bat.Definition == null) return;
-
-            foreach (var s in activeSoldiers) Destroy(s);
+            foreach (var s in activeSoldiers) 
+            {
+                if (s != null) Destroy(s.gameObject);
+            }
             activeSoldiers.Clear();
-
             if (bat.Definition.unitModelPrefab == null) return;
-
             int perModel = Mathf.Max(1, bat.Definition.soldiersPerModel); 
             int modelCount = Mathf.CeilToInt((float)bat.currentSoliders / perModel);
-            modelCount = Mathf.Min(modelCount, 20); // 上限限制
-
+            modelCount = Mathf.Min(modelCount, 20);
             GenerateFormation(modelCount, bat.Definition);
             CacheRenderers();
         }
@@ -32,7 +31,7 @@ namespace LongLiveKhioyen
             
             for (int i = 0; i < count; i++)
             {
-                GameObject soldier = Instantiate(def.unitModelPrefab, modelContainer);
+                GameObject soldierObj = Instantiate(def.unitModelPrefab, modelContainer);
                 
                 // 计算位置
                 float x = (i % rowLength) * spacing;
@@ -44,32 +43,42 @@ namespace LongLiveKhioyen
 
                 Vector3 pos = new Vector3(x - offsetX, 0, z - offsetZ);
 
-                // [避让逻辑] 旗帜在 (0,0,0)，如果士兵也在中心，稍微移开一点
                 if (pos.magnitude < 0.3f) 
                 {
-                    // 简单的避让：往后挪一点
                     pos += Vector3.back * 0.5f;
                 }
 
-                soldier.transform.localPosition = pos;
+                soldierObj.transform.localPosition = pos;
 
-                
-                var sr = soldier.GetComponentInChildren<SpriteRenderer>();
-                if (sr != null)
+                // 【修改点 2】获取 SoldierVisual 组件，并进行初始化
+                SoldierVisual sv = soldierObj.GetComponent<SoldierVisual>();
+                if (sv != null)
                 {
-                    if (def.spriteMaterial != null)
-                    {
-                        sr.material = def.spriteMaterial;
-                    }
+                    // 调用我们在 SoldierVisual 里写好的初始化接口，传入材质，并统一朝向
+                    sv.SetupInitialVisuals(def.spriteMaterial, false);
                     
-                    //sr.flipX = Random.value > 0.5f;
-                    sr.flipX = false;
-                    // sr.color = Battle.Instance.GetFactionColor(_ownerUnit.faction); // 需在 Battle 中实现 GetFactionColor 返回 Color
+                    // 确保刚生成出来时，强制设为待机状态
+                    sv.SetState(SoldierState.Idle);
+                    
+                    // 将引用存入列表
+                    activeSoldiers.Add(sv);
                 }
-                
-                activeSoldiers.Add(soldier);
+                else
+                {
+                    Debug.LogError("预制体上缺少 SoldierVisual 组件！");
+                }
             }
         }
         
+        public void SetBattalionState(SoldierState newState)
+        {
+            foreach (var soldier in activeSoldiers)
+            {
+                if (soldier != null)
+                {
+                    soldier.SetState(newState);
+                }
+            }
+        }
     }
 }

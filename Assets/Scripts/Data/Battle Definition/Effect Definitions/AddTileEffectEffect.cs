@@ -19,7 +19,7 @@ namespace LongLiveKhioyen
         [Range(0, 100)]
         public int baseProbability = 50;
 
-        public override void Execute(ActionContext ctx)
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
             if (useProbability)
             {
@@ -28,7 +28,7 @@ namespace LongLiveKhioyen
                 if (roll >= baseProbability)
                 {
                     Debug.Log($"[Effect] 地块效果施加判定失败 (Roll: {roll} >= {baseProbability})");
-                    return;
+                    yield break; // 【修改】在协程中使用 yield break 退出
                 }
                 
                 Debug.Log($"[Effect] 地块效果判定成功！(Roll: {roll})");
@@ -39,6 +39,8 @@ namespace LongLiveKhioyen
                 Battle.Instance.AddTileEffect(ctx.TargetPos, tileEffectDef, duration, ctx.User);
             }
 
+            // 【新增】标记协程瞬间执行完毕
+            yield break;
         }
     }
 }

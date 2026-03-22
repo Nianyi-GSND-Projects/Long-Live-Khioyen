@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+
 
 namespace LongLiveKhioyen
 {
@@ -16,17 +18,39 @@ namespace LongLiveKhioyen
         public string resultKey = "IsKnockbackBlocked";
         public string collisionTargetKey = "CollisionTarget";
 
-        public override void Execute(ActionContext ctx)
+        public override IEnumerator ExecuteCoroutine(ActionContext ctx)
         {
             Unit target = ctx.TargetUnit;
             if (target == null || !target.unitDefinition.beMoved) // 假设设施不可被击退
             {
                 ctx.SetData(resultKey, true); // 视为被阻挡
-                return;
+                yield break;
             }
+            
+            float t = BattleParam.Instance != null ? BattleParam.Instance.actionAnimationDuration : 0.5f;
+            float focusDist = BattleParam.Instance != null ? BattleParam.Instance.focusCameraDistance : 6f;
+            float camTransitionTime = BattleParam.Instance != null ? BattleParam.Instance.cameraTransitionDuration : 0.15f;
 
-            Vector2Int startPos = ctx.User.position;
-            Vector2Int targetPos = target.position;
+            BattleCameraController camController = null;
+            if (Battle.Instance.inputController != null)
+                camController = Battle.Instance.inputController.cameraController;
+
+            Battalion attackerBat = ctx.User as Battalion;
+            Battalion defenderBat = target as Battalion;
+
+            if (camController != null && ctx.User != null)
+            {
+                camController.FocusOnPosition(Battle.Instance.MapToWorld(ctx.User.position), focusDist, camTransitionTime);
+            }
+            if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Attack;
+            if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Hit;
+            
+            // 等待 t 秒，营造打击停顿感
+            yield return new WaitForSeconds(t);
+
+            // ==========================================
+            // 逻辑执行阶段：处理网格位移
+            // ==========================================
             Vector2Int currentPos = target.position;
             Vector3Int pushDir = Battle.Instance.GetHexDirection(ctx.User.position, currentPos);
             
@@ -38,10 +62,10 @@ namespace LongLiveKhioyen
                 Vector2Int nextPos = Battle.Instance.GetTileInDirection(currentPos, pushDir, 1);
                 
                 if (Battle.Instance.IsValidMapPosition(nextPos) &&
-                    Battle.Instance.CanUnitStopOnTile(target, nextPos,false))
+                    Battle.Instance.CanUnitStopOnTile(target, nextPos, false))
                 {
                     // 移动一步
-                    Battle.Instance.ForceMoveUnit(target, nextPos);
+                    yield return Battle.Instance.ForceMoveUnitRoutine(target, nextPos);
                     currentPos = nextPos;
                 }
                 else
@@ -63,6 +87,18 @@ namespace LongLiveKhioyen
             {
                 ctx.SetData(collisionTargetKey, collisionObject);
             }
+            
+            // ==========================================
+            // 动画阶段 2：追踪目标位移后的新位置
+            // ==========================================
+            if (camController != null)
+            {
+                camController.FocusOnPosition(Battle.Instance.MapToWorld(target.position), focusDist, camTransitionTime);
+            }
+
+            // 再等待 t 秒，让镜头跟过去，并让玩家看清击退落地后的样子
+            yield return new WaitForSeconds(t);
+
         }
     }
 }

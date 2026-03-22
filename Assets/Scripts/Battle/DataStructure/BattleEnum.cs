@@ -86,5 +86,15 @@ namespace LongLiveKhioyen
             AlliesStoppable, // 友方可停，敌方阻挡
             AlliesPassable   // 友方可过，敌方阻挡
         }
+        // 定义士兵的五种表现状态
+        public enum SoldierState
+        {
+            Idle,       // 待机
+            Move,       // 移动
+            Prepare,    // 准备 
+            Attack,     // 攻击
+            Hit,       // 受击
+            Cast        // 施法/交互
+        }
         
 }

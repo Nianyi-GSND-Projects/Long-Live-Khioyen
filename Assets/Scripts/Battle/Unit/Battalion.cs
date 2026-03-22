@@ -22,6 +22,20 @@ namespace LongLiveKhioyen
         public int ExtraMovement = 0;
         public int exp = 0;
         
+        private SoldierState _currentSoldierState = SoldierState.Idle;
+        public SoldierState CurrentSoldierState
+        {
+            get => _currentSoldierState;
+            set
+            {
+                // 如果状态相同，则不进行多余的更新
+                if (_currentSoldierState != value)
+                {
+                    _currentSoldierState = value;
+                    UpdateVisualState(); // 状态改变时，自动触发视觉更新
+                }
+            }
+        }
 
         public Battalion()
         {
@@ -261,7 +275,15 @@ namespace LongLiveKhioyen
                 }
             }
         }
+        
+        public override void UpdateVisualState()
+        {
+            base.UpdateVisualState();
+            if (visualController is BattalionVisuals batVisuals)
+            {
+                batVisuals.SetBattalionState(_currentSoldierState);
+            }
+        }
+        
     }
-    
-    
 }
