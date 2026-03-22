@@ -11,6 +11,7 @@ namespace LongLiveKhioyen
         {
             Battalion bat = _ownerUnit as Battalion;
             if (bat == null || bat.Definition == null) return;
+            SoldierState currentState = bat.CurrentSoldierState;
             foreach (var s in activeSoldiers) 
             {
                 if (s != null) Destroy(s.gameObject);
@@ -20,11 +21,11 @@ namespace LongLiveKhioyen
             int perModel = Mathf.Max(1, bat.Definition.soldiersPerModel); 
             int modelCount = Mathf.CeilToInt((float)bat.currentSoliders / perModel);
             modelCount = Mathf.Min(modelCount, 20);
-            GenerateFormation(modelCount, bat.Definition);
+            GenerateFormation(modelCount, bat.Definition, currentState);
             CacheRenderers();
         }
 
-        private void GenerateFormation(int count, BattalionDefinition def)
+        private void GenerateFormation(int count, BattalionDefinition def, SoldierState initialState)
         {
             float spacing = def.modelSpacing;
             int rowLength = Mathf.CeilToInt(Mathf.Sqrt(count)); 
@@ -33,11 +34,9 @@ namespace LongLiveKhioyen
             {
                 GameObject soldierObj = Instantiate(def.unitModelPrefab, modelContainer);
                 
-                // 计算位置
                 float x = (i % rowLength) * spacing;
                 float z = (i / rowLength) * spacing;
                 
-                // 居中偏移
                 float offsetX = (rowLength - 1) * spacing * 0.5f;
                 float offsetZ = (Mathf.CeilToInt((float)count/rowLength) - 1) * spacing * 0.5f;
 
@@ -50,17 +49,13 @@ namespace LongLiveKhioyen
 
                 soldierObj.transform.localPosition = pos;
 
-                // 【修改点 2】获取 SoldierVisual 组件，并进行初始化
                 SoldierVisual sv = soldierObj.GetComponent<SoldierVisual>();
                 if (sv != null)
                 {
-                    // 调用我们在 SoldierVisual 里写好的初始化接口，传入材质，并统一朝向
                     sv.SetupInitialVisuals(def.spriteMaterial, false);
                     
-                    // 确保刚生成出来时，强制设为待机状态
-                    sv.SetState(SoldierState.Idle);
+                    sv.SetState(initialState);
                     
-                    // 将引用存入列表
                     activeSoldiers.Add(sv);
                 }
                 else

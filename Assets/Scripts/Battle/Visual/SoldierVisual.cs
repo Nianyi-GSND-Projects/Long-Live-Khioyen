@@ -33,8 +33,10 @@ namespace LongLiveKhioyen
         public void SetState(SoldierState newState)
         {
             // 如果状态没有改变，直接跳过以节省性能
-            if (_currentState == newState && spriteRenderer.sprite != null) return;
-
+            if (_currentState == newState && spriteRenderer.sprite != null)
+            {
+                return;
+            }
             _currentState = newState;
             UpdateSprite();
         }

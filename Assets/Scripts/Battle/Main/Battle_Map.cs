@@ -508,6 +508,12 @@ namespace LongLiveKhioyen
             bool preventMovement = false;
             TileData tile = mapData[pos.x, pos.y];
             
+            if (tile.Facility == null && tile.Effects.Count == 0)
+            {
+                onResult?.Invoke(false);
+                yield break;
+            }
+            
             float t = BattleParam.Instance.actionAnimationDuration;
             float focusDist = BattleParam.Instance.focusCameraDistance;
             float camTime = BattleParam.Instance.cameraTransitionDuration;
@@ -538,12 +544,13 @@ namespace LongLiveKhioyen
                 if (unit.currentHealth <= 0 || trapDef.PreventMovement)
                     preventMovement = true;
 
-                // 如果还没死且还要继续走，恢复 Move 状态；否则恢复 Idle
+                //如果还没死且还要继续走，恢复 Move 状态；否则恢复 Idle
                 if (bat != null)
                 {
                     bat.CurrentSoldierState = (unit.currentHealth > 0 && !preventMovement) 
                         ? SoldierState.Move : SoldierState.Idle;
                 }
+                
             }
 
             if (tile.Effects.Count > 0)

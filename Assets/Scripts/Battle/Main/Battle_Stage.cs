@@ -474,10 +474,7 @@ namespace LongLiveKhioyen
         {
             IsUnitMoving = true;
             Battalion bat = unit as Battalion;
-            if (bat != null)
-            {
-                bat.CurrentSoldierState = SoldierState.Move;
-            }
+            
             
             if (targetPos == unit.position)
             {
@@ -490,15 +487,25 @@ namespace LongLiveKhioyen
                 yield break;
             }
             
+            
+            
             List<Vector2Int> path = FindPath(unit.position, targetPos, unit, true);
 	
             if (path != null && path.Count > 0)
             {
                 Vector2Int startPos = unit.position;
                 bool moveInterrupted = false;
+                if (bat != null)
+                {
+                    bat.CurrentSoldierState = SoldierState.Move;
+                }
                 yield return StartCoroutine(MoveUnit(unit, path, wasInterrupted => {
                     moveInterrupted = wasInterrupted;
                 }));
+                if (bat != null)
+                {
+                    bat.CurrentSoldierState = SoldierState.Idle;
+                }
                 
                 if (unit != null && (unit.faction == Faction.Player || unit.faction == Faction.Friend))
                 {
@@ -538,10 +545,7 @@ namespace LongLiveKhioyen
                 Debug.LogError($"无法找到通往 {targetPos} 的路径！");
             }
             
-            if (bat != null)
-            {
-                bat.CurrentSoldierState = SoldierState.Idle;
-            }
+            
 
             IsUnitMoving = false;
         }

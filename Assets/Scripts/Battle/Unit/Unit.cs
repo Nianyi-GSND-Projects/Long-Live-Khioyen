@@ -315,9 +315,14 @@ namespace LongLiveKhioyen
             this.position = newPos;
             bool shouldStop = false;
     
-            yield return Battle.Instance.StartCoroutine(Battle.Instance.CheckTileEffectOnEnterRoutine(this, newPos, (res) => {
+            yield return Battle.Instance.CheckTileEffectOnEnterRoutine(this, newPos, (res) => {
                 shouldStop = res;
-            }));
+            });
+            
+            if (this is Battalion bat && !shouldStop)
+            {
+                bat.CurrentSoldierState = SoldierState.Move;
+            }
             
             if (faction == Faction.Player || faction == Faction.Friend)
                 Battle.Instance.RefreshFogOfWar();
