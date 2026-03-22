@@ -16,7 +16,7 @@ namespace LongLiveKhioyen
         public Vector2 encounterOrientation;
         //玩家进入战役时行军的方向向量
 
-        public int difficulity;
+        public int difficulty;
         //动态难度系数
 
         public WorldData.EnvironmentParams envParams;  // 环境参数
@@ -32,9 +32,7 @@ namespace LongLiveKhioyen
         
         public void GenerateMetaData()
         {
-            //从GameInstance中取得需要的数据
         }
-        //TODO MetaData中应该包含一系列更具体指导地图生成的数据，例如：如果有预设地图，那预设地图的索引是多少；如果没有，则根据一系列参数随机生成地图。
     }
     
 }

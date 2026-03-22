@@ -12,6 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fcdb7e4e266f9d439d73325dcfc6964, type: 3}
   m_Name: DefaultRule
   m_EditorClassIdentifier: 
-  battlePools:
-  - {fileID: 11400000, guid: f54b4a08eee839742aaf354fcbab53c5, type: 2}
+  normalPools:
+  - {fileID: 11400000, guid: 3c93991a37cdd4942a5e10a159a3315c, type: 2}
+  - {fileID: 11400000, guid: e39f6fe95febd61498eb30fa4016ba2b, type: 2}
+  - {fileID: 11400000, guid: 57bf5a809d45b1b408da37ddf5614bbe, type: 2}
+  - {fileID: 11400000, guid: e34efbff17fae474487abb8136f92392, type: 2}
+  - {fileID: 11400000, guid: 5208048962039884c95f52b74e0522f1, type: 2}
+  - {fileID: 11400000, guid: f85b60237899a4d429da021bdf0f04b1, type: 2}
+  treePools:
+  - {fileID: 11400000, guid: eb854bf8eb48d7c4ea887b6f674ebe49, type: 2}
+  - {fileID: 11400000, guid: 28582e07938072341bdb8b40e05c1d79, type: 2}
+  - {fileID: 11400000, guid: 279db450066026544b5691e596c6e07b, type: 2}
+  - {fileID: 11400000, guid: 3e1ea2d47fab396479eefeee9f7cbc56, type: 2}
+  - {fileID: 11400000, guid: 0ea1a16f87df927499fad97a014a961c, type: 2}
+  - {fileID: 11400000, guid: ff12800b03d1ad44dafebe487dcd256c, type: 2}
+  waterPools:
+  - {fileID: 11400000, guid: bfe063aa9131c3540b39fc4b190a5a99, type: 2}
+  - {fileID: 11400000, guid: e9927df076388a24e9ebda0478f6c9c3, type: 2}
+  - {fileID: 11400000, guid: 29fae571f448a95498b3a6b73f0c329d, type: 2}
+  - {fileID: 11400000, guid: ab59ac68143982a429166fed709c7bb8, type: 2}
+  - {fileID: 11400000, guid: bfe8c25397b8cbb489265faf3f365eb5, type: 2}
+  - {fileID: 11400000, guid: eee5565e861f7ed41aad727da30346a4, type: 2}
+  treeAndWaterPools:
+  - {fileID: 11400000, guid: 629e425e9f1fed049b5bccaf752b10f3, type: 2}
+  - {fileID: 11400000, guid: a6ad95f0cda00044a9a7361f31ce4b3f, type: 2}
+  - {fileID: 11400000, guid: 73ce320f77648ac48ab03d7f0dc2f4bc, type: 2}
+  - {fileID: 11400000, guid: 4563af57093a1204e97c945b773cc9d1, type: 2}
+  - {fileID: 11400000, guid: 17461593d2a978948a033a11bcff9536, type: 2}
+  - {fileID: 11400000, guid: 1d70708079dd31d45a04e0eb8133332f, type: 2}
   defaultPool: {fileID: 11400000, guid: f54b4a08eee839742aaf354fcbab53c5, type: 2}

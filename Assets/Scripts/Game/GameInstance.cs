@@ -192,7 +192,7 @@ namespace LongLiveKhioyen
 			{
 				battlePosition = worldPosition,
 				envParams = envParams,
-				difficulity = Mathf.RoundToInt(envParams.difficulty),  // TODO: 难度转换公式
+				//difficulty = Mathf.RoundToInt(envParams.difficulty),
 				encounterOrientation = default,  // WONTFIX: 此量不打算提供
 			};
 			return data;

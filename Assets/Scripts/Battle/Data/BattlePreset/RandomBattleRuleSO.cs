@@ -1,5 +1,3 @@
-// Assets/Scripts/Battle/Data/RandomBattleRuleSO.cs (新文件)
-
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -8,24 +6,65 @@ namespace LongLiveKhioyen
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Level/Random Battle Rule")]
     public class RandomBattleRuleSO : ScriptableObject
     {
-        [Header("Available Pools")]
-        public List<BattlePoolSO> battlePools = new List<BattlePoolSO>();
+        [Header("Battle Pools Matrix [Please keep size to 6 for each]")]
+        [Tooltip("无树无水的普通地形地图池 (难度 1~6)")]
+        public List<BattlePoolSO> normalPools = new List<BattlePoolSO>(6);
         
-        [Header("Default Pool")]
+        [Tooltip("有树木的地形地图池 (难度 1~6)")]
+        public List<BattlePoolSO> treePools = new List<BattlePoolSO>(6);
+        
+        [Tooltip("有水域的地形地图池 (难度 1~6)")]
+        public List<BattlePoolSO> waterPools = new List<BattlePoolSO>(6);
+        
+        [Tooltip("同时有树木和水域的混合地形地图池 (难度 1~6)")]
+        public List<BattlePoolSO> treeAndWaterPools = new List<BattlePoolSO>(6);
+        
+        [Header("Fallback")]
+        [Tooltip("当无法找到对应条件的地图池时使用的默认池")]
         public BattlePoolSO defaultPool;
-
+        
         public BattlePoolSO GetBattlePool(BattleMetaData metaData)
         {
-            // TODO: 在这里实现根据 metaData 选择池子的逻辑
-            if (defaultPool != null) return defaultPool;
-            
-            if (battlePools != null && battlePools.Count > 0)
+            if (metaData == null)
             {
-                return battlePools[0];
+                Debug.LogWarning("MetaData is null! Returning default pool.");
+                return defaultPool;
             }
 
-            Debug.LogWarning("No BattlePool available in RandomBattleRuleSO!");
-            return null;
+            bool hasTree = metaData.envParams.tree > 0.5f;
+            bool hasWater = metaData.envParams.water > 0.5f;
+
+            List<BattlePoolSO> targetList;
+            if (hasTree && hasWater)
+            {
+                targetList = treeAndWaterPools;
+            }
+            else if (hasTree)
+            {
+                targetList = treePools;
+            }
+            else if (hasWater)
+            {
+                targetList = waterPools;
+            }
+            else
+            {
+                targetList = normalPools;
+            }
+
+            int diffIndex = Mathf.Clamp(Mathf.FloorToInt(metaData.envParams.difficulty * 6f), 0, 5);
+
+            if (targetList != null && diffIndex < targetList.Count)
+            {
+                BattlePoolSO selectedPool = targetList[diffIndex];
+                if (selectedPool != null)
+                {
+                    return selectedPool;
+                }
+            }
+
+            Debug.LogWarning($"Missing BattlePool for Tree:{hasTree}, Water:{hasWater}, DifficultyIndex:{diffIndex}. Falling back to default.");
+            return defaultPool;
         }
     }
 }
