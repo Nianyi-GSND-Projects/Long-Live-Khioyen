@@ -23,6 +23,46 @@ MonoBehaviour:
     m_Key: barracks
     m_Metadata:
       m_Items: []
+  - m_Id: 2512964879917056
+    m_Key: water-well
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2529944466890752
+    m_Key: dwelling-trio-1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530036246650880
+    m_Key: granary-rectangular
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530103288406016
+    m_Key: horse-station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530164147757056
+    m_Key: workshop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530218463993856
+    m_Key: drill-ground
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530275175178240
+    m_Key: bowyer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530320746291200
+    m_Key: horse-pasture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530365654704128
+    m_Key: royal-stables
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530446898372608
+    m_Key: construction-diretorate
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

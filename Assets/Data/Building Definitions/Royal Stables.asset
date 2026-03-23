@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a291e6bdf3089f241a4ab811eecfdaf5, type: 3}
-  m_Name: Imperial Crafts Office
+  m_Name: Royal Stables
   m_EditorClassIdentifier: 
-  id: inperial-crafts-office
+  id: royal-stables
   tags: []
   figure: {fileID: 0}
   defaultOrientation: 0
@@ -27,10 +27,8 @@ MonoBehaviour:
   persistentPopulation: 10
   cost:
     food: 0
-    material: 900
-    money: 600
+    material: 300
+    money: 100
     population: 0
     items:
-      records:
-      - itemId: 205
-        quantity: 5
+      records: []

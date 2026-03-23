@@ -23,7 +23,51 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2631861493760
-    m_Localized: Place to recruit commanders/soliders.
+    m_Localized: Place to recruit commanders and soliders.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2512964879917056
+    m_Localized: Slightly increases the population cap.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2529944466890752
+    m_Localized: Increases the population cap.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530036246650880
+    m_Localized: Harvest a continuous supply of food.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530103288406016
+    m_Localized: Merchant caravans arrive monthly, offering different goods for trade.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530164147757056
+    m_Localized: Crafts equipments for commanders and soliders.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530218463993856
+    m_Localized: Grants infantry stronger skills and allows the training of elite
+      infantry in the Barracks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530275175178240
+    m_Localized: Grants archers stronger skills and allows the training of elite
+      archers in the Barracks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530320746291200
+    m_Localized: Grants cavalry stronger skills and allows the training of elite
+      cavalry in the Barracks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530365654704128
+    m_Localized: Command the pinnacle of the empire's might. Grants generals access
+      to the Imperial Cavalry.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2530446898372608
+    m_Localized: Allows training of Engineers in the Barracks.
     m_Metadata:
       m_Items: []
   references:

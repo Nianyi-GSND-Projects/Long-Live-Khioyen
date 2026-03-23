@@ -46,6 +46,26 @@ MonoBehaviour:
     m_Localized: Workshop
     m_Metadata:
       m_Items: []
+  - m_Id: 59041592446558208
+    m_Localized: Drill Ground
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59041913625387008
+    m_Localized: Bowyer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59042136586199040
+    m_Localized: Horse Pasture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59042229947211776
+    m_Localized: Royal Stables
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59042339535986688
+    m_Localized: Construction Directorate
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

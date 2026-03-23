@@ -43,6 +43,26 @@ MonoBehaviour:
     m_Key: workshop
     m_Metadata:
       m_Items: []
+  - m_Id: 59041592446558208
+    m_Key: drill-ground
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59041913625387008
+    m_Key: bowyer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59042136586199040
+    m_Key: horse-pasture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59042229947211776
+    m_Key: royal-stables
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59042339535986688
+    m_Key: construction-diretorate
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

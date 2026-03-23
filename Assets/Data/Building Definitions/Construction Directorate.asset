@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a291e6bdf3089f241a4ab811eecfdaf5, type: 3}
-  m_Name: Directorate of Construction
+  m_Name: Construction Directorate
   m_EditorClassIdentifier: 
-  id: diretorate-of-construction
+  id: construction-diretorate
   tags: []
   figure: {fileID: 0}
   defaultOrientation: 0
