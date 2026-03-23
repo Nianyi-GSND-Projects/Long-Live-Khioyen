@@ -52,7 +52,7 @@ namespace LongLiveKhioyen
                 targetList = normalPools;
             }
 
-            int diffIndex = Mathf.Clamp(Mathf.FloorToInt(metaData.envParams.difficulty * 6f), 0, 5);
+            int diffIndex = MapDifficultyFromColor(metaData.envParams.difficulty);
 
             if (targetList != null && diffIndex < targetList.Count)
             {
@@ -65,6 +65,15 @@ namespace LongLiveKhioyen
 
             Debug.LogWarning($"Missing BattlePool for Tree:{hasTree}, Water:{hasWater}, DifficultyIndex:{diffIndex}. Falling back to default.");
             return defaultPool;
+        }
+        
+        public int MapDifficultyFromColor(float rValue)
+        {
+            float byteValue = rValue * 255f;
+
+            int index = Mathf.RoundToInt(byteValue / 50f);
+
+            return Mathf.Clamp(index, 0, 5);
         }
     }
 }
