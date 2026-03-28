@@ -14,12 +14,13 @@ namespace LongLiveKhioyen
 
 		protected void Start()
 		{
-			prevPos = rb.position;
+			prevPos = transform.localPosition;
 		}
 
 		public System.Action<Vector3> onMove;
 
-		Vector2 prevPos;
+		Vector3 prevPos;  // 场景暨世界空间
+		public Vector2 WorldPos => prevPos;
 		protected void Update()
 		{
 			Vector2 input = new(LateralMoveInput, ForwardMoveInput);
@@ -31,10 +32,15 @@ namespace LongLiveKhioyen
 
 		protected void FixedUpdate()
 		{
-			Vector2 movement = (rb.position - prevPos) / worldScale;
+			Vector2 movement = (transform.localPosition - prevPos) / worldScale;
 			onMove?.Invoke(movement);
 
-			prevPos = rb.position;
+			prevPos = transform.localPosition;
+		}
+
+		public void Teleport(Vector2 worldPos)
+		{
+			transform.localPosition = prevPos = worldPos;
 		}
 
 		WorldMapPolis nearbyPolis;

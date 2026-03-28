@@ -38,6 +38,7 @@ MonoBehaviour:
   fallbackFriendlyIcon: {fileID: 21300000, guid: e005b26c901e2124a8e35e0e51066ca3, type: 3}
   worldMapFoodCostRate: 0.0015
   worldMapTimeScale: 0.5
+  encounterRate: 0.0002
   foodCostPerBattle: 50
   timeCostPerBattle: 1
   tooltipDelay: 1

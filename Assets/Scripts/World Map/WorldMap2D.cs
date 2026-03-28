@@ -22,7 +22,8 @@ namespace LongLiveKhioyen
 		void Start()
 		{
 			Construct();
-			player.transform.localPosition = GetPolisLocalPosition(GameInstance.Instance.LastPolis);
+			var game = GameInstance.Instance;
+			player.Teleport(game.IsWild ? game.WildPos : GetPolisLocalPosition(game.LastPolis));
 			player.onMove += OnPlayerMove;
 		}
 
@@ -82,12 +83,18 @@ namespace LongLiveKhioyen
 		void OnPlayerMove(Vector3 movement)
 		{
 			float distance = movement.magnitude;
-			float foodCost = distance * Army.CarriedWeight * GameManager.InternalSettings.worldMapFoodCostRate;
 
+			float foodCost = distance * Army.CarriedWeight * GameManager.InternalSettings.worldMapFoodCostRate;
 			bool willStarve = foodCost > Army.carriedFood;
 			Army.carriedFood = Mathf.Max(0, Army.carriedFood - foodCost);
 			if(willStarve)
 				Starve();
+
+			float difficulty = GameData.world.GetEnviromentParams(player.WorldPos).difficulty;
+			float chance = 1 - Mathf.Pow(1 - difficulty * GameManager.InternalSettings.encounterRate, distance);
+			float value = Random.value;
+			if(value < chance)
+				GameInstance.Instance.EnterWildEncounterBattle(player.WorldPos);
 		}
 
 		void Starve()

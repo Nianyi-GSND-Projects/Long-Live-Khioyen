@@ -38,6 +38,7 @@ namespace LongLiveKhioyen
 		[Label("默认友方城池图标")] public Sprite fallbackFriendlyIcon;
 		[Label("行军耗粮速率（每距离每重量）"), Min(0)] public float worldMapFoodCostRate;
 		[Label("行军时间流速"), Min(0)] public float worldMapTimeScale;
+		[Label("暗雷率（每距离每难度）"), Range(0, 1)] public float encounterRate = 0.001f;
 
 		[Header("战斗")]
 		[Label("单次战斗耗粮（测试）"), Min(0)] public float foodCostPerBattle;  // 测试用

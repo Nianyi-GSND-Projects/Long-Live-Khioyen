@@ -198,6 +198,19 @@ namespace LongLiveKhioyen
 			return data;
 		}
 
+		public bool IsWild { get; private set; } = false;  // 是否在大地图上临时游荡
+		public Vector2 WildPos { get; private set; }
+		public void EnterWildEncounterBattle(Vector2 worldPosition)
+		{
+			battleMetaData = PrepareBattleMetadata(worldPosition);
+
+			Debug.Log($"进入野战。");
+			IsWild = true;
+			WildPos = worldPosition;
+			CurrentMode = Mode.Battle;
+			IsWild = false;
+		}
+
 		/// <summary>停止进攻敌方城池，回到大地图。</summary>
 		public void ExitBattle(BattleResult battleResult)
 		{
@@ -205,6 +218,7 @@ namespace LongLiveKhioyen
 			battleMetaData = null;
 			ApplyBattleResult(battleResult);
 			CurrentMode = Mode.WorldMap;
+			IsWild = false;
 		}
 
 		/// <summary>应用战役结果。</summary>
