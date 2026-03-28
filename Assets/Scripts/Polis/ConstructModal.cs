@@ -25,6 +25,7 @@ namespace LongLiveKhioyen
 		{
 			PolisData.Current.onEconomyChanged -= OnEconomyDataChanged;
 			SelectedBuildingType = null;
+			TooltipManager.SetTooltip(gameObject, null);
 		}
 
 		void OnEconomyDataChanged()
@@ -120,6 +121,11 @@ namespace LongLiveKhioyen
 			}
 		}
 
+		public string TooltipText
+		{
+			set => TooltipManager.Instance.ShowTooltipImmediately(value);
+		}
+
 		void UpdatePreviewModel()
 		{
 			if(preview == null)
@@ -138,12 +144,18 @@ namespace LongLiveKhioyen
 			if(!PositionMakesSense())
 			{
 				preview.Visible = false;
+				TooltipText = "Construction obstructed.";
 				return;
 			}
 			preview.Visible = true;
 
 			BuildingPlacement placement = new(SelectedBuildingType.id, mapPos, orientation);
 			preview.Valid = PolisData.Current.ValidateBuildingPlacement(placement);
+			if(!preview.Valid)
+				TooltipText = "Construction obstructed.";
+			else
+				TooltipText = null;
+
 			Polis.Instance.PositionBuilding(preview.transform, placement);
 		}
 		#endregion

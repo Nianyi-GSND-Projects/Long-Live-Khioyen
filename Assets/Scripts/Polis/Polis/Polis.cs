@@ -9,6 +9,7 @@ namespace LongLiveKhioyen
 
 		public PolisData Data => GameInstance.Instance.LastPolis;
 		[SerializeField] PolisUi ui;
+		public PolisUi Ui => ui;
 
 		#region 生命周期
 		void Awake()

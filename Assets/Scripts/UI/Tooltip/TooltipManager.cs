@@ -19,7 +19,14 @@ namespace LongLiveKhioyen
 	{
 		Vector2 MousePosition => Mouse.current.position.value;
 
+		public static TooltipManager Instance { get; private set; }
+
 		#region Unity 生命周期
+		protected void Awake()
+		{
+			Instance = this;
+		}
+
 		protected void Update()
 		{
 			var es = EventSystem.current;
@@ -53,13 +60,15 @@ namespace LongLiveKhioyen
 		ITooltipSource currentSource;
 		GameObject tooltip;
 
-		void ShowTooltip()
+		void ShowTooltipFromSource()
+		{
+			ShowTooltipImmediately(currentSource?.GetTooltipText());
+		}
+
+		public void ShowTooltipImmediately(string text)
 		{
 			HideTooltip();
-			if((currentSource as MonoBehaviour) == null)
-				return;
 
-			string text = currentSource.GetTooltipText();
 			if(text == null)
 				return;
 
@@ -132,14 +141,14 @@ namespace LongLiveKhioyen
 		{
 			HideTooltip();
 			yield return new WaitForSecondsRealtime(currentSource.Delay);
-			ShowTooltip();
+			ShowTooltipFromSource();
 		}
 		#endregion
 
 		#region 静态接口
 		public static Tooltip SetTooltip(GameObject go, string text)
 		{
-			if(go.TryGetComponent<ITooltipSource>(out var existing))
+			foreach(var existing in go.GetComponents<ITooltipSource>())
 				Destroy(existing as MonoBehaviour);
 			var tooltip = go.AddComponent<Tooltip>();
 			tooltip.TooltipText = text;
