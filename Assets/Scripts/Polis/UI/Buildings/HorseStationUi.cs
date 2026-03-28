@@ -110,6 +110,13 @@ namespace LongLiveKhioyen
 				item.onClick += () => PolisData.Current.UnsetItemForSale(itemDefinition.itemId, 1);
 			}
 		}
+
+		public void SellAll()
+		{
+			var stocks = PolisData.Current.StockedItems.Where(r => r.Definition.canSell).ToArray();
+			foreach(var s in stocks)
+				PolisData.Current.SetItemForSale(s.itemId, s.quantity);
+		}
 		#endregion
 
 		#region 买入
