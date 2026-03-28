@@ -15,7 +15,7 @@ MonoBehaviour:
   effectType: 1
   multiplier: 1
   minDamage: 1
-  beCountered: 0
+  beCountered: 1
   canDamageFacility: 1
   supportSurprise: 1
   surpriseFlagKey: IsSurpriseAttack

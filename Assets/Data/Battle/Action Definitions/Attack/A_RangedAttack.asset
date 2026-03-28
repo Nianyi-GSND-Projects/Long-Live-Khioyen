@@ -28,7 +28,7 @@ MonoBehaviour:
   oncePerBattle: 0
   requireVision: 1
   effects:
-  - {fileID: 11400000, guid: 03756d16644a91548abf9e6789ff396e, type: 2}
+  - {fileID: 11400000, guid: f855f2eef3f8c654a8c08044f5c42fd1, type: 2}
   maxRange: 2
   minRange: 1
   targetType: 3

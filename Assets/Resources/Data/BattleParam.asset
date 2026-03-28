@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9252e2384cff024281fca715fdbe260, type: 3}
   m_Name: BattleParam
   m_EditorClassIdentifier: 
-  actionAnimationDuration: 1
-  focusCameraDistance: 15
+  actionAnimationDuration: 1.4
+  focusCameraDistance: 20
   cameraTransitionDuration: 0.5
   defaultMaxExp: 0
   defaultMaxMorale: 1000
@@ -57,7 +57,7 @@ MonoBehaviour:
   schemeSuccessRatePerStrategy: 0.01
   constructionRatePerDiscipline: 0.01
   recoveryRatePerDiscipline: 0.01
-  invisibleAllyAlpha: 0.509
+  invisibleAllyAlpha: 0.5
   deployZoneVisionRange: 1
   extractionZoneVisionRange: 1
   moraleConsumePreTurn: 20
