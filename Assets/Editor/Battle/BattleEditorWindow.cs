@@ -10,7 +10,7 @@ namespace LongLiveKhioyen
         private BattlePresetSO currentPreset;
         private TerrainDatabase _terrainDatabase;
         
-        private enum ToolMode { None, Select, DeployPoint, ExtractionPoint,EnemySpawnZone, PlaceUnit, PlaceFacility, Erase }
+        private enum ToolMode { None, Select, DeployPoint, ExtractionPoint,EnemySpawnZone, PlaceBattalion, PlaceFacility, Erase }
         private ToolMode currentTool = ToolMode.None;
 
         private Faction selectedFaction = Faction.Enemy;
@@ -136,7 +136,7 @@ namespace LongLiveKhioyen
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            if (DrawToggleBtn("Unit (Bat)", ToolMode.PlaceUnit)) currentTool = ToolMode.PlaceUnit;
+            if (DrawToggleBtn("Unit (Bat)", ToolMode.PlaceBattalion)) currentTool = ToolMode.PlaceBattalion;
             if (DrawToggleBtn("Facility", ToolMode.PlaceFacility)) currentTool = ToolMode.PlaceFacility;
             GUILayout.EndHorizontal();
             
@@ -220,7 +220,7 @@ namespace LongLiveKhioyen
 
         private void DrawToolSettings()
         {
-            if (currentTool == ToolMode.PlaceUnit || currentTool == ToolMode.PlaceFacility)
+            if (currentTool == ToolMode.PlaceBattalion || currentTool == ToolMode.PlaceFacility)
             {
                 GUILayout.Space(5);
                 GUILayout.Label("Spawn Settings", EditorStyles.boldLabel);
@@ -228,7 +228,7 @@ namespace LongLiveKhioyen
                 
                 selectedFaction = (Faction)EditorGUILayout.EnumPopup("Faction", selectedFaction);
 
-                if (currentTool == ToolMode.PlaceUnit)
+                if (currentTool == ToolMode.PlaceBattalion)
                 {
                     selectedBattalionDef = (BattalionDefinition)EditorGUILayout.ObjectField("Battalion", selectedBattalionDef, typeof(BattalionDefinition), false);
                 }
@@ -415,7 +415,7 @@ namespace LongLiveKhioyen
                     if(currentPreset.extractionPoints.Contains(pos)) currentPreset.playerDeployPoints.Remove(pos);
                     break;
 
-                case ToolMode.PlaceUnit:
+                case ToolMode.PlaceBattalion:
                     if (selectedBattalionDef == null) return;
                     PlaceUnit(pos, false);
                     break;

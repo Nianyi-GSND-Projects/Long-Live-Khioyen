@@ -109,23 +109,6 @@ MonoBehaviour:
     useRandomCommander: 0
   - instanceId: 1
     unitName: 
-    position: {x: 19, y: 19}
-    faction: 2
-    isFacility: 0
-    isVisible: 1
-    battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
-    facilityDef: {fileID: 0}
-    overrideSoldiers: -1
-    overrideMorale: -1
-    commanderTemplate: {fileID: 0}
-    randomCommanderProfile:
-      identityRule: 
-      statsRule: 
-      traitsRule: 
-      level: 0
-    useRandomCommander: 0
-  - instanceId: 2
-    unitName: 
     position: {x: 14, y: 4}
     faction: 2
     isFacility: 0
@@ -141,7 +124,7 @@ MonoBehaviour:
       traitsRule: 
       level: 0
     useRandomCommander: 0
-  usePresetPlayerArmy: 1
+  usePresetPlayerArmy: 0
   playerReserveList:
   - instanceId: 0
     unitName: 

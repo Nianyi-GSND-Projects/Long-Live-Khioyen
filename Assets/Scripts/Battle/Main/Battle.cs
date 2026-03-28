@@ -377,7 +377,7 @@ namespace LongLiveKhioyen
 
 		private UnitDescriptor GenerateDescriptorFromSpawnData(PreplacedUnitData spawnData)
 		{
-			if (spawnData.isFacility)
+					if (spawnData.isFacility)
 					{
 						FacilityDescriptor facDesc = new FacilityDescriptor
 						{
@@ -404,14 +404,14 @@ namespace LongLiveKhioyen
 							visionRange = spawnData.battalionDef.defaultVisionRange,
 							placed = false,
 						};
+						
+						Debug.Log("Check");
 						if (spawnData.commanderTemplate != null)
 						{
-							// 使用模板
 							desc.battalionCommander = spawnData.commanderTemplate.CreateInstance(CommanderRegistry.Instance.GenerateID());
 						}
 						else if (spawnData.useRandomCommander)
 						{
-							// 使用随机生成
 							desc.battalionCommander = CommanderRegistry.Instance.GenerateCommander(spawnData.randomCommanderProfile);
 						}
 						else
