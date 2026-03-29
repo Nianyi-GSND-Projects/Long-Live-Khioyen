@@ -54,6 +54,12 @@ namespace LongLiveKhioyen
 
             int diffIndex = MapDifficultyFromColor(metaData.envParams.difficulty);
 
+            if (diffIndex < 0)
+            {
+                Debug.LogError($"Safe Zone Should Not Trigger Random Battle");
+                return defaultPool;
+            }
+            
             if (targetList != null && diffIndex < targetList.Count)
             {
                 BattlePoolSO selectedPool = targetList[diffIndex];
@@ -73,7 +79,7 @@ namespace LongLiveKhioyen
 
             int index = Mathf.RoundToInt(byteValue / 50f);
 
-            return Mathf.Clamp(index, 0, 5);
+            return Mathf.Clamp(index, 0, 5)-1;
         }
     }
 }
