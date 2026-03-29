@@ -13,41 +13,42 @@ MonoBehaviour:
   m_Name: Imperial Guard
   m_EditorClassIdentifier: 
   id: 13
+  idStr: 
   unitName: Imperial Guard
   unitType: 0
   icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
-  unitModelPrefab: {fileID: 0}
+  unitModelPrefab: {fileID: 2229188164278447998, guid: 06118d7f4ae1b7643b2bbc82b1d29c63, type: 3}
   useBillboard: 0
-  defaultPower: 0
-  defaultDefense: 0
-  defaultRepairPower: 10
+  defaultPower: 250
+  defaultDefense: 250
+  defaultRepairPower: 0
   defaultZocPower: 1
   defaultVisibility: 1
   defaultVisionRange: 2
   passability: 0
-  movable: 0
-  actionable: 0
-  beAttacked: 0
-  beMoved: 0
-  defaultAttack: {fileID: 0}
-  defaultRetreat: {fileID: 0}
-  defaultInteract: {fileID: 0}
+  movable: 1
+  actionable: 1
+  beAttacked: 1
+  beMoved: 1
+  defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
+  defaultRetreat: {fileID: 11400000, guid: b8e9c43b8f61b964a9a3d17e3403b709, type: 2}
+  defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
   defaultConstructAction: {fileID: 0}
   defaultRepairAction: {fileID: 0}
   unitUniqueActions: []
   lootRules: []
   tags: []
   isTrainable: 1
-  requiredWeapon: {fileID: 11400000, guid: 83fddd3cb387eef4c858c3302e03e220, type: 2}
+  requiredItems: []
   requiredBuildingTags: []
-  defaultDiscipline: 0
-  defaultFlexibility: 0
-  defaultStrategy: 0
-  defaultMaxSolider: 0
-  defaultMaxMorale: 0
-  soldiersPerModel: 100
-  modelSpacing: 0.05
+  defaultDiscipline: 100
+  defaultFlexibility: 30
+  defaultStrategy: 100
+  defaultMaxSolider: 1000
+  defaultMaxMorale: 1000
+  soldiersPerModel: 200
+  modelSpacing: 0.2
   spriteMaterial: {fileID: 0}
-  battalionAttackType: 0
-  attackRange: 0
+  battalionAttackType: 1
+  attackRange: 2

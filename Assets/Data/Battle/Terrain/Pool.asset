@@ -15,6 +15,7 @@ MonoBehaviour:
   id: 2
   terrainName: Pool
   material: {fileID: 2100000, guid: b1c0fb406f5b28346be9636e69009e9e, type: 2}
+  terrainTexture: {fileID: 2800000, guid: b9d05442274f0f74194e83cb51301d84, type: 3}
   movementCost: 1
   defenseBonus: 0
   unitPassability: 0

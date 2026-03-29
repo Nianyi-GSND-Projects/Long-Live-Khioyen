@@ -113,10 +113,15 @@ namespace LongLiveKhioyen
                 {
                     Debug.Log($"[AI] {aiUnit.name} 移动到 {moveTargetPos} 以攻击 {nearestTarget.name}");
                     
+                    Battalion bat = aiUnit as Battalion;
+                    if (bat != null) bat.CurrentSoldierState = SoldierState.Move;
+                    
                     bool moveInterrupted = false;
                     yield return StartCoroutine(Battle.Instance.MoveUnit(aiUnit, path, wasInterrupted => {
                         moveInterrupted = wasInterrupted;
                     }));
+                    
+                    if (bat != null) bat.CurrentSoldierState = SoldierState.Idle;
                     
                     Battle.Instance.RefreshAllZOCAndVision(aiUnit);
                     if (moveInterrupted)
@@ -153,8 +158,13 @@ namespace LongLiveKhioyen
                 if (path != null && path.Count > 0)
                 {
                     Debug.Log($"[AI] {aiUnit.name} 巡逻到 {patrolTarget}");
+                    Battalion bat = aiUnit as Battalion;
+                    if (bat != null) bat.CurrentSoldierState = SoldierState.Move;
+                    
                     yield return StartCoroutine(Battle.Instance.MoveUnit(aiUnit, path, wasInterrupted => {
                         if (wasInterrupted) Debug.Log($"[AI] {aiUnit.name} 的巡逻移动被打断！");
+                        
+                        if (bat != null) bat.CurrentSoldierState = SoldierState.Idle;
                     }));
                 }
                 Battle.Instance.RefreshAllZOCAndVision(aiUnit);
