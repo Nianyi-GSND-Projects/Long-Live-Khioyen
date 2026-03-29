@@ -102,7 +102,7 @@ MonoBehaviour:
   - {x: 3, y: 5}
   - {x: 4, y: 3}
   randomEnemyRules:
-  - unitDefinition: {fileID: 11400000, guid: 08c73965d03a67d4bb07b2b648876206, type: 2}
+  - unitDefinition: {fileID: 11400000, guid: aef7afa63c1545f49ae31540810b2b17, type: 2}
     faction: 2
     minCount: 2
     maxCount: 5

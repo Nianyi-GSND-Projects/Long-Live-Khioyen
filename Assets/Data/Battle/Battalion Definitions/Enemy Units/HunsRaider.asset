@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e596d401b870664ba6ac781f2aae3ba, type: 3}
+  m_Name: HunsRaider
+  m_EditorClassIdentifier: 
+  id: 0
+  idStr: 
+  unitName: HunsRaider
+  unitType: 0
+  icon: {fileID: 21300000, guid: af65e05533646ab4d955c1fdc975565e, type: 3}
+  unitSelectedSoundEffect: {fileID: 0}
+  unitModelPrefab: {fileID: 2229188164278447998, guid: 0847240ced894e142845668b072fbae9, type: 3}
+  useBillboard: 1
+  defaultPower: 100
+  defaultDefense: 50
+  defaultRepairPower: 0
+  defaultZocPower: 1
+  defaultVisibility: 1
+  defaultVisionRange: 2
+  passability: 0
+  movable: 1
+  actionable: 1
+  beAttacked: 1
+  beMoved: 1
+  defaultAttack: {fileID: 11400000, guid: 467bdbe055c60ba4b95fc4d5c5d93919, type: 2}
+  defaultRetreat: {fileID: 0}
+  defaultInteract: {fileID: 0}
+  defaultConstructAction: {fileID: 0}
+  defaultRepairAction: {fileID: 0}
+  unitUniqueActions: []
+  lootRules: []
+  tags: []
+  isTrainable: 0
+  requiredItems: []
+  requiredBuildingTags: []
+  defaultDiscipline: 100
+  defaultFlexibility: 30
+  defaultStrategy: 50
+  defaultMaxSolider: 150
+  defaultMaxMorale: 150
+  soldiersPerModel: 50
+  modelSpacing: 0.4
+  spriteMaterial: {fileID: 0}
+  battalionAttackType: 0
+  attackRange: 1
