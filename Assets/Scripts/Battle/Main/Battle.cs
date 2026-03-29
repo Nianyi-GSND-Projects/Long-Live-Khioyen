@@ -79,6 +79,7 @@ namespace LongLiveKhioyen
 				BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnBattleStart);
 			}
 			
+			ChangeStage(Stage.Preparation);
 		}
 		
 		#endregion
@@ -311,7 +312,6 @@ namespace LongLiveKhioyen
 			
 			CurrentActionStage = PlayerActionStage.None;
 			_previousActionStage = PlayerActionStage.None;
-			ChangeStage(Stage.Preparation);
 		}
 
 		private void PlaceNonPlayerBattalionUnit()

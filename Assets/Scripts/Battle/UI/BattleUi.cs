@@ -27,6 +27,7 @@ namespace LongLiveKhioyen
             battle.OnAmbiguousSelectionStarted += HandleAmbiguousSelectionStart;
             battle.OnAmbiguousSelectionEnded += HandleAmbiguousSelectionEnd;
             battle.OnStageChanged += HandleStageChanged;
+            battle.BattleStart += HandleBattleStart;
         }
         
         private void OnDestroy()
@@ -43,6 +44,7 @@ namespace LongLiveKhioyen
                 battle.OnAmbiguousSelectionStarted -= HandleAmbiguousSelectionStart;
                 battle.OnAmbiguousSelectionEnded -= HandleAmbiguousSelectionEnd;
                 battle.OnStageChanged -= HandleStageChanged;
+                battle.BattleStart -= HandleBattleStart;
             }
         }
         #endregion
@@ -52,7 +54,18 @@ namespace LongLiveKhioyen
         {
             Debug.Log("BattleUI 收到信号：玩家回合开始，显示UI。");
         }
-
+        
+        private void HandleBattleStart()
+        {
+            Debug.Log("TitleUI Set");
+            Debug.Log("BattleUI 收到信号：战斗开始，显示UI。");
+            if (battleTitlePanel != null && Battle.Instance.levelPreset != null)
+            {
+                
+                battleTitlePanel.ShowTitle(Battle.Instance.levelPreset.levelNameZH, Battle.Instance.levelPreset.levelNameEN);
+            }
+        }
+        
         private void HandlePlayerTurnEnd()
         {
             Debug.Log("BattleUI 收到信号：玩家回合结束，关闭UI。");
@@ -269,7 +282,7 @@ namespace LongLiveKhioyen
         #endregion
         
         public ConstructionUI constructionUI;
-        
+        public BattleTitlePanel battleTitlePanel;
         public ActionMenuUI actionMenu; 
         
         #region StageManagement

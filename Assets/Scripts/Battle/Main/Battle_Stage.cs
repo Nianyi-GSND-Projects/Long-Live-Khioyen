@@ -9,7 +9,7 @@ namespace LongLiveKhioyen
         #region BattleStage
         public Stage CurrentStage{ get; set; }
         public event System.Action OnStageChanged;
-		
+        public event System.Action BattleStart;
         public bool IsInArrangementStage { get; set; } = false;
         public bool IsInBattleStage { get; set; }= false;
         public bool IsReserveTeamSelected { get; set; }= false;
@@ -47,6 +47,7 @@ namespace LongLiveKhioyen
                     Debug.Log("OnEnter: 准备阶段");
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
+                    BattleStart?.Invoke();
                     HighlightTilesRing(availableArrangementPositions, deployRingColor);
                     Battle.Instance.RefreshFogOfWar(true); 
                     break;
