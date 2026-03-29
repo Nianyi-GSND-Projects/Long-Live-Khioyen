@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad79a11c01fba04881f56edad84aba4, type: 3}
   m_Name: WaterPool 0
   m_EditorClassIdentifier: 
-  battlePresets: []
+  battlePresets:
+  - preset: {fileID: 11400000, guid: a7cf7c8164296c942b010d4405ca06ca, type: 2}
+    weight: 1

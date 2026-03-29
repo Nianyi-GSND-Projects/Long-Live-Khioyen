@@ -1,0 +1,323 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcaaced6fc179014fb1e650ac3310a94, type: 3}
+  m_Name: ForestNWater0_0
+  m_EditorClassIdentifier: 
+  mapData: {fileID: 11400000, guid: 8fac7bdf687a24a44a7b7099a27998d0, type: 2}
+  levelNameEN: Silver Thorns
+  levelNameZH: "\u68A8\u82B1\u5F00"
+  battleGoal: 0
+  playerDeployPoints:
+  - {x: 8, y: 2}
+  - {x: 7, y: 2}
+  - {x: 6, y: 1}
+  - {x: 7, y: 1}
+  - {x: 8, y: 1}
+  - {x: 7, y: 3}
+  extractionPoints:
+  - {x: 1, y: 9}
+  - {x: 2, y: 9}
+  - {x: 2, y: 8}
+  - {x: 3, y: 9}
+  - {x: 3, y: 8}
+  levelEvents: []
+  nonPlayerUnitsSpawnZones:
+  - {x: 5, y: 8}
+  - {x: 5, y: 7}
+  - {x: 6, y: 8}
+  - {x: 7, y: 9}
+  - {x: 7, y: 8}
+  - {x: 8, y: 8}
+  - {x: 6, y: 9}
+  - {x: 5, y: 9}
+  - {x: 9, y: 6}
+  - {x: 8, y: 5}
+  - {x: 9, y: 5}
+  randomEnemyRules:
+  - unitDefinition: {fileID: 11400000, guid: 0291fdd98a03d1a47b7e718b4f5e3f63, type: 2}
+    faction: 2
+    minCount: 1
+    maxCount: 1
+    useRandomCommander: 0
+    commanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+  - unitDefinition: {fileID: 11400000, guid: 57bf222fb1fa2eb4fbdbf302951fc656, type: 2}
+    faction: 2
+    minCount: 1
+    maxCount: 2
+    useRandomCommander: 0
+    commanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+  preplacedUnits:
+  - instanceId: 1
+    unitName: 
+    position: {x: 3, y: 3}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 2
+    unitName: 
+    position: {x: 4, y: 4}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 3
+    unitName: 
+    position: {x: 4, y: 3}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 4
+    unitName: 
+    position: {x: 5, y: 4}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 5
+    unitName: 
+    position: {x: 4, y: 5}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 6
+    unitName: 
+    position: {x: 5, y: 5}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 7
+    unitName: 
+    position: {x: 6, y: 4}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 8
+    unitName: 
+    position: {x: 5, y: 3}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 9
+    unitName: 
+    position: {x: 3, y: 5}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 10
+    unitName: 
+    position: {x: 4, y: 6}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 11
+    unitName: 
+    position: {x: 5, y: 6}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 12
+    unitName: 
+    position: {x: 7, y: 6}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 13
+    unitName: 
+    position: {x: 6, y: 7}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 14
+    unitName: 
+    position: {x: 7, y: 7}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 15
+    unitName: 
+    position: {x: 8, y: 6}
+    faction: 3
+    isFacility: 1
+    isVisible: 1
+    battalionDef: {fileID: 0}
+    facilityDef: {fileID: 11400000, guid: 7a0a98b8f2aec1d4dbfe81731aafc532, type: 2}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  usePresetPlayerArmy: 0
+  playerReserveList: []

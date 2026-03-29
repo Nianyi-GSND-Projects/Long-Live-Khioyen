@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: NormalPool 0
   m_EditorClassIdentifier: 
   battlePresets:
-  - preset: {fileID: 11400000, guid: de70873aa13f71c42806d7fa08bab8c4, type: 2}
+  - preset: {fileID: 11400000, guid: fbb9a8d45dce02949a9e45604aa22ce7, type: 2}
     weight: 1

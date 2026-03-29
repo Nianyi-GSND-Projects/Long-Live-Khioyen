@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: TestRandomBattle
   m_EditorClassIdentifier: 
   mapData: {fileID: 11400000, guid: fd587be859713a341ab1c03fea982c77, type: 2}
-  levelName: New Battle
+  levelNameEN: New Battle
+  levelNameZH: "\u65E0\u540D\u5730"
   battleGoal: 0
   playerDeployPoints:
   - {x: 14, y: 3}
@@ -149,7 +150,7 @@ MonoBehaviour:
     faction: 0
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: b8c4ef03c3db6974886add6e36313836, type: 2}
+    battalionDef: {fileID: 11400000, guid: 08c73965d03a67d4bb07b2b648876206, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1

@@ -37,8 +37,8 @@ namespace LongLiveKhioyen
         public MapDataSO mapData; // 引用之前的地形数据
 
         [Header("Level Config")]
-        public string levelName = "New Battle";
-        
+        public string levelNameEN = "New Battle";
+        public string levelNameZH = "无名地";
         [Tooltip("本场战斗的胜利条件")]
         public BattleGoal battleGoal = BattleGoal.Annihilate;
         

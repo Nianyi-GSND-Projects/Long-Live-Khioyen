@@ -15,7 +15,7 @@ namespace LongLiveKhioyen
 		private CommanderRegistry commanderRegistry;
 		public RandomBattleRuleSO randomBattleRule;
 
-		public string battleName => levelPreset.levelName;
+		public string battleName => levelPreset.levelNameEN;
 		public BattleGoal battlegoal =>levelPreset.battleGoal;
 		
 		AudioSource audioSource;
