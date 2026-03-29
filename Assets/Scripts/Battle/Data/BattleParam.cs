@@ -59,6 +59,9 @@ namespace LongLiveKhioyen
         
         [Tooltip("摄像机在施法者与目标之间切换镜头的过渡时间")]
         public float cameraTransitionDuration = 0.15f;
+        
+        [Tooltip("AI敌人模拟思考时间")]
+        public float enemyThinkingDelay = 0.5f;
 
         [Header("Default Parameter")]
         public int defaultMaxExp = 100;

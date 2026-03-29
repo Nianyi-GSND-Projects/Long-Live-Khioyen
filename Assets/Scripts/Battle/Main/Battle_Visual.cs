@@ -459,6 +459,13 @@ namespace LongLiveKhioyen
             return true;
         }
         
+        public bool IsTileVisibleToPlayer(Vector2Int pos)
+        {
+            if (fogMap == null) return true;
+            if (!IsValidMapPosition(pos)) return false;
+            return fogMap[pos.x, pos.y] == FogState.Visible;
+        }
+        
         public void RefreshAllUnitsVisuals()
         {
             foreach (var factionUnits in factionActiveUnits.Values)

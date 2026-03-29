@@ -196,7 +196,7 @@ namespace LongLiveKhioyen
         
         #region Visual state
         
-        protected UnitVisualController visualController;
+        public UnitVisualController visualController;
         
         protected GameObject model;
 
@@ -306,39 +306,52 @@ namespace LongLiveKhioyen
             */
         }
 
-        public IEnumerator OnEnterNewTileRoutine(Vector2Int newPos, System.Action<bool> onResult)
+        public IEnumerator OnEnterNewTileRoutine(Vector2Int newPos, System.Action<bool> onResult, IEnumerator visualMoveRoutine = null)
         {
             if (Battle.Instance == null) { onResult?.Invoke(false); yield break; }
             if (Battle.Instance.CurrentStage == Stage.Arrangement) { onResult?.Invoke(false); yield break; }
-            
-            Vector2Int oldPos = this.position;
-            this.position = newPos;
-            bool shouldStop = false;
     
-            yield return Battle.Instance.CheckTileEffectOnEnterRoutine(this, newPos, (res) => {
-                shouldStop = res;
-            });
-            
-            if (this is Battalion bat && !shouldStop)
-            {
-                bat.CurrentSoldierState = SoldierState.Move;
-            }
-            
+            Vector2Int oldPos = this.position;
+    
+            // 1. 【最优先】更新逻辑坐标
+            this.position = newPos; 
+            bool shouldStop = false;
+
+            // 2. 【核心修复】在视觉移动和触发陷阱前，必须先刷新视野！
+            // 这样不仅解决了视野丢失，还能让随后的 visualMoveRoutine 准确获取最新的可见性
             if (faction == Faction.Player || faction == Faction.Friend)
                 Battle.Instance.RefreshFogOfWar();
             else
                 Battle.Instance.RefreshAllUnitsVisuals();
-            
+
+            // 3. 执行注入的视觉位移协程 (Lerp 平滑移动 或 黑雾中瞬移)
+            if (visualMoveRoutine != null)
+            {
+                yield return Battle.Instance.StartCoroutine(visualMoveRoutine);
+            }
+
+            // 4. 视觉移动到位后，再触发陷阱与地块效果
+            yield return Battle.Instance.CheckTileEffectOnEnterRoutine(this, newPos, (res) => {
+                shouldStop = res;
+            });
+    
+            // 5. 收尾工作
+            if (this is Battalion bat && !shouldStop)
+            {
+                bat.CurrentSoldierState = SoldierState.Move;
+            }
+    
             Battle.Instance.CheckDeath(this);
             if (currentHealth <= 0) shouldStop = true;
 
             OnUnitStateChanged();
-    
+
             Battle.Instance.RefreshZOCVisualsAroundPoint(oldPos);
             Battle.Instance.RefreshZOCVisualsAroundPoint(newPos);
 
             onResult?.Invoke(shouldStop);
         }
+        
         public abstract void ApplyBuff(BuffDescriptor buffDescriptor);
 
         public void ClearAllBuff()

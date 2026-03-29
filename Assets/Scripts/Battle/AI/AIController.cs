@@ -26,13 +26,13 @@ namespace LongLiveKhioyen
                 }
                 
                 if (unit == null) continue;
-                if (unit is not Battalion aiBattalion) continue;//TODO AIFacility行动
+                if (unit is not Battalion aiBattalion) continue;
                 if (aiBattalion.actionDone) continue;
-
-                Debug.Log($"[AI] Processing Unit: {unit.name} (ID:{unit.InstanceId}) at {unit.position}");
+                
+                float thinkDelay = Battle.Instance.IsUnitVisibleToPlayer(unit) ? BattleParam.Instance.enemyThinkingDelay : 0f;
                 List<Unit> targetsInVision = Battle.Instance.FindVisibleOpponentsInVision(unit);
                 // 模拟思考时间
-                yield return new WaitForSeconds(0.5f);
+                if (thinkDelay > 0) yield return new WaitForSeconds(thinkDelay);
 
                 if (targetsInVision.Count > 0)
                 {
@@ -46,8 +46,8 @@ namespace LongLiveKhioyen
                     Debug.Log($"[AI] {unit.name} 未发现目标，进入巡逻模式。");
                     yield return StartCoroutine(PatrolRoutine(unit));
                 }
-                yield return new WaitForSeconds(0.5f);
-                // 再次刷新，确保状态同步
+                if (thinkDelay > 0) yield return new WaitForSeconds(thinkDelay);
+                
                 if (Battle.Instance != null) Battle.Instance.ResolveDirtyUnits();
                 
                 if (Battle.Instance.IsEventBlockingAI)

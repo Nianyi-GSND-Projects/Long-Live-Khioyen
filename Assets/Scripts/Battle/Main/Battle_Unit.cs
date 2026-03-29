@@ -372,48 +372,71 @@ namespace LongLiveKhioyen
 
         #region Operation
         
-        public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path,System.Action<bool> onComplete)
+        public IEnumerator MoveUnit(Unit unit, List<Vector2Int> path, System.Action<bool> onComplete)
+{
+    if (unit == null || path == null || path.Count == 0)
+    {
+        onComplete?.Invoke(false);
+        yield break;
+    }
+    
+    unit.hasMovedThisTurn = true;
+    bool interrupted = false;
+    
+    foreach (var pos in path)
+    {
+        // 记录迈出脚步前是否可见
+        bool wasVisible = IsUnitVisibleToPlayer(unit);
+        
+        // 数据层的脱离与放置 (交由 Battle 统管)
+        RemoveUnitFromMap(unit);
+        PlaceUnitOnMap(unit, pos);
+
+        // ==========================================
+        // 定义这段路径的视觉表现逻辑 (打包但不立即执行)
+        // ==========================================
+        IEnumerator VisualMove()
         {
-            if (unit == null || path == null || path.Count == 0)
-            {
-                onComplete?.Invoke(false);
-                yield break;
-            }
+            // 此时 OnEnterNewTileRoutine 已经更新了坐标并刷新了视野，可以安全获取最新可见性
+            bool isVisibleNow = IsUnitVisibleToPlayer(unit);
+            Vector3 startPos = unit.transform.localPosition;
+            Vector3 endPos = MapToLocal(pos);
             
-            unit.hasMovedThisTurn = true;
-            bool interrupted = false;
-            // 2. 逐步移动
-            foreach (var pos in path)
+            if (!wasVisible && !isVisibleNow)
             {
-                RemoveUnitFromMap(unit);
-				
-                yield return StartCoroutine(unit.OnEnterNewTileRoutine(pos, (res) => {
-                    interrupted = res;
-                }));
-				
-                PlaceUnitOnMap(unit, pos);
-				
-                Vector3 startPos = unit.transform.localPosition;
-                Vector3 endPos = MapToLocal(pos);
-                float t = 0;
-                while (t < 1f)
+                unit.transform.localPosition = endPos; // 黑雾中瞬移
+            }
+            else
+            {
+                float moveT = 0;
+                while (moveT < 1f)
                 {
-                    t += Time.deltaTime * 5f; // 移动速度
-                    unit.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+                    moveT += Time.deltaTime * 5f; 
+                    unit.transform.localPosition = Vector3.Lerp(startPos, endPos, moveT);
                     yield return null;
                 }
                 unit.transform.localPosition = endPos;
-                if (interrupted)
-                {
-                    Debug.Log($"{unit.name} 的移动被陷阱打断！");
-                    
-                    break;
-                }
             }
-            CheckDeath(unit);
-            unit.OnUnitStateChanged();
-            onComplete?.Invoke(interrupted);
         }
+        
+        // ==========================================
+        // 将控制权完美交还给单位自身的生命周期
+        // ==========================================
+        bool shouldStop = false;
+        yield return StartCoroutine(unit.OnEnterNewTileRoutine(pos, (res) => {
+            shouldStop = res;
+        }, VisualMove())); // <--- 注入视觉逻辑
+
+        if (shouldStop)
+        {
+            Debug.Log($"{unit.name} 的移动被陷阱拦截或致死！");
+            interrupted = true;
+            break;
+        }
+    }
+    
+    onComplete?.Invoke(interrupted);
+}
         
         
 

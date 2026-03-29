@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Trap
   m_EditorClassIdentifier: 
   id: 20
+  idStr: 
   unitName: Trap
   unitType: 1
   icon: {fileID: 21300000, guid: 291da373b1b19564d862d403bc703915, type: 3}
   unitSelectedSoundEffect: {fileID: 0}
-  unitModelPrefab: {fileID: 366021807918811276, guid: 6aef77c3b36ae7146a7b6ee0ab342725, type: 3}
-  useBillboard: 0
+  unitModelPrefab: {fileID: 366021807918811276, guid: 3a2c3ca52c0626d40a748ac94b73b488, type: 3}
+  useBillboard: 1
   defaultPower: 0
   defaultDefense: 0
   defaultRepairPower: 10
@@ -52,4 +53,8 @@ MonoBehaviour:
   consumeOnTrigger: 1
   triggerOnEnemies: 1
   triggerOnAllies: 0
-  PreventMovement: 1
+  preventMovement: 1
+  armedSprite: {fileID: 21300000, guid: f3d2cbc6d1fda0148ae48ef0bfac2094, type: 3}
+  triggeredSprite: {fileID: 21300000, guid: 4f365f84dd5eb264a9138d3867090bfd, type: 3}
+  fadeOutDuration: 0.5
+  triggerVfx: {fileID: 0}

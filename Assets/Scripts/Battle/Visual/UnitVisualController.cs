@@ -117,7 +117,7 @@ namespace LongLiveKhioyen
             _renderersCached = true;
         }
         
-        private void SetOverallVisibility(bool visible, float alpha)
+        public void SetOverallVisibility(bool visible, float alpha)
         {
             var renderers = GetComponentsInChildren<Renderer>(true);
             

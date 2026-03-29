@@ -513,6 +513,7 @@ namespace LongLiveKhioyen
                 onResult?.Invoke(false);
                 yield break;
             }
+            bool showVisuals = IsUnitVisibleToPlayer(unit);
             
             float t = BattleParam.Instance.actionAnimationDuration;
             float focusDist = BattleParam.Instance.focusCameraDistance;
@@ -521,36 +522,19 @@ namespace LongLiveKhioyen
 
             if (tile.Facility != null && tile.Facility.Definition is TrapFacilityDefinition trapDef)
             {
-                // --- 表现开始 ---
-                // 聚焦踩到陷阱的单位
-                if (camController != null)
-                    camController.FocusOnPosition(MapToWorld(pos), focusDist, camTime);
+                // --- 表现与逻辑层：全部交给陷阱自己处理 ---
+                yield return StartCoroutine(trapDef.TriggerCoroutine(unit, tile.Facility, showVisuals));
 
-                // 单位切换为受击状态
-                Battalion bat = unit as Battalion;
-                if (bat != null) bat.CurrentSoldierState = SoldierState.Hit;
-
-                // 播放陷阱特效
-                if (trapDef.triggerVfx != null)
-                    Instantiate(trapDef.triggerVfx, MapToWorld(pos), Quaternion.identity);
-
-                // 执行陷阱具体的逻辑（如扣血）
-                yield return StartCoroutine(trapDef.TriggerCoroutine(unit, tile.Facility));
-
-                // 等待视觉停留
-                yield return new WaitForSeconds(t);
-
-                // --- 表现结束 ---
-                if (unit.currentHealth <= 0 || trapDef.PreventMovement)
+                // --- 结算结果 ---
+                if (unit.currentHealth <= 0 || trapDef.preventMovement)
                     preventMovement = true;
 
-                //如果还没死且还要继续走，恢复 Move 状态；否则恢复 Idle
-                if (bat != null)
+                // --- 恢复状态 ---
+                if (showVisuals && unit is Battalion bat)
                 {
                     bat.CurrentSoldierState = (unit.currentHealth > 0 && !preventMovement) 
                         ? SoldierState.Move : SoldierState.Idle;
                 }
-                
             }
 
             if (tile.Effects.Count > 0)
@@ -562,7 +546,6 @@ namespace LongLiveKhioyen
                     // 这里暂按同步处理，但保留位置以待扩展
                     effect.definition.OnEnter(unit); 
                 }
-        
                 if (unit.currentHealth <= 0) preventMovement = true;
             }
 

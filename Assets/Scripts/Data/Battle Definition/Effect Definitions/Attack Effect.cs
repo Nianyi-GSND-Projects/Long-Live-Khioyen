@@ -86,6 +86,14 @@ namespace LongLiveKhioyen
             float t = BattleParam.Instance != null ? BattleParam.Instance.actionAnimationDuration : 0.5f;
             float focusDist = BattleParam.Instance != null ? BattleParam.Instance.focusCameraDistance : 6f;
             float camTransitionTime = BattleParam.Instance != null ? BattleParam.Instance.cameraTransitionDuration : 0.15f;
+            bool showVisuals = false;
+            
+            if (Battle.Instance != null)
+            {
+                bool userVis = ctx.User != null && Battle.Instance.IsUnitVisibleToPlayer(ctx.User);
+                bool targetVis = target != null && Battle.Instance.IsUnitVisibleToPlayer(target);
+                showVisuals = userVis || targetVis;
+            }
             
             BattleCameraController camController = null;
             if (Battle.Instance.inputController != null)
@@ -97,26 +105,32 @@ namespace LongLiveKhioyen
             Battalion defenderBat = target as Battalion;
             Vector3 attackerWorldPos = Battle.Instance.MapToWorld(ctx.User.position);
             Vector3 targetWorldPos = Battle.Instance.MapToWorld(target.position);
-            
-            if (camController != null) 
+
+            if (showVisuals)
             {
-                camController.FocusOnPosition(attackerWorldPos, focusDist, camTransitionTime);
+                if (camController != null) 
+                {
+                    camController.FocusOnPosition(attackerWorldPos, focusDist, camTransitionTime);
+                }
+                yield return new WaitForSeconds(t);
             }
-            yield return new WaitForSeconds(t);
+            
             // ==========================================
             // 动画阶段 1：攻击与受击
             // ==========================================
-            if (camController != null) 
+            if (showVisuals)
             {
-                camController.FocusOnPosition(targetWorldPos, focusDist, camTransitionTime);
+                if (camController != null) 
+                {
+                    camController.FocusOnPosition(targetWorldPos, focusDist, camTransitionTime);
+                }
+                if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Attack;
+                if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Hit;
+            
+                if(hitEffect != null) Instantiate(hitEffect, target.transform.position, Quaternion.identity);
+            
+                yield return new WaitForSeconds(t);
             }
-            if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Attack;
-            if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Hit;
-            
-            if(hitEffect != null) Instantiate(hitEffect, target.transform.position, Quaternion.identity);
-            
-            yield return new WaitForSeconds(t);
-            
             // 等待时间结束，正式结算伤害
             ApplyDamage(ctx, ctx.User, target, damageToDefender);
             
@@ -137,18 +151,21 @@ namespace LongLiveKhioyen
 
             if (willCounter)
             {
-                if (camController != null) 
+                if (showVisuals)
                 {
-                    camController.FocusOnPosition(attackerWorldPos, focusDist, camTransitionTime);
-                }
-                // 角色互换，防守方攻击，进攻方受击
-                if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Attack;
-                if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Hit;
+                    if (camController != null) 
+                    {
+                        camController.FocusOnPosition(attackerWorldPos, focusDist, camTransitionTime);
+                    }
+                    // 角色互换，防守方攻击，进攻方受击
+                    if (defenderBat != null) defenderBat.CurrentSoldierState = SoldierState.Attack;
+                    if (attackerBat != null) attackerBat.CurrentSoldierState = SoldierState.Hit;
                 
-                if(hitEffect != null) Instantiate(hitEffect, ctx.User.transform.position, Quaternion.identity);
+                    if(hitEffect != null) Instantiate(hitEffect, ctx.User.transform.position, Quaternion.identity);
 
-                yield return new WaitForSeconds(t);
-
+                    yield return new WaitForSeconds(t);
+                }
+                
                 ApplyDamage(ctx, target, ctx.User, damageToAttacker, isCounter: true);
             }
             
