@@ -346,7 +346,7 @@ namespace LongLiveKhioyen
 			Debug.Log("Placing random enemies based on rules...");
 			if (levelPreset.nonPlayerUnitsSpawnZones == null || levelPreset.nonPlayerUnitsSpawnZones.Count == 0)
 			{
-				Debug.LogError(
+				Debug.Log(
 					"Random enemy generation failed: Enemy Spawn Zones are not defined in the BattlePresetSO.");
 				return;
 			}

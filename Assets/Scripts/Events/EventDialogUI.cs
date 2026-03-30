@@ -19,7 +19,7 @@ namespace LongLiveKhioyen
         [Header("Blocking")]
         [SerializeField] private GameObject inputBlocker;
         
-        private BattleEventDefinition _currentBattleEventDef;
+        private BattleEventContext _currentContext;
 
         // 新增：对话队列
         private Queue<DialogData> _dialogQueue = new Queue<DialogData>();
@@ -45,12 +45,9 @@ namespace LongLiveKhioyen
         }
 
         // 新增：启动对话链
-        public void StartDialogChain(DialogChainAction action)
+        public void StartDialogChain(DialogChainAction action, BattleEventContext ctx = null)
         {
-            if (BattleEventManager.Instance != null)
-            {
-                _currentBattleEventDef = BattleEventManager.Instance.CurrentEvent;
-            }
+            _currentContext = ctx;
             
             _dialogQueue.Clear();
             
@@ -75,8 +72,7 @@ namespace LongLiveKhioyen
             
             if (dialogPanel != null) dialogPanel.SetActive(true);
             
-            // 使用辅助属性获取最终显示内容
-            if (nameText != null) nameText.text = currentDialog.GetDisplayName(_currentBattleEventDef);
+            if (nameText != null) nameText.text = currentDialog.GetDisplayName(_currentContext);
             if (contentText != null) contentText.text = currentDialog.dialogText;
             
             if (portraitImage != null)
@@ -105,7 +101,9 @@ namespace LongLiveKhioyen
         {
             if (dialogPanel != null) dialogPanel.SetActive(false);
             if (inputBlocker != null) inputBlocker.SetActive(false);
-			      onHidden?.Invoke();
+            _currentContext = null;
+            onHidden?.Invoke();
+                  
 				}
     }
 }

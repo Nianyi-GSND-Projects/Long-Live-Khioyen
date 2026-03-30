@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Name: GetUnitPositionAction
   m_EditorClassIdentifier: 
   description: 
-  isBlocking: 0
+  isBlocking: 1
   useBlackboardID: 0
   inputIDKey: UnitID
   targetUnitInstanceId: 4
@@ -101,6 +101,7 @@ MonoBehaviour:
   eventName: Tutorial1
   triggerType: 0
   triggerOnce: 1
+  blockAI: 1
   conditionGroups: []
   actions:
   - {fileID: -306587620414603653}

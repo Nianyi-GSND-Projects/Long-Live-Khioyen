@@ -14,39 +14,52 @@ namespace LongLiveKhioyen
         public Vector2Int targetCoordinates;
 
         [Header("Camera Settings")]
-        public float duration = 1.0f; 
+        public float duration = 1.0f;
 
-        // 兼容旧接口
+        // ==========================================
+        // 1. 无参版本 (兼容旧接口，直接启动协程)
+        // ==========================================
         public override void Execute()
         {
-            // 如果是非阻塞调用，我们启动一个协程但不等待它
-            // 注意：ScriptableObject 不能直接 StartCoroutine，需要借助 Battle.Instance
             if (Battle.Instance != null)
             {
-                Battle.Instance.StartCoroutine(ExecuteCoroutine());
+                // 旧接口调用时不带 Context
+                Battle.Instance.StartCoroutine(ExecuteCoroutine(null));
             }
         }
 
-        // 核心逻辑移入协程
         public override IEnumerator ExecuteCoroutine()
+        {
+            yield return ExecuteCoroutine(null);
+        }
+
+        // ==========================================
+        // 2. 战斗专用版本 (带 Context 的核心逻辑)
+        // ==========================================
+        public override void Execute(BattleEventContext ctx)
+        {
+            if (Battle.Instance != null)
+            {
+                Battle.Instance.StartCoroutine(ExecuteCoroutine(ctx));
+            }
+        }
+
+        public override IEnumerator ExecuteCoroutine(BattleEventContext ctx)
         {
             if (Battle.Instance == null) yield break;
 
             Vector2Int finalCoords = targetCoordinates;
 
-            if (useBlackboard)
+            // 逻辑变更：直接从传入的 ctx 中读取黑板数据
+            if (useBlackboard && ctx != null)
             {
-                var evt = BattleEventManager.Instance?.CurrentEvent;
-                if (evt != null)
+                if (ctx.HasData(inputKey))
                 {
-                    if (evt.HasData(inputKey))
-                    {
-                        finalCoords = evt.GetData<Vector2Int>(inputKey);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"[FocusCamera] Key '{inputKey}' NOT found in blackboard. Using static coords.");
-                    }
+                    finalCoords = ctx.GetData<Vector2Int>(inputKey);
+                }
+                else
+                {
+                    Debug.LogWarning($"[FocusCamera] Key '{inputKey}' NOT found in Context. Using static coords: {targetCoordinates}");
                 }
             }
 
@@ -54,10 +67,10 @@ namespace LongLiveKhioyen
             {
                 Vector3 targetWorldPos = Battle.Instance.MapToWorld(finalCoords);
                 
-                // 执行移动
+                // 执行相机移动
                 Battle.Instance.FocusCamera(targetWorldPos, duration);
                 
-                // 如果是阻塞模式，等待移动完成
+                // 如果是阻塞模式或需要等待相机到达
                 if (duration > 0)
                 {
                     yield return new WaitForSeconds(duration);

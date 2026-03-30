@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Xiongnu King Rider
   m_EditorClassIdentifier: 
   id: 18
+  idStr: 
   unitName: "\u9A91\u624B"
   unitType: 0
   icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
-  unitModelPrefab: {fileID: 919132149155446097, guid: de28163cad98d3542ad2d42175ffcd42, type: 3}
+  unitModelPrefab: {fileID: 2229188164278447998, guid: d822240595e03e94585a658983f0e53d, type: 3}
   useBillboard: 0
   defaultPower: 50
   defaultDefense: 100
@@ -42,7 +43,7 @@ MonoBehaviour:
     dropChance: 100
   tags: []
   isTrainable: 1
-  requiredWeapon: {fileID: 0}
+  requiredItems: []
   requiredBuildingTags: []
   defaultDiscipline: 500
   defaultFlexibility: 30

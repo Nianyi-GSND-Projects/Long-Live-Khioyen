@@ -55,10 +55,6 @@ namespace LongLiveKhioyen
         [Header("Actions")]
         public List<GameEventAction> actions = new List<GameEventAction>();
         
-        [Header("Context")]
-        private Dictionary<string, object> _blackboard = new Dictionary<string, object>();
-        //用来保存本BattleEventDefinition内的每个GameEventAction执行相关的条件信息
-        
         public bool CheckConditions(BattleEventContext ctx)
         {
             // 如果没有配置任何条件，默认为真 (无条件触发)
@@ -73,60 +69,24 @@ namespace LongLiveKhioyen
             return false; // 所有组都不满足
         }
         
-        public IEnumerator TriggerCoroutine()
+        public IEnumerator TriggerCoroutine(BattleEventContext ctx)
         {
-            if (BattleEventManager.Instance != null)
-                BattleEventManager.Instance.StartEventExecution(this);
-            
             foreach (var action in actions)
             {
                 if (action == null) continue;
 
                 if (action.isBlocking)
                 {
-                    // 阻塞执行
-                    yield return  action.ExecuteCoroutine();
+                    yield return action.ExecuteCoroutine(ctx); 
                 }
                 else
                 {
-                    // 非阻塞执行 (直接跑，不等待)
                     if (BattleEventManager.Instance != null)
-                        BattleEventManager.Instance.StartCoroutine(action.ExecuteCoroutine());
+                        BattleEventManager.Instance.StartCoroutine(action.ExecuteCoroutine(ctx));
                     else
-                        action.Execute(); // Fallback
+                        action.Execute(ctx); 
                 }
             }
-            
-            if (BattleEventManager.Instance != null)
-                BattleEventManager.Instance.EndEventExecution();
         }
-
-        #region blackboard
-
-        public void SetData(string key, object value)
-        {
-            if (_blackboard.ContainsKey(key)) _blackboard[key] = value;
-            else _blackboard.Add(key, value);
-        }
-
-        public T GetData<T>(string key)
-        {
-            if (_blackboard.TryGetValue(key, out object val))
-            {
-                if (val is T tVal) return tVal;
-            }
-            return default(T);
-        }
-        
-        public bool HasData(string key) => _blackboard.ContainsKey(key);
-        
-        public void ClearBlackboard()
-        {
-            _blackboard.Clear();
-        }
-
-        #endregion
-        
-
     }
 }

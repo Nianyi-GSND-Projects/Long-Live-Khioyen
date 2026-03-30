@@ -41,7 +41,7 @@ namespace LongLiveKhioyen
         public string valueA_String;
         public int valueA_Int;
         public bool valueA_Bool;
-        public Vector2Int valueA_Vector; // [新增]
+        public Vector2Int valueA_Vector; 
 
         [Tooltip("Value if condition is FALSE")]
         public string valueB_String;
@@ -49,20 +49,35 @@ namespace LongLiveKhioyen
         public bool valueB_Bool;
         public Vector2Int valueB_Vector;
 
+        // ==========================================
+        // 1. 无参版本 (警告：缺少上下文无法读写 Flag)
+        // ==========================================
         public override void Execute()
         {
-            if (BattleEventManager.Instance == null || BattleEventManager.Instance.CurrentEvent == null) return;
-            var evt = BattleEventManager.Instance.CurrentEvent;
-
-            bool conditionMet = CheckCondition(evt);
-            
-            object finalValue = GetValue(conditionMet);
-            
-            evt.SetData(outputKey, finalValue);
-            Debug.Log($"[SetFlag] Condition: {conditionMode} -> {conditionMet}. Set '{outputKey}' = {finalValue}");
+            Debug.LogWarning($"[SetEventFlagAction] 执行失败：缺少 BattleEventContext。无法读取条件或设置 '{outputKey}'。");
         }
 
-        private bool CheckCondition(BattleEventDefinition evt)
+        // ==========================================
+        // 2. 战斗专用版本 (读写 Context 数据)
+        // ==========================================
+        public override void Execute(BattleEventContext ctx)
+        {
+            if (ctx == null)
+            {
+                Execute();
+                return;
+            }
+
+            // 将条件检查和数值写入全部切换到传入的 ctx 上
+            bool conditionMet = CheckCondition(ctx);
+            object finalValue = GetValue(conditionMet);
+            
+            ctx.SetData(outputKey, finalValue);
+            Debug.Log($"[SetFlag] Condition: {conditionMode} -> {conditionMet}. Set '{outputKey}' = {finalValue} in Context");
+        }
+
+        // [修改] 参数从 BattleEventDefinition 改为 BattleEventContext
+        private bool CheckCondition(BattleEventContext ctx)
         {
             switch (conditionMode)
             {
@@ -70,26 +85,26 @@ namespace LongLiveKhioyen
                     return true;
 
                 case FlagConditionMode.KeyExists:
-                    return evt.HasData(checkKey);
+                    return ctx.HasData(checkKey);
 
                 case FlagConditionMode.KeyNotExists:
-                    return !evt.HasData(checkKey);
+                    return !ctx.HasData(checkKey);
 
                 case FlagConditionMode.Equals:
-                    if (!evt.HasData(checkKey)) return false;
-                    return IsEqual(evt.GetData<object>(checkKey));
+                    if (!ctx.HasData(checkKey)) return false;
+                    return IsEqual(ctx.GetData<object>(checkKey));
 
                 case FlagConditionMode.NotEquals:
-                    if (!evt.HasData(checkKey)) return true; // Key 不存在视为不相等
-                    return !IsEqual(evt.GetData<object>(checkKey));
+                    if (!ctx.HasData(checkKey)) return true; // Key 不存在视为不相等
+                    return !IsEqual(ctx.GetData<object>(checkKey));
 
                 case FlagConditionMode.GreaterThan:
-                    if (!evt.HasData(checkKey)) return false;
-                    return GetInt(evt.GetData<object>(checkKey)) > checkValueInt;
+                    if (!ctx.HasData(checkKey)) return false;
+                    return GetInt(ctx.GetData<object>(checkKey)) > checkValueInt;
 
                 case FlagConditionMode.LessThan:
-                    if (!evt.HasData(checkKey)) return false;
-                    return GetInt(evt.GetData<object>(checkKey)) < checkValueInt;
+                    if (!ctx.HasData(checkKey)) return false;
+                    return GetInt(ctx.GetData<object>(checkKey)) < checkValueInt;
             }
             return false;
         }

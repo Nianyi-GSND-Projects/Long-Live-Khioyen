@@ -29,12 +29,15 @@ namespace LongLiveKhioyen
         // 辅助属性：获取最终显示的头像
         public Sprite DisplayPortrait => overridePortrait != null ? overridePortrait : (character != null ? character.portrait : null);
         
-        public string GetDisplayName(BattleEventDefinition evt)
+        public string GetDisplayName(BattleEventContext ctx = null)
         {
-            if (useBlackboardName && evt != null && evt.HasData(nameKey))
+            // 如果勾选了动态名字，且传来了有效的战斗上下文，且上下文中包含该 Key
+            if (useBlackboardName && ctx != null && ctx.HasData(nameKey))
             {
-                return evt.GetData<string>(nameKey);
+                return ctx.GetData<string>(nameKey);
             }
+            
+            // 否则退回到常规的名称获取逻辑
             return !string.IsNullOrEmpty(overrideName) ? overrideName : (character != null ? character.characterName : "Unknown");
         }
     }
@@ -51,7 +54,7 @@ namespace LongLiveKhioyen
         {
             if (EventDialogUI.Instance != null)
             {
-                EventDialogUI.Instance.StartDialogChain(this);
+                EventDialogUI.Instance.StartDialogChain(this, null);
             }
         }
         
@@ -59,9 +62,31 @@ namespace LongLiveKhioyen
         {
             if (EventDialogUI.Instance != null)
             {
-                EventDialogUI.Instance.StartDialogChain(this);
+                EventDialogUI.Instance.StartDialogChain(this, null);
         
                 // 等待直到 UI 关闭
+                while (EventDialogUI.Instance.IsActive)
+                {
+                    yield return null;
+                }
+            }
+        }
+        
+        public override void Execute(BattleEventContext ctx)
+        {
+            if (EventDialogUI.Instance != null)
+            {
+                // 将上下文传递给 UI，UI 内部渲染名字时就可以调用 dialogData.GetDisplayName(ctx)
+                EventDialogUI.Instance.StartDialogChain(this, ctx);
+            }
+        }
+
+        public override IEnumerator ExecuteCoroutine(BattleEventContext ctx)
+        {
+            if (EventDialogUI.Instance != null)
+            {
+                EventDialogUI.Instance.StartDialogChain(this, ctx);
+        
                 while (EventDialogUI.Instance.IsActive)
                 {
                     yield return null;
