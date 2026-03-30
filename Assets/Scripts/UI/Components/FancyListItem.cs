@@ -104,6 +104,7 @@ namespace LongLiveKhioyen
 		public void ApplyItem(ItemDefinition item)
 		{
 			ItemName = item.name;
+			IconSprite = item.icon;
 			SetCosts(item.costs);
 		}
 
