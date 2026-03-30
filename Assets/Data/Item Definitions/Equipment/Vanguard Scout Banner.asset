@@ -59,7 +59,7 @@ MonoBehaviour:
   description: A lightweight signal flag embedded with a bronze whistle, used by
     vanguard scouts to relay enemy intelligence. The troops of the flag-bearing general
     can grasp the terrain before the enemy and expand their field of vision.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: abced86cba45bf748b281acf71293fe6, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

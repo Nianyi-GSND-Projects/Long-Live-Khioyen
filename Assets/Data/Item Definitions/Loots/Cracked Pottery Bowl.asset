@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A broken Han pottery bowl with the inscription 'Jianyuan' on its base. It's a trace of the early Han garrison left here, now buried by the sand in ruins."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d0a7c71772804ee4a8bc0310a39735dc, type: 3}
   rarity: 0
   value: 8
   itemWeightFactor: 1

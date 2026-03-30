@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A silk script recording the market prices and black market trades along the route from Dunhuang to Jushi. Fencing it can bring a windfall. Between the lines, it is filled with the blood and tears of being plundered."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 8c42e922c83c99f489d6b65aaa4227de, type: 3}
   rarity: 2
   value: 120
   itemWeightFactor: 1

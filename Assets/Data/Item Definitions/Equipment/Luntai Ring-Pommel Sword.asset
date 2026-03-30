@@ -34,7 +34,7 @@ MonoBehaviour:
   description: A standard saber forged from Luntai iron. Its thick blade is ideal
     for infantry charges. Generals equipped with this sword on the battlefield can
     lead and boost morale.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 837bb8806dda6874688e9423ef2c8a39, type: 3}
   rarity: 1
   value: 30
   itemWeightFactor: 1

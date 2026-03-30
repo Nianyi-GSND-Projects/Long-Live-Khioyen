@@ -34,7 +34,7 @@ MonoBehaviour:
   description: A wooden token carved with relief orders. When receiving surrendered
     or rescued civilians with this token, more people are willing to join the Han
     army ranks, significantly expanding recruitment.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: aadabb441ceeee34889897d5041eaa6d, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

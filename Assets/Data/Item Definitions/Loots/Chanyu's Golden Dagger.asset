@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A status symbol personally bestowed by the Xiongnu Chanyu to a tribal chief. With a hilt cast of pure gold and inlaid with red agate, it will cause frantic bidding if it enters the black market."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: f8e58a2cabd56e949ab8ad00a468bf9a, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

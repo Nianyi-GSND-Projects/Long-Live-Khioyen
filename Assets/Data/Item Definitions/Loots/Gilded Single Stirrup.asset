@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "An ornate pendant from Xiongnu noble horse gear. The iron cavalry on the grasslands can gallop freely without stirrups; this gilded piece is purely to show off status and position."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 155d08e14b2eb5040a82f005d3bb23c7, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

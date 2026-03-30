@@ -60,7 +60,7 @@ MonoBehaviour:
     hairs of the Western Extreme Heavenly Horse. Troops of the banner-bearing general
     have extremely high prestige in joint operations, with more foreign vassals willing
     to follow in concert.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: a247ee5926c86ff4088d909918099b78, type: 3}
   rarity: 3
   value: 600
   itemWeightFactor: 1

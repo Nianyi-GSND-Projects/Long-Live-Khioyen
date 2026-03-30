@@ -52,7 +52,7 @@ MonoBehaviour:
   description: A bronze-edged war drum with matching command flags. The strict drumbeats
     can bring the whole army back to discipline in chaos, an indispensable token
     for colonels to control the troops.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: e6af415ef6f7cb1499200501718b3198, type: 3}
   rarity: 0
   value: 30
   itemWeightFactor: 1

@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "Animal horn used by Xiongnu elite archers to craft the main body of horn bows. A perfect combination of hardness and flexibility. Equipment reinforced with it often carries an aggressive nature."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 211b7b1ade27ff743bee9f1cca38961f, type: 3}
   rarity: 1
   value: 40
   itemWeightFactor: 1

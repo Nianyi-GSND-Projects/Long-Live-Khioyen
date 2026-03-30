@@ -77,7 +77,7 @@ MonoBehaviour:
   description: A siege atlas detailing the weaknesses of various Western Regions
     earthworks. When a general commands based on this, troops can find vulnerabilities
     much faster during sieges.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: e63aa6042f37dcd44b4e2e4ddf2dba00, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

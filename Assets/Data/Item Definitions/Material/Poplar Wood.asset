@@ -21,7 +21,7 @@ MonoBehaviour:
     remains unrotted for a thousand years after death. The Western Regions severely
     lack good timber, making this sturdy wood essential for crafting polearms and
     bow handles.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 99824f841f23bf443bbf5d5708ac8775, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1

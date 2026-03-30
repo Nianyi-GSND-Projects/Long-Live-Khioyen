@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A fragment of a top-secret edict suspected to have been lost by Emperor Wu of Han in the Western Regions, bearing the royal seal. Whether kept as a secret archive or sold, it will undoubtedly fetch city-tilting wealth."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 6b097cf0b5248f3499e34274e53392b5, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

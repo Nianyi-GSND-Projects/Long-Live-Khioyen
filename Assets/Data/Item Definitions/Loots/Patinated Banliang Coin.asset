@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A Banliang coin long abolished by the Han court. Occasionally dug out from sand fort ruins in the remote Western Regions, bought by smugglers as souvenirs."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 7aa3dce9bc98be64eadc745d5c3dfb10, type: 3}
   rarity: 0
   value: 15
   itemWeightFactor: 1

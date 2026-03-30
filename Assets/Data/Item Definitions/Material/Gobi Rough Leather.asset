@@ -19,7 +19,7 @@ MonoBehaviour:
   - Material
   description: Roughly processed hide of Gobi beasts. Almost all standard light armor
     and shields require this as a lining or covering during crafting.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9a103c8743854fb4283928f0fdaec854, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1

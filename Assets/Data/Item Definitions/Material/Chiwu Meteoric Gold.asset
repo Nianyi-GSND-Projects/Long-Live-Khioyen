@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "A rare extraterrestrial meteorite said to be discovered in the Western Regions during the reign of Emperor Wu of Han. Red as dark crystal, it becomes indestructible after smelting. It is the ultimate military resource deeply craved by the Han court armory, and a peerless medium used to forge great weapons of the state."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 775c22492eaa30c4fb3a2954a51b693d, type: 3}
   rarity: 4
   value: 2000
   itemWeightFactor: 1

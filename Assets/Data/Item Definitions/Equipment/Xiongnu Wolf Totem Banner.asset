@@ -34,7 +34,7 @@ MonoBehaviour:
   description: A wolf totem banner seized from a defeated Xiongnu Gudu Marquis, retaining
     the freezing pressure of the grasslands. Raising this banner on a stalemated
     battlefield can shake enemy morale and loosen their frontlines.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: a9c34f67146023d419a97c208541bb41, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "A black meteorite that crashed at the foot of the Tianshan Mountains, regarded by Xiongnu shamans as a divine object bestowed by Tengri. Extremely light in weight but far exceeding fine steel in hardness, it is the dream material for casting peerless divine weapons for famous generals."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 58024f540e6e1c54b9e2da3cb759e527, type: 3}
   rarity: 3
   value: 400
   itemWeightFactor: 1

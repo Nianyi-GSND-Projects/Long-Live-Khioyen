@@ -34,7 +34,7 @@ MonoBehaviour:
   description: An exquisite wooden-carved sand table map of the terrain around Juyan.
     Generals holding this can quickly read the land and gain an advantage when deploying
     formations.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 5aa88e1bef8b2524aaa303c951c81101, type: 3}
   rarity: 0
   value: 30
   itemWeightFactor: 1

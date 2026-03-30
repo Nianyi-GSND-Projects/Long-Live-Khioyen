@@ -52,7 +52,7 @@ MonoBehaviour:
   description: A detailed ledger recording the income and expenses of the Juyan farming
     colonies. Its holder can better grasp the dispatch of provisions, pacify the
     colony farmers, and reduce internal friction.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: c9801734391c5324ea0faaca79f1d600, type: 3}
   rarity: 0
   value: 30
   itemWeightFactor: 1

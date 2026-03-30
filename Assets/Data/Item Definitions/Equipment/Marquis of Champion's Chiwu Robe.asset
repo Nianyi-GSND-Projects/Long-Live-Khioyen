@@ -78,7 +78,7 @@ MonoBehaviour:
     to Huo Qubing a century ago, lined with soft scales made of the extremely rare
     Western Regions Chiwu meteoric gold. Advancing with this raised is like the return
     of the General of Agile Cavalry's might, causing enemies to retreat.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: a5a09c9432595a94fa59bc3d97d1c789, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

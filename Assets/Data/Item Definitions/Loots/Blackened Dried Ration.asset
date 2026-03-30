@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "Hard as a rock, whether it's camel or horse meat is unknown. Western Region merchants or low-level mercenaries might buy it for a few copper coins to fill their stomachs."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: dbfa3a54585f21d4e842ae4de37d63cf, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1

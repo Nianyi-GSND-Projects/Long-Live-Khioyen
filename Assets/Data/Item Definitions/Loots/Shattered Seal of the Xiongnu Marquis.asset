@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "An official signet recovered from a high-ranking Xiongnu commander fallen in battle. Turning it in to the authorities or selling it to intelligence brokers serves as undeniable proof of a glorious Han victory."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b04315ecebdf7db43af9893397b8230c, type: 3}
   rarity: 2
   value: 250
   itemWeightFactor: 1

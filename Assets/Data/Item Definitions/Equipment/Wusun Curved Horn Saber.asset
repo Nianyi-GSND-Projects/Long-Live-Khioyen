@@ -78,7 +78,7 @@ MonoBehaviour:
     Hui after lifting the siege of Jushi. The back of the blade is reinforced with
     Xiongnu curved horns, far sharper than standard Han sabers. A general leading
     the charge with this can inspire troops.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 88e732a1a74b1684aac313790584025b, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

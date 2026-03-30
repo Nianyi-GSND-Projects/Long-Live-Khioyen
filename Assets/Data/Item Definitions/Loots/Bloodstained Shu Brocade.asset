@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "Originally expensive silk bestowed by the Han Dynasty to Western Region states, torn and stained with dark red blood during plundering. Still valuable after washing."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 02365f1608b97bc4ab68808a88d69a35, type: 3}
   rarity: 1
   value: 35
   itemWeightFactor: 1

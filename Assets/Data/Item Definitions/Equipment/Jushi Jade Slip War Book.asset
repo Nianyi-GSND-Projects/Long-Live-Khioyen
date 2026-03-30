@@ -34,7 +34,7 @@ MonoBehaviour:
   description: An out-of-print tactical document with Juyan's surrounding terrain
     survey results carved onto Jushi chalcedony slips, possessing dual value in both
     intelligence integration and pacifying public sentiment.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 8520908c64e2a4741855d6cba1296b1e, type: 3}
   rarity: 3
   value: 600
   itemWeightFactor: 1

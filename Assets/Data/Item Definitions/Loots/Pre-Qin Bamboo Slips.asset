@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "Ancient remnants of pre-Qin philosophies that vanished into the Western Regions hundreds of years ago. For the grand masters of the Imperial Academy, these long-lost texts are worth a fortune in gold."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5979b6b0d126ad0408f3610007216db8, type: 3}
   rarity: 3
   value: 500
   itemWeightFactor: 1

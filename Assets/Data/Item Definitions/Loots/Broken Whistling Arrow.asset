@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A bone whistling arrow commonly used by Xiongnu cavalry. The shaft is broken and the whistle is cracked, but it can still be sold to artisans for bone recycling."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 917e53d356ce84b488bfe8f13f547550, type: 3}
   rarity: 0
   value: 5
   itemWeightFactor: 1

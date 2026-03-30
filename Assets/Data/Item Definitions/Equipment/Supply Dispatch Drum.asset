@@ -52,7 +52,7 @@ MonoBehaviour:
   description: A specialized bronze drum for commanding supply trains marching alongside
     combat units. The steady drumbeats ensure smooth logistics, reducing morale fluctuations
     and raising its maximum limit.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 6dc1ab3edbcd17242851a42c82b80842, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

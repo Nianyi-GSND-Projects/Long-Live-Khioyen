@@ -34,7 +34,7 @@ MonoBehaviour:
   description: 'A collection of bamboo slips recording the Western Regions farming
     colony experiences of predecessors like Zheng Ji, containing the essence of three
     tactics: garrison deployment, provision conservation, and scout arrangement.'
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 3b891d7214d9a2546b7eb413a3bd937f, type: 3}
   rarity: 3
   value: 600
   itemWeightFactor: 1

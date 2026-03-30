@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A wooden slip inscribed with a merchant caravan's name in Han clerical script and stamped with a pass seal. Its owner has perished in the desert; now it can only be sold as an antique."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 76ea2f223ed98bd49afbd1463f9070ee, type: 3}
   rarity: 1
   value: 45
   itemWeightFactor: 1

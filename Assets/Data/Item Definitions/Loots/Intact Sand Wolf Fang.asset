@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "The fang of a cunning sand wolf in the desert, slightly toxic from years of tearing rotten meat. Witch doctors or Xiongnu shamans are often willing to buy it at a high price."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 642006205310a5f40b375db06684427f, type: 3}
   rarity: 1
   value: 40
   itemWeightFactor: 1

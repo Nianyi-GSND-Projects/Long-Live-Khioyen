@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "Spices from the Western Regions that were more expensive than gold during the Han Dynasty. Although it's just a small pouch, it can fetch a shocking amount among the dignitaries in Chang'an."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: dd33d35a8a4244549ac28fd7c66a8928, type: 3}
   rarity: 2
   value: 180
   itemWeightFactor: 1

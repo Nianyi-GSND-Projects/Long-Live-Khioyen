@@ -77,7 +77,7 @@ MonoBehaviour:
   description: A gilded bronze leather whip used exclusively by Han colonels, functioning
     both as a deterrent and a ceremonial weapon. Troops led by its holder march with
     strict discipline, and stragglers are rare even in defeat.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: bd547d9dd649dac429463fce118f3135, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

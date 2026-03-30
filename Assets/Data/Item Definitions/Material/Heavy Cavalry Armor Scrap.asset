@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "High-hardness iron lamellar armor left behind after Xiongnu Gudu Marquis heavy cavalry were smashed. Extremely thick and heavy, it is the unmatched choice for crafting top-quality heavy armor."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: ff35ba5fea5a49e4a80d993351855ec4, type: 3}
   rarity: 2
   value: 200
   itemWeightFactor: 1

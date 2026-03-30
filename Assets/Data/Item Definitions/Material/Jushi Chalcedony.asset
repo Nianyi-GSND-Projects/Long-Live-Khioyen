@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "Warm and smooth chalcedony produced deep in the oases of the Jushi Kingdom. Used to craft high-level accessories that calm the mind and clear wisdom."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4bf160f3d8c1203418c5a03e7852c4ea, type: 3}
   rarity: 2
   value: 200
   itemWeightFactor: 1

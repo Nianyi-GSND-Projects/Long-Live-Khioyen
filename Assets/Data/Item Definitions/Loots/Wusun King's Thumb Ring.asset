@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A pure gold thumb ring passed down from the original royal court of the Wusun Kingdom, once the highest symbol of power representing the overlord of the Western Regions."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 99fb09a8be4508c4fb5c92b5af005313, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

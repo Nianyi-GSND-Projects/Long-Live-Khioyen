@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "Woven with a lost art known only to the weavers of Loulan, this exquisite textile features silk threads gilded in gold. It is a miraculous survivor of the fires of war, an artifact beyond compare."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 05b3bd98494b54f4296c3feab8208aac, type: 3}
   rarity: 3
   value: 700
   itemWeightFactor: 1

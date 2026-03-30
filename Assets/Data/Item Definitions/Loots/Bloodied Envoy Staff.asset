@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A shattered envoy staff left behind when a Han diplomat was lost in the desert centuries ago, symbolizing the tearful history of Han expansion in the Western Regions. The local Protector General is willing to pay heavily to recover it."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 2a628bab0509ab64699dcdfcc0a273bb, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

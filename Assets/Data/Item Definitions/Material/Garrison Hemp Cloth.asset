@@ -19,7 +19,7 @@ MonoBehaviour:
   - Material
   description: Hemp fabric woven daily by Juyan garrison soldiers. Used for wrapping
     weapon grips and making sand-proof bandages, consumed in massive quantities.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 09addb3d052760e449b99631d6435550, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1

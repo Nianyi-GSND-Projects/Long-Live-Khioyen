@@ -77,7 +77,7 @@ MonoBehaviour:
   description: A coordination token given by Wusun allies to Han generals. During
     mixed-unit operations, Wusun soldiers are more obedient to the holder's dispatch,
     making the joint force's formation changes more efficient.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: ccab915f2cf144c4cb70890458194953, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

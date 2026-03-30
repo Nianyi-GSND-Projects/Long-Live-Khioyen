@@ -34,7 +34,7 @@ MonoBehaviour:
   description: The commander's sword held by Chang Hui when relieving Jushi, engraved
     with the characters 'Changluo'. As a historical artifact, a general drawing this
     sword on the battlefield is an inspiration in itself.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 75bbf2bb8a6edc748b8f0e3419919745, type: 3}
   rarity: 3
   value: 600
   itemWeightFactor: 1

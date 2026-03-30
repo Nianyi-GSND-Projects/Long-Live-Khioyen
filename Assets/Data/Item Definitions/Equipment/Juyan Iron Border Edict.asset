@@ -74,7 +74,7 @@ MonoBehaviour:
     Han officially recognized the incorporation of Juyan into the territory, representing
     the landing of the Han court's supreme authority in the Western Regions. The
     general holding this edict has extraordinary coordination power.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 90dc8e93d575c414cba1aa5fe5a97437, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

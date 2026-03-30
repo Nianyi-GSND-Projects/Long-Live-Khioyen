@@ -20,7 +20,7 @@ MonoBehaviour:
   description: A top-tier metal forged by repeatedly infusing steel into Luntai rough
     iron hundreds of times. Capable of cutting through iron like mud, only high-ranking
     colonels in the Han army qualify to be issued weapons forged from this.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9195a46316cd66b4ead1ef36649135a3, type: 3}
   rarity: 2
   value: 200
   itemWeightFactor: 1

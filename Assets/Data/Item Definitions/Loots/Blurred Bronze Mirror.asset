@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A severely worn bronze mirror that can no longer reflect a face, but the interlocking beast patterns on its back prove it was once an item of a noble household."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 2b9d2ec2ec9eed244bb6761c38f4ef32, type: 3}
   rarity: 1
   value: 50
   itemWeightFactor: 1

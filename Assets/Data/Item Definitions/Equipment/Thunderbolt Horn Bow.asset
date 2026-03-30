@@ -59,7 +59,7 @@ MonoBehaviour:
   description: A powerful bow crafted combining Tianshan meteoric iron and Xiongnu
     horn bow techniques. The bowstring is reinforced with shrapnel polished from
     Heavenly Horse remains, boasting top-tier range and armor-piercing power.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 336313807f0e3334298e6a44bbefcc00, type: 3}
   rarity: 3
   value: 600
   itemWeightFactor: 1

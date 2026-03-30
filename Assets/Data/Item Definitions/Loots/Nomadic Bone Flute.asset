@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A short flute made from the leg bone of a bird of prey. In the dead of night, Xiongnu light cavalry often blow it, producing a mournful sound that keeps recruits awake all night. Many Central Plains scholars like to collect such exotic instruments."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 7c28af905fa19a84c9ab2e37657d787e, type: 3}
   rarity: 1
   value: 30
   itemWeightFactor: 1

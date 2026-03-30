@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "The coarse and stiff mane of fine horses unique to the Wusun Kingdom. Extremely resilient when braided, hard to cut through with swords. Often left behind by Wusun reinforcements after the Siege of Jushi."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5ab773929ed661747bcb2da63dcd951b, type: 3}
   rarity: 1
   value: 40
   itemWeightFactor: 1

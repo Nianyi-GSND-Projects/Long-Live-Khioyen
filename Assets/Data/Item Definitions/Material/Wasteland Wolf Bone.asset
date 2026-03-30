@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "The leg bone of a Gobi wasteland wolf, sturdy and wear-resistant. Archers of nomadic tribes like to use it for polishing arrowheads and making counterweights."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: bf520d52e296b9b44adde830bd5d4de1, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1

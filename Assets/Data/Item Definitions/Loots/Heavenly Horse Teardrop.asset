@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A rare ruby resembling weeping blood, said to be formed from the tears of the Western Extreme Heavenly Horse before its death. This is the most legendary natural treasure in the Western Regions."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 43e339dd853ec4242bf7725797255d95, type: 3}
   rarity: 3
   value: 800
   itemWeightFactor: 1

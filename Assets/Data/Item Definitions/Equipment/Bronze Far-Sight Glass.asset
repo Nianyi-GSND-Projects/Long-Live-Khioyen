@@ -52,14 +52,14 @@ MonoBehaviour:
   m_Name: Bronze Far-Sight Glass
   m_EditorClassIdentifier: 
   id: 310
-  itemId: s_psurvey_glass_p
+  itemId: eq_survey_glass_p
   itemName: Bronze Far-Sight Glass
   tags:
   - Equipment
   description: Crystal lens components introduced from Persia and specially crafted
     by Western Regions artisans, allowing one to observe terrain miles away. The
     holder's field of vision is vastly expanded, mastering the battlefield situation.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 09083eb70fc1c8d40a6553863f6cd760, type: 3}
   rarity: 2
   value: 150
   itemWeightFactor: 1

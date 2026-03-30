@@ -19,7 +19,7 @@ MonoBehaviour:
   - Material
   description: Impure raw iron produced in the mining areas around Luntai. It is
     the base material for forging Han ring-pommel swords and repairing city walls.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 993db3edce4456d4cacfe3cad43dcef4, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1

@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "An extremely rare and detailed map of the military deployments of the Thirty-Six States of the Western Regions, its value to the expeditionary force is immeasurable."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4216558a97c02f346914db2ab33be566, type: 3}
   rarity: 4
   value: 2350
   itemWeightFactor: 1

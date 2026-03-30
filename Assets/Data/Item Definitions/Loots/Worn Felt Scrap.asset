@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A leftover piece of tent material used by Jushi herdsmen to fend off the bitter cold, emitting a strong smell of mutton."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 1e38814d043bcd44a9a403361ae65850, type: 3}
   rarity: 0
   value: 6
   itemWeightFactor: 1

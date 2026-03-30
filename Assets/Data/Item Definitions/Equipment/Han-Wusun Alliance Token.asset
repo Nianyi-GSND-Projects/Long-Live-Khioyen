@@ -52,7 +52,7 @@ MonoBehaviour:
   description: A border pass inscribed with 'Protector General of the Western Regions
     of the Great Han'. Holding this when acting as an envoy or receiving envoys from
     Wusun and Jushi shows more prestige and makes alliances easier to conclude.
-  icon: {fileID: 21300000, guid: acd293c38f78ba74f83b49e6a36bc521, type: 3}
+  icon: {fileID: 21300000, guid: 2f4405778d350a1408692b20152c949d, type: 3}
   rarity: 0
   value: 30
   itemWeightFactor: 1

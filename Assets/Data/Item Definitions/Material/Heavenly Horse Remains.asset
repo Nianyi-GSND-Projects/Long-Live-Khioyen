@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Material
   description: "Bones left behind only by pure-blood Western Extreme Heavenly Horses that died on the front lines throughout the history of the Wusun Kingdom. Possessing some miraculous intimidating power, it is the core for crafting top-tier tokens or horse gear capable of commanding thousands of troops."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 152d48f7f59b2824f81b8ef102294deb, type: 3}
   rarity: 3
   value: 400
   itemWeightFactor: 1

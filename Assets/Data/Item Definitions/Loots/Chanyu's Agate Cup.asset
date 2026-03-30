@@ -18,7 +18,7 @@ MonoBehaviour:
   tags:
   - Sellable
   description: "A blood-red agate cup carved with a wolf totem. The Xiongnu Chanyu only gifts this to tribal chiefs who have made illustrious military achievements. On the Central Plains black market, this piece of art can fetch an astronomical price."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 2e2966da5bf133640be4df39da41f9d7, type: 3}
   rarity: 3
   value: 400
   itemWeightFactor: 1
