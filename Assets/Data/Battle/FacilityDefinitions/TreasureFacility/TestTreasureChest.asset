@@ -55,3 +55,6 @@ MonoBehaviour:
   isInteractable: 1
   openVfxPrefab: {fileID: 0}
   destroyOnOpen: 1
+  preOpenDelay: 0.5
+  animationDuration: 1
+  fadeOutDuration: 5
