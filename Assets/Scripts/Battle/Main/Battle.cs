@@ -72,7 +72,10 @@ namespace LongLiveKhioyen
 			
 			PlaceNonPlayerBattalionUnit();
 			
+			RefreshFogOfWar();
+			
 			onInitialized?.Invoke();
+
 			
 			if (BattleEventManager.Instance != null)
 			{
@@ -94,7 +97,6 @@ namespace LongLiveKhioyen
 				data = GameInstance.Instance.BattleMetaData;
 			}
 			
-
 			if (data == null)
 			{
 				Debug.LogWarning("BattleMetaData is null. Using Inspector settings.");
@@ -136,6 +138,7 @@ namespace LongLiveKhioyen
 					Debug.LogError("[Battle] useRandomBattle is false, but fixedBattlePreset is null!");
 				}
 			}
+			
 		}
 		
 		
@@ -257,7 +260,7 @@ namespace LongLiveKhioyen
 			if (levelPreset != null)
 			{
 				presetMapData = levelPreset.mapData;
-				
+				UseFogOfWar = levelPreset.useFogOfWar;
 				if (BattleEventManager.Instance != null && levelPreset.levelEvents != null)
 				{
 					BattleEventManager.Instance.levelEvents.Clear(); 

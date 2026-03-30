@@ -327,9 +327,17 @@ namespace LongLiveKhioyen
 
         #region FogOfWar
         
+        public bool UseFogOfWar { get; private set; } = true;
         private void UpdateFogOfWar(bool immediate = false)
        {
            if (fogMap == null) return;
+           if (!UseFogOfWar)
+           {
+               fogOfWarController.UpdateFogVisuals(fogMap, immediate);
+               return;
+           }
+           
+           
            Debug.Log($"--- Running UpdateFogOfWar ---");
            for (int x = 0; x < Size.x; x++)
            {
@@ -482,8 +490,21 @@ namespace LongLiveKhioyen
         
         public void RefreshFogOfWar(bool immediate = false)
         {
-            UpdatePlayerVisionSources();
+            if (fogMap == null) return;
+            if (!UseFogOfWar)
+                {
+                    for (int x = 0; x < fogMap.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < fogMap.GetLength(1); y++)
+                        {
+                            fogMap[x, y] = FogState.Visible;
+                        }
+                    }
+                    RefreshAllUnitsVisuals();
+                    return;
+                }
             
+            UpdatePlayerVisionSources();
             UpdateFogOfWar(immediate);
         }
         #endregion

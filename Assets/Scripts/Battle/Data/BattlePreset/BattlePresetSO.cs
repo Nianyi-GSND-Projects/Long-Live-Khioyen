@@ -41,6 +41,9 @@ namespace LongLiveKhioyen
         public string levelNameZH = "无名地";
         [Tooltip("本场战斗的胜利条件")]
         public BattleGoal battleGoal = BattleGoal.Annihilate;
+        [Tooltip("本场战斗是否启用战争迷雾。如果不启用，全图将默认可见。")]
+        public bool useFogOfWar = true;
+        
         
         [Header("Spawn Points")]
         public List<Vector2Int> playerDeployPoints = new List<Vector2Int>(); // 玩家部署区
