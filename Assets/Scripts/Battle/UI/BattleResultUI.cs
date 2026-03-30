@@ -20,7 +20,7 @@ namespace LongLiveKhioyen
         [Header("Components - Page 2")]
         public Transform lootListContainer;
         public GameObject lootEntryPrefab;
-        public ItemTooltip itemTooltip;
+        public GameObject itemTooltipPrefab;
 
         [Header("Navigation")]
         public Button actionButton;
@@ -46,8 +46,8 @@ namespace LongLiveKhioyen
             titleText.text = _result.Victory ? "Victory" : "Defeated";
             titleText.color = _result.Victory ? Color.yellow : Color.red;
 
-            SwitchToPage(1);
-            //SwitchToPage(2);
+            //SwitchToPage(1);
+            SwitchToPage(2);
         }
 
         private void SetupPage1()
@@ -83,7 +83,7 @@ namespace LongLiveKhioyen
                 {
                     var entryObj = Instantiate(lootEntryPrefab, lootListContainer);
                     var entry = entryObj.GetComponent<LootItem>();
-                    entry.Initialize(item, itemTooltip);
+                    entry.Initialize(item, itemTooltipPrefab);
                 }
             }
         }

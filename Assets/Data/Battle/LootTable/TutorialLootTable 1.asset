@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TutorialLootTable 1
   m_EditorClassIdentifier: 
   entries:
-  - item: {fileID: 11400000, guid: 7c8f66fae3d76b949ad307ab8bb444c2, type: 2}
+  - item: {fileID: 11400000, guid: 86b15bfeac12b864ca6c2704acab8d94, type: 2}
     weight: 100
     minAmount: 1
     maxAmount: 1

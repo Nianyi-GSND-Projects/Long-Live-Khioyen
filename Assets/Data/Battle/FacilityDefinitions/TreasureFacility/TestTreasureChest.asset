@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: TestTreasureChest
   m_EditorClassIdentifier: 
   id: 22
+  idStr: 
   unitName: 
   unitType: 0
   icon: {fileID: 0}
@@ -38,6 +39,8 @@ MonoBehaviour:
   unitUniqueActions: []
   lootRules:
   - lootTable: {fileID: 11400000, guid: 18177c4fd797bc447a2fa076a3fb6ce1, type: 2}
+    dropChance: 100
+  - lootTable: {fileID: 11400000, guid: 13deff6a7e8d05449bb5ef51466d6816, type: 2}
     dropChance: 100
   tags: []
   description: 
