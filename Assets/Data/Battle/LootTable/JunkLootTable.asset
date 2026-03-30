@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aec69cfe612ebe46b84ddce915d7fd1, type: 3}
+  m_Name: JunkLootTable
+  m_EditorClassIdentifier: 
+  entries:
+  - item: {fileID: 11400000, guid: 9386c2bbb73175d4fa9a73f568d37ed3, type: 2}
+    weight: 30
+    minAmount: 1
+    maxAmount: 2
+  - item: {fileID: 11400000, guid: 717756fa59a4ba54892f39b8d81c27dd, type: 2}
+    weight: 30
+    minAmount: 1
+    maxAmount: 2
+  - item: {fileID: 11400000, guid: 8c7fa0d7c18a26142bf2a8a53b026835, type: 2}
+    weight: 20
+    minAmount: 1
+    maxAmount: 2
+  - item: {fileID: 11400000, guid: 797991ac87c9aef4ea89def123f7ad5a, type: 2}
+    weight: 20
+    minAmount: 1
+    maxAmount: 2

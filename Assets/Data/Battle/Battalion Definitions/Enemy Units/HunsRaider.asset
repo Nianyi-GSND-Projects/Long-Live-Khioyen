@@ -37,7 +37,19 @@ MonoBehaviour:
   defaultConstructAction: {fileID: 0}
   defaultRepairAction: {fileID: 0}
   unitUniqueActions: []
-  lootRules: []
+  lootRules:
+  - lootTable: {fileID: 11400000, guid: afe290a7607a472ebbaabd4db13acb71, type: 2}
+    dropChance: 50
+  - lootTable: {fileID: 11400000, guid: d0ea2271897542e8acace2a2a204be20, type: 2}
+    dropChance: 100
+  - lootTable: {fileID: 11400000, guid: ca6361c22475459fa82412e1fbbcb109, type: 2}
+    dropChance: 70
+  - lootTable: {fileID: 11400000, guid: fef470bae5f24b3ea39c8e499a16e3c5, type: 2}
+    dropChance: 30
+  - lootTable: {fileID: 11400000, guid: d162fa53acc6438495407bbc2359f6e9, type: 2}
+    dropChance: 20
+  - lootTable: {fileID: 11400000, guid: c09eb120459310b48828a7b711c79181, type: 2}
+    dropChance: 100
   tags: []
   isTrainable: 0
   requiredItems: []
