@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -20,6 +20,270 @@ MonoBehaviour:
   m_TableData:
   - m_Id: 121004318720
     m_Localized: Test equipment for debuging.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000000000000
+    m_Localized: A standard saber forged from Luntai iron. Its thick blade is ideal for infantry charges. Generals equipped with this sword on the battlefield can lead and boost morale.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000100000000
+    m_Localized: "A bronze-edged war drum with matching command flags. The strict drumbeats can bring the whole army back to discipline in chaos, an indispensable token for colonels to control the troops."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000200000000
+    m_Localized: An exquisite wooden-carved sand table map of the terrain around Juyan. Generals holding this can quickly read the land and gain an advantage when deploying formations.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000300000000
+    m_Localized: "A detailed ledger recording the income and expenses of the Juyan farming colonies. Its holder can better grasp the dispatch of provisions, pacify the colony farmers, and reduce internal friction."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000400000000
+    m_Localized: "A border pass inscribed with 'Protector General of the Western Regions of the Great Han'. Holding this when acting as an envoy or receiving envoys from Wusun and Jushi shows more prestige and makes alliances easier to conclude."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000500000000
+    m_Localized: "A prairie curved saber left behind by the Wusun elite brought by Chang Hui after lifting the siege of Jushi. The back of the blade is reinforced with Xiongnu curved horns, far sharper than standard Han sabers. A general leading the charge with this can inspire troops."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000600000000
+    m_Localized: Heavy weapons seized during the defense of Jushi. The thick and heavy halberd head is used to block cavalry charges during city defense. A general wielding it personally can strengthen troop defense lines.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000700000000
+    m_Localized: "A gilded bronze leather whip used exclusively by Han colonels, functioning both as a deterrent and a ceremonial weapon. Troops led by its holder march with strict discipline, and stragglers are rare even in defeat."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000800000000
+    m_Localized: "A lightweight signal flag embedded with a bronze whistle, used by vanguard scouts to relay enemy intelligence. The troops of the flag-bearing general can grasp the terrain before the enemy and expand their field of vision."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000900000000
+    m_Localized: A military silk script recording rapid outflanking tactics tailored for Western Regions terrain. A general well-versed in this book can direct troops to complete strategic maneuvers in complex terrain.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001000000000
+    m_Localized: "Crystal lens components introduced from Persia and specially crafted by Western Regions artisans, allowing one to observe terrain miles away. The holder's field of vision is vastly expanded, mastering the battlefield situation."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001100000000
+    m_Localized: "A siege atlas detailing the weaknesses of various Western Regions earthworks. When a general commands based on this, troops can find vulnerabilities much faster during sieges."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001200000000
+    m_Localized: "A wooden token carved with relief orders. When receiving surrendered or rescued civilians with this token, more people are willing to join the Han army ranks, significantly expanding recruitment."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001300000000
+    m_Localized: "A specialized bronze drum for commanding supply trains marching alongside combat units. The steady drumbeats ensure smooth logistics, reducing morale fluctuations and raising its maximum limit."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001400000000
+    m_Localized: "A coordination token given by Wusun allies to Han generals. During mixed-unit operations, Wusun soldiers are more obedient to the holder's dispatch, making the joint force's formation changes more efficient."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001500000000
+    m_Localized: "The commander's sword held by Chang Hui when relieving Jushi, engraved with the characters 'Changluo'. As a historical artifact, a general drawing this sword on the battlefield is an inspiration in itself."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001600000000
+    m_Localized: "A collection of bamboo slips recording the Western Regions farming colony experiences of predecessors like Zheng Ji, containing the essence of three tactics: garrison deployment, provision conservation, and scout arrangement."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001700000000
+    m_Localized: "A powerful bow crafted combining Tianshan meteoric iron and Xiongnu horn bow techniques. The bowstring is reinforced with shrapnel polished from Heavenly Horse remains, boasting top-tier range and armor-piercing power."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001800000000
+    m_Localized: "The symbolic war banner of the Wusun royal court, woven from the tail hairs of the Western Extreme Heavenly Horse. Troops of the banner-bearing general have extremely high prestige in joint operations, with more foreign vassals willing to follow in concert."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001900000000
+    m_Localized: "An out-of-print tactical document with Juyan's surrounding terrain survey results carved onto Jushi chalcedony slips, possessing dual value in both intelligence integration and pacifying public sentiment."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002000000000
+    m_Localized: "An administrative military iron slip issued after Emperor Xuan of Han officially recognized the incorporation of Juyan into the territory, representing the landing of the Han court's supreme authority in the Western Regions. The general holding this edict has extraordinary coordination power."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002100000000
+    m_Localized: "A wolf totem banner seized from a defeated Xiongnu Gudu Marquis, retaining the freezing pressure of the grasslands. Raising this banner on a stalemated battlefield can shake enemy morale and loosen their frontlines."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002200000000
+    m_Localized: "A replica fragment of the battle robe bestowed by Emperor Wu of Han to Huo Qubing a century ago, lined with soft scales made of the extremely rare Western Regions Chiwu meteoric gold. Advancing with this raised is like the return of the General of Agile Cavalry's might, causing enemies to retreat."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002300000000
+    m_Localized: "One half of the tiger tally, the highest symbol of military power in the Wusun Kingdom. The holder possesses the legitimacy to mobilize the armies of the entire Wusun territory and can obtain military support from Wusun."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002400000000
+    m_Localized: "A bone whistling arrow commonly used by Xiongnu cavalry. The shaft is broken and the whistle is cracked, but it can still be sold to artisans for bone recycling."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002500000000
+    m_Localized: "A broken Han pottery bowl with the inscription 'Jianyuan' on its base. It's a trace of the early Han garrison left here, now buried by the sand in ruins."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002600000000
+    m_Localized: "Hard as a rock, whether it's camel or horse meat is unknown. Western Region merchants or low-level mercenaries might buy it for a few copper coins to fill their stomachs."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002700000000
+    m_Localized: "A leftover piece of tent material used by Jushi herdsmen to fend off the bitter cold, emitting a strong smell of mutton."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002800000000
+    m_Localized: "A Banliang coin long abolished by the Han court. Occasionally dug out from sand fort ruins in the remote Western Regions, bought by smugglers as souvenirs."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002900000000
+    m_Localized: "A short flute made from the leg bone of a bird of prey. In the dead of night, Xiongnu light cavalry often blow it, producing a mournful sound that keeps recruits awake all night. Many Central Plains scholars like to collect such exotic instruments."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003000000000
+    m_Localized: "Originally expensive silk bestowed by the Han Dynasty to Western Region states, torn and stained with dark red blood during plundering. Still valuable after washing."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003100000000
+    m_Localized: "A wooden slip inscribed with a merchant caravan's name in Han clerical script and stamped with a pass seal. Its owner has perished in the desert; now it can only be sold as an antique."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003200000000
+    m_Localized: "The fang of a cunning sand wolf in the desert, slightly toxic from years of tearing rotten meat. Witch doctors or Xiongnu shamans are often willing to buy it at a high price."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003300000000
+    m_Localized: "A severely worn bronze mirror that can no longer reflect a face, but the interlocking beast patterns on its back prove it was once an item of a noble household."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003400000000
+    m_Localized: "A silk script recording the market prices and black market trades along the route from Dunhuang to Jushi. Fencing it can bring a windfall. Between the lines, it is filled with the blood and tears of being plundered."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003500000000
+    m_Localized: An ornate pendant from Xiongnu noble horse gear. The iron cavalry on the grasslands can gallop freely without stirrups; this gilded piece is purely to show off status and position.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003600000000
+    m_Localized: "Spices from the Western Regions that were more expensive than gold during the Han Dynasty. Although it's just a small pouch, it can fetch a shocking amount among the dignitaries in Chang'an."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003700000000
+    m_Localized: "A top-grade jade ring from the legendary Kingdom of Khotan. Warm to the touch and exceedingly translucent, often a tribute plundered by the Xiongnu."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003800000000
+    m_Localized: An official signet recovered from a high-ranking Xiongnu commander fallen in battle. Turning it in to the authorities or selling it to intelligence brokers serves as undeniable proof of a glorious Han victory.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003900000000
+    m_Localized: "A blood-red agate cup carved with a wolf totem. The Xiongnu Chanyu only gifts this to tribal chiefs who have made illustrious military achievements. On the Central Plains black market, this piece of art can fetch an astronomical price."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004000000000
+    m_Localized: "Ancient remnants of pre-Qin philosophies that vanished into the Western Regions hundreds of years ago. For the grand masters of the Imperial Academy, these long-lost texts are worth a fortune in gold."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004100000000
+    m_Localized: "A small golden Buddha cast by craftsmen from Bactria or Sindhu, made of pure gold and featuring an extremely rare Western Region religious style."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004200000000
+    m_Localized: "Woven with a lost art known only to the weavers of Loulan, this exquisite textile features silk threads gilded in gold. It is a miraculous survivor of the fires of war, an artifact beyond compare."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004300000000
+    m_Localized: "A rare ruby resembling weeping blood, said to be formed from the tears of the Western Extreme Heavenly Horse before its death. This is the most legendary natural treasure in the Western Regions."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004400000000
+    m_Localized: "A status symbol personally bestowed by the Xiongnu Chanyu to a tribal chief. With a hilt cast of pure gold and inlaid with red agate, it will cause frantic bidding if it enters the black market."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004500000000
+    m_Localized: "A shattered envoy staff left behind when a Han diplomat was lost in the desert centuries ago, symbolizing the tearful history of Han expansion in the Western Regions. The local Protector General is willing to pay heavily to recover it."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004600000000
+    m_Localized: "An extremely rare and detailed map of the military deployments of the Thirty-Six States of the Western Regions, its value to the expeditionary force is immeasurable."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004700000000
+    m_Localized: "A fragment of a top-secret edict suspected to have been lost by Emperor Wu of Han in the Western Regions, bearing the royal seal. Whether kept as a secret archive or sold, it will undoubtedly fetch city-tilting wealth."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004800000000
+    m_Localized: "A pure gold thumb ring passed down from the original royal court of the Wusun Kingdom, once the highest symbol of power representing the overlord of the Western Regions."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004900000000
+    m_Localized: Roughly processed hide of Gobi beasts. Almost all standard light armor and shields require this as a lining or covering during crafting.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005000000000
+    m_Localized: Impure raw iron produced in the mining areas around Luntai. It is the base material for forging Han ring-pommel swords and repairing city walls.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005100000000
+    m_Localized: "The desert poplar that lives for a thousand years without dying, and remains unrotted for a thousand years after death. The Western Regions severely lack good timber, making this sturdy wood essential for crafting polearms and bow handles."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005200000000
+    m_Localized: "Hemp fabric woven daily by Juyan garrison soldiers. Used for wrapping weapon grips and making sand-proof bandages, consumed in massive quantities."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005300000000
+    m_Localized: "The leg bone of a Gobi wasteland wolf, sturdy and wear-resistant. Archers of nomadic tribes like to use it for polishing arrowheads and making counterweights."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005400000000
+    m_Localized: "Prairie ox sinew exposed to the sun and beaten via special processes. Surprisingly elastic, it is the core component for making strong crossbow strings and catapult pull cords."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005500000000
+    m_Localized: "The coarse and stiff mane of fine horses unique to the Wusun Kingdom. Extremely resilient when braided, hard to cut through with swords."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005600000000
+    m_Localized: Animal horn used by Xiongnu elite archers to craft the main body of horn bows. A perfect combination of hardness and flexibility. Equipment reinforced with it often carries an aggressive nature.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005700000000
+    m_Localized: "A top-tier metal forged by repeatedly infusing steel into Luntai rough iron hundreds of times. Capable of cutting through iron like mud, only high-ranking colonels in the Han army qualify to be issued weapons forged from this."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005800000000
+    m_Localized: "High-hardness iron lamellar armor left behind after Xiongnu Gudu Marquis heavy cavalry were smashed. Extremely thick and heavy, it is the unmatched choice for crafting top-quality heavy armor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005900000000
+    m_Localized: Warm and smooth chalcedony produced deep in the oases of the Jushi Kingdom. Used to craft high-level accessories that calm the mind and clear wisdom.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006000000000
+    m_Localized: "A black meteorite that crashed at the foot of the Tianshan Mountains, regarded by Xiongnu shamans as a divine object bestowed by Tengri. Extremely light in weight but far exceeding fine steel in hardness, it is the dream material for casting peerless divine weapons for famous generals."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006100000000
+    m_Localized: "Bones left behind only by pure-blood Western Extreme Heavenly Horses that died on the front lines throughout the history of the Wusun Kingdom. Possessing some miraculous intimidating power, it is the core for crafting top-tier tokens or horse gear capable of commanding thousands of troops."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006200000000
+    m_Localized: "A rare extraterrestrial meteorite said to be discovered in the Western Regions during the reign of Emperor Wu of Han. Red as dark crystal, it becomes indestructible after smelting. It is the ultimate military resource deeply craved by the Han court armory, and a peerless medium used to forge great weapons of the state."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006300000000
+    m_Localized: "Standard-issue gear for Han garrison troops, crafted from coarse leather and iron lamellae. Required for training Light Infantry."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006400000000
+    m_Localized: Heavy iron lamellar armor. Required for training Heavy Infantry.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006500000000
+    m_Localized: Premium steeds bred in the Western Regions or allied territories. Required for training Cavalry.
     m_Metadata:
       m_Items: []
   references:

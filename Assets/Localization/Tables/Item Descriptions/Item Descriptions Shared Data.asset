@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -17,6 +17,270 @@ MonoBehaviour:
   m_Entries:
   - m_Id: 121004318720
     m_Key: test-equip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000000000000
+    m_Key: eq_iron_blade_b
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000100000000
+    m_Key: eq_command_drum_b
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000200000000
+    m_Key: eq_terrain_map_b
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000300000000
+    m_Key: eq_ration_ledger_b
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000400000000
+    m_Key: eq_alliance_token_b
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000500000000
+    m_Key: eq_wusun_saber_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000600000000
+    m_Key: eq_heavy_halberd_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000700000000
+    m_Key: eq_discipline_whip_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000800000000
+    m_Key: eq_forward_banner_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000000900000000
+    m_Key: eq_tactic_scroll_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001000000000
+    m_Key: eq_survey_glass_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001100000000
+    m_Key: eq_siege_plan_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001200000000
+    m_Key: eq_relief_flag_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001300000000
+    m_Key: eq_supply_drum_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001400000000
+    m_Key: eq_wusun_ring_p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001500000000
+    m_Key: eq_changhui_sword_g
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001600000000
+    m_Key: eq_juntun_book_g
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001700000000
+    m_Key: eq_thunder_bow_g
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001800000000
+    m_Key: eq_wusun_warflag_g
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000001900000000
+    m_Key: eq_jade_warbook_g
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002000000000
+    m_Key: eq_juyuan_iron_edict_r
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002100000000
+    m_Key: eq_xiongnu_wolf_fang_r
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002200000000
+    m_Key: eq_champion_robe_r
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002300000000
+    m_Key: eq_wusun_tiger_tally_r
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002400000000
+    m_Key: loot_broken_arrow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002500000000
+    m_Key: loot_cracked_bowl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002600000000
+    m_Key: loot_dried_ration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002700000000
+    m_Key: loot_felt_scrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002800000000
+    m_Key: loot_copper_coin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000002900000000
+    m_Key: loot_bone_flute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003000000000
+    m_Key: loot_silk_scrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003100000000
+    m_Key: loot_merchant_tally
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003200000000
+    m_Key: loot_wolf_fang
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003300000000
+    m_Key: loot_bronze_mirror
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003400000000
+    m_Key: loot_merchant_ledger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003500000000
+    m_Key: loot_gilded_stirrup
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003600000000
+    m_Key: loot_spice_pouch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003700000000
+    m_Key: loot_jade_pendant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003800000000
+    m_Key: loot_general_seal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000003900000000
+    m_Key: loot_royal_agate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004000000000
+    m_Key: loot_ancient_scroll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004100000000
+    m_Key: loot_golden_buddha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004200000000
+    m_Key: loot_loulan_silk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004300000000
+    m_Key: loot_wusun_blood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004400000000
+    m_Key: loot_chanyu_dagger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004500000000
+    m_Key: loot_han_envoy_staff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004600000000
+    m_Key: loot_xiyu_map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004700000000
+    m_Key: loot_imperial_script
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004800000000
+    m_Key: loot_wusun_king_ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000004900000000
+    m_Key: mat_raw_leather
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005000000000
+    m_Key: mat_iron_scrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005100000000
+    m_Key: mat_poplar_wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005200000000
+    m_Key: mat_hemp_cloth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005300000000
+    m_Key: mat_beast_bone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005400000000
+    m_Key: mat_sinew_cord
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005500000000
+    m_Key: mat_wusun_mane
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005600000000
+    m_Key: mat_xiongnu_horn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005700000000
+    m_Key: mat_refined_steel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005800000000
+    m_Key: mat_heavy_armor_scrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000005900000000
+    m_Key: mat_desert_jade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006000000000
+    m_Key: mat_meteor_iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006100000000
+    m_Key: mat_heaven_horse_bone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006200000000
+    m_Key: mat_chiwu_meteor_gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006300000000
+    m_Key: heavy_armament
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006400000000
+    m_Key: light_armament
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80000006500000000
+    m_Key: warhorse
     m_Metadata:
       m_Items: []
   m_Metadata:
