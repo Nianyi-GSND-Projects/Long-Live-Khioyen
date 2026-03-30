@@ -50,40 +50,6 @@ MonoBehaviour:
       traitsRule: 
       level: 0
     useRandomCommander: 0
-  - instanceId: 2
-    unitName: 
-    position: {x: 8, y: 5}
-    faction: 2
-    isFacility: 0
-    isVisible: 1
-    battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
-    facilityDef: {fileID: 0}
-    overrideSoldiers: -1
-    overrideMorale: -1
-    commanderTemplate: {fileID: 0}
-    randomCommanderProfile:
-      identityRule: 
-      statsRule: 
-      traitsRule: 
-      level: 0
-    useRandomCommander: 0
-  - instanceId: 3
-    unitName: 
-    position: {x: 7, y: 5}
-    faction: 2
-    isFacility: 0
-    isVisible: 1
-    battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
-    facilityDef: {fileID: 0}
-    overrideSoldiers: -1
-    overrideMorale: -1
-    commanderTemplate: {fileID: 0}
-    randomCommanderProfile:
-      identityRule: 
-      statsRule: 
-      traitsRule: 
-      level: 0
-    useRandomCommander: 0
   - instanceId: 4
     unitName: 
     position: {x: 1, y: 1}
@@ -101,13 +67,47 @@ MonoBehaviour:
       traitsRule: 
       level: 0
     useRandomCommander: 0
-  - instanceId: 5
+  - instanceId: 2
     unitName: 
-    position: {x: 4, y: 2}
+    position: {x: 7, y: 5}
     faction: 2
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
+    battalionDef: {fileID: 11400000, guid: ad85ece484bf3b44496288a543136e0e, type: 2}
+    facilityDef: {fileID: 0}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 3
+    unitName: 
+    position: {x: 9, y: 5}
+    faction: 2
+    isFacility: 0
+    isVisible: 1
+    battalionDef: {fileID: 11400000, guid: ad85ece484bf3b44496288a543136e0e, type: 2}
+    facilityDef: {fileID: 0}
+    overrideSoldiers: -1
+    overrideMorale: -1
+    commanderTemplate: {fileID: 0}
+    randomCommanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+    useRandomCommander: 0
+  - instanceId: 5
+    unitName: 
+    position: {x: 3, y: 2}
+    faction: 2
+    isFacility: 0
+    isVisible: 1
+    battalionDef: {fileID: 11400000, guid: ad85ece484bf3b44496288a543136e0e, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1
@@ -124,7 +124,7 @@ MonoBehaviour:
     faction: 2
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: b92eeab365a2c454281e94d9d9e54b42, type: 2}
+    battalionDef: {fileID: 11400000, guid: ad85ece484bf3b44496288a543136e0e, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1
@@ -143,7 +143,7 @@ MonoBehaviour:
     faction: 0
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
+    battalionDef: {fileID: 11400000, guid: b8c4ef03c3db6974886add6e36313836, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1
@@ -160,7 +160,7 @@ MonoBehaviour:
     faction: 0
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
+    battalionDef: {fileID: 11400000, guid: b8c4ef03c3db6974886add6e36313836, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1
@@ -177,7 +177,7 @@ MonoBehaviour:
     faction: 0
     isFacility: 0
     isVisible: 1
-    battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
+    battalionDef: {fileID: 11400000, guid: b8c4ef03c3db6974886add6e36313836, type: 2}
     facilityDef: {fileID: 0}
     overrideSoldiers: -1
     overrideMorale: -1

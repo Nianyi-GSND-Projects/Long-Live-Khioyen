@@ -14,7 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pages:
   - title: Tactical Deployment
+    topText: At the start of the battle, you must deploy your reserves onto the battlefield
+      to allow them to join the upcoming fight.
+    image: {fileID: 21300000, guid: cb2ddb72d52952549b5ad343a3ed7fd2, type: 3}
+    bottomText: The tiles marked with a dark blue ring represent the areas where
+      you can deploy troops.
+  - title: Tactical Deployment
     topText: Click [Deploy], select [Zhao Ponu] or other units, and position them
       within the dark blue area.
-    image: {fileID: 21300000, guid: d18ef669efd206b45a57a45d4dd9876e, type: 3}
-    bottomText: Once the formation is set, click [BATTLE] to begin the expedition.
+    image: {fileID: 21300000, guid: c24bfc5cbba7a3f438fd4bf763fee429, type: 3}
+    bottomText: Once the formation is set, click [BATTLE] to begin the fight.

@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pages:
   - title: Assault Command
-    topText: Click on the deployed unit.
-    image: {fileID: 0}
-    bottomText: The green area represents the movement range this turn.
+    topText: Please click on the deployed unit. The green area represents its movement
+      range this turn.
+    image: {fileID: 21300000, guid: bac83c5e46b15d046951caffa24bd177, type: 3}
+    bottomText: Click a green square to move the selected unit there.
   - title: Assault Command
-    topText: Click any location within the range to move and launch an attack on
-      the enemies.
-    image: {fileID: 0}
-    bottomText: 
+    topText: When a unit's movement points are exhausted, or when you click on the
+      tile occupied by the unit, you may select the action the unit will perform
+      this turn.
+    image: {fileID: 21300000, guid: d65f36b0920f8f942a5eba76893321ee, type: 3}
+    bottomText: Please try selecting an attack and attacking an enemy within range.

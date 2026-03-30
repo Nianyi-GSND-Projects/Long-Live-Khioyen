@@ -452,7 +452,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -346.9773, y: 0, z: -343.2663, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1160,6 +1160,7 @@ MonoBehaviour:
   prevButton: {fileID: 2047341285299523056}
   nextButton: {fileID: 2166143771119263405}
   nextButtonText: {fileID: 8786709651680775233}
+  inputBlocker: {fileID: 0}
 --- !u!1 &9025396670012133442
 GameObject:
   m_ObjectHideFlags: 0
