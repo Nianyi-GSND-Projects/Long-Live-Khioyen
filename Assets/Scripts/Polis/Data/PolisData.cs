@@ -17,6 +17,8 @@ namespace LongLiveKhioyen
 		public bool conquered = false;
 		public PolisType type;
 
+		public BattlePresetSO fixedBattlePreset;
+
 		public Vector2 position;
 		public Vector2Int size;
 		[Range(0, 359)] public float orientation;

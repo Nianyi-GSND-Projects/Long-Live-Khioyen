@@ -145,7 +145,16 @@ namespace LongLiveKhioyen
 					LastPolis = polis;
 					battleMetaData = PrepareBattleMetadata(LastPolis.position);
 
-					Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。");
+					// Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。");
+					// 牢宋修改处
+					// 进入polis时判断是否存在对应地图
+					if (polis.fixedBattlePreset != null)
+					{
+						battleMetaData.useRandomBattle = false;
+						battleMetaData.fixedBattlePreset = polis.fixedBattlePreset;
+					}
+					Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。" + (polis.fixedBattlePreset != null ? $" [固定地图: {polis.fixedBattlePreset.name}]" : " [随机地图]"));
+					
 					CurrentMode = Mode.Battle;
 					break;
 
