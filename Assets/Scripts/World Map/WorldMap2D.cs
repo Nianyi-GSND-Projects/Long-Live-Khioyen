@@ -83,6 +83,8 @@ namespace LongLiveKhioyen
 		void OnPlayerMove(Vector3 movement)
 		{
 			float distance = movement.magnitude;
+			if(distance == 0)
+				return;
 
 			float foodCost = distance * Army.CarriedWeight * GameManager.InternalSettings.worldMapFoodCostRate;
 			bool willStarve = foodCost > Army.carriedFood;
@@ -90,11 +92,17 @@ namespace LongLiveKhioyen
 			if(willStarve)
 				Starve();
 
-			float difficulty = GameData.world.GetEnviromentParams(player.WorldPos).difficulty;
+			Vector2 worldPos = player.WorldPos;
+			WorldData.EnvironmentParams env = GameData.world.GetEnviromentParams(worldPos);
+			//Debug.Log($"pos={worldPos}, env={env.ToString()}");  // DEBUG: 测试获取到的环境参数是否正确
+			float difficulty = env.difficulty;
 			float chance = 1 - Mathf.Pow(1 - difficulty * GameManager.InternalSettings.encounterRate, distance);
 			float value = Random.value;
 			if(value < chance)
+			{
+				Debug.Log("遇到暗雷");
 				GameInstance.Instance.EnterWildEncounterBattle(player.WorldPos);
+			}
 		}
 
 		void Starve()

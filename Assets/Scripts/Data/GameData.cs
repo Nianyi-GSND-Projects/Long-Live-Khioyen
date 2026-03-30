@@ -46,6 +46,8 @@ namespace LongLiveKhioyen
 			public float difficulty;
 			public float tree;
 			public float water;
+
+			public override readonly string ToString() => $"(difficulty={difficulty}, tree={tree}, water={water})";
 		}
 
 		/// <param name="position">未被缩放过的游戏世界坐标。</param>

@@ -19,8 +19,8 @@ namespace LongLiveKhioyen
 
 		public System.Action<Vector3> onMove;
 
-		Vector3 prevPos;  // 场景暨世界空间
-		public Vector2 WorldPos => prevPos;
+		Vector3 prevPos;  // 场景空间
+		public Vector2 WorldPos => prevPos / worldScale;
 		protected void Update()
 		{
 			Vector2 input = new(LateralMoveInput, ForwardMoveInput);
