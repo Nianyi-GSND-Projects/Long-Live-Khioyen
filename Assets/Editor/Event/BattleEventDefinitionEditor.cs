@@ -12,8 +12,7 @@ namespace LongLiveKhioyen
     {
         private ReorderableList _actionList;
         private List<Type> _actionTypes;
-        
-        // 缓存当前选中的 Editor，避免每帧创建
+        private List<Type> _conditionTypes;
         private Editor _currentActionEditor;
         private GameEventAction _currentSelectedAction;
 
@@ -24,6 +23,12 @@ namespace LongLiveKhioyen
                 .SelectMany(a => a.GetTypes())
                 .Where(t => t.IsSubclassOf(typeof(GameEventAction)) && !t.IsAbstract)
                 .ToList();
+            
+            _conditionTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .Where(t => t.IsSubclassOf(typeof(BattleEventCondition)) && !t.IsAbstract)
+                .ToList();
+            
 
             // 2. 初始化列表
             _actionList = new ReorderableList(serializedObject, serializedObject.FindProperty("actions"), true, true, true, true);
@@ -165,7 +170,10 @@ namespace LongLiveKhioyen
         {
             serializedObject.Update();
             
-            DrawPropertiesExcluding(serializedObject, "actions");
+            DrawPropertiesExcluding(serializedObject, "actions", "conditionGroups");
+            
+            GUILayout.Space(10);
+            DrawConditionGroups();
             
             GUILayout.Space(10);
             _actionList.DoLayoutList();
@@ -197,6 +205,123 @@ namespace LongLiveKhioyen
             }
 
             serializedObject.ApplyModifiedProperties();
+        }
+        
+        private void DrawConditionGroups()
+        {
+            SerializedProperty groupsProp = serializedObject.FindProperty("conditionGroups");
+            
+            EditorGUILayout.LabelField("Trigger Conditions (OR logic between groups)", EditorStyles.boldLabel);
+            
+            for (int i = 0; i < groupsProp.arraySize; i++)
+            {
+                EditorGUILayout.BeginVertical("helpbox");
+                
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField($"Condition Group {i} (AND logic inside)", EditorStyles.miniBoldLabel);
+                
+                // 删除组按钮
+                if (GUILayout.Button("Remove Group", EditorStyles.miniButton, GUILayout.Width(100)))
+                {
+                    groupsProp.DeleteArrayElementAtIndex(i);
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndVertical();
+                    break; // 打断循环，下一帧重新绘制
+                }
+                EditorGUILayout.EndHorizontal();
+
+                SerializedProperty groupProp = groupsProp.GetArrayElementAtIndex(i);
+                SerializedProperty conditionsProp = groupProp.FindPropertyRelative("conditions");
+
+                // 遍历组内的所有具体条件
+                for (int j = 0; j < conditionsProp.arraySize; j++)
+                {
+                    SerializedProperty conditionProp = conditionsProp.GetArrayElementAtIndex(j);
+                    
+                    EditorGUILayout.BeginHorizontal("box");
+                    
+                    // 判断这个 SerializeReference 是否为空
+                    if (string.IsNullOrEmpty(conditionProp.managedReferenceFullTypename))
+                    {
+                        EditorGUILayout.LabelField("Empty Condition", GUILayout.Width(120));
+                        if (GUILayout.Button("Select Type...", GUILayout.Width(120)))
+                        {
+                            ShowConditionTypeMenu(conditionProp.propertyPath);
+                        }
+                    }
+                    else
+                    {
+                        // 提取纯类名作为标签
+                        string typeName = conditionProp.managedReferenceFullTypename.Split(' ').Last().Split('.').Last();
+                        // 净化类名（比如把 Condition_TurnCountEquals 变成 TurnCountEquals）
+                        typeName = typeName.Replace("Condition_", "");
+                        
+                        EditorGUILayout.LabelField(typeName, EditorStyles.boldLabel, GUILayout.Width(150));
+                        
+                        // 核心：使用 PropertyField 绘制这个多态对象里面的全部字段！
+                        EditorGUILayout.PropertyField(conditionProp, GUIContent.none, true);
+                    }
+
+                    // 删除单条条件
+                    if (GUILayout.Button("X", GUILayout.Width(25)))
+                    {
+                        // Unity 删除 SerializeReference 的安全做法：先置空，再删除
+                        int oldSize = conditionsProp.arraySize;
+                        conditionsProp.DeleteArrayElementAtIndex(j);
+                        if (conditionsProp.arraySize == oldSize)
+                        {
+                            // 如果尺寸没变，说明第一次只是置空了引用，需要再删一次彻底移除元素
+                            conditionsProp.DeleteArrayElementAtIndex(j);
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        break;
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                // 添加条件按钮
+                if (GUILayout.Button("+ Add Condition", EditorStyles.miniButton))
+                {
+                    conditionsProp.arraySize++;
+                    SerializedProperty newCond = conditionsProp.GetArrayElementAtIndex(conditionsProp.arraySize - 1);
+                    newCond.managedReferenceValue = null; // 确保新元素为空
+                }
+
+                EditorGUILayout.EndVertical();
+                GUILayout.Space(5);
+            }
+
+            if (GUILayout.Button("Add New Condition Group", GUILayout.Height(25)))
+            {
+                groupsProp.arraySize++;
+                SerializedProperty newGroup = groupsProp.GetArrayElementAtIndex(groupsProp.arraySize - 1);
+                // 新建组时，把内部的 conditions 列表清空，防止复制了上一个组的数据
+                newGroup.FindPropertyRelative("conditions").ClearArray();
+            }
+        }
+        
+        private void ShowConditionTypeMenu(string propertyPath)
+        {
+            GenericMenu menu = new GenericMenu();
+            foreach (var type in _conditionTypes)
+            {
+                // 利用下划线分级，比如 Condition_TurnCount 会变成菜单里的 Condition/TurnCount
+                string menuPath = type.Name.Replace("_", "/");
+                
+                menu.AddItem(new GUIContent(menuPath), false, () => 
+                {
+                    serializedObject.Update();
+                    SerializedProperty prop = serializedObject.FindProperty(propertyPath);
+                    if (prop != null)
+                    {
+                        // 实例化多态子类并赋值给 SerializeReference
+                        object instance = Activator.CreateInstance(type);
+                        prop.managedReferenceValue = instance;
+                        serializedObject.ApplyModifiedProperties();
+                    }
+                });
+            }
+            menu.ShowAsContext();
         }
         
         private void OnDisable()

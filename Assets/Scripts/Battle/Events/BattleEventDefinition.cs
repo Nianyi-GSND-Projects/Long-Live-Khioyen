@@ -18,23 +18,7 @@ namespace LongLiveKhioyen
         Manual
     }
     
-    [Serializable]
-    public class ConditionGroup
-    {
-        [Tooltip("All conditions in this group must be TRUE (AND logic)")]
-        public List<BattleEventCondition> conditions = new List<BattleEventCondition>();
-
-        public bool Evaluate(BattleEventContext ctx)
-        {
-            if (conditions.Count == 0) return true; // 空组默认为真
-
-            foreach (var condition in conditions)
-            {
-                if (!condition.Evaluate(ctx)) return false;
-            }
-            return true;
-        }
-    }
+    
 
     [CreateAssetMenu(menuName = "Long Live Khioyen/Battle/Events/Battle Event Definition")]
     public class BattleEventDefinition : ScriptableObject
@@ -57,16 +41,16 @@ namespace LongLiveKhioyen
         
         public bool CheckConditions(BattleEventContext ctx)
         {
-            // 如果没有配置任何条件，默认为真 (无条件触发)
-            if (conditionGroups.Count == 0) return true;
+            if (conditionGroups == null || conditionGroups.Count == 0) return true;
 
             foreach (var group in conditionGroups)
             {
-                // 只要有一个组满足 (OR)
+                if (group == null) continue; 
+        
                 if (group.Evaluate(ctx)) return true;
             }
-            
-            return false; // 所有组都不满足
+    
+            return false; 
         }
         
         public IEnumerator TriggerCoroutine(BattleEventContext ctx)

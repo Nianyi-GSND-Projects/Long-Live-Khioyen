@@ -46,6 +46,7 @@ namespace LongLiveKhioyen
                     Debug.Log($"[AI] {unit.name} 未发现目标，进入巡逻模式。");
                     yield return StartCoroutine(PatrolRoutine(unit));
                 }
+                
                 if (thinkDelay > 0) yield return new WaitForSeconds(thinkDelay);
                 
                 if (Battle.Instance != null) Battle.Instance.ResolveDirtyUnits();
@@ -99,7 +100,7 @@ namespace LongLiveKhioyen
             if (attackAction != null && attackAction.IsTileValidTarget(aiUnit, nearestTarget.position))
             {
                 Debug.Log($"[AI] {aiUnit.name} 直接攻击 {nearestTarget.name}");
-                Battle.Instance.ExecuteActionLogic(aiUnit, nearestTarget.position, attackAction);
+                yield return StartCoroutine(Battle.Instance.ExecuteActionCoroutine(aiUnit, nearestTarget.position, attackAction));
                 yield break;
             }
 
@@ -136,7 +137,7 @@ namespace LongLiveKhioyen
                     if (attackAction != null && attackAction.IsTileValidTarget(aiUnit, nearestTarget.position))
                     {
                         Debug.Log($"[AI] {aiUnit.name} 移动后攻击 {nearestTarget.name}");
-                        Battle.Instance.ExecuteActionLogic(aiUnit, nearestTarget.position, attackAction);
+                        yield return StartCoroutine(Battle.Instance.ExecuteActionCoroutine(aiUnit, nearestTarget.position, attackAction));
                     }
                 }
             }
@@ -160,12 +161,14 @@ namespace LongLiveKhioyen
                     Debug.Log($"[AI] {aiUnit.name} 巡逻到 {patrolTarget}");
                     Battalion bat = aiUnit as Battalion;
                     if (bat != null) bat.CurrentSoldierState = SoldierState.Move;
-                    
-                    yield return StartCoroutine(Battle.Instance.MoveUnit(aiUnit, path, wasInterrupted => {
+
+                    yield return StartCoroutine(Battle.Instance.MoveUnit(aiUnit, path, wasInterrupted =>
+                    {
                         if (wasInterrupted) Debug.Log($"[AI] {aiUnit.name} 的巡逻移动被打断！");
-                        
-                        if (bat != null) bat.CurrentSoldierState = SoldierState.Idle;
+
+
                     }));
+                    if (bat != null) bat.CurrentSoldierState = SoldierState.Idle;
                 }
                 Battle.Instance.RefreshAllZOCAndVision(aiUnit);
             }

@@ -70,33 +70,14 @@ MonoBehaviour:
   eventName: 
   triggerType: 5
   triggerOnce: 1
+  blockAI: 1
   conditionGroups:
   - conditions:
-    - conditionType: 4
-      intValue: 4
-      stringValue: 
-      vectorValue: {x: 0, y: 0}
-      unitDefinition: {fileID: 0}
-      faction: 2
-    - conditionType: 6
-      intValue: 1
-      stringValue: 
-      vectorValue: {x: 0, y: 0}
-      unitDefinition: {fileID: 0}
-      faction: 2
+    - rid: 1291670677289697282
+    - rid: 1291670677289697283
   - conditions:
-    - conditionType: 4
-      intValue: 1
-      stringValue: 
-      vectorValue: {x: 0, y: 0}
-      unitDefinition: {fileID: 0}
-      faction: 2
-    - conditionType: 6
-      intValue: 4
-      stringValue: 
-      vectorValue: {x: 0, y: 0}
-      unitDefinition: {fileID: 0}
-      faction: 2
+    - rid: 1291670677289697284
+    - rid: 1291670677289697285
   actions:
   - {fileID: 3980298096885656726}
   - {fileID: 7305023222052057160}
@@ -104,6 +85,25 @@ MonoBehaviour:
   - {fileID: -1047711601112492163}
   - {fileID: 8103027507049090594}
   - {fileID: -2045683086705731115}
+  references:
+    version: 2
+    RefIds:
+    - rid: 1291670677289697282
+      type: {class: Condition_ContextUnitIsID, ns: LongLiveKhioyen.Conditions, asm: Assembly-CSharp}
+      data:
+        requiredInstanceId: 1
+    - rid: 1291670677289697283
+      type: {class: Condition_UnitIsAlive, ns: LongLiveKhioyen.Conditions, asm: Assembly-CSharp}
+      data:
+        targetInstanceId: 4
+    - rid: 1291670677289697284
+      type: {class: Condition_UnitIsAlive, ns: LongLiveKhioyen.Conditions, asm: Assembly-CSharp}
+      data:
+        targetInstanceId: 1
+    - rid: 1291670677289697285
+      type: {class: Condition_ContextUnitIsID, ns: LongLiveKhioyen.Conditions, asm: Assembly-CSharp}
+      data:
+        requiredInstanceId: 4
 --- !u!114 &3980298096885656726
 MonoBehaviour:
   m_ObjectHideFlags: 0
