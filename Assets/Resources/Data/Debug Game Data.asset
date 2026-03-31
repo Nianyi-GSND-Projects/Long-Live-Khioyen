@@ -233,7 +233,7 @@ MonoBehaviour:
       conquered: 0
       type: 2
       fixedBattlePreset: {fileID: 0}
-      position: {x: 8500, y: -3000}
+      position: {x: 20000, y: -13000}
       size: {x: 10, y: 10}
       orientation: 45
       iconOverride: {fileID: 0}

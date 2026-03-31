@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Tutorial
   m_EditorClassIdentifier: 
   mapData: {fileID: 11400000, guid: 7eca801d382a27449b929256dd1aef22, type: 2}
-  levelNameEN: New Battle
-  levelNameZH: "\u65E0\u540D\u5730"
+  levelNameEN: Juyan
+  levelNameZH: "\u5C45\u5EF6"
   battleGoal: 0
   useFogOfWar: 0
   playerDeployPoints:
