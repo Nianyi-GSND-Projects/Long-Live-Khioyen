@@ -23,7 +23,7 @@ MonoBehaviour:
   value: 0
   itemWeightFactor: 1
   maxStackNumber: 100
-  productable: 1
+  productable: 0
   costs:
   - type: 4
     itemId: 

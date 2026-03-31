@@ -40,6 +40,10 @@ MonoBehaviour:
         position: {x: 20, y: 30}
         orientation: 2
         underConstruction: 0
+      - id: workshop
+        position: {x: 15, y: 15}
+        orientation: 0
+        underConstruction: 0
       - id: dwelling-trio-1
         position: {x: 16, y: 26}
         orientation: 0
