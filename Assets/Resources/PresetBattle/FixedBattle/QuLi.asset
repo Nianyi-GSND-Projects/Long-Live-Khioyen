@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: QuLi
   m_EditorClassIdentifier: 
   mapData: {fileID: 11400000, guid: b7c74b2145e441e44b293fc128899b53, type: 2}
-  levelNameEN: New Battle
-  levelNameZH: "\u65E0\u540D\u5730"
+  levelNameEN: Qu Li
+  levelNameZH: "\u6E20\u7281"
   battleGoal: 0
+  useFogOfWar: 1
   playerDeployPoints:
   - {x: 12, y: 9}
   - {x: 12, y: 8}
@@ -33,7 +34,9 @@ MonoBehaviour:
   - {x: 13, y: 13}
   - {x: 14, y: 13}
   - {x: 14, y: 14}
-  levelEvents: []
+  levelEvents:
+  - {fileID: 11400000, guid: b6513ba0819d34242ba04905b16256d6, type: 2}
+  - {fileID: 11400000, guid: eea0b50e365784d4c99f2f877caf3d11, type: 2}
   nonPlayerUnitsSpawnZones:
   - {x: 6, y: 8}
   - {x: 6, y: 5}
