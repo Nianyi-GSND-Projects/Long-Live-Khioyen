@@ -178,6 +178,23 @@ namespace LongLiveKhioyen
 			onNextPromotableCommanderChanged?.Invoke();
 		}
 		#endregion
+
+		// 开局添加一支预配置驻军。
+		public void AddStartingBattalion(CommanderTemplateSO template, BattalionDefinition type, int soldierCount)
+		{
+			var commander = template.CreateInstance(CommanderRegistry.Instance.GenerateID());
+
+			BattalionStatus battalion = new()
+			{
+				battalionCommander = commander,
+				battalionDefinition = type,
+				currentSolider = soldierCount,
+				currentMorale = type.defaultMaxMorale,
+			};
+
+			garrisonedBattalions.Add(battalion);
+			onGarrisonChanged?.Invoke();
+		}
 		#endregion
 
 		#region 训练
