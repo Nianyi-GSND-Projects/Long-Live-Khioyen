@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b9e896d7e3a8f5a4f82881e064828dd7, type: 3}
-  m_Name: DefaultLootDrop
+  m_Name: QuLiTreasureChest
   m_EditorClassIdentifier: 
-  id: 21
+  id: 0
   idStr: 
   unitName: 
   unitType: 0
   icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
-  unitModelPrefab: {fileID: 366021807918811276, guid: 1a755ee8671cb79408947c24d4de8fc9, type: 3}
+  unitModelPrefab: {fileID: 366021807918811276, guid: 9bbc4c379c06c0e4ea4f62a2abcc6998, type: 3}
   useBillboard: 1
   defaultPower: 0
   defaultDefense: 0
@@ -37,7 +37,13 @@ MonoBehaviour:
   defaultConstructAction: {fileID: 0}
   defaultRepairAction: {fileID: 0}
   unitUniqueActions: []
-  lootRules: []
+  lootRules:
+  - lootTable: {fileID: 11400000, guid: fef470bae5f24b3ea39c8e499a16e3c5, type: 2}
+    dropChance: 70
+  - lootTable: {fileID: 11400000, guid: ca6361c22475459fa82412e1fbbcb109, type: 2}
+    dropChance: 70
+  - lootTable: {fileID: 11400000, guid: d0ea2271897542e8acace2a2a204be20, type: 2}
+    dropChance: 70
   tags: []
   description: 
   defaultMaxDurability: 1

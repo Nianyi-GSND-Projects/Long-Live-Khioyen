@@ -18,7 +18,7 @@ MonoBehaviour:
   unitType: 0
   icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
-  unitModelPrefab: {fileID: 2229188164278447998, guid: d822240595e03e94585a658983f0e53d, type: 3}
+  unitModelPrefab: {fileID: 2229188164278447998, guid: 284f663c776ada7478cab770315f0fa9, type: 3}
   useBillboard: 0
   defaultPower: 50
   defaultDefense: 100

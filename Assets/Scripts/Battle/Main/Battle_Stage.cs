@@ -440,6 +440,7 @@ namespace LongLiveKhioyen
         
         public IEnumerator ExecuteActionCoroutine(Unit source, Vector2Int targetPos, ActionDefinition actionToPerform)
         {
+            HighlightTilesOverlay(availableTargetPositions, Color.clear);
             // 等待整个行动（包括所有 Effect 及其动画）执行完毕
             yield return StartCoroutine(actionToPerform.PerformRoutine(source, targetPos));
 

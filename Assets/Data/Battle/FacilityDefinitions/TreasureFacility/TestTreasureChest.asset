@@ -19,7 +19,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   unitSelectedSoundEffect: {fileID: 0}
   unitModelPrefab: {fileID: 366021807918811276, guid: 9bbc4c379c06c0e4ea4f62a2abcc6998, type: 3}
-  useBillboard: 0
+  useBillboard: 1
   defaultPower: 0
   defaultDefense: 0
   defaultRepairPower: 0
