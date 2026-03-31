@@ -107,8 +107,28 @@ MonoBehaviour:
   randomEnemyRules:
   - unitDefinition: {fileID: 11400000, guid: aef7afa63c1545f49ae31540810b2b17, type: 2}
     faction: 2
-    minCount: 2
-    maxCount: 5
+    minCount: 1
+    maxCount: 3
+    useRandomCommander: 0
+    commanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+  - unitDefinition: {fileID: 11400000, guid: 34f0b6fb0aa8c93439db9485a9c495e6, type: 2}
+    faction: 2
+    minCount: 1
+    maxCount: 3
+    useRandomCommander: 0
+    commanderProfile:
+      identityRule: 
+      statsRule: 
+      traitsRule: 
+      level: 0
+  - unitDefinition: {fileID: 11400000, guid: 2c6baa6a03dc18a499833348aa10be5b, type: 2}
+    faction: 2
+    minCount: 1
+    maxCount: 2
     useRandomCommander: 0
     commanderProfile:
       identityRule: 

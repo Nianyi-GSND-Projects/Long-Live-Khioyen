@@ -15,11 +15,23 @@ MonoBehaviour:
   ruleName: han
   race: 0
   firstNames:
-  - 1
-  - 2
-  - 3
+  - Fei
+  - Yu
+  - ChongHuan
+  - Jian
+  - Qi
+  - Yafu
   lastNames:
-  - z
-  - w
-  - l
+  - Zhao
+  - Sun
+  - Li
+  - Wu
+  - Wang
+  - Song
+  - Zhang
+  - Chen
+  - Yang
+  - Gao
+  - Bai
+  - Zhou
   portraits: []
