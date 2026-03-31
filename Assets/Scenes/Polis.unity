@@ -1421,6 +1421,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Free population
+  overrideDelay: 0
+  delay: 1
 --- !u!1 &471704485
 GameObject:
   m_ObjectHideFlags: 0
@@ -2328,6 +2330,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Pause menu
+  overrideDelay: 0
+  delay: 1
 --- !u!1 &716896469
 GameObject:
   m_ObjectHideFlags: 0
@@ -4809,6 +4813,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Population cap
+  overrideDelay: 0
+  delay: 1
 --- !u!1001 &1275710355
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5172,6 +5178,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Total population
+  overrideDelay: 0
+  delay: 1
 --- !u!1 &1363216773
 GameObject:
   m_ObjectHideFlags: 0
@@ -6055,6 +6063,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Food
+  overrideDelay: 0
+  delay: 1
 --- !u!1 &1614821688
 GameObject:
   m_ObjectHideFlags: 3
@@ -6303,6 +6313,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Material
+  overrideDelay: 0
+  delay: 1
 --- !u!1001 &1778707401
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6665,6 +6677,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Money
+  overrideDelay: 0
+  delay: 1
 --- !u!1001 &1939149431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7072,6 +7086,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipText: Current time in month
+  overrideDelay: 0
+  delay: 1
 --- !u!1001 &2108591924
 PrefabInstance:
   m_ObjectHideFlags: 0

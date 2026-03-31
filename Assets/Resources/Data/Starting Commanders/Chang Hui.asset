@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f3071bbd12733448953260fe376dcab, type: 3}
+  m_Name: Chang Hui
+  m_EditorClassIdentifier: 
+  commanderName: Hui Chang
+  portrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
+  race: 0
+  level: 5
+  Zhi: 88
+  Xin: 86
+  Ren: 84
+  Yong: 85
+  Yan: 72
+  personality: {fileID: 0}
+  traits: []
+  commanderActions: []
+  presetEquipments:
+  - {fileID: 11400000, guid: 54c45952240e18c41ab135dd2d35175c, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}

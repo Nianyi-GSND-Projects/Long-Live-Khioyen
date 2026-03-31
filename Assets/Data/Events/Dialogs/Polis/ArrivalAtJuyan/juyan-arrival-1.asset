@@ -17,7 +17,7 @@ MonoBehaviour:
   id: 1001
   dialogList:
   - character: {fileID: 11400000, guid: 40b8f547de70441429ab97ee87f24d28, type: 2}
-    overrideName: ZhengJi
+    overrideName: 
     overridePortrait: {fileID: 0}
     useBlackboardName: 0
     nameKey: 
@@ -25,7 +25,7 @@ MonoBehaviour:
       Hexi, this place was a bastion of magnificence. Now, nothing remains but broken
       bricks and shattered tiles.
   - character: {fileID: 11400000, guid: 040104332c0706043997fff01846f372, type: 2}
-    overrideName: ChangHui
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
     useBlackboardName: 0
     nameKey: 
@@ -33,7 +33,7 @@ MonoBehaviour:
       of the Xiongnu Zhuri King is already at our doorstep. Our mission is to establish
       a foothold here and restore peace to the Western Regions once more.
   - character: {fileID: 11400000, guid: 40b8f547de70441429ab97ee87f24d28, type: 2}
-    overrideName: ZhengJi
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 74b572e97e778f846a1f3cdd95fc2056, type: 3}
     useBlackboardName: 0
     nameKey: 
@@ -48,7 +48,7 @@ MonoBehaviour:
     dialogText: Then let us begin beneath our very feet. To secure our stay in the
       Western Regions, we must rebuild Juyan from the ground up.
   - character: {fileID: 11400000, guid: 040104332c0706043997fff01846f372, type: 2}
-    overrideName: ChangHui
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
     useBlackboardName: 0
     nameKey: 
@@ -56,7 +56,7 @@ MonoBehaviour:
       the pioneers of what is to come. To reclaim these lost lands, our first priority
       in Juyan is to 'erect shelters'.
   - character: {fileID: 11400000, guid: 40b8f547de70441429ab97ee87f24d28, type: 2}
-    overrideName: ZhengJi
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 74b572e97e778f846a1f3cdd95fc2056, type: 3}
     useBlackboardName: 0
     nameKey: 
@@ -64,7 +64,7 @@ MonoBehaviour:
       Only with quarters can our men find a true sense of belonging. This will no
       longer be a foreign land, but our stronghold.
   - character: {fileID: 11400000, guid: 040104332c0706043997fff01846f372, type: 2}
-    overrideName: ChangHui
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
     useBlackboardName: 0
     nameKey: 

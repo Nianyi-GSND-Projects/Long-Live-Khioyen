@@ -17,7 +17,7 @@ MonoBehaviour:
   id: 1002
   dialogList:
   - character: {fileID: 11400000, guid: 40b8f547de70441429ab97ee87f24d28, type: 2}
-    overrideName: ZhengJi
+    overrideName: 
     overridePortrait: {fileID: 0}
     useBlackboardName: 0
     nameKey: 
@@ -25,7 +25,7 @@ MonoBehaviour:
       Chang, reclaiming lost territory requires more than just willpower; it depends
       on this very soil.
   - character: {fileID: 11400000, guid: 040104332c0706043997fff01846f372, type: 2}
-    overrideName: ChangHui
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
     useBlackboardName: 0
     nameKey: 
@@ -34,7 +34,7 @@ MonoBehaviour:
       for emergencies; the harvest from this land is our true foundation in the Western
       Regions.
   - character: {fileID: 11400000, guid: 040104332c0706043997fff01846f372, type: 2}
-    overrideName: ChangHui
+    overrideName: 
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
     useBlackboardName: 0
     nameKey: 
