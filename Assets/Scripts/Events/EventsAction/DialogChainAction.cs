@@ -23,12 +23,26 @@ namespace LongLiveKhioyen
         [Header("Content")]
         [TextArea(3, 10)] public string dialogText;
         
-        // 辅助属性：获取最终显示的名字
-        public string DisplayName => !string.IsNullOrEmpty(overrideName) ? overrideName : (character != null ? character.characterName : "Unknown");
+        private GameCharacter GetActiveCharacter(BattleEventContext ctx)
+        {
+            // 尝试从黑板和数据库中获取动态角色
+            if (useBlackboardName && ctx != null && ctx.HasData(nameKey))
+            {
+                string dynamicName = ctx.GetData<string>(nameKey);
+            
+                if (CharacterDatabase.Instance != null)
+                {
+                    GameCharacter dynamicChar = CharacterDatabase.Instance.GetCharacter(dynamicName);
+                    if (dynamicChar != null)
+                    {
+                        return dynamicChar; // 成功匹配到动态角色！
+                    }
+                }
+            }
         
-        // 辅助属性：获取最终显示的头像
-        public Sprite DisplayPortrait => overridePortrait != null ? overridePortrait : (character != null ? character.portrait : null);
-        
+            // 如果未开启动态、缺少上下文、或者数据库中没找到，则回退到静态配置
+            return character;
+        }
         public string GetDisplayName(BattleEventContext ctx = null)
         {
             // 如果勾选了动态名字，且传来了有效的战斗上下文，且上下文中包含该 Key
@@ -39,6 +53,16 @@ namespace LongLiveKhioyen
             
             // 否则退回到常规的名称获取逻辑
             return !string.IsNullOrEmpty(overrideName) ? overrideName : (character != null ? character.characterName : "Unknown");
+        }
+        
+        public Sprite GetDisplayPortrait(BattleEventContext ctx = null)
+        {
+            // 1. 强制覆写头像的优先级最高
+            if (overridePortrait != null) return overridePortrait;
+
+            // 2. 解析激活的角色的头像
+            GameCharacter activeChar = GetActiveCharacter(ctx);
+            return activeChar != null ? activeChar.portrait : null;
         }
     }
 

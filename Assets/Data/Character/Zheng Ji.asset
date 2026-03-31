@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8b85cc9c7c4514994b6475c2eb1100, type: 3}
   m_Name: Zheng Ji
   m_EditorClassIdentifier: 
+  characterId: 7
   characterName: Ji Zheng
   portrait: {fileID: 21300000, guid: 74b572e97e778f846a1f3cdd95fc2056, type: 3}
   description: 

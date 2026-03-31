@@ -65,10 +65,20 @@ namespace LongLiveKhioyen
                 }
                 else
                 {
-                    if (BattleEventManager.Instance != null)
-                        BattleEventManager.Instance.StartCoroutine(action.ExecuteCoroutine(ctx));
+                    MonoBehaviour runner = BattleEventManager.Instance;
+                    if (ctx != null && ctx.TriggerUnit != null && ctx.TriggerUnit.gameObject.activeInHierarchy)
+                    {
+                        runner = ctx.TriggerUnit; 
+                    }
+                    
+                    if (runner != null && runner.gameObject.activeInHierarchy)
+                    {
+                        runner.StartCoroutine(action.ExecuteCoroutine(ctx));
+                    }
                     else
-                        action.Execute(ctx); 
+                    {
+                        action.Execute(ctx);
+                    }
                 }
             }
         }

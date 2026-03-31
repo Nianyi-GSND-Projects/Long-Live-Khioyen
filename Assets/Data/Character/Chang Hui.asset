@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8b85cc9c7c4514994b6475c2eb1100, type: 3}
   m_Name: Chang Hui
   m_EditorClassIdentifier: 
+  characterId: 1
   characterName: Hui Chang
   portrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
   description: 

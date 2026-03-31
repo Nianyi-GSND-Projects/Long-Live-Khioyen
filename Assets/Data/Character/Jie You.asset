@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8b85cc9c7c4514994b6475c2eb1100, type: 3}
   m_Name: Jie You
   m_EditorClassIdentifier: 
+  characterId: 2
   characterName: Princess Jieyou
   portrait: {fileID: 21300000, guid: 848ec7ac2b349af47a29bb6946a5bb15, type: 3}
   description: 

@@ -77,7 +77,7 @@ namespace LongLiveKhioyen
             
             if (portraitImage != null)
             {
-                Sprite portrait = currentDialog.DisplayPortrait;
+                Sprite portrait = currentDialog.GetDisplayPortrait(_currentContext);
                 if (portrait != null)
                 {
                     portraitImage.sprite = portrait;
