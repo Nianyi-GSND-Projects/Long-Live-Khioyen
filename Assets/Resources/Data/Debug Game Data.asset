@@ -58,7 +58,7 @@ MonoBehaviour:
         food: 100000
         material: 50000
         money: 800000
-        population: 200
+        population: 2000
         items:
           records:
           - itemId: test-equip
