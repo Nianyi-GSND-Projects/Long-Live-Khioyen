@@ -10,19 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bd43ed6a2e414342bef6272366feb4e, type: 3}
-  m_Name: Initial Game Data
+  m_Name: Debug Game Data
   m_EditorClassIdentifier: 
   gameData:
     world:
       data3D:
         scale: 0.025
-        terrainAddress: 
-        skyboxAddress: 
       data2D:
-        scale: 0.0001
-        mapAddress: 
-    lastPolis: huns-debug
-    mainPolis: juyan
+        scale: 0.017
+        mapImage: {fileID: 21300000, guid: b30dddfc3f3a8c34ca80fa5c09c4621b, type: 3}
+        mapMask: {fileID: 21300000, guid: 2b1db8139e70c684598c89776c4092d9, type: 3}
+    lastPolis: juyan
+    mainPolis: 
     poleis:
     - buildings:
       - id: water-well
@@ -45,27 +44,25 @@ MonoBehaviour:
         position: {x: 16, y: 26}
         orientation: 0
         underConstruction: 0
-      - id: dwelling-trio-1
-        position: {x: 12, y: 26}
-        orientation: 0
-        underConstruction: 0
-      - id: dwelling-trio-1
-        position: {x: 8, y: 26}
-        orientation: 0
-        underConstruction: 0
       id: juyan
       canControl: 0
+      conquered: 0
       type: 1
-      position: {x: 0, y: 0}
+      fixedBattlePreset: {fileID: 0}
+      position: {x: 8500, y: -1200}
       size: {x: 40, y: 40}
       orientation: 22.5
+      iconOverride: {fileID: 21300000, guid: b9d1c47bcfe5062488f52e3ed07ead12, type: 3}
+      conqueredIconOverride: {fileID: 0}
       economy:
-        food: 1000
-        material: 2000
-        money: 800
-        population: 100
+        food: 100000
+        material: 50000
+        money: 800000
+        population: 200
         items:
-          records: []
+          records:
+          - itemId: test-equip
+            quantity: 100
       queuedProductions: []
       forSaleItems:
         records: []
@@ -106,15 +103,247 @@ MonoBehaviour:
         parameters:
         - 1001
         - 0
+      - type: schedule-on-construction-completed
+        totalTime: 0
+        remainingTime: 0
+        requiredPopulation: 0
+        parameters:
+        - dwelling
+        - start-dialog
+        - 1002
+      - type: schedule-on-construction-completed
+        totalTime: 0
+        remainingTime: 0
+        requiredPopulation: 0
+        parameters:
+        - granary
+        - start-dialog
+        - 1003
+      lastTime:
+        monthsElapsed: 0
+    - buildings: []
+      id: luntai
+      canControl: 0
+      conquered: 0
+      type: 2
+      fixedBattlePreset: {fileID: 0}
+      position: {x: -3200, y: 2500}
+      size: {x: 20, y: 20}
+      orientation: 15
+      iconOverride: {fileID: 21300000, guid: 5adf57b31e7446c46ab6da38a12048a7, type: 3}
+      conqueredIconOverride: {fileID: 0}
+      economy:
+        food: 0
+        material: 0
+        money: 0
+        population: 0
+        items:
+          records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      monthlyBuyItems:
+        records: []
+      nextPromotion:
+        commander:
+          commanderId: 0
+          commanderName: 
+          portrait: {fileID: 0}
+          race: 0
+          level: 1
+          Zhi: 0
+          Xin: 0
+          Ren: 0
+          Yong: 0
+          Yan: 0
+          isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          personality: {fileID: 0}
+          traits: []
+          commanderActions: []
+        cost:
+          food: 0
+          material: 0
+          money: 0
+          population: 0
+          items:
+            records: []
+      tasks: []
+      lastTime:
+        monthsElapsed: 0
+    - buildings: []
+      id: quli
+      canControl: 0
+      conquered: 0
+      type: 2
+      fixedBattlePreset: {fileID: 11400000, guid: cfda532b313163f4e9a8e1d655d9885c, type: 2}
+      position: {x: 3000, y: -2000}
+      size: {x: 50, y: 50}
+      orientation: 0
+      iconOverride: {fileID: 21300000, guid: 5adf57b31e7446c46ab6da38a12048a7, type: 3}
+      conqueredIconOverride: {fileID: 0}
+      economy:
+        food: 0
+        material: 0
+        money: 0
+        population: 0
+        items:
+          records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      monthlyBuyItems:
+        records: []
+      nextPromotion:
+        commander:
+          commanderId: 0
+          commanderName: 
+          portrait: {fileID: 0}
+          race: 0
+          level: 1
+          Zhi: 0
+          Xin: 0
+          Ren: 0
+          Yong: 0
+          Yan: 0
+          isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          personality: {fileID: 0}
+          traits: []
+          commanderActions: []
+        cost:
+          food: 0
+          material: 0
+          money: 0
+          population: 0
+          items:
+            records: []
+      tasks: []
       lastTime:
         monthsElapsed: 0
     - buildings: []
       id: huns-debug
       canControl: 0
+      conquered: 0
       type: 2
-      position: {x: 0, y: 5000}
+      fixedBattlePreset: {fileID: 0}
+      position: {x: 8500, y: -3000}
       size: {x: 10, y: 10}
       orientation: 45
+      iconOverride: {fileID: 0}
+      conqueredIconOverride: {fileID: 0}
+      economy:
+        food: 0
+        material: 0
+        money: 0
+        population: 0
+        items:
+          records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      monthlyBuyItems:
+        records: []
+      nextPromotion:
+        commander:
+          commanderId: 0
+          commanderName: 
+          portrait: {fileID: 0}
+          race: 0
+          level: 1
+          Zhi: 0
+          Xin: 0
+          Ren: 0
+          Yong: 0
+          Yan: 0
+          isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          personality: {fileID: 0}
+          traits: []
+          commanderActions: []
+        cost:
+          food: 0
+          material: 0
+          money: 0
+          population: 0
+          items:
+            records: []
+      tasks: []
+      lastTime:
+        monthsElapsed: 0
+    - buildings: []
+      id: wusun
+      canControl: 0
+      conquered: 0
+      type: 2
+      fixedBattlePreset: {fileID: 0}
+      position: {x: -2000, y: 5000}
+      size: {x: 10, y: 10}
+      orientation: 45
+      iconOverride: {fileID: 21300000, guid: 8caaae12a391ea3468687aa3157143f1, type: 3}
+      conqueredIconOverride: {fileID: 0}
+      economy:
+        food: 0
+        material: 0
+        money: 0
+        population: 0
+        items:
+          records: []
+      queuedProductions: []
+      forSaleItems:
+        records: []
+      monthlyBuyItems:
+        records: []
+      nextPromotion:
+        commander:
+          commanderId: 0
+          commanderName: 
+          portrait: {fileID: 0}
+          race: 0
+          level: 1
+          Zhi: 0
+          Xin: 0
+          Ren: 0
+          Yong: 0
+          Yan: 0
+          isAssigned: 0
+          equipments:
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          personality: {fileID: 0}
+          traits: []
+          commanderActions: []
+        cost:
+          food: 0
+          material: 0
+          money: 0
+          population: 0
+          items:
+            records: []
+      tasks: []
+      lastTime:
+        monthsElapsed: 0
+    - buildings: []
+      id: jushi
+      canControl: 0
+      conquered: 0
+      type: 2
+      fixedBattlePreset: {fileID: 0}
+      position: {x: 3500, y: 4300}
+      size: {x: 10, y: 10}
+      orientation: 45
+      iconOverride: {fileID: 21300000, guid: a8b0739b2de2f994c8c4be9b0df6f488, type: 3}
+      conqueredIconOverride: {fileID: 0}
       economy:
         food: 0
         material: 0
