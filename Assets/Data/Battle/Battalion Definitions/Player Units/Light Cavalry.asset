@@ -36,7 +36,8 @@ MonoBehaviour:
   defaultInteract: {fileID: 11400000, guid: 1901abdca2ccffc46b7f6efc2d8393b8, type: 2}
   defaultConstructAction: {fileID: 0}
   defaultRepairAction: {fileID: 0}
-  unitUniqueActions: []
+  unitUniqueActions:
+  - {fileID: 11400000, guid: 26c7e5a101031894ca187bdbefdf3df1, type: 2}
   lootRules: []
   tags: []
   isTrainable: 1

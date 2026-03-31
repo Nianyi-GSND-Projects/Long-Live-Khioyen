@@ -39,7 +39,7 @@ MonoBehaviour:
   unitUniqueActions: []
   lootRules: []
   tags: []
-  isTrainable: 1
+  isTrainable: 0
   requiredItems: []
   requiredBuildingTags: []
   defaultDiscipline: 30
