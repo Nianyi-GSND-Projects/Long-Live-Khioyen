@@ -19,7 +19,7 @@ namespace LongLiveKhioyen
 
 			cartItemPrefab = Resources.Load<GameObject>("Prefabs/Polis/UI/Cart Item");
 
-			IsSellOpen = true;
+			IsSellOpen = false;
 
 			Refresh();
 		}
