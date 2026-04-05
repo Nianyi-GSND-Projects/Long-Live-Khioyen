@@ -660,9 +660,10 @@ namespace LongLiveKhioyen
 		
 		public BattleResult YieldResult()
 		{
+			var game = GameInstance.Instance;
 			BattleResult result = new()
 			{
-				polisId = GameInstance.Instance.LastPolis.id,
+				polisId = game.IsWild ? null : game.LastPolis.id,
 				passedTime = GameManager.InternalSettings.timeCostPerBattle,  // TODO: 牢宋需给具体公式
 			};
 			ApplyArmyChangesToArmyStatus();

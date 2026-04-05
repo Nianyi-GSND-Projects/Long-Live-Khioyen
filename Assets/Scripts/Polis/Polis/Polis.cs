@@ -25,6 +25,7 @@ namespace LongLiveKhioyen
 				return;
 			}
 
+			GameInstance.Instance.IsWild = false;
 			Data.Population = Data.Population;  // 人口可能超出动态上限，手动触发卡一下
 
 			// 默认切到市长模式

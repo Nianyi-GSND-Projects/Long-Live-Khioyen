@@ -25,6 +25,7 @@ namespace LongLiveKhioyen
 			Construct();
 			var game = GameInstance.Instance;
 			player.Teleport(game.IsWild ? game.WildPos : GetPolisLocalPosition(game.LastPolis));
+			game.IsWild = false;
 			player.onMove += OnPlayerMove;
 		}
 

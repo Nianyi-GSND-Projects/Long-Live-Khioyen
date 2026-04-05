@@ -148,13 +148,13 @@ namespace LongLiveKhioyen
 					// Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。");
 					// 牢宋修改处
 					// 进入polis时判断是否存在对应地图
-					if (polis.fixedBattlePreset != null)
+					if(polis.fixedBattlePreset != null)
 					{
 						battleMetaData.useRandomBattle = false;
 						battleMetaData.fixedBattlePreset = polis.fixedBattlePreset;
 					}
 					Debug.Log($"进攻敌对城池 \"{LastPolis.id}\"。" + (polis.fixedBattlePreset != null ? $" [固定地图: {polis.fixedBattlePreset.name}]" : " [随机地图]"));
-					
+
 					CurrentMode = Mode.Battle;
 					break;
 
@@ -207,7 +207,7 @@ namespace LongLiveKhioyen
 			return data;
 		}
 
-		public bool IsWild { get; private set; } = false;  // 是否在大地图上临时游荡
+		public bool IsWild { get; set; } = false;  // 是否在大地图上临时游荡
 		public Vector2 WildPos { get; private set; }
 		public void EnterWildEncounterBattle(Vector2 worldPosition)
 		{
@@ -217,7 +217,6 @@ namespace LongLiveKhioyen
 			IsWild = true;
 			WildPos = worldPosition;
 			CurrentMode = Mode.Battle;
-			IsWild = false;
 		}
 
 		/// <summary>停止进攻敌方城池，回到大地图。</summary>
@@ -227,7 +226,6 @@ namespace LongLiveKhioyen
 			battleMetaData = null;
 			ApplyBattleResult(battleResult);
 			CurrentMode = Mode.WorldMap;
-			IsWild = false;
 		}
 
 		/// <summary>应用战役结果。</summary>
@@ -236,25 +234,34 @@ namespace LongLiveKhioyen
 			// 度过时间
 			Data.time.AdvanceByMonth(result.passedTime);
 
-			var polis = Data.GetPolis(result.polisId);
+			// 战利品入库
+			foreach(inBattleItem loot in result.Loot)
+			{
+				PolisData.Main.StockedItems.Add(new()
+				{
+					itemId = loot.definition.itemId,
+					quantity = loot.amount,
+				});
+			}
+
+			// 若攻克城池，使之变为友好
+			PolisData polis = null;
+			if(!string.IsNullOrEmpty(result.polisId))
+				polis = Data.GetPolis(result.polisId);
 			if(polis == null)
-			{
 				Debug.LogWarning($"找不到城池 \"{result.polisId}\"，无法应用战役结果。");
-				return;
-			}
-
-			// TODO: 战利品入库
-
-			// 若战斗成功，使城池变为友好
-			if(result.Victory)
-			{
-				polis.type = polis.canControl ? PolisType.Controlled : PolisType.Friendly;
-				polis.conquered = true;
-				Debug.Log($"成功攻克城池 \"{result.polisId}\"。");
-			}
 			else
 			{
-				Debug.Log($"未能攻克城池 \"{result.polisId}\"。");
+				if(result.Victory)
+				{
+					polis.type = polis.canControl ? PolisType.Controlled : PolisType.Friendly;
+					polis.conquered = true;
+					Debug.Log($"成功攻克城池 \"{result.polisId}\"。");
+				}
+				else
+				{
+					Debug.Log($"未能攻克城池 \"{result.polisId}\"。");
+				}
 			}
 		}
 		#endregion
