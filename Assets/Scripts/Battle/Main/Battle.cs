@@ -171,9 +171,13 @@ namespace LongLiveKhioyen
 						desc.battalionCommander = CommanderRegistry.Instance.GenerateCommander(data.randomCommanderProfile);
 					}
 
-					desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
-					desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
-					desc.actionChance += desc.battalionCommander.GetActionChanceBonus();
+					if (desc.battalionCommander != null)
+					{
+						
+						desc.maxSolider += desc.battalionCommander.GetMaxSoldiersBonus();
+						desc.maxMorale += desc.battalionCommander.GetMaxMoraleBonus();
+						desc.actionChance += desc.battalionCommander.GetActionChanceBonus();
+					}
 					
 					desc.currentSoliders = data.overrideSoldiers > 0
 						? data.overrideSoldiers
