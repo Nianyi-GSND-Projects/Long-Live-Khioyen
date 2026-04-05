@@ -103,20 +103,19 @@ namespace LongLiveKhioyen
                     if (unit is Battalion bat && bat.currentMovement == 0)
                     {
                         Debug.Log("Battalion " + bat.InstanceId + " has no movement!");
-                        break;
                     }
 					
                     initialUnitPosition = SelectedUnit.position;
                     
                     if (CurrentActionStage == PlayerActionStage.None)
                     {
-                        if (unit is Battalion battalion)
+                        if (unit is Battalion battalion && battalion.currentMovement != 0)
                         {
                             int moveRange = initialUnitMovement;
                             UpdateAvailableMovePositions(battalion);
                             ChangeActionStage(PlayerActionStage.MovingBattalion);
                         }
-                        else if (unit.unitDefinition.actionable)
+                        else if (unit.unitDefinition.actionable||unit is Battalion batt && batt.currentMovement == 0)
                         {
                             availableMovePositions.Clear();
                             ChangeActionStage(PlayerActionStage.SelectingAction);

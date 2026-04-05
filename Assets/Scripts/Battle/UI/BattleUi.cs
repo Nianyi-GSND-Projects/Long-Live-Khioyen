@@ -285,6 +285,41 @@ namespace LongLiveKhioyen
         public BattleTitlePanel battleTitlePanel;
         public ActionMenuUI actionMenu; 
         
+        #region BackInput
+
+        /// <summary>
+        /// 尝试由 UI 处理右键/取消操作（关闭子菜单、建造面板、多重选择等）。
+        /// 返回 true 表示 UI 已消费该输入，调用方应立即返回。
+        /// </summary>
+        public bool TryHandleBackInput()
+        {
+            if (battle == null) return false;
+
+            switch (battle.CurrentActionStage)
+            {
+                case PlayerActionStage.SelectingAmbiguousTarget:
+                    // 关闭多重选择面板，回到空闲
+                    battle.ClearAllSelection();
+                    battle.ChangeActionStage(PlayerActionStage.None);
+                    return true;
+
+                case PlayerActionStage.SelectingSubAction:
+                    // 关闭二级菜单，回到一级行动菜单
+                    battle.ChangeActionStage(PlayerActionStage.SelectingAction);
+                    return true;
+
+                case PlayerActionStage.SelectingBuildItem:
+                    // 关闭建造面板，回到一级行动菜单
+                    battle.ChangeActionStage(PlayerActionStage.SelectingAction);
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
+
         #region StageManagement
         
         public void ClosePanel(CanvasGroup canvasGroup)

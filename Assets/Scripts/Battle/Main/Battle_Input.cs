@@ -54,7 +54,7 @@ namespace LongLiveKhioyen
             else if (CurrentStage == Stage.Battle)
             {
                 // 尝试让 UI 处理回退 (比如关闭子菜单)
-                //if (BattleUi.Instance != null && BattleUi.Instance.TryHandleBackInput()) return;
+                if (BattleUi.Instance != null && BattleUi.Instance.TryHandleBackInput()) return;
 
                 // 否则执行游戏逻辑回退
                 switch (CurrentActionStage)
@@ -87,6 +87,11 @@ namespace LongLiveKhioyen
                         break;
 
                     case PlayerActionStage.MovingBattalion:
+                        ClearAllSelection();
+                        ChangeActionStage(PlayerActionStage.None);
+                        break;
+                    
+                    case PlayerActionStage.SelectingAmbiguousTarget:
                         ClearAllSelection();
                         ChangeActionStage(PlayerActionStage.None);
                         break;

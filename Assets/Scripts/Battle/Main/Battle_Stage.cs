@@ -450,10 +450,8 @@ namespace LongLiveKhioyen
             {
                 source.actionDone = true;
                 if (source == SelectedUnit)
-                {
                     ClearAllSelection();
-                    ChangeActionStage(PlayerActionStage.None);
-                }
+                ChangeActionStage(PlayerActionStage.None);
             }
             
             if (BattleEventManager.Instance != null)
