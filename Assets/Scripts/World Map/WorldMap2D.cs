@@ -1,4 +1,5 @@
 using UnityEngine;
+using Cinemachine;
 using System.Collections.Generic;
 using Nianyi.UnityPack;
 
@@ -42,13 +43,16 @@ namespace LongLiveKhioyen
 		public WorldMap2DPlayer Player => player;
 		[SerializeField] SpriteRenderer mapRenderer;
 		[SerializeField] Transform poleisContainer;
+		[SerializeField] GameObject mapBoundaries;
+		[SerializeField] GameObject mapArea;
+		[SerializeField] CinemachineVirtualCamera followingVcam;
 
 		void Construct()
 		{
 			mapRenderer.sprite = GameData.world.data2D.mapImage;
 			mapRenderer.transform.localScale = Vector3.one * MapScale;
 
-			// 生成碰撞
+			// 生成地图碰撞
 			var pc = mapRenderer.gameObject.AddComponent<PolygonCollider2D>();
 			Sprite mapMask = GameData.world.data2D.mapMask;
 			int shapeCount = mapMask.GetPhysicsShapeCount();
@@ -59,6 +63,40 @@ namespace LongLiveKhioyen
 				mapMask.GetPhysicsShape(i, shape);
 				pc.SetPath(i, shape);
 			}
+
+			// 生成边界与范围
+			var bounds = mapRenderer.bounds;
+
+			var top = mapBoundaries.AddComponent<BoxCollider2D>();
+			top.size = new Vector2(bounds.size.x, 1);
+			top.offset = new Vector2(0, bounds.size.y / 2 + 0.5f);
+			var bottom = mapBoundaries.AddComponent<BoxCollider2D>();
+			bottom.size = new Vector2(bounds.size.x, 1);
+			bottom.offset = new Vector2(0, -bounds.size.y / 2 - 0.5f);
+			var left = mapBoundaries.AddComponent<BoxCollider2D>();
+			left.size = new Vector2(1, bounds.size.y);
+			left.offset = new Vector2(-bounds.size.x / 2 - 0.5f, 0);
+			var right = mapBoundaries.AddComponent<BoxCollider2D>();
+			right.size = new Vector2(1, bounds.size.y);
+			right.offset = new Vector2(bounds.size.x / 2 + 0.5f, 0);
+
+			var area = mapArea.AddComponent<PolygonCollider2D>();
+			area.isTrigger = true;
+			// 根据 bounds.size 生成矩形区域
+			float halfWidth = bounds.size.x / 2;
+			float halfHeight = bounds.size.y / 2;
+			Vector2[] rectPath = new Vector2[]
+			{
+				new(-halfWidth, -halfHeight),
+				new(halfWidth, -halfHeight),
+				new(halfWidth, halfHeight),
+				new(-halfWidth, halfHeight)
+			};
+			area.SetPath(0, rectPath);
+
+			var confiner = followingVcam.gameObject.AddComponent<CinemachineConfiner2D>();
+			confiner.m_BoundingShape2D = area;
+			followingVcam.AddExtension(confiner);
 
 			// 生成城池
 			foreach(var polisData in GameData.poleis)
