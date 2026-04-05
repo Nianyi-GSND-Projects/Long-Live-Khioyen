@@ -222,10 +222,13 @@ namespace LongLiveKhioyen
 		/// <summary>停止进攻敌方城池，回到大地图。</summary>
 		public void ExitBattle(BattleResult battleResult)
 		{
-			Debug.Log($"Exiting battle against polis \"{LastPolis.id}\".");
+			Debug.Log($"退出战斗。");
 			battleMetaData = null;
 			ApplyBattleResult(battleResult);
-			CurrentMode = Mode.WorldMap;
+			if(battleResult.Victory)
+				CurrentMode = Mode.WorldMap;
+			else
+				EnterPolis(Data.mainPolis);
 		}
 
 		/// <summary>应用战役结果。</summary>
