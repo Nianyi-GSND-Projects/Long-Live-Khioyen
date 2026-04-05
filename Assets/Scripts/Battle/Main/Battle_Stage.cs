@@ -172,6 +172,7 @@ namespace LongLiveKhioyen
         
         private Vector2Int initialUnitPosition;
         private int initialUnitMovement;
+        public bool IsOperatingUnit { get; set; } = false;
         public PlayerActionStage CurrentActionStage{ get; set; }
         private PlayerActionStage _previousActionStage;
         private IEnumerator PlayerTurnCoroutine()
@@ -193,6 +194,7 @@ namespace LongLiveKhioyen
             }
             
             Debug.Log("Player Turn End!");
+            IsOperatingUnit = false;
             ChangeActionStage(PlayerActionStage.None);
             foreach (var unit in factionActiveUnits[Faction.Player])
             {
@@ -222,6 +224,7 @@ namespace LongLiveKhioyen
                     ChangeActionStage(PlayerActionStage.None);
                 }
 
+                IsOperatingUnit = false;
                 ClearAllHexRingHighlights();
                 IsPlayerTurnOver = true;
             }
@@ -444,15 +447,14 @@ namespace LongLiveKhioyen
             // 等待整个行动（包括所有 Effect 及其动画）执行完毕
             yield return StartCoroutine(actionToPerform.PerformRoutine(source, targetPos));
 
-            // 行动彻底完成后的结算逻辑
             ResolveDirtyUnits();
             if (source != null)
             {
                 source.actionDone = true;
-                if (source == SelectedUnit)
-                    ClearAllSelection();
-                ChangeActionStage(PlayerActionStage.None);
             }
+            IsOperatingUnit = false;
+            ClearAllSelection();
+            ChangeActionStage(PlayerActionStage.None);
             
             if (BattleEventManager.Instance != null)
                 BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd, source);
@@ -553,6 +555,7 @@ namespace LongLiveKhioyen
         public void ActionWait()
         {
             SelectedUnit.actionDone = true;
+            IsOperatingUnit = false;
             ClearAllSelection();
             ChangeActionStage(PlayerActionStage.None);
         }

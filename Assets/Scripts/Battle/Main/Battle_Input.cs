@@ -75,9 +75,15 @@ namespace LongLiveKhioyen
                         break;
                     
                     case PlayerActionStage.SelectingAction:
-                        if (SelectedUnit != null && SelectedUnit.hasMovedThisTurn)
+                        if (IsOperatingUnit)
                         {
-                            Debug.Log("Unit has already moved, cannot cancel movement.");
+                            // 操作中：未移动且有移动力时允许回退到移动选择
+                            if (SelectedUnit != null && !SelectedUnit.hasMovedThisTurn
+                                && SelectedUnit is Battalion bat && bat.currentMovement > 0)
+                            {
+                                UpdateAvailableMovePositions(bat);
+                                ChangeActionStage(PlayerActionStage.MovingBattalion);
+                            }
                         }
                         else
                         {
@@ -87,8 +93,15 @@ namespace LongLiveKhioyen
                         break;
 
                     case PlayerActionStage.MovingBattalion:
-                        ClearAllSelection();
-                        ChangeActionStage(PlayerActionStage.None);
+                        if (IsOperatingUnit)
+                        {
+                            Debug.Log("正在操作单位中，无法取消选择。");
+                        }
+                        else
+                        {
+                            ClearAllSelection();
+                            ChangeActionStage(PlayerActionStage.None);
+                        }
                         break;
                     
                     case PlayerActionStage.SelectingAmbiguousTarget:
@@ -212,7 +225,7 @@ namespace LongLiveKhioyen
                 {
                     MovingBattalion(gridPos);
                 }
-                else
+                else if (!IsOperatingUnit)
                 {
                     ClearAllSelection();
                     ChangeActionStage(PlayerActionStage.None);

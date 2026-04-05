@@ -109,6 +109,7 @@ namespace LongLiveKhioyen
                     
                     if (CurrentActionStage == PlayerActionStage.None)
                     {
+                        IsOperatingUnit = true;
                         if (unit is Battalion battalion && battalion.currentMovement != 0)
                         {
                             int moveRange = initialUnitMovement;
