@@ -49,7 +49,11 @@ namespace LongLiveKhioyen
 		[SerializeField] TMP_Text erpText;
 		void RefreshErp()
 		{
-			erpText.text = string.Join(", ", PolisData.Current.CalculateMonthlyResourceChanges().Select(d => d.ToString()));
+			var resourceChanges = PolisData.Current.CalculateMonthlyResourceChanges().ToArray();
+			erpText.text = string.Join(", ", resourceChanges.Select(d => d.ToString()
+				.Replace("*", "+")
+				.Replace("+-", "-")
+			));
 		}
 		#endregion
 	}
