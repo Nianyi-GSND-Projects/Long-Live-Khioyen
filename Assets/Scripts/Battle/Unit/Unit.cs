@@ -258,7 +258,7 @@ namespace LongLiveKhioyen
                 currentHealth -= healthLoss;
                 currentHealth = Mathf.Max(0, currentHealth);
                 Debug.Log($"{name} took {rawDamage} raw damage. Threshold: {resistanceFactor}. Lost {healthLoss} HP. Remaining: {currentHealth}");
-                OnHealthChanged();
+                OnHealthChanged(); 
                 
                 if (Battle.Instance != null) 
                     Battle.Instance.MarkUnitDirty(this);
@@ -341,7 +341,9 @@ namespace LongLiveKhioyen
                 bat.CurrentSoldierState = SoldierState.Move;
             }
     
-            Battle.Instance.CheckDeath(this);
+            // 不在移动途中直接 CheckDeath —— 由调用方在移动结束后
+            // 统一调用 ResolveDirtyUnits() 处理所有脏单位（包括陷阱设施）。
+            // 在此仅通过 currentHealth 判断是否中断移动。
             if (currentHealth <= 0) shouldStop = true;
 
             OnUnitStateChanged();

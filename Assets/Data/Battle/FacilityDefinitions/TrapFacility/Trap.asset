@@ -22,14 +22,14 @@ MonoBehaviour:
   useBillboard: 1
   defaultPower: 0
   defaultDefense: 0
-  defaultRepairPower: 10
+  defaultRepairPower: 0
   defaultZocPower: 1
   defaultVisibility: 0
   defaultVisionRange: 0
   passability: 1
   movable: 0
   actionable: 0
-  beAttacked: 1
+  beAttacked: 0
   beMoved: 0
   defaultAttack: {fileID: 0}
   defaultRetreat: {fileID: 0}
@@ -49,7 +49,7 @@ MonoBehaviour:
   formationSpacing: 0.5
   constructionStagePrefabs: []
   isInteractable: 0
-  damage: 100
+  damage: 1000000
   consumeOnTrigger: 1
   triggerOnEnemies: 1
   triggerOnAllies: 0

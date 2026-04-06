@@ -504,11 +504,25 @@ namespace LongLiveKhioyen
                 yield return StartCoroutine(MoveUnit(unit, path, wasInterrupted => {
                     moveInterrupted = wasInterrupted;
                 }));
+
+                // 移动结束后统一结算所有脏单位（移动途中踩陷阱等产生的伤亡）
+                ResolveDirtyUnits();
+                
+                // 单位在移动中死亡（如踩陷阱），直接清理状态并返回
+                if (unit == null || !unit.gameObject.activeSelf||!unit.gameObject)
+                {
+                    IsOperatingUnit = false;
+                    ClearAllSelection();
+                    ChangeActionStage(PlayerActionStage.None);
+                    IsUnitMoving = false;
+                    yield break;
+                }
+
                 if (bat != null)
                 {
                     bat.CurrentSoldierState = SoldierState.Idle;
                 }
-                
+
                 if (unit != null && (unit.faction == Faction.Player || unit.faction == Faction.Friend))
                 {
                     UpdatePlayerVisionSources();
@@ -547,8 +561,6 @@ namespace LongLiveKhioyen
                 Debug.LogError($"无法找到通往 {targetPos} 的路径！");
             }
             
-            
-
             IsUnitMoving = false;
         }
         

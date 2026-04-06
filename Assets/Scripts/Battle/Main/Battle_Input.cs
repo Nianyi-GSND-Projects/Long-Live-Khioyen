@@ -84,6 +84,13 @@ namespace LongLiveKhioyen
                                 UpdateAvailableMovePositions(bat);
                                 ChangeActionStage(PlayerActionStage.MovingBattalion);
                             }
+                            else if (SelectedUnit == null)
+                            {
+                                // 防御性兜底：单位已死亡或被移除，恢复到初始状态
+                                IsOperatingUnit = false;
+                                ClearAllSelection();
+                                ChangeActionStage(PlayerActionStage.None);
+                            }
                         }
                         else
                         {

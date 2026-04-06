@@ -349,7 +349,6 @@ namespace LongLiveKhioyen
                 UpdatePlayerVisionSources();
                 UpdateFogOfWar();
             }
-            
         }
         
         public void RemoveUnitFromMap(Unit unit)
@@ -426,7 +425,7 @@ namespace LongLiveKhioyen
         yield return StartCoroutine(unit.OnEnterNewTileRoutine(pos, (res) => {
             shouldStop = res;
         }, VisualMove())); // <--- 注入视觉逻辑
-
+        
         if (shouldStop)
         {
             Debug.Log($"{unit.name} 的移动被陷阱拦截或致死！");
@@ -481,6 +480,7 @@ namespace LongLiveKhioyen
             
             unit.gameObject.SetActive(false);
             unit.transform.SetParent(null);
+            
             Debug.Log($"[Withdraw] Unit {unit.name} has successfully retreated.");
             if (unit.faction == Faction.Player || unit.faction == Faction.Friend)
             {
@@ -499,13 +499,17 @@ namespace LongLiveKhioyen
             if (dirtyUnits.Count == 0) return;
 
             List<Unit> unitsToCheck = new List<Unit>(dirtyUnits);
-            
+            dirtyUnits.Clear();
+
             foreach (var unit in unitsToCheck)
             {
+                if (unit == null) continue;
                 CheckDeath(unit);
-                unit.OnUnitStateChanged();
+                // 已被 RemoveUnitFromBattle 停用的单位不再刷新视觉，
+                // 防止 RefreshVisuals 中的 SetActive(true) 撤销死亡
+                if (unit != null && unit.gameObject.activeSelf)
+                    unit.OnUnitStateChanged();
             }
-            dirtyUnits.Clear();
         }
         
         public void MarkUnitDirty(Unit unit)
@@ -536,7 +540,6 @@ namespace LongLiveKhioyen
             {
                 Debug.Log($"[CheckDeath] Unit {unit.name} is dead. Processing loot...");
                 HandleUnitDeathLoot(unit);
-
                 // 3. 触发死亡事件 (Event System)
                 // 这允许剧情脚本响应特定单位的死亡
                 if (BattleEventManager.Instance != null)
