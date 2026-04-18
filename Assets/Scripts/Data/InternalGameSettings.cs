@@ -46,5 +46,8 @@ namespace LongLiveKhioyen
 
 		[Header("UI")]
 		[Label("UI 提示显示延迟"), Min(0)] public float tooltipDelay = 1;
+
+		[Header("转换")] [Label("转换为物料的ItemDefinition")]
+		public ItemDefinition materialDefinition;
 	}
 }

@@ -240,11 +240,22 @@ namespace LongLiveKhioyen
 			// 战利品入库
 			foreach(inBattleItem loot in result.Loot)
 			{
-				PolisData.Main.StockedItems.Add(new()
+				if (loot.definition == GameManager.InternalSettings.materialDefinition)
 				{
-					itemId = loot.definition.itemId,
-					quantity = loot.amount,
-				});
+					PolisData.Main.Economy.Add(new ResourceDescriptor()
+					{
+						type = ResourceType.Material,
+						quantity = loot.amount
+					});
+				}
+				else
+				{
+					PolisData.Main.StockedItems.Add(new()
+					{
+						itemId = loot.definition.itemId,
+						quantity = loot.amount,
+					});
+				}
 			}
 
 			// 若攻克城池，使之变为友好

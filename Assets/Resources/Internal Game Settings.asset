@@ -42,3 +42,4 @@ MonoBehaviour:
   foodCostPerBattle: 50
   timeCostPerBattle: 1
   tooltipDelay: 1
+  materialDefinition: {fileID: 11400000, guid: eed1fc4557682d840a1b8552f251ba30, type: 2}
