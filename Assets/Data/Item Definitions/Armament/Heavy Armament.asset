@@ -17,7 +17,7 @@ MonoBehaviour:
   itemName: Heavy Armament
   tags: []
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4c6b01a3f0dc2a045965f87b41258f4e, type: 3}
   rarity: 0
   value: 20
   itemWeightFactor: 1

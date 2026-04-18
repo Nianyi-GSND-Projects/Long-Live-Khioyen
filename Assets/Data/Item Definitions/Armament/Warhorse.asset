@@ -17,7 +17,7 @@ MonoBehaviour:
   itemName: Warhorse
   tags: []
   description: 
-  icon: {fileID: 21300000, guid: af65e05533646ab4d955c1fdc975565e, type: 3}
+  icon: {fileID: 21300000, guid: 63e94b8f8792def4d81f0bbc83563c67, type: 3}
   rarity: 0
   value: 20
   itemWeightFactor: 1
