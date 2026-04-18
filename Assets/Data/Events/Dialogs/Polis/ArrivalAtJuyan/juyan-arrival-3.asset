@@ -30,9 +30,9 @@ MonoBehaviour:
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}
     useBlackboardName: 0
     nameKey: 
-    dialogText: Furthermore, the military camps can enlist able-bodied men in their
-      prime, arming them with heavy crossbows and long halberds. Force is the sole
-      leverage we possess in any negotiation with the Xiongnu.
+    dialogText: Furthermore, the BARRACKS can enlist able-bodied men in their prime,
+      arming them with heavy crossbows and long halberds. Force is the sole leverage
+      we possess in any negotiation with the Xiongnu.
   - character: {fileID: 11400000, guid: 040104332c0706043997fff01846f372, type: 2}
     overrideName: 
     overridePortrait: {fileID: 21300000, guid: 8a72dbe276cf1e34bb4a7bd81cd2e9b9, type: 3}

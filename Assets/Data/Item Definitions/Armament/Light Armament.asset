@@ -17,7 +17,7 @@ MonoBehaviour:
   itemName: Light Armament
   tags: []
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: f8d19d56d2ea2a54a892c6adc032d141, type: 3}
   rarity: 0
   value: 10
   itemWeightFactor: 1
