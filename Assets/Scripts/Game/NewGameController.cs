@@ -84,11 +84,11 @@ namespace LongLiveKhioyen
 			var infantry     = db.GetUnit(14) as BattalionDefinition;  // Infantry
 
 			if(changHui != null && lightCavalry != null)
-				mainPolis.AddStartingBattalion(changHui, lightCavalry, 300);
+				mainPolis.AddStartingBattalion(changHui, lightCavalry, 600);
 			if(laiDan != null && archers != null)
-				mainPolis.AddStartingBattalion(laiDan, archers, 200);
+				mainPolis.AddStartingBattalion(laiDan, archers, 400);
 			if(zhengJi != null && infantry != null)
-				mainPolis.AddStartingBattalion(zhengJi, infantry, 250);
+				mainPolis.AddStartingBattalion(zhengJi, infantry, 500);
 
 			Debug.Log($"已为 {mainPolis.id} 添加 3 支初始驻军。");
 		}
