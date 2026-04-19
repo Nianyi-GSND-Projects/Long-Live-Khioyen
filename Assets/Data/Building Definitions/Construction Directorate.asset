@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: construction-diretorate
   tags: []
-  figure: {fileID: 0}
+  figure: {fileID: 21300000, guid: c2051310b188ce244bf16fe851e581c6, type: 3}
   defaultOrientation: 0
   pivot: {x: 1, y: 1}
   size: {x: 4, y: 4}

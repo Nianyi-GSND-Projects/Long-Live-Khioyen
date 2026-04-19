@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Drill Ground
   m_EditorClassIdentifier: 
   id: drill-ground
-  tags: []
-  figure: {fileID: 0}
+  tags:
+  - drill-ground
+  figure: {fileID: 21300000, guid: 837bb8806dda6874688e9423ef2c8a39, type: 3}
   defaultOrientation: 0
   pivot: {x: 1, y: 1}
   size: {x: 4, y: 4}

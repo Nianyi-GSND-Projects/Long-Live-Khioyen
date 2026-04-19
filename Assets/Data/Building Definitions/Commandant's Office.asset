@@ -15,8 +15,7 @@ MonoBehaviour:
   id: commandant-office
   tags:
   - commandant-office
-  figure: {fileID: 21300000, guid: d9f2d0aff557fba4cb316f849b0ccdd1, type: 3}
-  persistentPopulation: 5
+  figure: {fileID: 21300000, guid: e6af415ef6f7cb1499200501718b3198, type: 3}
   defaultOrientation: 0
   pivot: {x: 1, y: 1}
   size: {x: 5, y: 5}
@@ -25,6 +24,7 @@ MonoBehaviour:
   preliminaryBuildingTags: []
   constructionTime: 0
   constructionPopulation: 0
+  persistentPopulation: 5
   cost:
     food: 0
     material: 0

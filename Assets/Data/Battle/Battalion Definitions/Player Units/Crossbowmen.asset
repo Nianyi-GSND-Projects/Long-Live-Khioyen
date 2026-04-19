@@ -42,7 +42,8 @@ MonoBehaviour:
   tags: []
   isTrainable: 1
   requiredItems: []
-  requiredBuildingTags: []
+  requiredBuildingTags:
+  - bowyer
   defaultDiscipline: 100
   defaultFlexibility: 20
   defaultStrategy: 100

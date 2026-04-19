@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: horse-station
   tags: []
-  figure: {fileID: 0}
+  figure: {fileID: 21300000, guid: 1255bd6c6fbd05a4d964c8a264867cf9, type: 3}
   defaultOrientation: 0
   pivot: {x: 1, y: 0}
   size: {x: 3, y: 2}

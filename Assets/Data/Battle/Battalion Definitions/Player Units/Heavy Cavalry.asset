@@ -42,7 +42,8 @@ MonoBehaviour:
   tags: []
   isTrainable: 1
   requiredItems: []
-  requiredBuildingTags: []
+  requiredBuildingTags:
+  - horse-pasture
   defaultDiscipline: 100
   defaultFlexibility: 30
   defaultStrategy: 100
