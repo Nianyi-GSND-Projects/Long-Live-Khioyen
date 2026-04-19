@@ -42,7 +42,7 @@ MonoBehaviour:
   - lootTable: {fileID: 11400000, guid: 18177c4fd797bc447a2fa076a3fb6ce1, type: 2}
     dropChance: 100
   tags: []
-  isTrainable: 1
+  isTrainable: 0
   requiredItems: []
   requiredBuildingTags: []
   defaultDiscipline: 500
