@@ -31,6 +31,4 @@ MonoBehaviour:
     money: 400
     population: 0
     items:
-      records:
-      - itemId: 201
-        quantity: 5
+      records: []
