@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Summon new unit
   icon: {fileID: 0}
   actionPointCost: 0
+  requireInteractable: 0
+  requireAttackable: 0
   targetFactionType: 3
   targetCountType: 1
   displayConditions: []
@@ -28,6 +30,7 @@ MonoBehaviour:
   maxRange: 99
   minRange: 1
   targetType: 2
+  targetingVisualState: 2
 --- !u!114 &8349736954364510467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41,8 +44,8 @@ MonoBehaviour:
   m_Name: SummonUnitEffect
   m_EditorClassIdentifier: 
   effectType: 7
-  battalionDef: {fileID: 11400000, guid: 74589fe9da952424ebf22ab3b586ef14, type: 2}
-  commanderTemplate: {fileID: 11400000, guid: 6f95d48f58b65964996600a1c35bf87c, type: 2}
+  battalionDef: {fileID: 11400000, guid: ad85ece484bf3b44496288a543136e0e, type: 2}
+  commanderTemplate: {fileID: 0}
   randomCommanderProfile:
     identityRule: 
     statsRule: 
