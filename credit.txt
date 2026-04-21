@@ -1,0 +1,59 @@
+Overview
+ Project: Long Live Khioyen
+ Author: Nianyi Wang, Yichi Zhang, Zhuowen Song
+ Version: 0.2
+
+Assests
+ Fonts
+  Source Han Sans CN
+   Copyright (c) 2014-2021 Adobe
+   License: SIL Open Font License 1.1
+   https://github.com/adobe-fonts/source-han-sans
+
+  Sweynheim & Pannartz Proto-Roman 115R
+   Copyright (c) 2019 ANRT
+   Designed by Alexis Faudot and Rafael Ribas
+   License: SIL Open Font License 1.1
+   https://github.com/anrt-type/GoticoAntiqua
+
+  Sweynheim & Pannartz Subiaco Proto-Roman 120R
+   Copyright (c) 2019 ANRT
+   Designed by Alexis Faudot and Rafael Ribas
+   License: SIL Open Font License 1.1
+   https://github.com/anrt-type/GoticoAntiqua
+
+  王汉宗隶书
+   Copyright (c) 王汉宗 (Prof. Wang Han-Zong), 中原大学
+   License: GNU GPL
+
+  王汉宗中魏碑简 (WangHanZong WeiBei)
+   Copyright (c) 王汉宗 (Prof. Wang Han-Zong), 中原大学
+   License: GNU GPL
+
+AI Tools Used
+ Tripo AI
+ https://www.tripo3d.ai/
+  Purpose: 3D model generation
+  How it was used: Provided text & image prompts to generate base 3D models, which were then imported into Blender and Unity for further modified.
+  Output location:
+   Assets/Resources/Models/Buildings/PolishedBuildings
+
+ NovelAI
+ https://novelai.net/
+  Purpose: Character illustrations and 2D artwork
+  How it was used: Generated character art and illustrations via text prompts describing character appearance and style. Outputs were edited in Photoshop.
+  Output location:
+   Assets/Resources/Sprite/Character
+   Assets/Resources/Sprite/CG
+
+ Google Gemini
+ https://gemini.google.com/
+   Purpose: UI and sprite generation
+   How it was used: Provided text prompts describing desired UI layout and sprite styles. The generated images were edited for use in the project.
+   Output location:
+    Assets/Resources/Textures/UI/Icons
+    Assets/Resources/Sprite/UI
+    Assets/Resources/Sprite/Battle/Battalion
+    
+
+
