@@ -233,6 +233,7 @@ namespace LongLiveKhioyen
         
         public void CancelAction()
         {
+            if (SelectedUnit is Battalion bat) bat.CurrentSoldierState = SoldierState.Idle;
             availableTargetPositions.Clear();
             CurrentAction = null;
             IsPreparingAction = false;

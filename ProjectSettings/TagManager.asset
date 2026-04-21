@@ -47,3 +47,27 @@ TagManager:
   - name: WM_Player
     uniqueID: 3069276871
     locked: 0
+  - name: B_MapBase
+    uniqueID: 1704326561
+    locked: 0
+  - name: B_MapDecal
+    uniqueID: 1734917
+    locked: 0
+  - name: B_GridHightLight
+    uniqueID: 117301369
+    locked: 0
+  - name: B_GridZOC
+    uniqueID: 2380922641
+    locked: 0
+  - name: B_Unit
+    uniqueID: 1405746035
+    locked: 0
+  - name: B_FogofWar
+    uniqueID: 2532283993
+    locked: 0
+  - name: B_VFX
+    uniqueID: 321305415
+    locked: 0
+  - name: B_OverheadUI
+    uniqueID: 1458800381
+    locked: 0
