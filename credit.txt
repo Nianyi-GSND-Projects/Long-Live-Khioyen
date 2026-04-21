@@ -52,8 +52,14 @@ AI Tools Used
    How it was used: Provided text prompts describing desired UI layout and sprite styles. The generated images were edited for use in the project.
    Output location:
     Assets/Resources/Textures/UI/Icons
+    Assets/Resources/Textures/Battle/Terrain
     Assets/Resources/Sprite/UI
     Assets/Resources/Sprite/Battle/Battalion
+    Assets/Resources/Sprite/Battle/Commander
+    Assets/Resources/Sprite/Battle/Facility
+    Assets/Resources/Sprite/Battle/Icon
+    Assets/Resources/Sprite/Battle/Map
+    Assets/Resources/Sprite/TileEffect
     
 
 
