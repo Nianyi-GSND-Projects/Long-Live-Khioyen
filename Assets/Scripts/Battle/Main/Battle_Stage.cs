@@ -449,14 +449,22 @@ namespace LongLiveKhioyen
             yield return StartCoroutine(actionToPerform.PerformRoutine(source, targetPos));
 
             ResolveDirtyUnits();
-            if (source != null)
+
+            // 如果行动过程中战斗已结束（如撤离最后一个单位触发 CheckBattleEnd），提前退出
+            if (CurrentStage == Stage.Settlement)
+            {
+                IsOperatingUnit = false;
+                yield break;
+            }
+
+            if (source != null && source.gameObject.activeSelf)
             {
                 source.actionDone = true;
             }
             IsOperatingUnit = false;
             ClearAllSelection();
             ChangeActionStage(PlayerActionStage.None);
-            
+
             if (BattleEventManager.Instance != null)
                 BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd, source);
         }

@@ -39,16 +39,11 @@ namespace LongLiveKhioyen
             // ==========================================
             Debug.Log($"{unit.name} 已成功撤离战场！");
 
-            // 1. 从地图移除
+            // 从战场撤离（WithdrawUnit 内部会处理地图移除、列表清理、视觉隐藏等全部逻辑）
             if (Battle.Instance != null)
             {
-                Battle.Instance.RemoveUnitFromMap(unit);
-            
-                // 2. 从活跃列表移除 (这会影响胜利条件判断)
-                Battle.Instance.WithdrawUnit(unit); 
+                Battle.Instance.WithdrawUnit(unit);
             }
-
-            unit.gameObject.SetActive(false);
         }
     }
 }
