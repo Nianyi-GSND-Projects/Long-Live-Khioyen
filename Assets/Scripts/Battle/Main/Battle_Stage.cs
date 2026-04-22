@@ -59,9 +59,9 @@ namespace LongLiveKhioyen
                     HighlightTilesRing(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Battle:
-                    RefreshAllZOC();
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
+                    RecalculateAllZOC();
                     battleLoopCoroutine = StartCoroutine(BattleTurnLoop());
                     Debug.Log("OnEnter: 战斗阶段");
                     break;
