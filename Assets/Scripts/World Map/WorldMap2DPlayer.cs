@@ -38,9 +38,9 @@ namespace LongLiveKhioyen
 			prevPos = transform.localPosition;
 		}
 
-		public void Teleport(Vector2 worldPos)
+		public void Teleport(Vector2 localPos)
 		{
-			transform.localPosition = prevPos = worldPos;
+			transform.localPosition = prevPos = localPos;
 		}
 
 		WorldMapPolis nearbyPolis;
