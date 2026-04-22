@@ -348,9 +348,6 @@ namespace LongLiveKhioyen
 
             OnUnitStateChanged();
 
-            Battle.Instance.RefreshZOCVisualsAroundPoint(oldPos);
-            Battle.Instance.RefreshZOCVisualsAroundPoint(newPos);
-
             onResult?.Invoke(shouldStop);
         }
         

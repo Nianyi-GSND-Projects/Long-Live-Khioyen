@@ -59,9 +59,9 @@ namespace LongLiveKhioyen
                     HighlightTilesRing(availableArrangementPositions, deployRingColor);
                     break;
                 case Stage.Battle:
-                    RefreshAllZOC();
                     UpdatePlayerVisionSources();
                     UpdateFogOfWar();
+                    RecalculateAllZOC();
                     battleLoopCoroutine = StartCoroutine(BattleTurnLoop());
                     Debug.Log("OnEnter: 战斗阶段");
                     break;
@@ -97,6 +97,7 @@ namespace LongLiveKhioyen
         
         public event System.Action OnPlayerTurnStarted;
         public event System.Action OnPlayerTurnEnded;
+        public event System.Action OnEnemyTurnStarted;
         public event System.Action OnActionSelectionStarted;
         public event System.Action OnActionSelectionEnded;
         
@@ -140,6 +141,7 @@ namespace LongLiveKhioyen
                 
                 yield return new WaitForSeconds(0.5f);
                 CurrentTurnState = TurnState.EnemyTurn;
+                OnEnemyTurnStarted?.Invoke();
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnEnemyTurnStart);
                 yield return StartCoroutine(EnemyTurnCoroutine());
@@ -449,14 +451,22 @@ namespace LongLiveKhioyen
             yield return StartCoroutine(actionToPerform.PerformRoutine(source, targetPos));
 
             ResolveDirtyUnits();
-            if (source != null)
+
+            // 如果行动过程中战斗已结束（如撤离最后一个单位触发 CheckBattleEnd），提前退出
+            if (CurrentStage == Stage.Settlement)
+            {
+                IsOperatingUnit = false;
+                yield break;
+            }
+
+            if (source != null && source.gameObject.activeSelf)
             {
                 source.actionDone = true;
             }
             IsOperatingUnit = false;
             ClearAllSelection();
             ChangeActionStage(PlayerActionStage.None);
-            
+
             if (BattleEventManager.Instance != null)
                 BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnUnitActionEnd, source);
         }

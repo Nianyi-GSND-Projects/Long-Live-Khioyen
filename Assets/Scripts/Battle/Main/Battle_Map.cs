@@ -220,7 +220,7 @@ namespace LongLiveKhioyen
                 UnitPassability.Passable => false,
                 UnitPassability.AlliesPassable => false,
                 UnitPassability.Stoppable => true,
-                UnitPassability.AlliesStoppable => tile.Facility.faction == unit.faction,
+                UnitPassability.AlliesStoppable => tile.Facility != null && tile.Facility.faction == unit.faction,
                 _ => true,
             };
         }
@@ -260,7 +260,7 @@ namespace LongLiveKhioyen
                 UnitPassability.Passable => false,
                 UnitPassability.AlliesPassable => false,
                 UnitPassability.Stoppable => true,
-                UnitPassability.AlliesStoppable => tile.Facility.faction == desc.faction,
+                UnitPassability.AlliesStoppable => tile.Facility != null && tile.Facility.faction == desc.faction,
                 _ => true,
             };
         }
@@ -308,7 +308,7 @@ namespace LongLiveKhioyen
                 UnitPassability.Impassable => false,
                 UnitPassability.Passable => true,
                 UnitPassability.Stoppable => true,
-                UnitPassability.AlliesPassable or UnitPassability.AlliesStoppable => tile.Facility.faction == unit.faction,
+                UnitPassability.AlliesPassable or UnitPassability.AlliesStoppable => tile.Facility != null && tile.Facility.faction == unit.faction,
                 _ => true,
             };
             

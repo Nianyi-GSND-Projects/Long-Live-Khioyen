@@ -16,6 +16,7 @@ namespace LongLiveKhioyen
             get
             {
                 if (Battle.Instance == null) return null;
+                if (!Battle.Instance.IsValidMapPosition(TargetPos)) return null;
                 TileData tile = Battle.Instance.mapData[TargetPos.x, TargetPos.y];
                 
                 if (ActionDef != null)
@@ -282,8 +283,8 @@ namespace LongLiveKhioyen
                 user.MarkActionAsUsed(this);
             }
     
-            // 3. 行动彻底结束，强制恢复待机动画
-            if (user is Battalion bat)
+            // 3. 行动彻底结束，强制恢复待机动画（仅当单位仍在场时）
+            if (user != null && user.gameObject.activeSelf && user is Battalion bat)
             {
                 bat.CurrentSoldierState = SoldierState.Idle;
             }
