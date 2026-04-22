@@ -12,7 +12,8 @@ namespace LongLiveKhioyen
         public CanvasGroup _canvasGroup;
         public TMP_Text commanderNameText;
         public TMP_Text unitInfoText;
-        public Image iconImage; 
+        public Image iconImage;
+        public Image factionColorImage;
         
         [Header("Bars")]
         public Slider healthSlider;
@@ -43,6 +44,11 @@ namespace LongLiveKhioyen
             if (Camera.main != null) 
                 _mainCamTransform = Camera.main.transform;
             
+            if (factionColorImage != null && Battle.Instance != null)
+            {
+                factionColorImage.color = Battle.Instance.GetFactionUIColor(unit.faction);
+            }
+
             UpdateInfo(unit);
         }
 
