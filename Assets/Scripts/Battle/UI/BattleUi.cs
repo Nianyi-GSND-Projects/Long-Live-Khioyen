@@ -20,6 +20,7 @@ namespace LongLiveKhioyen
         {
             battle.OnPlayerTurnStarted += HandlePlayerTurnStart;
             battle.OnPlayerTurnEnded += HandlePlayerTurnEnd;
+            battle.OnEnemyTurnStarted += HandleEnemyTurnStart;
             battle.OnActionSelectionStarted += HandleActionSelectionStart;
             battle.OnActionSelectionEnded += HandleActionSelectionEnd;
             battle.OnUnitSelectionChanged += HandleUnitSelectionChanged;
@@ -37,6 +38,7 @@ namespace LongLiveKhioyen
             {
                 battle.OnPlayerTurnStarted -= HandlePlayerTurnStart;
                 battle.OnPlayerTurnEnded -= HandlePlayerTurnEnd;
+                battle.OnEnemyTurnStarted -= HandleEnemyTurnStart;
                 battle.OnActionSelectionStarted -= HandleActionSelectionStart;
                 battle.OnActionSelectionEnded -= HandleActionSelectionEnd;
                 battle.OnUnitSelectionChanged -= HandleUnitSelectionChanged;
@@ -53,6 +55,10 @@ namespace LongLiveKhioyen
         private void HandlePlayerTurnStart()
         {
             Debug.Log("BattleUI 收到信号：玩家回合开始，显示UI。");
+            if (turnBanner != null)
+            {
+                turnBanner.Show(Faction.Player, Battle.Instance.TurnCount);
+            }
         }
         
         private void HandleBattleStart()
@@ -66,6 +72,15 @@ namespace LongLiveKhioyen
             }
         }
         
+        private void HandleEnemyTurnStart()
+        {
+            Debug.Log("BattleUI 收到信号：敌方回合开始。");
+            if (turnBanner != null)
+            {
+                turnBanner.Show(Faction.Enemy, Battle.Instance.TurnCount);
+            }
+        }
+
         private void HandlePlayerTurnEnd()
         {
             Debug.Log("BattleUI 收到信号：玩家回合结束，关闭UI。");
@@ -283,7 +298,8 @@ namespace LongLiveKhioyen
         
         public ConstructionUI constructionUI;
         public BattleTitlePanel battleTitlePanel;
-        public ActionMenuUI actionMenu; 
+        public TurnBannerUI turnBanner;
+        public ActionMenuUI actionMenu;
         
         #region BackInput
 

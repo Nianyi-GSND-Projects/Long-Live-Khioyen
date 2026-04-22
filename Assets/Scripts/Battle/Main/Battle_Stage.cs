@@ -97,6 +97,7 @@ namespace LongLiveKhioyen
         
         public event System.Action OnPlayerTurnStarted;
         public event System.Action OnPlayerTurnEnded;
+        public event System.Action OnEnemyTurnStarted;
         public event System.Action OnActionSelectionStarted;
         public event System.Action OnActionSelectionEnded;
         
@@ -140,6 +141,7 @@ namespace LongLiveKhioyen
                 
                 yield return new WaitForSeconds(0.5f);
                 CurrentTurnState = TurnState.EnemyTurn;
+                OnEnemyTurnStarted?.Invoke();
                 if (BattleEventManager.Instance != null)
                     BattleEventManager.Instance.OnEventTrigger(BattleEventTriggerType.OnEnemyTurnStart);
                 yield return StartCoroutine(EnemyTurnCoroutine());
