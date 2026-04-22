@@ -125,15 +125,15 @@ namespace LongLiveKhioyen
         {
             if (unit == null)
             {
-                if(!battle.IsReserveTeamSelected) 
-                    ClosePanel(unitInfoPanel.canvasGroup);
+                if(!battle.IsReserveTeamSelected)
+                    ClosePanel(unitInfoPanel.canvasGroup, false);
             }
             else
             {
-                if (battle.CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget) 
+                if (battle.CurrentActionStage == PlayerActionStage.SelectingAmbiguousTarget)
                     return;
                 unitInfoPanel.UpdateUI(unit);
-                OpenPanel(unitInfoPanel.canvasGroup);
+                OpenPanel(unitInfoPanel.canvasGroup, false);
             }
         }
         
@@ -142,12 +142,12 @@ namespace LongLiveKhioyen
             if (desc == null)
             {
                 if(!battle.IsUnitSelected)
-                    ClosePanel(unitInfoPanel.canvasGroup);
+                    ClosePanel(unitInfoPanel.canvasGroup, false);
             }
             else
             {
                 unitInfoPanel.UpdateUI(desc);
-                OpenPanel(unitInfoPanel.canvasGroup);
+                OpenPanel(unitInfoPanel.canvasGroup, false);
             }
         }
         
@@ -338,18 +338,18 @@ namespace LongLiveKhioyen
 
         #region StageManagement
         
-        public void ClosePanel(CanvasGroup canvasGroup)
+        public void ClosePanel(CanvasGroup canvasGroup, bool changeBlocksRaycasts = true)
         {
             canvasGroup.interactable = false;
             canvasGroup.alpha = 0;
-            canvasGroup.blocksRaycasts = false; 
+            if (changeBlocksRaycasts) canvasGroup.blocksRaycasts = false;
         }
-        
-        public void OpenPanel(CanvasGroup canvasGroup)
+
+        public void OpenPanel(CanvasGroup canvasGroup, bool changeBlocksRaycasts = true)
         {
             canvasGroup.interactable = true;
             canvasGroup.alpha = 1;
-            canvasGroup.blocksRaycasts = true; 
+            if (changeBlocksRaycasts) canvasGroup.blocksRaycasts = true;
         }
 
         public void EnterArrangementMode()
