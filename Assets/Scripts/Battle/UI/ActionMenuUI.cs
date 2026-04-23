@@ -225,7 +225,7 @@ namespace LongLiveKhioyen
             }
             // --- 按钮 5: 部队技能 (Unit Actions) ---
             bool hasUnitActions = currentUnit.runtimeUnitActions != null && currentUnit.runtimeUnitActions.Count > 0;
-            CreateButton(mainMenuContainer, "Unit Skills", "Unit's unique skills",null,() =>
+            CreateButton(mainMenuContainer, "Tactics", "Unit's unique skills",null,() =>
             {
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeUnitActions);
@@ -233,7 +233,7 @@ namespace LongLiveKhioyen
 
             // --- 按钮 6: 指挥官技能 (Commander Actions) ---
             bool hasCmdActions = currentUnit.runtimeCommanderActions != null && currentUnit.runtimeCommanderActions.Count > 0;
-            CreateButton(mainMenuContainer, "Commander Skills", "Commander's unique skills",null, () =>
+            CreateButton(mainMenuContainer, "Stratagem", "Commander's unique skills",null, () =>
             {
                 // 点击后展开二级菜单
                 PopulateSubMenu(currentUnit.runtimeCommanderActions);
