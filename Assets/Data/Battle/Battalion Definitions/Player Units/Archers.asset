@@ -20,8 +20,8 @@ MonoBehaviour:
   unitSelectedSoundEffect: {fileID: 0}
   unitModelPrefab: {fileID: 2229188164278447998, guid: 4c92b885d95763a46b9565ddadd47596, type: 3}
   useBillboard: 1
-  defaultPower: 100
-  defaultDefense: 100
+  defaultPower: 80
+  defaultDefense: 80
   defaultRepairPower: 0
   defaultZocPower: 1
   defaultVisibility: 1
@@ -47,7 +47,7 @@ MonoBehaviour:
   defaultFlexibility: 20
   defaultStrategy: 100
   defaultMaxSolider: 500
-  defaultMaxMorale: 500
+  defaultMaxMorale: 1000
   soldiersPerModel: 200
   modelSpacing: 0.2
   spriteMaterial: {fileID: 0}

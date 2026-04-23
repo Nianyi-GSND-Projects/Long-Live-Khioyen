@@ -56,7 +56,7 @@ MonoBehaviour:
   defaultFlexibility: 20
   defaultStrategy: 80
   defaultMaxSolider: 200
-  defaultMaxMorale: 200
+  defaultMaxMorale: 1000
   soldiersPerModel: 100
   modelSpacing: 0.3
   spriteMaterial: {fileID: 0}

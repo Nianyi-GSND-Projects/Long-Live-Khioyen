@@ -21,7 +21,7 @@ MonoBehaviour:
   unitModelPrefab: {fileID: 2229188164278447998, guid: 9b1d36608a12c474aa756a461e631e38, type: 3}
   useBillboard: 1
   defaultPower: 30
-  defaultDefense: 50
+  defaultDefense: 40
   defaultRepairPower: 0
   defaultZocPower: 1
   defaultVisibility: 1
@@ -53,7 +53,7 @@ MonoBehaviour:
   defaultDiscipline: 50
   defaultFlexibility: 20
   defaultStrategy: 50
-  defaultMaxSolider: 100
+  defaultMaxSolider: 200
   defaultMaxMorale: 1000
   soldiersPerModel: 30
   modelSpacing: 0.3
