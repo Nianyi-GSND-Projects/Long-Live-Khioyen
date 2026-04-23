@@ -55,7 +55,7 @@ namespace LongLiveKhioyen
 
             // 等待 t 秒，让受击动作充分展示
             yield return new WaitForSeconds(t);
-
+            victimBat.CurrentSoldierState = SoldierState.Idle;
             // ==========================================
             // 逻辑执行阶段：造成伤害
             // ==========================================
